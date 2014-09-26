@@ -16,7 +16,7 @@ class KlinkCoreClient
 	 */
 	private $institution_id = null;
 
-	function __construct($institution_id, $core_api_url = "https://localhost/kcore/")
+	function __construct($institution_id, $core_api_url = "https://localhost/kcore/", )
 	{
 		# code...
 		$this->institution_id = $institution_id;
