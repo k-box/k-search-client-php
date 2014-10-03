@@ -16,7 +16,9 @@ class KlinkCoreClient
 	 */
 	private $institution_id = null;
 
-	function __construct($institution_id, $core_api_url = "https://localhost/kcore/", )
+	private $institution_auth = null;
+
+	function __construct($institution_id, array $core_api_url = array("https://localhost/kcore/"), )
 	{
 		# code...
 		$this->institution_id = $institution_id;
@@ -98,4 +100,11 @@ class KlinkCoreClient
 	function autocomplete($terms, SearchType $type = SearchType::LOCAL){
 		return null;
 	}
+
+
+
+	function saveInstitutionDetails(KlinkInstitutionInfo $info){
+
+	}
+
 }
