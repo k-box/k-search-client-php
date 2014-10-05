@@ -3,6 +3,9 @@
 Is the starting point for creating a **K**Link Adapter. Offers some basic functionality for interacting with the KLink Core API and exposes the main interfaces that represents the data needed for every operation. The use of interfaces has been preferred over classes given the fact that the implementation can be different if an ORM is used or the CMS has some particular requirements.
 
 
+**Composer is used for autoload and bootstrap, so only one file in your project must be included**
+
+
 ## feature offered
 
 the Adapter boilerplate offers a common way to interact with the Klink Core API. The more advanced features will be offered by platform dependant Adapters. You can see the boilerplate as the common part of all adapters.
