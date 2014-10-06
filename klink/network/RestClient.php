@@ -1,4 +1,4 @@
-<?php
+<?php namespace Klink\Network;
 
 
 /**
@@ -9,9 +9,17 @@ class RestClient
 	
 	private $baseApiUrl = null;
 
+
+	private INetworkTransport $transport = null;
+
+
 	function __construct($baseApiUrl, array $options = null)
 	{
 		# code...
+
+		$this->baseApiUrl = $baseApiUrl;
+
+		$this->transport = new KlinkHttp();
 	}
 
 

@@ -1,8 +1,9 @@
-<?php 
+<?php namespace Klink;
 
 /**
- * Define the avialble types of search
- * @package default
+ * Define the available types of search.
+ *
+ * @package Klink
  */
 abstract class SearchType
 {

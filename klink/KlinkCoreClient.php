@@ -1,4 +1,4 @@
-<?php
+<?php namespace Klink;
 
 /**
 *  KlinkCoreClient.
@@ -18,10 +18,17 @@ class KlinkCoreClient
 
 	private $institution_auth = null;
 
+	private RestClient $rest = null;
+
+
 	function __construct($institution_id, array $core_api_url = array("https://localhost/kcore/"), )
 	{
 		# code...
 		$this->institution_id = $institution_id;
+
+		/**
+			TODO: initialize RestClient
+		*/
 	}
 
 

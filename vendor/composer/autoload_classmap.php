@@ -6,9 +6,17 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
-    'IDocument' => $baseDir . '/klink/IDocument.php',
-    'INetworkTransport' => $baseDir . '/klink/INetworkTransport.php',
-    'KlinkCoreClient' => $baseDir . '/klink/KlinkCoreClient.php',
-    'RestClient' => $baseDir . '/klink/utils/RestClient.php',
-    'SearchType' => $baseDir . '/klink/SearchType.php',
+    'Klink\\IDocument' => $baseDir . '/klink/IDocument.php',
+    'Klink\\KlinkCoreClient' => $baseDir . '/klink/KlinkCoreClient.php',
+    'Klink\\KlinkError' => $baseDir . '/klink/class-klink-error.php',
+    'Klink\\Network\\INetworkTransport' => $baseDir . '/klink/network/INetworkTransport.php',
+    'Klink\\Network\\KlinkHttp' => $baseDir . '/klink/network/class-http.php',
+    'Klink\\Network\\KlinkHttp_Cookie' => $baseDir . '/klink/network/class-http.php',
+    'Klink\\Network\\KlinkHttp_Curl' => $baseDir . '/klink/network/class-http.php',
+    'Klink\\Network\\KlinkHttp_Encoding' => $baseDir . '/klink/network/class-http.php',
+    'Klink\\Network\\KlinkHttp_Streams' => $baseDir . '/klink/network/class-http.php',
+    'Klink\\Network\\RestClient' => $baseDir . '/klink/network/RestClient.php',
+    'Klink\\SearchType' => $baseDir . '/klink/SearchType.php',
+    'Klink\\Utils\\DocumentUtils' => $baseDir . '/klink/utils/DocumentUtils.php',
+    'Klink\\Utils\\Helpers' => $baseDir . '/klink/utils/Helpers.php',
 );
