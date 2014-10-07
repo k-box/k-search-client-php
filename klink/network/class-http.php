@@ -277,7 +277,7 @@ class KlinkHttp implements INetworkTransport {
 				SSL verify should be turned on and sslcertificates should contain the necessary certificates
 			*/
 			'sslcertificates' => ABSPATH . WPINC . '/certificates/ca-bundle.crt',
-			'stream' => true,
+			'stream' => false, //if true the body of the response will be directly saved to filename
 			'filename' => null,
 			'limit_response_size' => null,
 		);
@@ -876,7 +876,7 @@ class KlinkHttp implements INetworkTransport {
 		if ( is_array( $redirect_location ) )
 			$redirect_location = array_pop( $redirect_location );
 
-		$redirect_location = WP_HTTP::make_absolute_url( $redirect_location, $url );
+		$redirect_location = KlinkHttp::make_absolute_url( $redirect_location, $url );
 
 		// POST requests should not POST to a redirected location.
 		if ( 'POST' == $args['method'] ) {
@@ -1041,7 +1041,7 @@ class KlinkHttp_Streams {
 		// Store error string.
 		$connection_error_str = null;
 
-		if ( !WP_DEBUG ) {
+		if ( !KLINKADAPTER_DEBUG ) {
 			// In the event that the SSL connection fails, silence the many PHP Warnings.
 			if ( $secure_transport )
 				$error_reporting = error_reporting(0);
@@ -1128,7 +1128,7 @@ class KlinkHttp_Streams {
 				if ( ! $bodyStarted ) {
 					$strResponse .= $block;
 					if ( strpos( $strResponse, "\r\n\r\n" ) ) {
-						$process = WP_Http::processResponse( $strResponse );
+						$process = KlinkHttp::processResponse( $strResponse );
 						$bodyStarted = true;
 						$block = $process['body'];
 						unset( $strResponse );
@@ -1168,14 +1168,14 @@ class KlinkHttp_Streams {
 				$keep_reading = ( ! $bodyStarted || !isset( $r['limit_response_size'] ) || strlen( $strResponse ) < ( $header_length + $r['limit_response_size'] ) );
 			}
 
-			$process = WP_Http::processResponse( $strResponse );
+			$process = KlinkHttp::processResponse( $strResponse );
 			unset( $strResponse );
 
 		}
 
 		fclose( $handle );
 
-		$arrHeaders = WP_Http::processHeaders( $process['headers'], $url );
+		$arrHeaders = KlinkHttp::processHeaders( $process['headers'], $url );
 
 		$response = array(
 			'headers' => $arrHeaders['headers'],
@@ -1187,15 +1187,15 @@ class KlinkHttp_Streams {
 		);
 
 		// Handle redirects.
-		if ( false !== ( $redirect_response = WP_HTTP::handle_redirects( $url, $r, $response ) ) )
+		if ( false !== ( $redirect_response = KlinkHttp::handle_redirects( $url, $r, $response ) ) )
 			return $redirect_response;
 
 		// If the body was chunk encoded, then decode it.
 		if ( ! empty( $process['body'] ) && isset( $arrHeaders['headers']['transfer-encoding'] ) && 'chunked' == $arrHeaders['headers']['transfer-encoding'] )
-			$process['body'] = WP_Http::chunkTransferDecode($process['body']);
+			$process['body'] = KlinkHttp::chunkTransferDecode($process['body']);
 
-		if ( true === $r['decompress'] && true === WP_Http_Encoding::should_decode($arrHeaders['headers']) )
-			$process['body'] = WP_Http_Encoding::decompress( $process['body'] );
+		if ( true === $r['decompress'] && true === KlinkHttp_Encoding::should_decode($arrHeaders['headers']) )
+			$process['body'] = KlinkHttp_Encoding::decompress( $process['body'] );
 
 		if ( isset( $r['limit_response_size'] ) && strlen( $process['body'] ) > $r['limit_response_size'] )
 			$process['body'] = substr( $process['body'], 0, $r['limit_response_size'] );
@@ -1236,7 +1236,7 @@ class KlinkHttp_Streams {
 		 * If the request is being made to an IP address, we'll validate against IP fields
 		 * in the cert (if they exist)
 		 */
-		$host_type = ( WP_HTTP::is_ip_address( $host ) ? 'ip' : 'dns' );
+		$host_type = ( KlinkHttp::is_ip_address( $host ) ? 'ip' : 'dns' );
 
 		$certificate_hostnames = array();
 		if ( ! empty( $cert['extensions']['subjectAltName'] ) ) {
@@ -1560,7 +1560,7 @@ class KlinkHttp_Curl {
 			return $redirect_response;
 
 		if ( true === $r['decompress'] && true === KlinkHttp_Encoding::should_decode($theHeaders['headers']) )
-			$theBody = WP_Http_Encoding::decompress( $theBody );
+			$theBody = KlinkHttp_Encoding::decompress( $theBody );
 
 		$response['body'] = $theBody;
 
@@ -1828,7 +1828,7 @@ class KlinkHttp_Cookie {
 		 * @param string $value The cookie value.
 		 * @param string $name  The cookie name.
 		 */
-		return $this->name . '=' . apply_filters( 'wp_http_cookie_value', $this->value, $this->name );
+		return $this->name . '=' . apply_filters( 'klink_http_cookie_value', $this->value, $this->name );
 	}
 
 	/**
