@@ -1,0 +1,42 @@
+[
+    {
+        "name": "netresearch/jsonmapper",
+        "version": "v0.4.0",
+        "version_normalized": "0.4.0.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/netresearch/jsonmapper.git",
+            "reference": "2e5a116f475e069a6e6b1b69f7467928162fdadb"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/netresearch/jsonmapper/zipball/2e5a116f475e069a6e6b1b69f7467928162fdadb",
+            "reference": "2e5a116f475e069a6e6b1b69f7467928162fdadb",
+            "shasum": ""
+        },
+        "require-dev": {
+            "phpunit/phpunit": "4.2.*"
+        },
+        "time": "2014-09-20 09:43:18",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-0": {
+                "": "src/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "AGPL-3.0"
+        ],
+        "authors": [
+            {
+                "name": "Christian Weiske",
+                "email": "christian.weiske@netresearch.de",
+                "homepage": "http://www.netresearch.de/",
+                "role": "Developer"
+            }
+        ],
+        "description": "Map nested JSON structures onto PHP classes"
+    }
+]

@@ -1,0 +1,244 @@
+<?php namespace Klink\Network;
+
+use Klink\Utils\Helpers;
+
+/**
+ * RestClient adapter to mask the underlying library used. 
+ *
+ * Standardizes the communication with a RESTFul endpoint. Exposes shortcut methods for common operations
+ * Simple and uniform REESTful web service client.
+ * 
+ * Remember to setup the default time zone (e.g., date_default_timezone_set('America/Los_Angeles');)
+ *
+ *
+ * @package Klink
+ * @subpackage Network
+ * @since 0.1.0
+ */
+
+/**
+ * Klink RestClient Class for communicating with a RESTful web service.
+ *
+ * This class is used to consistently make outgoing HTTP requests easy for developers
+ * while still being compatible with the many PHP configurations under which
+ * Klink Adpter runs.
+ * 
+ * Remember to setup the default time zone (e.g., date_default_timezone_set('America/Los_Angeles');)
+ *
+ *
+ * @package Klink
+ * @subpackage Network
+ * @since 0.1.0
+ */
+class KlinkRestClient implements INetworkTransport
+{
+
+	const JSON_ENCODING = 'application/json';
+
+	/**
+	* The common part of the API URL to call
+	*/
+	private $baseApiUrl = null;
+
+	/**
+	* the real transport layer used
+	*/
+	private KlinkHttp $rest = null;
+
+	/**
+	 * Holds the configuration for this instance
+	 */
+	private array $config = null;
+
+
+	private JsonMapper $jm = null;
+
+
+	/**
+	 * Description
+	 * @param string $baseApiUrl the starting part of the API url
+	 * @param KlinkAuthentication $authentication the authentication information
+	 * @param array $options 
+	 * @return KlinkRestClient
+	 */
+	function __construct($baseApiUrl, KlinkAuthentication $authentication, array $options = array())
+	{
+		$defaults = array(
+			/**
+			 * Filter the timeout value for an HTTP request.
+			 *
+			 * @since 0.1.0
+			 *
+			 * @param int $timeout_value Time in seconds until a request times out.
+			 *                           Default 5.
+			 */
+			'timeout' => 5,
+			/**
+			 * Filter the number of redirects allowed during an HTTP request.
+			 *
+			 * @since 0.1.0
+			 *
+			 * @param int $redirect_count Number of redirects allowed. Fixed to 2, no more than two redirect are allowed
+			 */
+			'redirection' => 2,
+			/**
+			 * Filter the user agent value sent with an HTTP request.
+			 *
+			 * @since 0.1.0
+			 *
+			 * @param string $user_agent WordPress user agent string.
+			 */
+			'user-agent' => 'Klink/any;',
+			/**
+			 * Filter whether to pass URLs through http_validate_url() in an HTTP request.
+			 *
+			 * @since 0.1.0
+			 *
+			 * @param bool $pass_url Whether to pass URLs through http_validate_url().
+			 *                       Default false.
+			 */
+			// 'reject_unsafe_urls' => false,
+			/**
+			 * Enable debug messaging.
+			 *
+			 * @since 0.1.0
+			 *
+			 * @param bool $debug Whether to enable debug messages on the log.
+			 *                       Default false.
+			 */
+			'debug' => false,
+		);
+
+		$this->config = array_merge($defaults, $options);
+
+		$this->jm = new JsonMapper();
+		$this->jm->bExceptionOnUndefinedProperty = true;
+
+
+		$this->baseApiUrl = $baseApiUrl;
+
+		$this->rest = new KlinkHttp('http://localhost/');
+	}
+
+
+	/**
+	 * Description
+	 * @param string $url 
+	 * @param array $params 
+	 * @param null|boolean|string expectedClass what class should the response return, null use a plain array, false expects nothing, otherwise the class name with full namespace
+	 * @return type
+	 */
+	function get( $url, array $params = null, $expectedClass = null ){
+
+		//Expects json response
+
+		// $json = json_decode(file_get_contents('http://example.org/bigbang.json'));
+		// $mapper = new JsonMapper();
+		// $contact = $mapper->map($json, new Contact());
+
+	}
+
+	/**
+	 * Makes a POST request with the specified data using json content.
+	 * 
+	 * Given the nature of the POST request a non-empty 
+	 * 
+	 * The expected return is a json response. The response will be automatically mapped to a specified class
+	 * 
+	 * @param string $url 
+	 * @param array $data the data that will be sent in the body of the request (json encoded)
+	 * @param string|class expected_return_type the class that represents the returned information from the server. If a class is provided must be an instance.
+	 * @param type array $params 
+	 * @return type
+	 */
+	function post( $url, array $data, $expected_return_type = false, array $params = null ){
+		//sends with json encode
+		//expects json encode
+
+		$url = self::_construct_url($this->baseApiUrl, $url);
+
+		$result = $this->rest->post( $url, 
+			array(
+				'body' => json_encode($data), 
+				'headers' => 'Content-Type:' . self::JSON_ENCODING
+			) );
+
+		if(Helpers::is_error($result)){
+			return $result;
+		}
+
+
+		//204 no content
+		//201 created
+		//202 accepted
+
+		if($result['response']['code'] !== 200 || $result['response']['code'] !== 201){
+			return new KlinkError('http_request_failed', Helpers::localize($result['response']['message']));
+		}
+
+		if($result['headers']['content-type'] !== self::JSON_ENCODING){
+			return new KlinkError('http_response_format', Helpers::localize('Unsupported content encoding from the server.'));
+		}
+
+		// $this->assertEquals('application/json', $result['headers']['content-type'], 'Expected JSON response');
+
+		$decoded = json_decode($result['body'], true);
+
+		return $this->jm->map($decoded, CLASS_INSTANCE);
+
+		//usare mapArray per gli array in risposta
+
+
+	}
+
+	/**
+	 * Description
+	 * @param string $url 
+	 * @param array $data the data that will be sent in the body of the request (json encoded)
+	 * @param type array $params 
+	 * @return type
+	 */
+	function put( $url, array $data, array $params = null, $expectedClass = null ){
+
+	}
+
+	/**
+	 * Description
+	 * @param string $url 
+	 * @param array $params 
+	 * @return type
+	 */
+	function delete( $url, array $params = null, $expectedClass = false ){
+
+	}
+
+
+	function fileSend(){
+		//A specific file post to the server	
+	}
+
+
+
+	/**
+	 * Compose the url given tha base and the portions that needs to be attached
+	 * @param string $base the base part of the url, must be a valid url
+	 * @param string|array $rest 
+	 * @return string the full url
+	 */
+	private function _construct_url($base, $rest)
+	{
+		/**
+		 TODO: test if $base is a valid url (@parse_url())
+		 * */
+
+		if(is_array($rest)){
+			$rest = implode('/', $rest);
+		}
+
+		return $base . '/' . $rest;
+	}
+}
+
+
+
+?>

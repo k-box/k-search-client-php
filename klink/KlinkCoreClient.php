@@ -44,7 +44,7 @@ class KlinkCoreClient
 	 * @param type $document_content 
 	 * @return type
 	 */
-	function addDocument(IDocument $document, $document_content){
+	function addDocument(KlinkDocument $document, $document_content){
 
 	}
 
@@ -53,7 +53,7 @@ class KlinkCoreClient
 	 * @param type IDocument $document 
 	 * @return boolean
 	 */
-	function removeDocument(IDocument $document){
+	function removeDocument(KlinkDocument $document){
 
 		return false;
 	}
@@ -64,7 +64,7 @@ class KlinkCoreClient
 	 * @param type $document_content 
 	 * @return type
 	 */
-	function updateDocument(IDocument $document, $document_content){
+	function updateDocument(KlinkDocument $document, $document_content){
 
 		$this->removeDocument($document);
 
@@ -74,7 +74,7 @@ class KlinkCoreClient
 
 	/**
 	 * Get the currently indexed documents that are local/private of the institution
-	 * @return IDocument[]
+	 * @return KlinkDocument[]
 	 */
 	function getLocalDocuments(){
 
@@ -88,7 +88,7 @@ class KlinkCoreClient
 	 * Description
 	 * @param string $terms the phrase or terms to seach for
 	 * @param SearchType $type the type of the search to be perfomed
-	 * @return IDocument[] returns the document that match the searched terms
+	 * @return KlinkDocument[] returns the document that match the searched terms
 	 */
 	function search($terms, SearchType $type = SearchType::LOCAL){
 

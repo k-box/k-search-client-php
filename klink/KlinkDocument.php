@@ -6,7 +6,7 @@
 * @package Klink
 * @since 0.1.0
 */
-interface IDocument 
+class KlinkDocument 
 {
 	
 	function getId();

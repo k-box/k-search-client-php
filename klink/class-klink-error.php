@@ -245,18 +245,3 @@ class KlinkError {
 	}
 }
 
-/**
- * Check whether variable is a Klink Error.
- *
- * Returns true if $thing is an object of the KlinkError class.
- *
- * @since 0.1.0
- *
- * @param mixed $thing Check if unknown variable is a KlinkError object.
- * @return bool True, if KlinkError. False, if not KlinkError.
- */
-function is_klink_error($thing) {
-	if ( is_object($thing) && is_a($thing, 'KlinkError') )
-		return true;
-	return false;
-}

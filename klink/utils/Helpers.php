@@ -288,4 +288,9 @@ class Helpers
 	}
 
 
+	function localize($string){
+		return $string;
+	}
+
+
 }

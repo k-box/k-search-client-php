@@ -13,6 +13,8 @@ class HttpClassTest extends PHPUnit_Framework_TestCase
 	  	date_default_timezone_set('America/Los_Angeles');
 
 	    $this->http = new KlinkHttp('http://localhost/');
+
+	    $this->testendpoint = "http://httpbin.org/";
 	}
 
 	// public function inputNumbers()
@@ -41,14 +43,52 @@ class HttpClassTest extends PHPUnit_Framework_TestCase
  //  }
 	public function testHttpGet()
 	{
-
-		$url = 'http://www.google.it';
-		
-		$result = $this->http->get($url);
+		$result = $this->http->get( $this->testendpoint . 'ip');
 
 
-		print_r($result);
+		// print_r($result);
 
-		$this->assertTrue(true, 'message');
+		$this->assertEquals(200, $result['response']['code'], 'Something wront happened');
+		$this->assertTrue(!empty($result['body']), 'The response body is empty');
+	}
+
+	public function testHttpPost()
+	{
+
+		$data = array('key' => 'test', );
+
+
+		$result = $this->http->post( $this->testendpoint . 'post', 
+			array(
+				'body' => json_encode($data), 
+				'headers' => 'Content-Type:application/json'
+			) );
+
+
+		// print_r($result);
+
+
+
+		$this->assertEquals(200, $result['response']['code'], 'Something wront happened');
+		$this->assertTrue(!empty($result['body']), 'The response body is empty');
+
+		$this->assertEquals('application/json', $result['headers']['content-type'], 'Expected JSON response');
+
+		$decoded = json_decode($result['body']);
+
+		$this->assertObjectHasAttribute('key', $decoded->json, 'returned json not have the key property');
+
+	}
+
+	public function testHttpError_NotFound()
+	{
+
+		$result = $this->http->get( $this->testendpoint . 'status/404');
+
+
+		$this->assertEquals(404, $result['response']['code'], 'Something wront happened');
+		$this->assertEmpty($result['body'], 'Body not empty');
+		//$this->assertTrue(!empty($result['body']), 'The response body is empty');
+
 	}
 }
