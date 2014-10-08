@@ -6,8 +6,10 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
-    'Klink\\IDocument' => $baseDir . '/klink/IDocument.php',
+    'HttpClassTest' => $baseDir . '/test/HttpClassTest.php',
+    'KlinkRestClientTest' => $baseDir . '/test/KlinkRestClientTest.php',
     'Klink\\KlinkCoreClient' => $baseDir . '/klink/KlinkCoreClient.php',
+    'Klink\\KlinkDocument' => $baseDir . '/klink/KlinkDocument.php',
     'Klink\\KlinkError' => $baseDir . '/klink/class-klink-error.php',
     'Klink\\Network\\Authentication\\KlinkAuthentication' => $baseDir . '/klink/network/auth/KlinkAuthentication.php',
     'Klink\\Network\\INetworkTransport' => $baseDir . '/klink/network/INetworkTransport.php',
@@ -20,4 +22,8 @@ return array(
     'Klink\\SearchType' => $baseDir . '/klink/SearchType.php',
     'Klink\\Utils\\DocumentUtils' => $baseDir . '/klink/utils/DocumentUtils.php',
     'Klink\\Utils\\Helpers' => $baseDir . '/klink/utils/Helpers.php',
+    'Klink_Address' => $baseDir . '/klink/KlinkInstitutionInfo.php',
+    'Klink_InstitutionInfo' => $baseDir . '/klink/KlinkInstitutionInfo.php',
+    'TestBodyResponse' => $baseDir . '/test/TestBodyResponse.php',
+    'TestResponse' => $baseDir . '/test/TestResponse.php',
 );

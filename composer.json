@@ -1,7 +1,8 @@
 {
   "autoload": {
     "classmap": [
-      "klink"
+      "klink",
+      "test"
     ]
   },
   "require": {

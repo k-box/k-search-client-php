@@ -2,6 +2,7 @@
 
 
 use Klink\Network\KlinkHttp;
+use Klink\Utils\Helpers;
 
 /**
 * Test the KlinkHttp Class for basic functionality
@@ -48,6 +49,8 @@ class HttpClassTest extends PHPUnit_Framework_TestCase
 
 		// print_r($result);
 
+		$this->assertFalse(Helpers::is_error($result), 'What the hell');
+
 		$this->assertEquals(200, $result['response']['code'], 'Something wront happened');
 		$this->assertTrue(!empty($result['body']), 'The response body is empty');
 	}
@@ -64,17 +67,14 @@ class HttpClassTest extends PHPUnit_Framework_TestCase
 				'headers' => 'Content-Type:application/json'
 			) );
 
-
-		// print_r($result);
-
-
-
 		$this->assertEquals(200, $result['response']['code'], 'Something wront happened');
 		$this->assertTrue(!empty($result['body']), 'The response body is empty');
 
 		$this->assertEquals('application/json', $result['headers']['content-type'], 'Expected JSON response');
 
 		$decoded = json_decode($result['body']);
+
+		// print_r($result);
 
 		$this->assertObjectHasAttribute('key', $decoded->json, 'returned json not have the key property');
 
@@ -85,10 +85,8 @@ class HttpClassTest extends PHPUnit_Framework_TestCase
 
 		$result = $this->http->get( $this->testendpoint . 'status/404');
 
-
 		$this->assertEquals(404, $result['response']['code'], 'Something wront happened');
 		$this->assertEmpty($result['body'], 'Body not empty');
-		//$this->assertTrue(!empty($result['body']), 'The response body is empty');
 
 	}
 }

@@ -1,6 +1,7 @@
 <?php namespace Klink\Network;
 
 use Klink\Utils\Helpers;
+use Klink\KlinkError;
 
 /**
  * Simple and uniform HTTP request API.
