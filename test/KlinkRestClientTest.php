@@ -1,10 +1,5 @@
 <?php
 
-
-use Klink\Utils\Helpers;
-use Klink\Network\KlinkRestClient;
-use Klink\Network\Authentication\KlinkAuthentication;
-
 /**
 * Test the KlinkHttp Class for basic functionality
 */
@@ -52,7 +47,7 @@ class KlinkRestClientTest extends PHPUnit_Framework_TestCase
 
 		// print_r($result);
 
-		$this->assertFalse(Helpers::is_error($result), 'What the hell');
+		$this->assertFalse(KlinkHelpers::is_error($result), 'What the hell');
 
 		$this->assertInstanceOf('TestResponse', $result);
 
@@ -64,7 +59,7 @@ class KlinkRestClientTest extends PHPUnit_Framework_TestCase
 
 		// print_r($result);
 
-		$this->assertTrue(Helpers::is_error($result), 'Error expected');
+		$this->assertTrue(KlinkHelpers::is_error($result), 'Error expected');
 
 		$this->assertContains('deserialization_error', $result->get_error_codes(), 'Expected "deserialization_error" error');
 
@@ -96,7 +91,7 @@ class KlinkRestClientTest extends PHPUnit_Framework_TestCase
 
 		// print_r($result);
 
-		$this->assertFalse(Helpers::is_error($result), 'Everything should work');
+		$this->assertFalse(KlinkHelpers::is_error($result), 'Everything should work');
 
 		$this->assertInstanceOf('TestBodyResponse', $result);
 
@@ -125,7 +120,7 @@ class KlinkRestClientTest extends PHPUnit_Framework_TestCase
 
 		//class_expected
 
-		$this->assertTrue(Helpers::is_error($result), 'Expected error');
+		$this->assertTrue(KlinkHelpers::is_error($result), 'Expected error');
 
 		$this->assertContains('class_expected', $result->get_error_codes(), 'Expected "class_expected" error');
 

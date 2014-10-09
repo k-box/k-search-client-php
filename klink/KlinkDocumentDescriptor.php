@@ -1,4 +1,4 @@
-<?php namespace Klink;
+<?php
 
 
 /**
@@ -6,9 +6,43 @@
 * @package Klink
 * @since 0.1.0
 */
-class KlinkDocument 
+final class KlinkDocumentDescriptor
 {
 	
+	public $id;
+
+
+	public $has;
+
+
+	public $title;
+
+
+	public $uri;
+
+
+
+	public $abstract;
+
+
+	public /* KlinkDocumentAuthor[] */ $authors;
+
+	public $type;
+
+
+	public $institution; /* id or KlinkInstitutionDetails */
+
+
+	public $thumbnail;
+
+
+	public $creationDate;
+
+
+	public $lastModifiedDate;
+
+
+
 	function getId();
 
 	function getUrl();

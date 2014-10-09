@@ -1,10 +1,10 @@
-<?php namespace Klink\Utils;
+<?php
 
 
 /**
 * 
 */
-class DocumentUtils
+class KlinkDocumentUtils
 {
 	
 	/**

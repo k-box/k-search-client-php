@@ -1,4 +1,4 @@
-<?php namespace Klink;
+<?php
 
 /**
  * Klink Error API.
@@ -19,7 +19,7 @@
  * @package Klink
  * @since 0.1.0
  */
-class KlinkError {
+final class KlinkError {
 	/**
 	 * Stores the list of errors.
 	 *

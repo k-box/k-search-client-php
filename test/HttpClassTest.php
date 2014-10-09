@@ -1,9 +1,6 @@
 <?php
 
 
-use Klink\Network\KlinkHttp;
-use Klink\Utils\Helpers;
-
 /**
 * Test the KlinkHttp Class for basic functionality
 */
@@ -49,7 +46,7 @@ class HttpClassTest extends PHPUnit_Framework_TestCase
 
 		// print_r($result);
 
-		$this->assertFalse(Helpers::is_error($result), 'What the hell');
+		$this->assertFalse(KlinkHelpers::is_error($result), 'What the hell');
 
 		$this->assertEquals(200, $result['response']['code'], 'Something wront happened');
 		$this->assertTrue(!empty($result['body']), 'The response body is empty');

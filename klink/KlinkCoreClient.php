@@ -1,10 +1,10 @@
-<?php namespace Klink;
+<?php
 
 /**
 *  KlinkCoreClient.
 *  offers a clean API to perform actions on the Klink Core
 */
-class KlinkCoreClient
+final class KlinkCoreClient
 {
 
 
@@ -18,10 +18,10 @@ class KlinkCoreClient
 
 	private $institution_auth = null;
 
-	private RestClient $rest = null;
+	private /*KlinkRestClient*/ $rest = null;
 
 
-	function __construct($institution_id, array $core_api_url = array("https://localhost/kcore/"), )
+	function __construct($institution_id, KlinkConfiguration $config )
 	{
 		# code...
 		$this->institution_id = $institution_id;
@@ -44,7 +44,7 @@ class KlinkCoreClient
 	 * @param type $document_content 
 	 * @return type
 	 */
-	function addDocument(KlinkDocument $document, $document_content){
+	function addDocument(KlinkDocumentDescriptor $document, $document_content){
 
 	}
 
@@ -53,7 +53,7 @@ class KlinkCoreClient
 	 * @param type IDocument $document 
 	 * @return boolean
 	 */
-	function removeDocument(KlinkDocument $document){
+	function removeDocument(KlinkDocumentDescriptor $document){
 
 		return false;
 	}
@@ -64,7 +64,7 @@ class KlinkCoreClient
 	 * @param type $document_content 
 	 * @return type
 	 */
-	function updateDocument(KlinkDocument $document, $document_content){
+	function updateDocument(KlinkDocumentDescriptor $document, $document_content){
 
 		$this->removeDocument($document);
 
@@ -74,7 +74,7 @@ class KlinkCoreClient
 
 	/**
 	 * Get the currently indexed documents that are local/private of the institution
-	 * @return KlinkDocument[]
+	 * @return KlinkDocumentDescriptor[]
 	 */
 	function getLocalDocuments(){
 
@@ -86,11 +86,11 @@ class KlinkCoreClient
 
 	/**
 	 * Description
-	 * @param string $terms the phrase or terms to seach for
+	 * @param string $terms the phrase or terms to search for
 	 * @param SearchType $type the type of the search to be perfomed
-	 * @return KlinkDocument[] returns the document that match the searched terms
+	 * @return KlinkDocumentDescriptor[] returns the document that match the searched terms
 	 */
-	function search($terms, SearchType $type = SearchType::LOCAL){
+	function search($terms, SearchType $type = KlinkSearchType::LOCAL){
 
 		return null;
 	}
@@ -104,13 +104,13 @@ class KlinkCoreClient
 	 * @param SearchType $type 
 	 * @return string[] the possible suggestions
 	 */
-	function autocomplete($terms, SearchType $type = SearchType::LOCAL){
+	function autocomplete($terms, SearchType $type = KlinkSearchType::LOCAL){
 		return null;
 	}
 
 
 
-	function saveInstitutionDetails(KlinkInstitutionInfo $info){
+	function saveInstitutionDetails(KlinkInstitutionDetails $info){
 
 	}
 

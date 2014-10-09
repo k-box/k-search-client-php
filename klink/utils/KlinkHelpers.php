@@ -1,10 +1,10 @@
-<?php namespace Klink\Utils;
+<?php
 
 
 /**
 * 
 */
-class Helpers
+class KlinkHelpers
 {
 	/**
 	 * Appends a trailing slash.
@@ -282,7 +282,7 @@ class Helpers
 	 * @return bool True, if KlinkError. False, if not KlinkError.
 	 */
 	function is_error($thing) {
-		if ( is_object($thing) && is_a($thing, 'Klink\KlinkError') )
+		if ( is_object($thing) && is_a($thing, 'KlinkError') )
 			return true;
 		return false;
 	}
