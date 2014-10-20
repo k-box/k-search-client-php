@@ -9,7 +9,7 @@ class KlinkRestClientTest extends PHPUnit_Framework_TestCase
 	{
 	  	date_default_timezone_set('America/Los_Angeles');
 
-	    $this->rest = new KlinkRestClient("http://httpbin.org/", new KlinkAuthentication());
+	    $this->rest = new KlinkRestClient("http://httpbin.org/", new KlinkAuthentication('localhost', 'test', 'test'));
 
 	    //$this->testendpoint = "http://httpbin.org/";
 	}

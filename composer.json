@@ -5,7 +5,15 @@
       "test"
     ]
   },
+  "repositories": [
+        {
+            "type": "git",
+            "url": "https://github.com/avvertix/jsonmapper"
+        }
+    ],
   "require": {
-        "netresearch/jsonmapper": "0.4"
+        "avvertix/jsonmapper": "0.4.*",
+        "illuminate/database": "4.1.*"
+
     }
 }

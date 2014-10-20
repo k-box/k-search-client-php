@@ -58,13 +58,19 @@ final class KlinkRestClient implements INetworkTransport
 
 
 	/**
+	 TODO: aggiungere informazioni sul tempo di trasferimento per capire se la connessione diventa lenta o l'host non è più raggiungibile
+	 * */
+
+	/**
 	 * Description
 	 * @param string $baseApiUrl the starting part of the API url
-	 * @param KlinkAuthentication $authentication the authentication information
+	 * @param KlinkAuthentication $authentication the authentication information for this instance
 	 * @param array $options 
 	 * @return KlinkRestClient
+	 * 
+	 TODO: magari usare una classe tipo KlinkAuthenticatioCollection che estende ArrayObject in modo da verificare meglio il parametro
 	 */
-	function __construct($baseApiUrl, KlinkAuthentication $authentication, array $options = array())
+	function __construct($baseApiUrl, KlinkAuthentication $authentications, array $options = array())
 	{
 		$defaults = array(
 			/**
@@ -425,11 +431,11 @@ final class KlinkRestClient implements INetworkTransport
 			return new KlinkError('deserialization_error', $je->getMessage());
 
 		}
-		catch(\Exception $je){
+		// catch(\Exception $je){
 
-			return new KlinkError('deserialization_error', $je->getMessage());
+		// 	return new KlinkError('deserialization_error', $je->getMessage());
 
-		}
+		// }
 
 	}
 
@@ -449,11 +455,11 @@ final class KlinkRestClient implements INetworkTransport
 			return new KlinkError('deserialization_error', $je->getMessage());
 
 		}
-		catch(\Exception $je){
+		// catch(\Exception $je){
 
-			return new KlinkError('deserialization_error', $je->getMessage());
+		// 	return new KlinkError('deserialization_error', $je->getMessage());
 
-		}
+		// }
 		
 	}
 }

@@ -5,7 +5,7 @@
  *
  * @package Klink
  */
-final abstract class KlinkSearchType
+final class KlinkSearchType
 {
 
 	/**

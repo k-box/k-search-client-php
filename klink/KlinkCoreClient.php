@@ -7,6 +7,51 @@
 final class KlinkCoreClient
 {
 
+	// ---- API endpoint constants
+
+
+	/**
+	 * DOCUMENTS_ENDPOINT
+	 */
+
+	const ALL_DOCUMENTS_ENDPOINT = 'documents/';
+
+
+	/**
+	 * SINGLE_DOCUMENT_ENDPOINT
+	 */
+
+	const SINGLE_DOCUMENT_ENDPOINT = 'document/{ID}';
+
+
+	/**
+	 * SEARCH_ENDPOINT
+	 */
+
+	const SEARCH_ENDPOINT = 'search/';
+
+
+	/**
+	 * AUTOCOMPLETE_ENDPOINT
+	 */
+
+	const AUTOCOMPLETE_ENDPOINT = 'autocomplete/';
+
+
+	/**
+	 * ALL_INSTITUTIONS_ENDPOINT
+	 */
+
+	const ALL_INSTITUTIONS_ENDPOINT = 'institutions/';
+
+
+	/**
+	 * SINGLE_INSTITUTION_ENDPOINT
+	 */
+
+	const SINGLE_INSTITUTION_ENDPOINT = 'institutions/{ID}';
+
+
 
 
 	// ---- constructor and private fields
@@ -18,17 +63,33 @@ final class KlinkCoreClient
 
 	private $institution_auth = null;
 
+	/**
+	 * @var KlinkRestClient[];
+	 * 
+	 TODO: credo proprio che sarà una collection di RestClient, uno per ogni core specificato in fase di configurazione
+	 */
 	private /*KlinkRestClient*/ $rest = null;
 
+	private $configuration = null;
 
-	function __construct($institution_id, KlinkConfiguration $config )
+
+	function __construct(KlinkConfiguration $config )
 	{
-		# code...
-		$this->institution_id = $institution_id;
+
+		KlinkCoreClient::test($config); //test the configuration for errors
+
+
+
+		// save the the configuration for the instance
+		//$this->institution_id = $institution_id; //institution id can be saved only after first use
+
+		$this->configuration = $config;
 
 		/**
-			TODO: initialize RestClient
+			TODO: initialize RestClient, one client for each core in the configuration
 		*/
+
+
 	}
 
 
@@ -40,35 +101,47 @@ final class KlinkCoreClient
 
 	/**
 	 * Description
-	 * @param type IDocument $document 
+	 * @param KlinkDocument $document 
 	 * @param type $document_content 
-	 * @return type
+	 * @return KlinkDocumentDescriptor|KlinkError
 	 */
-	function addDocument(KlinkDocumentDescriptor $document, $document_content){
+	function addDocument( KlinkDocument $document ){
+
+		$conn = self::_get_connection();
+
+		// $document->getDescriptor(), $document->getFile()
+
+		return $conn->post(self::ALL_DOCUMENTS_ENDPOINT, $document->getDescriptor(), 'KlinkDocumentDescriptor');
 
 	}
 
 	/**
 	 * Description
-	 * @param type IDocument $document 
-	 * @return boolean
+	 * @param KlinkDocumentDescriptor $document 
+	 * @return boolean|KlinkError
 	 */
-	function removeDocument(KlinkDocumentDescriptor $document){
+	function removeDocument( KlinkDocumentDescriptor $document ){
 
-		return false;
+		$conn = self::_get_connection();
+
+		return $conn->delete(self::SINGLE_DOCUMENT_ENDPOINT, array('ID' => $document->getId()));
+
 	}
 
 	/**
 	 * Description
-	 * @param type IDocument $document 
+	 * @param KlinkDocument $document 
 	 * @param type $document_content 
-	 * @return type
+	 * @return KlinkDocumentDescriptor|KlinkError
 	 */
-	function updateDocument(KlinkDocumentDescriptor $document, $document_content){
+	function updateDocument( KlinkDocument $document ){
 
-		$this->removeDocument($document);
+		$rem = $this->removeDocument($document);
+		if(KlinkHelpers::is_error($rem)){
+			return $rem;
+		}
 
-		$this->addDocument($document, $document_content);
+		return $this->addDocument($document);
 
 	}
 
@@ -90,9 +163,19 @@ final class KlinkCoreClient
 	 * @param SearchType $type the type of the search to be perfomed
 	 * @return KlinkDocumentDescriptor[] returns the document that match the searched terms
 	 */
-	function search($terms, SearchType $type = KlinkSearchType::LOCAL){
+	function search($terms, SearchType $type = null){
 
-		return null;
+		if(is_null($type)){
+			$type = KlinkSearchType::LOCAL;
+		}
+
+		$conn = self::_get_connection();
+
+		return $conn->getCollection(self::SEARCH_ENDPOINT, 
+			array(
+				'query' => $terms,
+				'visibility' => $type == KlinkSearchType::LOCAL ? 'private' : 'public'
+			), 'KlinkDocumentDescriptor');
 	}
 
 
@@ -104,14 +187,114 @@ final class KlinkCoreClient
 	 * @param SearchType $type 
 	 * @return string[] the possible suggestions
 	 */
-	function autocomplete($terms, SearchType $type = KlinkSearchType::LOCAL){
-		return null;
+	function autocomplete($terms, SearchType $type = null){
+
+		if(is_null($type)){
+			$type = KlinkSearchType::LOCAL;
+		}
+
+		$conn = self::_get_connection();
+
+		return $conn->getCollection(self::AUTOCOMPLETE_ENDPOINT, 
+			array(
+				'query' => $terms,
+				'visibility' => $type == KlinkSearchType::LOCAL ? 'private' : 'public'
+			), 'string');
+		/**
+			TODO: verificare che il return su array di stringhe possa funzionare
+		*/
 	}
 
 
+	/**
+	 * Updates the details of the specified institution
+	 * @param KlinkInstitutionDetails $info 
+	 * @return KlinkInstitutionDetails
+	 */
+	function updateInstitution(KlinkInstitutionDetails $info){
+		$conn = self::_get_connection();
 
-	function saveInstitutionDetails(KlinkInstitutionDetails $info){
+		return $conn->put(self::SINGLE_INSTITUTION_ENDPOINT, $info);
+	}
+
+	function saveInstitution(KlinkInstitutionDetails $info){
+		
+		$conn = self::_get_connection();
+
+		return $conn->post(self::ALL_INSTITUTIONS_ENDPOINT, $info, 'KlinkInstitutionDetails');
 
 	}
 
+
+	/**
+	 * Get the Klink Institutions
+	 * @param string $name optional for filtering institutions that contains the specified terms in the name
+	 * @return KlinkInstitutionDetails[] the list of institutions
+	 */
+	function getInstitutions($name = null){
+
+		
+
+		$conn = self::_get_connection();
+
+		$insts = $conn->getCollection(self::ALL_INSTITUTIONS_ENDPOINT, array(), 'KlinkInstitutionDetails');
+
+		if(!is_null($name)){
+
+			/**
+			 TODO: filtering
+			 * */
+
+			return $insts;
+		}
+
+
+		return $insts;
+	}
+
+
+	function getInstitution($id){
+
+		$conn = self::_get_connection();
+
+		return $conn->get(self::SINGLE_DOCUMENT_ENDPOINT, array('ID' => $id, 'KlinkInstitutionDetails'));
+
+	}
+
+	
+	// ----- Static Utility Stuff
+
+	/**
+	 * Test the specified KlinkConfiguration for errors
+	 * */
+	public static function test(KlinkConfiguration $config){
+
+		/**
+		 TODO: test the connection and the configuration with a simple call
+		 * */
+
+	}
+
+
+	// ----- Private Stuff
+
+
+	/**
+	 * Selects the Klink Core for the communication
+	 * @return type
+	 */
+	private function _select_klink_core(){
+		return 'id|url|something';
+	}
+
+	/**
+	 * Get the connection to the Klink Core for performing the request
+	 * @return KlinkRestClient to use
+	 */
+	private function _get_connection(){
+
+		$core_id = self::_select_klink_core();
+
+		return $this->rest[0];
+	}
 }
