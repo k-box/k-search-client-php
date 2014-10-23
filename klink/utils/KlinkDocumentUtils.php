@@ -8,9 +8,11 @@ class KlinkDocumentUtils
 {
 	
 	/**
-	* Computes the hash for uniquely identify the file
-	* Uses SHA-512 variant of SHA-2 (Secure hash Algorithm)
-	*/
+	 * Computes the hash for uniquely identify the file
+	 * Uses SHA-512 variant of SHA-2 (Secure hash Algorithm)
+	 * @param string $filePath The file path
+	 * @return string
+	 */
 	public static function generateDocumentHash( $filePath )
 	{
 
@@ -18,6 +20,11 @@ class KlinkDocumentUtils
 
 	}
 
+	/**
+	 * Computes the SHA-512 hash for the specified content
+	 * @param string $content 
+	 * @return string
+	 */
 	public static function generateHash( $content ){
 
 		return hash( 'sha512', $content );
@@ -32,10 +39,18 @@ class KlinkDocumentUtils
 	}
 
 
-
 	public static function generateDocumentThumbnail($file, array $sizes){
 
 	}
 
+	/**
+	 * Convert the mime type to a document type
+	 * @param string $mimeType 
+	 * @return string the correspondent 
+	 */
+	public static function documentTypeFromMimeType($mimeType){
+
+		return "";
+	}
 
 }

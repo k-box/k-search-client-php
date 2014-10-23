@@ -111,7 +111,7 @@ final class KlinkCoreClient
 
 		// $document->getDescriptor(), $document->getFile()
 
-		return $conn->post(self::ALL_DOCUMENTS_ENDPOINT, $document->getDescriptor(), 'KlinkDocumentDescriptor');
+		return $conn->post( self::ALL_DOCUMENTS_ENDPOINT, $document->getDescriptor(), new KlinkDocumentDescriptor() );
 
 	}
 
@@ -124,7 +124,7 @@ final class KlinkCoreClient
 
 		$conn = self::_get_connection();
 
-		return $conn->delete(self::SINGLE_DOCUMENT_ENDPOINT, array('ID' => $document->getId()));
+		return $conn->delete( self::SINGLE_DOCUMENT_ENDPOINT, array('ID' => $document->getId()) );
 
 	}
 
@@ -141,7 +141,7 @@ final class KlinkCoreClient
 			return $rem;
 		}
 
-		return $this->addDocument($document);
+		return $this->addDocument( $document );
 
 	}
 
@@ -161,7 +161,7 @@ final class KlinkCoreClient
 	 * Description
 	 * @param string $terms the phrase or terms to search for
 	 * @param SearchType $type the type of the search to be perfomed
-	 * @return KlinkDocumentDescriptor[] returns the document that match the searched terms
+	 * @return KlinkSearchResult returns the document that match the searched terms
 	 */
 	function search($terms, SearchType $type = null){
 
@@ -171,11 +171,11 @@ final class KlinkCoreClient
 
 		$conn = self::_get_connection();
 
-		return $conn->getCollection(self::SEARCH_ENDPOINT, 
+		return $conn->get(self::SEARCH_ENDPOINT, 
 			array(
 				'query' => $terms,
 				'visibility' => $type == KlinkSearchType::LOCAL ? 'private' : 'public'
-			), 'KlinkDocumentDescriptor');
+			), new KlinkSearchResult() );
 	}
 
 
@@ -214,14 +214,14 @@ final class KlinkCoreClient
 	function updateInstitution(KlinkInstitutionDetails $info){
 		$conn = self::_get_connection();
 
-		return $conn->put(self::SINGLE_INSTITUTION_ENDPOINT, $info);
+		return $conn->put( self::SINGLE_INSTITUTION_ENDPOINT, $info );
 	}
 
 	function saveInstitution(KlinkInstitutionDetails $info){
 		
 		$conn = self::_get_connection();
 
-		return $conn->post(self::ALL_INSTITUTIONS_ENDPOINT, $info, 'KlinkInstitutionDetails');
+		return $conn->post( self::ALL_INSTITUTIONS_ENDPOINT, $info, 'KlinkInstitutionDetails' );
 
 	}
 
@@ -233,11 +233,9 @@ final class KlinkCoreClient
 	 */
 	function getInstitutions($name = null){
 
-		
-
 		$conn = self::_get_connection();
 
-		$insts = $conn->getCollection(self::ALL_INSTITUTIONS_ENDPOINT, array(), 'KlinkInstitutionDetails');
+		$insts = $conn->getCollection( self::ALL_INSTITUTIONS_ENDPOINT, array(), 'KlinkInstitutionDetails' );
 
 		if(!is_null($name)){
 
@@ -253,11 +251,11 @@ final class KlinkCoreClient
 	}
 
 
-	function getInstitution($id){
+	function getInstitution( $id ){
 
 		$conn = self::_get_connection();
 
-		return $conn->get(self::SINGLE_DOCUMENT_ENDPOINT, array('ID' => $id, 'KlinkInstitutionDetails'));
+		return $conn->get( self::SINGLE_DOCUMENT_ENDPOINT, array('ID' => $id), new KlinkInstitutionDetails() );
 
 	}
 

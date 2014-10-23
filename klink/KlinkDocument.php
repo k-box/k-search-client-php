@@ -21,7 +21,7 @@ class KlinkDocument {
 	 * @var mixed
 	 */
 
-	private $file;
+	private $documentData;
 
 	/**
 	 * 
@@ -29,7 +29,7 @@ class KlinkDocument {
 	public function __constructor(KlinkDocumentDescriptor $descriptor, $file_path){
 		$this->descriptor = $descriptor;
 
-		$this->file = $file_path;
+		$this->documentData = $file_path; //TODO: base64 encoding of file content if the mimetype is not text/plain, otherwise file content
 	}
 
 
@@ -48,8 +48,8 @@ class KlinkDocument {
 	 * getFile
 	 * @return string the file path on the accessible filesystem
 	 */
-	public function getFile() {
-		return $this->file;
+	public function getDocumentData() {
+		return $this->documentData;
 	}
 
 }

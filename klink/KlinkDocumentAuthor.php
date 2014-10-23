@@ -12,7 +12,7 @@ final class KlinkDocumentAuthor
 	public $mail;
 
 
-	function __construct()
+	function __construct($encodedString)
 	{
 		
 	}

@@ -9,20 +9,12 @@
 final class KlinkDocumentDescriptor
 {
 
-//
-
-	/**
-	 * 
-	 * 
-	 * */
-
-
 	/**
 	 * id
 	 * @var string
 	 */
 
-	private $id;
+	public $id;
 
 	/**
 	 * getId
@@ -37,7 +29,7 @@ final class KlinkDocumentDescriptor
 	 * @var string
 	 */
 
-	private $hash;
+	public $hash;
 
 	/**
 	 * getHash
@@ -52,7 +44,7 @@ final class KlinkDocumentDescriptor
 	 * @var string
 	 */
 
-	private $title;
+	public $title;
 
 	/**
 	 * setTitle
@@ -75,14 +67,14 @@ final class KlinkDocumentDescriptor
 	 * @var string
 	 */
 
-	private $uri;
+	public $documentURI;
 
 	/**
 	 * getUri
 	 * @return string
 	 */
-	public function getUri() {
-		return $this->uri;
+	public function getDocumentUri() {
+		return $this->documentURI;
 	}
 
 	/**
@@ -90,7 +82,7 @@ final class KlinkDocumentDescriptor
 	 * @var string
 	 */
 
-	private $abstract;
+	public $abstract;
 
 	/**
 	 * setAbstract
@@ -112,17 +104,17 @@ final class KlinkDocumentDescriptor
 	 * Reference person.
 	 * 
 	 * The person to contact for getting details
-	 * @var KlinkDocumentAuthor
+	 * @var string
 	 */
 
-	private $referencePerson;
+	public $userOwner;
 
 	/**
 	 * getReferencePerson
-	 * @return KlinkDocumentAuthor
+	 * @return string
 	 */
-	public function getReferencePerson() {
-		return $this->referencePerson;
+	public function getUserOwner() {
+		return $this->userOwner;
 	}
 
 	/**
@@ -130,11 +122,11 @@ final class KlinkDocumentDescriptor
 	 * @var KlinkDocumentAuthor[]
 	 */
 
-	private $authors;
+	public $authors;
 
 	/**
 	 * setAuthors
-	 * @param KlinkDocumentAuthor[] $value
+	 * @param string[] $value
 	 * @return void
 	 */
 	public function setAuthors(array $value) {
@@ -142,7 +134,7 @@ final class KlinkDocumentDescriptor
 	}
 	/**
 	 * getAuthors
-	 * @return KlinkDocumentAuthor[]
+	 * @return string[]
 	 */
 	public function getAuthors() {
 		return $this->authors;
@@ -153,22 +145,22 @@ final class KlinkDocumentDescriptor
 	 * @var string
 	 */
 
-	private $type;
+	public $mimeType;
 
 	/**
 	 * setType
 	 * @param $value
 	 * @return void
 	 */
-	public function setType($value) {
-		$this->type = $value;
+	public function setMimeType($value) {
+		$this->mimeType = $value;
 	}
 	/**
 	 * getType
 	 * @return string
 	 */
-	public function getType() {
-		return $this->type;
+	public function getMimeType() {
+		return $this->mimeType;
 	}
 
 	/**
@@ -176,14 +168,14 @@ final class KlinkDocumentDescriptor
 	 * @var KlinkInstitutionDetails
 	 */
 
-	private $institution;
+	public $institutionID;
 
 	/**
 	 * Owner institution
 	 * @return KlinkInstitutionDetails
 	 */
-	public function getInstitution() {
-		return $this->institution;
+	public function getInstitutionID() {
+		return $this->institutionID;
 	}
 
 	/**
@@ -191,7 +183,7 @@ final class KlinkDocumentDescriptor
 	 * @var Date
 	 */
 
-	private $creationDate;
+	public $creationDate;
 
 	/**
 	 * setCreationDate
@@ -209,31 +201,169 @@ final class KlinkDocumentDescriptor
 		return $this->creationDate;
 	}
 
+
 	/**
-	 * lastModified
-	 * @var Date
+	 * language
+	 * @var string
 	 */
 
-	private $lastModified;
+	public $language;
 
 	/**
-	 * setLastModified
-	 * @param Date $value
+	 * setLanguage
+	 * @param $value
 	 * @return void
 	 */
-	public function setLastModified(Date $value) {
-		$this->lastModified = $value;
+	public function setLanguage($value) {
+		$this->language = $value;
 	}
 	/**
-	 * getLastModified
-	 * @return Date
+	 * getLanguage
+	 * @return string
 	 */
-	public function getLastModified() {
-		return $this->lastModified;
+	public function getLanguage() {
+		return $this->language;
 	}
 
-	
+	/**
+	 * thumbnailURI
+	 * @var string
+	 */
 
+	public $thumbnailURI;
+
+	/**
+	 * setThumbnailURI
+	 * @param $value
+	 * @return void
+	 */
+	public function setThumbnailURI($value) {
+		$this->thumbnailURI = $value;
+	}
+	/**
+	 * getThumbnailURI
+	 * @return string
+	 */
+	public function getThumbnailURI() {
+		return $this->thumbnailURI;
+	}
+
+	/**
+	 * visibility
+	 * @var KlinkVisibilityType
+	 */
+
+	public $visibility;
+
+	/**
+	 * setVisibility
+	 * @param KlinkVisibilityType $value
+	 * @return void
+	 */
+	public function setVisibility(KlinkVisibilityType $value) {
+		$this->visibility = $value;
+	}
+	/**
+	 * getVisibility
+	 * @return KlinkVisibilityType
+	 */
+	public function getVisibility() {
+		return $this->visibility;
+	}
+
+	/**
+	 * documentType
+	 * @var string
+	 */
+
+	public $documentType;
+
+	/**
+	 * setDocumentType
+	 * @param $value
+	 * @return void
+	 */
+	public function setDocumentType($value) {
+		$this->documentType = $value;
+	}
+	/**
+	 * getDocumentType
+	 * @return string
+	 */
+	public function getDocumentType() {
+		return $this->documentType;
+	}
+
+	/**
+	 * userUploader
+	 * @var string
+	 */
+
+	public $userUploader;
+
+	/**
+	 * setUserUploader
+	 * @param $value
+	 * @return void
+	 */
+	public function setUserUploader($value) {
+		$this->userUploader = $value;
+	}
+	/**
+	 * getUserUploader
+	 * @return string
+	 */
+	public function getUserUploader() {
+		return $this->userUploader;
+	}
+
+	/**
+	 * localDocumentID
+	 * @var string
+	 */
+
+	public $localDocumentID;
+
+	/**
+	 * setLocalDocumentID
+	 * @param $value
+	 * @return void
+	 */
+	public function setLocalDocumentID($value) {
+		$this->localDocumentID = $value;
+	}
+	/**
+	 * getLocalDocumentID
+	 * @return string
+	 */
+	public function getLocalDocumentID() {
+		return $this->localDocumentID;
+	}
+
+
+	function __construct($id = '', $institutionID = '', $localDocumentID = '', $hash = ''){
+		$this->id = $id;
+		$this->institutionID = $institutionID;
+		$this->localDocumentID = $localDocumentID;
+		$this->hash = $hash;
+	}
+
+
+	/**
+	 * For JSON serialization purporses
+	 * */
+	public function to_array(){
+		$json = array();
+	    foreach($this as $key => $value) {
+	    	if(is_array($value)){
+	    		$json[$key] = "array";
+	    	}
+	    	else {
+		        $json[$key] = $value;
+		    }
+	    }
+	    return $json; // or json_encode($json)
+	}
 
 
 }

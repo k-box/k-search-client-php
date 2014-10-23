@@ -56,9 +56,15 @@ final class KlinkInstitutionDetails
 
     /**
      * The institution address
-     * @var Klink_Address
+     * @var string
      */
-    public $address;
+    public $addressStreet;
+
+    public $addressCountry;
+
+    public $addressLocality;
+
+    public $addressPostalCode;
 
     /**
      * ...
@@ -72,12 +78,26 @@ final class KlinkInstitutionDetails
      */
     public $thumbnail;
 
+
+    function __construct(){
+
+    }
+
 }
 
 class Klink_Address
 {
     public $street;
-    public $city;
+    public $country;
+    public $locality;
+    public $postalCode;
+
+    // addressCountry  Country     The country. For example, USA. You can also provide the two-letter ISO 3166-1 alpha-2 country code.
+    // addressLocality Text    The locality. For example, Mountain View.
+    // addressRegion   Text    The region. For example, CA.
+    // postOfficeBoxNumber Text    The post office box number for PO box addresses.
+    // postalCode  Text    The postal code. For example, 94043.
+    // streetAddress   Text    The street address. For example, 1600 Amphitheatre Pkwy.
 
     public function getGeoCoords()
     {
