@@ -70,9 +70,9 @@ final class KlinkConfiguration
 
 		KlinkHelpers::is_array_of_type($cores, 'KlinkAuthentication', 'cores');
 
-		KlinkHelpers::is_string_and_not_empty( $institutionId, 'institution id');
+		KlinkHelpers::is_valid_id( $institutionId, 'institution id');
 
-		KlinkHelpers::is_string_and_not_empty( $adapterId, 'adapter id');
+		KlinkHelpers::is_valid_id( $adapterId, 'adapter id');
 
 
 

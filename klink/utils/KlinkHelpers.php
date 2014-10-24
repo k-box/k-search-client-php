@@ -404,6 +404,20 @@ class KlinkHelpers
 
 	}
 
+	public static function is_valid_id( $id, $parameter_name, $error_message_format = 'The %s must be a valid id. Valid ids are composed by alpha-numeric characters with no dashes, underscore, ? and spaces.' )
+	{
+
+		self::is_string_and_not_empty( $id, $parameter_name, $error_message_format );
+
+		if ( !preg_match('/^[\w\:\d]+$/', $string1) ) {
+			
+			$message = self::localize( sprintf( $error_message_format, $parameter_name ) );
+
+			throw new InvalidArgumentException( $message );
+
+		}
+
+	}
 
 	/**
 	 * Check is an array contains only elements of a particular class
