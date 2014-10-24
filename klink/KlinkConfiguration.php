@@ -15,8 +15,13 @@ final class KlinkConfiguration
 	 * The institution identifier in the KLink network. This is chosen at configuration time
 	 * @var string
 	 */
-
 	private $institution_id;
+
+	/**
+	 * The adapter identifier
+	 * @var string
+	 */
+	private $adapter_id;
 
 	/**
 	 * The institution identifier in the KLink network
@@ -24,6 +29,14 @@ final class KlinkConfiguration
 	 */
 	public function getInstitutionId() {
 		return $this->institution_id;
+	}
+
+	/**
+	 * The Adapter identifier
+	 * @return type
+	 */
+	public function getAdapterId() {
+		return $this->adapter_id;
 	}
 
 	/**
@@ -47,19 +60,26 @@ final class KlinkConfiguration
 	/**
 	 * Creates a KlinkConfiguration instance to be used for configuring the KlinkCoreClient
 	 * 
-	 * @param string $institutionId 
-	 * @param KlinkAuthentication[] $cores 
-	 * @return KlinkConfiguration
+	 * @param string $institutionId the identifier of the institution
+	 * @param string $adapterId the identifier of the adapter
+	 * @param KlinkAuthentication[] $cores the cores to be used from this institution
+	 * @return KlinkConfiguration the KlinkConfiguration object to be used for configuring the KlinkCoreClient
 	 */
-	function __construct( $institutionId, array $cores )
+	function __construct( $institutionId, $adapterId, array $cores )
 	{
 
 		KlinkHelpers::is_array_of_type($cores, 'KlinkAuthentication', 'cores');
 
 		KlinkHelpers::is_string_and_not_empty( $institutionId, 'institution id');
 
+		KlinkHelpers::is_string_and_not_empty( $adapterId, 'adapter id');
+
+
+
 
 		$this->institution_id = $institutionId;
+
+		$this->adapter_id = $adapterId;
 
 		$this->cores = $cores;
 
