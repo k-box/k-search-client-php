@@ -7,6 +7,10 @@
 final class KlinkCoreClient
 {
 
+/**
+ TODO: magari usare le eccezioni per indicare che c'è stato un errore
+ * */
+
 	// ---- API endpoint constants
 
 
@@ -59,16 +63,16 @@ final class KlinkCoreClient
 	/**
 	 * Stores the institution identifier in the KLink network.
 	 */
-	private $institution_id = null;
+	// private $institution_id = null;
 
-	private $institution_auth = null;
+	// private $institution_auth = null;
 
 	/**
 	 * @var KlinkRestClient[];
 	 * 
 	 TODO: credo proprio che sarà una collection di RestClient, uno per ogni core specificato in fase di configurazione
 	 */
-	private /*KlinkRestClient*/ $rest = null;
+	private /*KlinkRestClient*/ $rest = array();
 
 	private $configuration = null;
 
@@ -89,6 +93,11 @@ final class KlinkCoreClient
 			TODO: initialize RestClient, one client for each core in the configuration
 		*/
 
+		foreach ($this->configuration->getCores() as $core) {
+
+			$this->rest[] = new KlinkRestClient($core->core, $core);
+
+		}
 
 	}
 
@@ -269,6 +278,10 @@ final class KlinkCoreClient
 
 		/**
 		 TODO: test the connection and the configuration with a simple call
+		 create a client
+		 do the test
+		 if fails -> error
+		 else -> ok
 		 * */
 
 	}

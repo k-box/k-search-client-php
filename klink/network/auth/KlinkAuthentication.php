@@ -23,7 +23,7 @@ final class KlinkAuthentication
 {
 	
 	/**
-	 * core
+	 * core url
 	 * @var string
 	 */
 
@@ -50,9 +50,18 @@ final class KlinkAuthentication
 	 * @param string $username the username that must be used for authentication
 	 * @param string $password the password
 	 * @return KlinkAuthentication
+	 * @throws IllegalArgumentException if any of the parameters is wrong
 	 */
 	function __construct($core_url, $username, $password)
 	{
+
+		KlinkHelpers::is_valid_url( $core_url, 'core url');
+
+		KlinkHelpers::is_string_and_not_empty( $username, 'username');
+
+		KlinkHelpers::is_string_and_not_empty( $password, 'password');
+
+
 		$this->core = $core_url;
 		$this->username = $username;
 		$this->password = $password;
@@ -62,7 +71,7 @@ final class KlinkAuthentication
 	
 
 	/**
-	 * getCore
+	 * The Core Url
 	 * @return string
 	 */
 	public function getCore() {
@@ -70,7 +79,7 @@ final class KlinkAuthentication
 	}
 
 	/**
-	 * getUsername
+	 * The username used for authentication
 	 * @return string
 	 */
 	public function getUsername() {
@@ -78,7 +87,7 @@ final class KlinkAuthentication
 	}
 
 	/**
-	 * getPassword
+	 * The password used for authentication
 	 * @return string
 	 */
 	public function getPassword() {

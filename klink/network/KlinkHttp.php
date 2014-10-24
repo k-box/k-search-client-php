@@ -10,6 +10,7 @@
  * @package Klink
  * @subpackage Network
  * @since 0.1.0
+ * @internal
  */
 
 /**
@@ -25,6 +26,7 @@
  * @package Klink
  * @subpackage Network
  * @since 0.1.0
+ * @internal
  */
 final class KlinkHttp implements INetworkTransport {
 

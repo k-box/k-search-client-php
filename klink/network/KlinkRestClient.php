@@ -12,6 +12,7 @@
  * @package Klink
  * @subpackage Network
  * @since 0.1.0
+ * @internal
  */
 
 /**
@@ -27,10 +28,13 @@
  * @package Klink
  * @subpackage Network
  * @since 0.1.0
+ * @internal
  */
 final class KlinkRestClient implements INetworkTransport
 {
-
+	/**
+	 * The constant defining the json mime-type
+	 */
 	const JSON_ENCODING = 'application/json';
 
 	/**
@@ -40,7 +44,7 @@ final class KlinkRestClient implements INetworkTransport
 
 	/**
 	* the real transport layer used
-	* @var KlinkRestClient
+	* @var KlinkHttp
 	*/
 	private $rest = null;
 
@@ -51,11 +55,15 @@ final class KlinkRestClient implements INetworkTransport
 	private $config = null;
 
 	/**
-	 * 
+	 * The mapper for transforming a json decoded response into a class
 	 * @var JsonMapper
 	 */
 	private $jm = null;
 
+	/**
+	 * The headers that are sent for all the requests. This includes the basic authentication header if authentication parameters are provided during class instantiation.
+	 */
+	private $all_request_options = array();
 
 	/**
 	 TODO: aggiungere informazioni sul tempo di trasferimento per capire se la connessione diventa lenta o l'host non è più raggiungibile
@@ -63,14 +71,13 @@ final class KlinkRestClient implements INetworkTransport
 
 	/**
 	 * Description
-	 * @param string $baseApiUrl the starting part of the API url
-	 * @param KlinkAuthentication $authentication the authentication information for this instance
-	 * @param array $options 
+	 * @param string $baseApiUrl (required) the starting part of the API url, must me not null or empty and a valid url
+	 * @param KlinkAuthentication (optional) $authentication the authentication information for this instance, use null if no authentication is required
+	 * @param array $options (optional) to be documented
 	 * @return KlinkRestClient
-	 * 
-	 TODO: magari usare una classe tipo KlinkAuthenticatioCollection che estende ArrayObject in modo da verificare meglio il parametro
+	 * @throws IllegalArgumentException if the $baseApiUrl is given in the wrong format
 	 */
-	function __construct($baseApiUrl, KlinkAuthentication $authentications, array $options = array())
+	function __construct($baseApiUrl, KlinkAuthentication $authentication = null, array $options = array())
 	{
 		$defaults = array(
 			/**
@@ -118,6 +125,8 @@ final class KlinkRestClient implements INetworkTransport
 			'debug' => false,
 		);
 
+		KlinkHelpers::is_valid_url( $baseApiUrl, 'baseApiUrl' );
+
 		$this->config = array_merge($defaults, $options);
 
 		$this->jm = new JsonMapper();
@@ -126,7 +135,11 @@ final class KlinkRestClient implements INetworkTransport
 
 		$this->baseApiUrl = $baseApiUrl;
 
-		$this->rest = new KlinkHttp('http://localhost/');
+ 		if(!is_null($authentication)){
+	 		$this->all_request_options['headers'] = array( 'Authorization' => 'Basic ' . base64_encode( $authentication->getUsername() . ':' . $authentication->getPassword() ) );
+	 	}
+
+		$this->rest = new KlinkHttp($this->baseApiUrl);
 	}
 
 
@@ -139,19 +152,16 @@ final class KlinkRestClient implements INetworkTransport
 	 */
 	function get( $url, $expected_return_type, array $params = null ){
 
-		/**
-		TODO: handle get parameters
-		*/
-
-
 		if(!self::_check_expected_return_type($expected_return_type)){
 			return new KlinkError('class_expected', KlinkHelpers::localize('The specified return type is not a class.'));
 		}
 
 
-		$url = self::_construct_url($this->baseApiUrl, $url);
+		$query_string = !empty( $params ) ? '?'.self::_compose_get_parameters( $params ) : '';
 
-		$result = $this->rest->get( $url );
+		$url = self::_construct_url($this->baseApiUrl, array( $url, $query_string ) );
+
+		$result = $this->rest->get( $url, $this->all_request_options );
 
 		if(KlinkHelpers::is_error($result)){
 			return $result;
@@ -180,18 +190,16 @@ final class KlinkRestClient implements INetworkTransport
 
 	public function getCollection( $url, $expected_return_type, array $params = null )
 	{
-		/**
-		TODO: handle get parameters
-		*/
 		
 		if(!self::_check_expected_return_type($expected_return_type)){
 			return new KlinkError('class_expected', KlinkHelpers::localize('The specified return type is not a class.'));
 		}
 
+		$query_string = !empty( $params ) ? '?'.self::_compose_get_parameters( $params ) : '';
 
-		$url = self::_construct_url($this->baseApiUrl, $url);
+		$url = self::_construct_url($this->baseApiUrl, array( $url, $query_string ) );
 
-		$result = $this->rest->get( $url );
+		$result = $this->rest->get( $url, $this->all_request_options );
 
 		if(Helpers::is_error($result)){
 			return $result;
@@ -239,11 +247,14 @@ final class KlinkRestClient implements INetworkTransport
 
 		$url = self::_construct_url($this->baseApiUrl, $url);
 
-		$result = $this->rest->post( $url, 
+		$headers = array_merge_recursive(
+			$this->all_request_options, 
 			array(
 				'body' => json_encode($data), 
-				'headers' => 'Content-Type:' . self::JSON_ENCODING
-			) );
+				'headers' => array('Content-Type' => self::JSON_ENCODING)
+			));
+
+		$result = $this->rest->post( $url, $headers );
 
 		if(KlinkHelpers::is_error($result)){
 			return $result;
@@ -286,11 +297,14 @@ final class KlinkRestClient implements INetworkTransport
 
 		$url = self::_construct_url($this->baseApiUrl, $url);
 
-		$result = $this->rest->post( $url, 
+		$headers = array_merge_recursive(
+			$this->all_request_options, 
 			array(
 				'body' => json_encode($data), 
-				'headers' => 'Content-Type:' . self::JSON_ENCODING
-			) );
+				'headers' => array('Content-Type' => self::JSON_ENCODING)
+			));
+
+		$result = $this->rest->post( $url, $headers );
 
 		if(KlinkHelpers::is_error($result)){
 			return $result;
@@ -322,8 +336,6 @@ final class KlinkRestClient implements INetworkTransport
 			return true;
 		}
 
-		
-
 	}
 
 	/**
@@ -334,19 +346,16 @@ final class KlinkRestClient implements INetworkTransport
 	 */
 	function delete( $url, array $params = null ){
 
-		/**
-		TODO: handle get parameters
-		*/
+		// if(!self::_check_expected_return_type($expected_return_type)){
+		// 	return new KlinkError('class_expected', KlinkHelpers::localize('The specified return type is not a class.'));
+		// }
+
+		$query_string = !empty( $params ) ? '?'.self::_compose_get_parameters( $params ) : '';
 
 
-		if(!self::_check_expected_return_type($expected_return_type)){
-			return new KlinkError('class_expected', KlinkHelpers::localize('The specified return type is not a class.'));
-		}
+		$url = self::_construct_url($this->baseApiUrl, array( $url, $query_string ) );
 
-
-		$url = self::_construct_url($this->baseApiUrl, $url);
-
-		$result = $this->rest->delete( $url );
+		$result = $this->rest->delete( $url, $this->all_request_options );
 
 		if(KlinkHelpers::is_error($result)){
 			return $result;
@@ -364,22 +373,37 @@ final class KlinkRestClient implements INetworkTransport
 			return new KlinkError('http_response_format', KlinkHelpers::localize('Unsupported content encoding from the server.'));
 		}
 
-		// $this->assertEquals('application/json', $result['headers']['content-type'], 'Expected JSON response');
-
-		// $class = is_object($expected_return_type) ? $expected_return_type : new $expected_return_type;
-
 		return true;
 
 	}
 
-
-	function fileSend(){
+	/**
+	 * reserved for future use
+	 * @param type $url 
+	 * @return type
+	 * @internal
+	 */
+	function fileSend( $url ){
 		//A specific file post to the server
 		/**
-			TODO: fileSend specif post
+			TODO: fileSend specific post
 		*/	
 	}
 
+	/**
+	 * Compose an array of key-values into an url encoded string according to the RFC 1738 (PHP_QUERY_RFC1738) specification
+	 * @param array $array 
+	 * @return string the url-encoded version of the array keys and values according to the PHP_QUERY_RFC1738
+	 */
+	private function _compose_get_parameters( array $array )
+	{
+		if(empty( $array )){
+			return '';
+		}
+
+		return http_build_query( $array );
+
+	}
 
 
 	/**
@@ -390,15 +414,19 @@ final class KlinkRestClient implements INetworkTransport
 	 */
 	private function _construct_url($base, $rest)
 	{
-		/**
-		 TODO: test if $base is a valid url (@parse_url())
-		 * */
+		KlinkHelpers::is_valid_url( $base, 'starting part of the url' );
 
 		if(is_array($rest)){
+
+			$rest = array_filter($rest);
+
 			$rest = implode('/', $rest);
+
 		}
 
-		return $base . '/' . $rest;
+		$concat = ( KlinkHelpers::string_ends_with($base, '/') ) ? '' : '/';
+
+		return $base . $concat . $rest;
 	}
 
 	private function _check_expected_return_type($return_type)
@@ -431,11 +459,6 @@ final class KlinkRestClient implements INetworkTransport
 			return new KlinkError('deserialization_error', $je->getMessage());
 
 		}
-		// catch(\Exception $je){
-
-		// 	return new KlinkError('deserialization_error', $je->getMessage());
-
-		// }
 
 	}
 
@@ -455,11 +478,6 @@ final class KlinkRestClient implements INetworkTransport
 			return new KlinkError('deserialization_error', $je->getMessage());
 
 		}
-		// catch(\Exception $je){
-
-		// 	return new KlinkError('deserialization_error', $je->getMessage());
-
-		// }
 		
 	}
 }

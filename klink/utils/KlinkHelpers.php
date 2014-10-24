@@ -281,16 +281,160 @@ class KlinkHelpers
 	 * @param mixed $thing Check if unknown variable is a KlinkError object.
 	 * @return bool True, if KlinkError. False, if not KlinkError.
 	 */
-	function is_error($thing) {
+	public static function is_error($thing) {
+		
 		if ( is_object($thing) && is_a($thing, 'KlinkError') )
 			return true;
+		
 		return false;
+
 	}
 
+	/**
+	 * Localize the specified string in a different language. The string must be passed in english like for gettext.
+	 * 
+	 * if the KLINK_LANGUAGE constant is defined the $lang parameter will be ignored.
+	 * 
+	 * @param string $string the string to be localized
+	 * @param string $lang the language of the localization, if not specified the english localization is returned.
+	 * @return string the localized string
+	 */
+	public static function localize( $string, $lang = 'en' )
+	{
 
-	function localize($string){
+		/**
+			TODO: gettext implementation
+		*/
+
+		if( defined( 'KLINK_LANGUAGE' ) ){
+
+			$constantValue = KLINK_LANGUAGE;
+
+			if( !empty( $constantValue ) && is_string( $constantValue ) ){
+
+				$lang = KLINK_LANGUAGE;
+			}
+		}
+
 		return $string;
+
+	}
+
+	public static function string_ends_with( $haystack, $needle ){
+
+		self::is_string_and_not_empty($haystack, 'haystack');
+
+		if(!is_string($needle)){
+			return false;
+		}
+		
+	    $length = strlen($needle);
+	    if ($length == 0) {
+	        return true;
+	    }
+
+	    return (substr($haystack, -$length) === $needle);
+		
+
 	}
 
 
+	// ---- Parameter preconditions check
+
+	/**
+	 * Check is the passed value is a non null, non empty string. To enforce the precondition an exception is thrown.
+	 * 
+	 * @param string $value the value to check
+	 * @param string $parameter_name the human understandable name of the parameter to be used in the error message
+	 * @param string $error_message_format only one %s is allowed, plese take into account that the format must be in english and will be localized in other languages
+	 * @throws InvalidArgumentException if the passed value is empty or null or is not a string
+	 */
+	public static function is_string_and_not_empty( $value, $parameter_name, $error_message_format = 'The %s must be a non empty or null string' )
+	{
+		if( !empty($value) )
+			$value = trim($value);
+
+
+		if( empty( $value ) ){
+
+			$message = self::localize( sprintf( $error_message_format, $parameter_name ) );
+
+			throw new InvalidArgumentException( $message );
+
+		}
+
+		
+
+		if( !empty( $value ) && !is_string( $value ) ){
+
+			$message = self::localize( sprintf( $error_message_format, $parameter_name ) );
+
+			throw new InvalidArgumentException( $message );
+			
+		}
+	}
+
+	/**
+	 * Check if the url is syntactically well formatted.
+	 * @param string $url 
+	 * @param string $parameter_name 
+	 * @param string $error_message_format 
+	 * @throws IllegalArgumentException if the url is not well formatted or null or empty is given
+	 */
+	public static function is_valid_url($url, $parameter_name, $error_message_format = 'The %s must be a valid url')
+	{
+
+		self::is_string_and_not_empty( $url, $parameter_name, $error_message_format );
+
+		if( @parse_url($url) === false ) {
+
+			$message = self::localize( sprintf( $error_message_format, $parameter_name ) );
+
+			throw new InvalidArgumentException( $message );
+
+		}
+
+		if (! filter_var($url, FILTER_VALIDATE_URL)) {
+			
+			$message = self::localize( sprintf( $error_message_format, $parameter_name ) );
+
+			throw new InvalidArgumentException( $message );
+
+		}
+
+	}
+
+
+	/**
+	 * Check is an array contains only elements of a particular class
+	 * @param array $array the array to check
+	 * @param string $classname the class name to check
+	 * @throws InvalidArgumentException if an element of the array is not of type specified and is null or contains no elements
+	 */
+	public static function is_array_of_type( array $array, $classname, $parameter_name, $error_message_format = 'The %s must be a non empty array with all elements of type %s' )
+	{
+
+		if( is_null( $array ) || empty( $array ) || empty( $classname ) ){
+			
+			$message = self::localize( sprintf( $error_message_format, $parameter_name, $classname ) );
+
+			throw new InvalidArgumentException( $message );
+
+		}
+
+		foreach( $array as $element ){
+
+			if( !is_a( $element, $classname ) ) {
+
+				$message = self::localize( sprintf( $error_message_format, $parameter_name, $classname ) );
+
+				throw new InvalidArgumentException( $message );
+
+			}
+
+		}
+
+		//return true;
+
+	}
 }

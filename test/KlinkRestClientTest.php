@@ -9,7 +9,7 @@ class KlinkRestClientTest extends PHPUnit_Framework_TestCase
 	{
 	  	date_default_timezone_set('America/Los_Angeles');
 
-	    $this->rest = new KlinkRestClient("http://httpbin.org/", new KlinkAuthentication('localhost', 'test', 'test'));
+	    $this->rest = new KlinkRestClient("http://httpbin.org/", null); //new KlinkAuthentication('http://klink-experim.cloudapp.net:14000/', 'testUser', 'testPass')
 
 	    //$this->testendpoint = "http://httpbin.org/";
 	}
@@ -65,18 +65,18 @@ class KlinkRestClientTest extends PHPUnit_Framework_TestCase
 
 	}
 
-	public function testGetCollection()
-	{
-		// $result = $this->rest->getCollection( 'ip', 'TestResponse' );
+	// public function testGetCollection()
+	// {
+	// 	// $result = $this->rest->getCollection( 'ip', 'TestResponse' );
 
 
-		// // print_r($result);
+	// 	// // print_r($result);
 
-		// $this->assertEquals(200, $result['response']['code'], 'Something wront happened');
-		// $this->assertTrue(!empty($result['body']), 'The response body is empty');
+	// 	// $this->assertEquals(200, $result['response']['code'], 'Something wront happened');
+	// 	// $this->assertTrue(!empty($result['body']), 'The response body is empty');
 
-		$this->assertTrue(true, 'GetCollection need a test');
-	}
+	// 	$this->assertTrue(true, 'GetCollection need a test');
+	// }
 
 	public function testPost()
 	{
