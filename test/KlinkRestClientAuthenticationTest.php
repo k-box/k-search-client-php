@@ -18,7 +18,7 @@ class KlinkRestClientAuthenticationTest extends PHPUnit_Framework_TestCase
 	
 	public function testGet()
 	{
-		$result = $this->rest->get( 'institution', new KlinkInstitutionDetails() );
+		$result = $this->rest->get( 'institutions/K', new KlinkInstitutionDetails() );
 
 		print_r($result);
 
