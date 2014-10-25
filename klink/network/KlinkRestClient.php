@@ -156,10 +156,7 @@ final class KlinkRestClient implements INetworkTransport
 			return new KlinkError('class_expected', KlinkHelpers::localize('The specified return type is not a class.'));
 		}
 
-
-		$query_string = !empty( $params ) ? '?'.self::_compose_get_parameters( $params ) : '';
-
-		$url = self::_construct_url($this->baseApiUrl, array( $url, $query_string ) );
+		$url = self::_construct_url($this->baseApiUrl, $url, $params );
 
 		$result = $this->rest->get( $url, $this->all_request_options );
 
@@ -195,9 +192,7 @@ final class KlinkRestClient implements INetworkTransport
 			return new KlinkError('class_expected', KlinkHelpers::localize('The specified return type is not a class.'));
 		}
 
-		$query_string = !empty( $params ) ? '?'.self::_compose_get_parameters( $params ) : '';
-
-		$url = self::_construct_url($this->baseApiUrl, array( $url, $query_string ) );
+		$url = self::_construct_url( $this->baseApiUrl, $url, $params );
 
 		$result = $this->rest->get( $url, $this->all_request_options );
 
@@ -245,7 +240,7 @@ final class KlinkRestClient implements INetworkTransport
 			return new KlinkError('class_expected', KlinkHelpers::localize('The specified return type is not a class.'));
 		}
 
-		$url = self::_construct_url($this->baseApiUrl, $url);
+		$url = self::_construct_url( $this->baseApiUrl, $url, $params );
 
 		$headers = array_merge_recursive(
 			$this->all_request_options, 
@@ -295,7 +290,7 @@ final class KlinkRestClient implements INetworkTransport
 			return new KlinkError('class_expected', KlinkHelpers::localize('The specified return type is not a class.'));
 		}
 
-		$url = self::_construct_url($this->baseApiUrl, $url);
+		$url = self::_construct_url($this->baseApiUrl, $url, $params);
 
 		$headers = array_merge_recursive(
 			$this->all_request_options, 
@@ -350,10 +345,7 @@ final class KlinkRestClient implements INetworkTransport
 		// 	return new KlinkError('class_expected', KlinkHelpers::localize('The specified return type is not a class.'));
 		// }
 
-		$query_string = !empty( $params ) ? '?'.self::_compose_get_parameters( $params ) : '';
-
-
-		$url = self::_construct_url($this->baseApiUrl, array( $url, $query_string ) );
+		$url = self::_construct_url($this->baseApiUrl, $url, $params );
 
 		$result = $this->rest->delete( $url, $this->all_request_options );
 
@@ -412,7 +404,7 @@ final class KlinkRestClient implements INetworkTransport
 	 * @param string|array $rest 
 	 * @return string the full url
 	 */
-	private function _construct_url($base, $rest)
+	private function _construct_url($base, $rest, array $getParams = null)
 	{
 		KlinkHelpers::is_valid_url( $base, 'starting part of the url' );
 
@@ -422,6 +414,29 @@ final class KlinkRestClient implements INetworkTransport
 
 			$rest = implode('/', $rest);
 
+		}
+
+		if( !is_null( $getParams ) && !empty( $getParams ) ){
+			$otherparams = array();
+
+			foreach ( $getParams as $key => $value ) {
+				
+				if( strpos( $rest, "{$key}" ) !== false ){
+
+					$rest = str_replace('{' . $key . '}', $value, $rest);
+
+				}
+				else {
+					$otherparams[$key] = $value;
+				}
+
+			}
+			
+			if( !empty( $otherparams ) ){
+				$querystring = self::_compose_get_parameters( $otherparams );
+				
+				$rest .= '?' . $querystring;	
+			}
 		}
 
 		$concat = ( KlinkHelpers::string_ends_with($base, '/') ) ? '' : '/';

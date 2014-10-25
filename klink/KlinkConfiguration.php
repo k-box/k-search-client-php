@@ -75,8 +75,6 @@ final class KlinkConfiguration
 		KlinkHelpers::is_valid_id( $adapterId, 'adapter id');
 
 
-
-
 		$this->institution_id = $institutionId;
 
 		$this->adapter_id = $adapterId;

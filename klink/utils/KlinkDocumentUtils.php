@@ -43,6 +43,15 @@ class KlinkDocumentUtils
 
 	}
 
+
+	public static function isLocalDocument(KlinkDocumentDescriptor $descriptor, $instId, $adapterId){
+
+
+
+		throw new NotImplementedException();
+		
+	}
+
 	/**
 	 * Convert the mime type to a document type
 	 * @param string $mimeType 

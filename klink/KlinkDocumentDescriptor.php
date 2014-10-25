@@ -147,14 +147,14 @@ final class KlinkDocumentDescriptor
 
 	public $mimeType;
 
-	/**
-	 * setType
-	 * @param $value
-	 * @return void
-	 */
-	public function setMimeType($value) {
-		$this->mimeType = $value;
-	}
+	// /**
+	//  * setType
+	//  * @param $value
+	//  * @return void
+	//  */
+	// public function setMimeType($value) {
+	// 	$this->mimeType = $value;
+	// }
 	/**
 	 * getType
 	 * @return string
@@ -185,14 +185,14 @@ final class KlinkDocumentDescriptor
 
 	public $creationDate;
 
-	/**
-	 * setCreationDate
-	 * @param Date $value
-	 * @return void
-	 */
-	public function setCreationDate(Date $value) {
-		$this->creationDate = $value;
-	}
+	// /**
+	//  * setCreationDate
+	//  * @param Date $value
+	//  * @return void
+	//  */
+	// public function setCreationDate(Date $value) {
+	// 	$this->creationDate = $value;
+	// }
 	/**
 	 * getCreationDate
 	 * @return Date
@@ -278,14 +278,14 @@ final class KlinkDocumentDescriptor
 
 	public $documentType;
 
-	/**
-	 * setDocumentType
-	 * @param $value
-	 * @return void
-	 */
-	public function setDocumentType($value) {
-		$this->documentType = $value;
-	}
+	// /**
+	//  * setDocumentType
+	//  * @param $value
+	//  * @return void
+	//  */
+	// public function setDocumentType($value) {
+	// 	$this->documentType = $value;
+	// }
 	/**
 	 * getDocumentType
 	 * @return string
@@ -301,14 +301,14 @@ final class KlinkDocumentDescriptor
 
 	public $userUploader;
 
-	/**
-	 * setUserUploader
-	 * @param $value
-	 * @return void
-	 */
-	public function setUserUploader($value) {
-		$this->userUploader = $value;
-	}
+	// /**
+	//  * setUserUploader
+	//  * @param $value
+	//  * @return void
+	//  */
+	// public function setUserUploader($value) {
+	// 	$this->userUploader = $value;
+	// }
 	/**
 	 * getUserUploader
 	 * @return string
@@ -324,14 +324,14 @@ final class KlinkDocumentDescriptor
 
 	public $localDocumentID;
 
-	/**
-	 * setLocalDocumentID
-	 * @param $value
-	 * @return void
-	 */
-	public function setLocalDocumentID($value) {
-		$this->localDocumentID = $value;
-	}
+	// /**
+	//  * setLocalDocumentID
+	//  * @param $value
+	//  * @return void
+	//  */
+	// public function setLocalDocumentID($value) {
+	// 	$this->localDocumentID = $value;
+	// }
 	/**
 	 * getLocalDocumentID
 	 * @return string
@@ -347,7 +347,6 @@ final class KlinkDocumentDescriptor
 		$this->localDocumentID = $localDocumentID;
 		$this->hash = $hash;
 	}
-
 
 	/**
 	 * For JSON serialization purporses

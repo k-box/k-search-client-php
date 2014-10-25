@@ -24,7 +24,36 @@ class KlinkRestClientTest extends PHPUnit_Framework_TestCase
 		  ['NonExistingNamespace\TotallyNonexistentClass']
 		];
 	}
+
+	public function inputUrlConstruction(){
+		return [
+		  ['http://base', '', null, 'http://base/' ],
+		  ['http://base', '', [], 'http://base/' ],
+		  ['http://base/', 'method', [], 'http://base/method' ],
+		  ['http://base/', 'method/{ID}', [ 'ID' => 5 ], 'http://base/method/5' ],
+		  ['http://base/', 'method', [ 'query' => 'test' ], 'http://base/method?query=test' ],
+		  ['http://base/', 'method/{VISIBILITY}/', ['query' => 'test', 'VISIBILITY' => 'public' ], 'http://base/method/public/?query=test' ],
+		];	
+	}
 	
+	/**
+	 * Call protected/private method of a class.
+	 *
+	 * @param object &$object    Instantiated object that we will run method on.
+	 * @param string $methodName Method name to call
+	 * @param array  $parameters Array of parameters to pass into method.
+	 *
+	 * @return mixed Method return.
+	 */
+	public function invokeMethod(&$object, $methodName, array $parameters = array())
+	{
+	    $reflection = new \ReflectionClass(get_class($object));
+	    $method = $reflection->getMethod($methodName);
+	    $method->setAccessible(true);
+
+	    return $method->invokeArgs($object, $parameters);
+	}
+
  //  /**
  //   * @dataProvider inputNumbers
  //   */
@@ -125,4 +154,18 @@ class KlinkRestClientTest extends PHPUnit_Framework_TestCase
 		$this->assertContains('class_expected', $result->get_error_codes(), 'Expected "class_expected" error');
 
 	}
+
+	/**
+	 * @dataProvider inputUrlConstruction
+	 */
+	public function testConstructUrl($base, $rest, $getParams, $expected ){
+
+		$url = $this->invokeMethod( $this->rest, '_construct_url' , array($base, $rest, $getParams) );
+
+		$this->assertEquals($expected, $url);
+
+	}
+
+
+
 }

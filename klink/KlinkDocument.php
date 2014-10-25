@@ -29,7 +29,7 @@ class KlinkDocument {
 	public function __constructor(KlinkDocumentDescriptor $descriptor, $file_path){
 		$this->descriptor = $descriptor;
 
-		$this->documentData = $file_path; //TODO: base64 encoding of file content if the mimetype is not text/plain, otherwise file content
+		$this->documentData = $file_path;
 	}
 
 
@@ -49,6 +49,13 @@ class KlinkDocument {
 	 * @return string the file path on the accessible filesystem
 	 */
 	public function getDocumentData() {
+
+		if(is_file($this->documentData)){
+
+			return base64_encode( file_get_contents( $this->documentData ) );
+
+		}
+
 		return $this->documentData;
 	}
 

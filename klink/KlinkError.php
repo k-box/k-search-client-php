@@ -243,5 +243,12 @@ final class KlinkError {
 
 		$this->error_data[$code] = $data;
 	}
+
+
+	public function __toString()
+    {
+        return implode( '.', $this->get_error_messages() );
+    }
+
 }
 
