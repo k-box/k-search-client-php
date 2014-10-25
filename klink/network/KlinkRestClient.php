@@ -185,7 +185,7 @@ final class KlinkRestClient implements INetworkTransport
 		
 	}
 
-	public function getCollection( $url, $expected_return_type, array $params = null )
+	public function getCollection( $url, array $params = null, $expected_return_type )
 	{
 		
 		if(!self::_check_expected_return_type($expected_return_type)){
@@ -196,7 +196,7 @@ final class KlinkRestClient implements INetworkTransport
 
 		$result = $this->rest->get( $url, $this->all_request_options );
 
-		if(Helpers::is_error($result)){
+		if(KlinkHelpers::is_error($result)){
 			return $result;
 		}
 
@@ -485,7 +485,8 @@ final class KlinkRestClient implements INetworkTransport
 			$decoded = json_decode($json, true);
 			
 			$deserialized = $this->jm->mapArray($decoded, new ArrayObject(), $class);
-			return $deserialized;
+
+			return $deserialized->getArrayCopy();
 
 		}
 		catch(Exception $je){

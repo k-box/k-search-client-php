@@ -409,7 +409,7 @@ class KlinkHelpers
 
 		self::is_string_and_not_empty( $id, $parameter_name, $error_message_format );
 
-		if ( !preg_match('/^[\w\-\d]+$/', $string1) ) {
+		if ( !preg_match('/^[\w\-\d]+$/', $id) ) {
 			
 			$message = self::localize( sprintf( $error_message_format, $parameter_name ) );
 

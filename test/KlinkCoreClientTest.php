@@ -9,7 +9,7 @@ class KlinkCoreClientTest extends PHPUnit_Framework_TestCase
 	{
 	  	date_default_timezone_set('America/Los_Angeles');
 
-	  	$config = new KlinkConfiguration('K', array(
+	  	$config = new KlinkConfiguration( 'K-uyv', 'KA', array(
 	  			new KlinkAuthentication( 'http://klink-experim.cloudapp.net:14000/kcore/', 'testUser', 'testPass' )
 	  		) );
 
@@ -28,6 +28,36 @@ class KlinkCoreClientTest extends PHPUnit_Framework_TestCase
 	// 	];
 	// }
 	
+	public function testGetInstitutions()
+	{
+
+
+		$result = $this->core->getInstitutions();
+
+		print_r($result);
+
+		// KlinkInstitutionDetails Object
+		// (
+		//     [id] => K
+		//     [name] => Test institution
+		//     [mail] => info@tk.com
+		//     [telephone] => +9987634878237
+		//     [type] => NGO
+		//     [addressStreet] => Avenue Tchuy, 193
+		//     [addressCountry] => Kyrgyzstan
+		//     [addressLocality] => Bishkek
+		//     [addressPostalCode] => 720001
+		//     [creationDate] => 1975-12-25T14:15:16+05:00
+		//     [thumbnail] => http://api.randomuser.me/portraits/med/women/48.jpg
+		// )
+
+		$this->assertTrue(is_array($result), 'result must be an array');
+
+		//$this->assertContains('deserialization_error', $result->get_error_codes(), 'Expected "deserialization_error" error');
+
+	}
+
+
  // //  /**
  // //   * @dataProvider inputNumbers
  // //   */

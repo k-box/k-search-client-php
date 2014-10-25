@@ -13,13 +13,13 @@ final class KlinkSearchType
 	 * 
 	 * Only local institution documents are searched
 	 */	
-	const LOCAL = 'local';
+	const KLINK_PRIVATE = 'private';
 
 	/**
 	 * Global (All) search type.
 	 * 
 	 * The search is performed on publica documents from all the institutions in KLink
 	 */
-	const ALL = 'global';
+	const KLINK_PUBLIC = 'public';
 
 }

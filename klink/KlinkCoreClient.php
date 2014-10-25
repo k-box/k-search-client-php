@@ -61,19 +61,15 @@ final class KlinkCoreClient
 	// ---- constructor and private fields
 
 	/**
-	 * Stores the institution identifier in the KLink network.
+	 * The list of clients that can connect to a KLink Core
+	 * 
+	 * @var KlinkRestClient[];
 	 */
-	// private $institution_id = null;
-
-	// private $institution_auth = null;
+	private $rest = array();
 
 	/**
-	 * @var KlinkRestClient[];
-	 * 
-	 TODO: credo proprio che sarà una collection di RestClient, uno per ogni core specificato in fase di configurazione
+	 * Stores the configuration for this KlinkCoreClient instance
 	 */
-	private /*KlinkRestClient*/ $rest = array();
-
 	private $configuration = null;
 
 
@@ -82,20 +78,11 @@ final class KlinkCoreClient
 
 		KlinkCoreClient::test($config); //test the configuration for errors
 
-
-
-		// save the the configuration for the instance
-		//$this->institution_id = $institution_id; //institution id can be saved only after first use
-
 		$this->configuration = $config;
-
-		/**
-			TODO: initialize RestClient, one client for each core in the configuration
-		*/
 
 		foreach ($this->configuration->getCores() as $core) {
 
-			$this->rest[] = new KlinkRestClient($core->core, $core);
+			$this->rest[] = new KlinkRestClient($core->getCore(), $core);
 
 		}
 
@@ -112,45 +99,74 @@ final class KlinkCoreClient
 	 * Description
 	 * @param KlinkDocument $document 
 	 * @param type $document_content 
-	 * @return KlinkDocumentDescriptor|KlinkError
+	 * @return KlinkDocumentDescriptor
+	 * @throws KlinkException if something wrong happened during the communication with the core
 	 */
 	function addDocument( KlinkDocument $document ){
 
 		$conn = self::_get_connection();
 
-		// $document->getDescriptor(), $document->getFile()
+		$array = array(
+			'descriptor' => $document->getDescriptor(),
+			'documentData' => $document->getDocumentData(),
+		);
 
-		return $conn->post( self::ALL_DOCUMENTS_ENDPOINT, $document->getDescriptor(), new KlinkDocumentDescriptor() );
+		$rem = $conn->post( self::ALL_DOCUMENTS_ENDPOINT, $array, new KlinkDocumentDescriptor() );
+
+		if(KlinkHelpers::is_error($rem)){
+			throw new KlinkException((string)$rem);
+		}
+
+		return $rem;
 
 	}
 
 	/**
 	 * Description
 	 * @param KlinkDocumentDescriptor $document 
-	 * @return boolean|KlinkError
+	 * @return boolean
+	 * @throws KlinkException if something wrong happened during the communication with the core
 	 */
 	function removeDocument( KlinkDocumentDescriptor $document ){
 
+		if( !KlinkDocumentUtils::isLocalDocument( $document, $this->configuration->getInstitutionId(), $this->configuration->getAdapterId() ) ){
+			throw new KlinkException("You cannot remove document you don't own");
+		}
+
 		$conn = self::_get_connection();
 
-		return $conn->delete( self::SINGLE_DOCUMENT_ENDPOINT, array('ID' => $document->getId()) );
+		$rem = $conn->delete( self::SINGLE_DOCUMENT_ENDPOINT, array('ID' => $document->getId()) );
+
+		if( KlinkHelpers::is_error( $rem ) ){
+			throw new KlinkException( (string)$rem );
+		}
+
+		return $rem;
 
 	}
 
 	/**
 	 * Description
-	 * @param KlinkDocument $document 
+	 * @param KlinkDocument $document the new information about the document. The document descriptor must have the same ID of the already existing document
 	 * @param type $document_content 
-	 * @return KlinkDocumentDescriptor|KlinkError
+	 * @return KlinkDocumentDescriptor
+	 * @throws KlinkException if something wrong happened during the communication with the core
 	 */
 	function updateDocument( KlinkDocument $document ){
 
 		$rem = $this->removeDocument($document);
-		if(KlinkHelpers::is_error($rem)){
-			return $rem;
+
+		if(KlinkHelpers::is_error( $rem )){
+			throw new KlinkException( (string)$rem );
 		}
 
-		return $this->addDocument( $document );
+		$rem = $this->addDocument( $document );
+
+		if( KlinkHelpers::is_error( $rem ) ){
+			throw new KlinkException( (string)$rem );
+		}
+
+		return $rem;
 
 	}
 
@@ -169,22 +185,31 @@ final class KlinkCoreClient
 	/**
 	 * Description
 	 * @param string $terms the phrase or terms to search for
-	 * @param SearchType $type the type of the search to be perfomed
+	 * @param SearchType $type the type of the search to be perfomed, if null is specified the default behaviour is KlinkSearchType::GLOBAL
+	 * @param int $resultsPerPage the number of results per page
+	 * @param int $page the page to display
 	 * @return KlinkSearchResult returns the document that match the searched terms
+	 * @throws KlinkException if something wrong happened during the communication with the core
 	 */
-	function search($terms, SearchType $type = null){
+	function search($terms, KlinkSearchType $type = null, $resultsPerPage = 10, $page = 0){
 
 		if(is_null($type)){
-			$type = KlinkSearchType::LOCAL;
+			$type = KlinkSearchType::KLINK_PUBLIC;
 		}
 
 		$conn = self::_get_connection();
 
-		return $conn->get(self::SEARCH_ENDPOINT, 
+		$rem = $conn->get(self::SEARCH_ENDPOINT, 
 			array(
 				'query' => $terms,
-				'visibility' => $type == KlinkSearchType::LOCAL ? 'private' : 'public'
+				'visibility' => $type
 			), new KlinkSearchResult() );
+
+		if(KlinkHelpers::is_error($rem)){
+			throw new KlinkException((string)$rem);
+		}
+
+		return $rem;
 	}
 
 
@@ -195,11 +220,13 @@ final class KlinkCoreClient
 	 * @param mixed $terms could be a string or a plain array. If an array is given each element is considered separately and completion for each terms are provided
 	 * @param SearchType $type 
 	 * @return string[] the possible suggestions
+	 * @throws KlinkException if something wrong happened during the communication with the core
+	 * @internal Reserved for future uses
 	 */
-	function autocomplete($terms, SearchType $type = null){
+	function autocomplete($terms, KlinkSearchType $type = null){
 
 		if(is_null($type)){
-			$type = KlinkSearchType::LOCAL;
+			$type = KlinkSearchType::KLINK_PUBLIC;
 		}
 
 		$conn = self::_get_connection();
@@ -207,7 +234,7 @@ final class KlinkCoreClient
 		return $conn->getCollection(self::AUTOCOMPLETE_ENDPOINT, 
 			array(
 				'query' => $terms,
-				'visibility' => $type == KlinkSearchType::LOCAL ? 'private' : 'public'
+				'visibility' => $type
 			), 'string');
 		/**
 			TODO: verificare che il return su array di stringhe possa funzionare
@@ -219,18 +246,37 @@ final class KlinkCoreClient
 	 * Updates the details of the specified institution
 	 * @param KlinkInstitutionDetails $info 
 	 * @return KlinkInstitutionDetails
+	 * @throws KlinkException if something wrong happened during the communication with the core
 	 */
 	function updateInstitution(KlinkInstitutionDetails $info){
 		$conn = self::_get_connection();
 
-		return $conn->put( self::SINGLE_INSTITUTION_ENDPOINT, $info );
+		$rem = $conn->put( self::SINGLE_INSTITUTION_ENDPOINT, $info );
+
+		if( KlinkHelpers::is_error( $rem ) ){
+			throw new KlinkException( (string)$rem );
+		}
+
+		return $rem;
 	}
 
+	/**
+	 * Description
+	 * @param type KlinkInstitutionDetails $info 
+	 * @return type
+	 * @throws KlinkException if something wrong happened during the communication with the core
+	 */
 	function saveInstitution(KlinkInstitutionDetails $info){
 		
 		$conn = self::_get_connection();
 
-		return $conn->post( self::ALL_INSTITUTIONS_ENDPOINT, $info, 'KlinkInstitutionDetails' );
+		$rem = $conn->post( self::ALL_INSTITUTIONS_ENDPOINT, $info, 'KlinkInstitutionDetails' );
+
+		if( KlinkHelpers::is_error( $rem ) ){
+			throw new KlinkException( (string)$rem );
+		}
+
+		return $rem;
 
 	}
 
@@ -239,14 +285,19 @@ final class KlinkCoreClient
 	 * Get the Klink Institutions
 	 * @param string $name optional for filtering institutions that contains the specified terms in the name
 	 * @return KlinkInstitutionDetails[] the list of institutions
+	 * @throws KlinkException if something wrong happened during the communication with the core
 	 */
-	function getInstitutions($name = null){
+	function getInstitutions($nameOrId = null){
 
 		$conn = self::_get_connection();
 
 		$insts = $conn->getCollection( self::ALL_INSTITUTIONS_ENDPOINT, array(), 'KlinkInstitutionDetails' );
 
-		if(!is_null($name)){
+		if( KlinkHelpers::is_error( $insts ) ){
+			throw new KlinkException( (string)$insts );
+		}
+
+		if( !is_null( $nameOrId ) ){
 
 			/**
 			 TODO: filtering
@@ -259,12 +310,26 @@ final class KlinkCoreClient
 		return $insts;
 	}
 
-
+	/**
+	 * Description
+	 * @param type $id 
+	 * @return type
+	 * @throws KlinkException if something wrong happened during the communication with the core
+	 * @throws IllegalArgumentException if the id is not well formatted
+	 */
 	function getInstitution( $id ){
 
 		$conn = self::_get_connection();
 
-		return $conn->get( self::SINGLE_DOCUMENT_ENDPOINT, array('ID' => $id), new KlinkInstitutionDetails() );
+		KlinkHelpers::is_valid_id( $id );
+
+		$rem = $conn->get( self::SINGLE_DOCUMENT_ENDPOINT, array('ID' => $id), new KlinkInstitutionDetails() );
+
+		if( KlinkHelpers::is_error( $rem ) ){
+			throw new KlinkException( (string)$rem );
+		}
+
+		return $rem;
 
 	}
 
@@ -299,12 +364,18 @@ final class KlinkCoreClient
 	}
 
 	/**
-	 * Get the connection to the Klink Core for performing the request
-	 * @return KlinkRestClient to use
+	 * Get the connection to the Klink Core for performing the request.
+	 * The connection is selected considering last execution time if more than one Cores are configured.
+	 * 
+	 * @return KlinkRestClient the KlinkRestClient to use
 	 */
 	private function _get_connection(){
 
 		$core_id = self::_select_klink_core();
+
+		if(count($this->rest) == 1){
+			return $this->rest[0];
+		}
 
 		return $this->rest[0];
 	}

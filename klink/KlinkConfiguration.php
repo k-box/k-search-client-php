@@ -68,7 +68,7 @@ final class KlinkConfiguration
 	function __construct( $institutionId, $adapterId, array $cores )
 	{
 
-		KlinkHelpers::is_array_of_type($cores, 'KlinkAuthentication', 'cores');
+		KlinkHelpers::is_array_of_type( $cores, 'KlinkAuthentication', 'cores' );
 
 		KlinkHelpers::is_valid_id( $institutionId, 'institution id');
 
