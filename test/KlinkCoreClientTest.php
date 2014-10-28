@@ -65,8 +65,6 @@ class KlinkCoreClientTest extends PHPUnit_Framework_TestCase
 
 		$result = $this->core->search($term_to_search);
 
-		//print_r($result);
-
 		$this->assertEquals($term_to_search, $result->getQuery());
 
 		$this->assertInstanceOf('KlinkSearchResult', $result);

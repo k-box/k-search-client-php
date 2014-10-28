@@ -28,9 +28,24 @@ class KlinkSearchResult
 	/**
 	 * visibility
 	 * @var KlinkVisibilityType
+	 * @preferset
 	 */
 
 	public $visibility;
+
+	/**
+	 * setVisibility
+	 * @param string $value
+	 * @return void
+	 */
+	public function setVisibility($value) {
+
+		if( is_string( $value ) ) {
+			$value = KlinkVisibilityType::fromString( $value );
+		}
+
+		$this->visibility = $value;
+	}
 
 	/**
 	 * The performed search visibility (public or private)

@@ -18,6 +18,7 @@ return array(
     'KlinkDocumentAuthor' => $baseDir . '/klink/KlinkDocumentAuthor.php',
     'KlinkDocumentDescriptor' => $baseDir . '/klink/KlinkDocumentDescriptor.php',
     'KlinkDocumentUtils' => $baseDir . '/klink/utils/KlinkDocumentUtils.php',
+    'KlinkEnum' => $baseDir . '/klink/KlinkEnum.php',
     'KlinkError' => $baseDir . '/klink/KlinkError.php',
     'KlinkException' => $baseDir . '/klink/exception/KlinkException.php',
     'KlinkHelpers' => $baseDir . '/klink/utils/KlinkHelpers.php',

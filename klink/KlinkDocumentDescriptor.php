@@ -119,7 +119,7 @@ final class KlinkDocumentDescriptor
 
 	/**
 	 * authors
-	 * @var KlinkDocumentAuthor[]
+	 * @var string
 	 */
 
 	public $authors;
@@ -165,14 +165,14 @@ final class KlinkDocumentDescriptor
 
 	/**
 	 * institution
-	 * @var KlinkInstitutionDetails
+	 * @var string
 	 */
 
 	public $institutionID;
 
 	/**
 	 * Owner institution
-	 * @return KlinkInstitutionDetails
+	 * @return string
 	 */
 	public function getInstitutionID() {
 		return $this->institutionID;
@@ -251,18 +251,25 @@ final class KlinkDocumentDescriptor
 	/**
 	 * visibility
 	 * @var KlinkVisibilityType
+	 * @preferset
 	 */
 
 	public $visibility;
 
 	/**
 	 * setVisibility
-	 * @param KlinkVisibilityType $value
+	 * @param string $value
 	 * @return void
 	 */
-	public function setVisibility(KlinkVisibilityType $value) {
+	public function setVisibility($value) {
+
+		if( is_string( $value ) ) {
+			$value = KlinkVisibilityType::fromString( $value );
+		}
+
 		$this->visibility = $value;
 	}
+
 	/**
 	 * getVisibility
 	 * @return KlinkVisibilityType
