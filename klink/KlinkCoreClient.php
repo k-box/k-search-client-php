@@ -193,17 +193,19 @@ final class KlinkCoreClient
 	 */
 	function search($terms, KlinkSearchType $type = null, $resultsPerPage = 10, $page = 0){
 
+
+
 		if(is_null($type)){
 			$type = KlinkSearchType::KLINK_PUBLIC;
 		}
 
 		$conn = self::_get_connection();
 
-		$rem = $conn->get(self::SEARCH_ENDPOINT, 
+		$rem = $conn->get(self::SEARCH_ENDPOINT, new KlinkSearchResult(),
 			array(
 				'query' => $terms,
 				'visibility' => $type
-			), new KlinkSearchResult() );
+			) );
 
 		if(KlinkHelpers::is_error($rem)){
 			throw new KlinkException((string)$rem);
@@ -323,7 +325,7 @@ final class KlinkCoreClient
 
 		KlinkHelpers::is_valid_id( $id );
 
-		$rem = $conn->get( self::SINGLE_DOCUMENT_ENDPOINT, array('ID' => $id), new KlinkInstitutionDetails() );
+		$rem = $conn->get( self::SINGLE_DOCUMENT_ENDPOINT, new KlinkInstitutionDetails(), array('ID' => $id) );
 
 		if( KlinkHelpers::is_error( $rem ) ){
 			throw new KlinkException( (string)$rem );

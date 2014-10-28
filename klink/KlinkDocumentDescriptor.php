@@ -180,7 +180,7 @@ final class KlinkDocumentDescriptor
 
 	/**
 	 * creationDate
-	 * @var Date
+	 * @var string
 	 */
 
 	public $creationDate;
@@ -195,7 +195,7 @@ final class KlinkDocumentDescriptor
 	// }
 	/**
 	 * getCreationDate
-	 * @return Date
+	 * @return string
 	 */
 	public function getCreationDate() {
 		return $this->creationDate;

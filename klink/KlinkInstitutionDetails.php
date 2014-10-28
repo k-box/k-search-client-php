@@ -46,7 +46,7 @@ final class KlinkInstitutionDetails
      * ...
      * @var string
      */
-    public $telephone;
+    public $phone;
 
     /**
      * ...
@@ -76,11 +76,17 @@ final class KlinkInstitutionDetails
      * ...
      * @var string
      */
-    public $thumbnail;
+    public $thumbnailURI;
 
 
     function __construct(){
 
+    }
+
+
+
+    public function getFormattedAddress(){
+        throw new Exception('Not implemented');
     }
 
 }

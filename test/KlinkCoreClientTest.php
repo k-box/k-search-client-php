@@ -34,7 +34,7 @@ class KlinkCoreClientTest extends PHPUnit_Framework_TestCase
 
 		$result = $this->core->getInstitutions();
 
-		print_r($result);
+		//print_r($result);
 
 		// KlinkInstitutionDetails Object
 		// (
@@ -53,8 +53,23 @@ class KlinkCoreClientTest extends PHPUnit_Framework_TestCase
 
 		$this->assertTrue(is_array($result), 'result must be an array');
 
+		$this->assertContainsOnlyInstancesOf('KlinkInstitutionDetails', $result);
+
 		//$this->assertContains('deserialization_error', $result->get_error_codes(), 'Expected "deserialization_error" error');
 
+	}
+
+	public function testSearch(){
+		
+		$term_to_search = 'search_term';
+
+		$result = $this->core->search($term_to_search);
+
+		//print_r($result);
+
+		$this->assertEquals($term_to_search, $result->getQuery());
+
+		$this->assertInstanceOf('KlinkSearchResult', $result);
 	}
 
 

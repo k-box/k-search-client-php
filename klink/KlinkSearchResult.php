@@ -146,7 +146,7 @@ class KlinkSearchResult
 		$this->itemCount = $itemsCount;
 		$this->items = array(
 
-			new KlinkDocumentDescriptor('K:a11', 'K', 'a11', KlinkDocumentUtils::generateHash('test'))
+			new KlinkDocumentDescriptor('K-a11', 'K', 'a11', KlinkDocumentUtils::generateHash('test'))
 
 			);
 	}
