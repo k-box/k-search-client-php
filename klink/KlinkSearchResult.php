@@ -5,7 +5,7 @@
  * 
  * @package Klink
  */
-class KlinkSearchResult
+final class KlinkSearchResult
 {
 	
 
@@ -21,7 +21,7 @@ class KlinkSearchResult
 	 * getQuery
 	 * @return string
 	 */
-	public function getQuery() {
+	public function getTerms() {
 		return $this->query;
 	}
 
@@ -66,7 +66,7 @@ class KlinkSearchResult
 	 * The grand total of results matched by the query
 	 * @return int
 	 */
-	public function getNumFound() {
+	public function getTotalResults() {
 		return $this->numFound;
 	}
 
@@ -78,10 +78,10 @@ class KlinkSearchResult
 	public $queryTime;
 
 	/**
-	 * Query execution time (in milliseconds)
+	 * Search execution time (in milliseconds)
 	 * @return int
 	 */
-	public function getQueryTime() {
+	public function getSearchTime() {
 		return $this->queryTime;
 	}
 
@@ -96,7 +96,7 @@ class KlinkSearchResult
 	 * specify the number of results to retrieve, if no value is given the default value of 10 is used
 	 * @return int
 	 */
-	public function getNumResults() {
+	public function getResultsPerPage() {
 		return $this->numResults;
 	}
 
@@ -111,7 +111,7 @@ class KlinkSearchResult
 	 * specify the first result to return from the complete set of retrieved set, the value is 0-based; the default value is 0
 	 * @return int
 	 */
-	public function getStartResult() {
+	public function getOffset() {
 		return $this->startResult;
 	}
 
@@ -126,7 +126,7 @@ class KlinkSearchResult
 	 * The number of results returned by this invocation
 	 * @return int
 	 */
-	public function getItemCount() {
+	public function getCurrentResultCount() {
 		return $this->itemCount;
 	}
 
@@ -141,7 +141,7 @@ class KlinkSearchResult
 	 * The current list of Results
 	 * @return KlinkDocumentDescriptor[]
 	 */
-	public function getItems() {
+	public function getResults() {
 		return $this->items;
 	}
 

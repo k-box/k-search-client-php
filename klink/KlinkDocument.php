@@ -26,10 +26,10 @@ class KlinkDocument {
 	/**
 	 * 
 	 */
-	public function __constructor(KlinkDocumentDescriptor $descriptor, $file_path){
+	public function __constructor(KlinkDocumentDescriptor $descriptor, $data){
 		$this->descriptor = $descriptor;
 
-		$this->documentData = $file_path;
+		$this->documentData = $data;
 	}
 
 
@@ -56,7 +56,7 @@ class KlinkDocument {
 
 		}
 
-		return $this->documentData;
+		return base64_encode( $this->documentData );
 	}
 
 }

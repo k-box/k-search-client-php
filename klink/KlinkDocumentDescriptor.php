@@ -12,17 +12,67 @@ final class KlinkDocumentDescriptor
 	/**
 	 * id
 	 * @var string
+	 * @internal this property might be forever null
 	 */
 
-	public $id;
+	// public $id;
 
 	/**
 	 * getId
 	 * @return string
+	 * @internal this parameter might be forever null
 	 */
-	public function getId() {
-		return $this->id;
+	// public function getId() {
+	// 	return $this->id;
+	// }
+
+
+	public function getKlinkId() {
+		return $this->institutionID . '-' . $this->localDocumentID;
 	}
+
+
+	/**
+	 * institution
+	 * @var string
+	 */
+
+	public $institutionID;
+
+	/**
+	 * Owner institution
+	 * @return string
+	 */
+	public function getInstitutionID() {
+		return $this->institutionID;
+	}
+
+
+
+	/**
+	 * localDocumentID
+	 * @var string
+	 */
+
+	public $localDocumentID;
+
+	// /**
+	//  * setLocalDocumentID
+	//  * @param $value
+	//  * @return void
+	//  */
+	// public function setLocalDocumentID($value) {
+	// 	$this->localDocumentID = $value;
+	// }
+	/**
+	 * getLocalDocumentID
+	 * @return string
+	 */
+	public function getLocalDocumentID() {
+		return $this->localDocumentID;
+	}
+
+
 
 	/**
 	 * hash
@@ -91,6 +141,8 @@ final class KlinkDocumentDescriptor
 	 */
 	public function setAbstract($value) {
 		$this->abstract = $value;
+
+		return $this;
 	}
 	/**
 	 * getAbstract
@@ -100,22 +152,7 @@ final class KlinkDocumentDescriptor
 		return $this->abstract;
 	}
 
-	/**
-	 * Reference person.
-	 * 
-	 * The person to contact for getting details
-	 * @var string
-	 */
-
-	public $userOwner;
-
-	/**
-	 * getReferencePerson
-	 * @return string
-	 */
-	public function getUserOwner() {
-		return $this->userOwner;
-	}
+	
 
 	/**
 	 * authors
@@ -131,6 +168,8 @@ final class KlinkDocumentDescriptor
 	 */
 	public function setAuthors(array $value) {
 		$this->authors = $value;
+
+		return $this;
 	}
 	/**
 	 * getAuthors
@@ -163,20 +202,7 @@ final class KlinkDocumentDescriptor
 		return $this->mimeType;
 	}
 
-	/**
-	 * institution
-	 * @var string
-	 */
-
-	public $institutionID;
-
-	/**
-	 * Owner institution
-	 * @return string
-	 */
-	public function getInstitutionID() {
-		return $this->institutionID;
-	}
+	
 
 	/**
 	 * creationDate
@@ -216,6 +242,8 @@ final class KlinkDocumentDescriptor
 	 */
 	public function setLanguage($value) {
 		$this->language = $value;
+
+		return $this;
 	}
 	/**
 	 * getLanguage
@@ -239,6 +267,8 @@ final class KlinkDocumentDescriptor
 	 */
 	public function setThumbnailURI($value) {
 		$this->thumbnailURI = $value;
+
+		return $this;
 	}
 	/**
 	 * getThumbnailURI
@@ -268,6 +298,8 @@ final class KlinkDocumentDescriptor
 		}
 
 		$this->visibility = $value;
+
+		return $this;
 	}
 
 	/**
@@ -325,35 +357,84 @@ final class KlinkDocumentDescriptor
 	}
 
 	/**
-	 * localDocumentID
+	 * Reference person.
+	 * 
+	 * The person to contact for getting details
 	 * @var string
 	 */
 
-	public $localDocumentID;
+	public $userOwner;
 
-	// /**
-	//  * setLocalDocumentID
-	//  * @param $value
-	//  * @return void
-	//  */
-	// public function setLocalDocumentID($value) {
-	// 	$this->localDocumentID = $value;
-	// }
 	/**
-	 * getLocalDocumentID
+	 * getReferencePerson
 	 * @return string
 	 */
-	public function getLocalDocumentID() {
-		return $this->localDocumentID;
+	public function getUserOwner() {
+		return $this->userOwner;
+	}
+
+	
+
+
+	function __construct(){
+
 	}
 
 
-	function __construct($id = '', $institutionID = '', $localDocumentID = '', $hash = ''){
-		$this->id = $id;
-		$this->institutionID = $institutionID;
-		$this->localDocumentID = $localDocumentID;
-		$this->hash = $hash;
-	}
+	public static function create($institutionID, $localDocumentID, $hash, $title, $mimetype, $documentURI, $thumbnailURI, $userUploader, $userOwner, $visibility = null, $creationDate = null){
+
+        KlinkHelpers::is_valid_id( $institutionID, 'institution id' );
+
+        KlinkHelpers::is_valid_id( $localDocumentID, 'local document id' );
+
+        KlinkHelpers::is_string_and_not_empty( $hash, 'hash' );
+
+        KlinkHelpers::is_string_and_not_empty( $mimetype, 'mime type' );
+
+        if( !is_null( $creationDate ) ){
+            KlinkHelpers::is_valid_date_string( $creationDate, 'creation date' );
+        }
+        else {
+            $creationDate = KlinkHelpers::now();
+        }
+
+        if(is_null($visibility)){
+			$visibility = KlinkVisibilityType::KLINK_PUBLIC;
+		}
+        
+
+
+        $instance = new self();
+
+        //$instance->id = $id;
+
+        $instance->institutionID = $institutionID;
+		
+		$instance->localDocumentID = $localDocumentID;
+		
+		$instance->hash = $hash;
+
+        $instance->title = $title;
+
+        $instance->creationDate = $creationDate;
+
+        $instance->thumbnailURI = $thumbnailURI;
+
+        $instance->documentURI = $documentURI;
+
+        $instance->mimetype = $mimetype;
+
+        $instance->documentType = KlinkDocumentUtils::documentTypeFromMimeType( $mimetype );
+
+        $instance->userUploader = $userUploader;
+
+        $instance->userOwner = $userOwner;
+
+        $instance->visibility = $visibility;
+
+        return $instance;
+
+    }
 
 	/**
 	 * For JSON serialization purporses

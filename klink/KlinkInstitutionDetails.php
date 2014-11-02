@@ -84,26 +84,240 @@ final class KlinkInstitutionDetails
     }
 
 
+    /**
+     * Returns the address of the institution.
+     * 
+     * @return Klink_Address
+     */
+    public function getAddress(){
+
+        return new Klink_Address(
+            $this->addressStreet, 
+            $this->addressCountry, 
+            $this->addressLocality, 
+            $this->addressPostalCode);
+
+    }
+
+    public function setAddress(Klink_Address $address){
+        $this->addressStreet = $address->street;
+        $this->addressCountry = $address->country;
+        $this->addressLocality = $address->locality;
+        $this->addressPostalCode = $address->postalCode;
+
+        return $this;
+    }
+
+    /**
+     * The type of the institution according to schema.org
+     * @return string
+     */
+    public function getType()
+    {
+        return $this->type;
+    }
+
+    public function setType( $type )
+    {
+        $this->type = $type;
+        return $this;
+    }
+
+    /**
+     * The name of the institution
+     * @return type
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    public function setName($name)
+    {
+        $this->name = $name;
+        return $this;
+    }
+
+    /**
+     * The institution telephone number
+     * @return type
+     */
+    public function getPhoneNumber()
+    {
+        return $this->phone;
+    }
+
+    public function setPhoneNumber($number)
+    {
+        KlinkHelpers::is_valid_phonenumber( $number, 'phone number' );
+
+        $this->phone = $number;
+    }
+
+    /**
+     * The institution e-mail address for contact purposes
+     * @return type
+     */
+    public function getMail()
+    {
+        return $this->mail;
+    }
+
+    public function setMail( $mail )
+    {
+        KlinkHelpers::is_valid_mail( $number, 'phone number' );
+
+        $this->mail = $mail;
+
+        return $this;
+    }
+
+    /**
+     * The institution ID
+     * @return type
+     */
+    public function getID()
+    {
+        return $this->id;
+    }
+
+    /**
+     * The image that represents the institution
+     * @return string|null the url of the public institution image if configured, null otherwise
+     */
+    public function getThumbnail()
+    {
+        return $this->thumbnailURI;
+    }
+
+    public function setThumbnail($thumbnailURI)
+    {
+        $this->thumbnailURI = $thumbnailURI;
+
+        return $this;
+    }
+
+    /**
+     * The date on which the institution has joined the KLink
+     * @return DateTime
+     */
+    public function getJoinedDate()
+    {
+        return date_create( $this->creationDate );
+    }
+
+
+
 
     public function getFormattedAddress(){
         throw new Exception('Not implemented');
     }
 
+
+    /**
+     * Creates a new instance of KlinkInstitutiondetails
+     * @param string $id the Insitution ID, must be an alphanumeric non empty (or non null) string
+     * @param string $name the name of the institution, must be a non empty string
+     * @param string $type The organization type according to the classification of schema.org
+     * @param string $joinedDate (optional) the date on which the institution has joined the Klink using the RFC3339 format, if null is given the current date and time will be used
+     * @return KlinkInstitutionDetails
+     * @throws InvalidArgumentException if some parameters are invalid
+     */
+    public static function create($id, $name, $type = 'Organization',  $joinedDate = null){
+
+        KlinkHelpers::is_valid_id( $id, 'id' );
+
+        KlinkHelpers::is_string_and_not_empty( $name, 'name' );
+
+        if( !is_null( $joinedDate ) ){
+            KlinkHelpers::is_valid_date_string( $joinedDate, 'joinedDate' );
+        }
+        else {
+            $joinedDate = KlinkHelpers::now();
+        }
+
+        $instance = new self();
+
+        $instance->id = $id;
+
+        $instance->name = $name;
+
+        $instance->creationDate = $joinedDate;
+
+        $instance->mail = null;
+
+        $instance->phone = null;
+
+        $instance->thumbnailURI = null;
+
+        $instance->type = $type;
+
+        return $instance;
+
+    }
+
+
 }
 
-class Klink_Address
+/**
+ * Describe an organization address
+ * @package default
+ */
+final class Klink_Address
 {
-    public $street;
-    public $country;
-    public $locality;
-    public $postalCode;
+    private $street;
+    private $country;
+    private $locality;
+    private $postalCode;
 
-    // addressCountry  Country     The country. For example, USA. You can also provide the two-letter ISO 3166-1 alpha-2 country code.
-    // addressLocality Text    The locality. For example, Mountain View.
+    /**
+     * 
+     */
+    public function __construct( $street, $country, $locality, $postalCode ){
+
+        $this->street = $street;
+        $this->country = $country;
+        $this->locality = $locality;
+        $this->postalCode = $postalCode;
+
+    }
+
+    /**
+     * The street address. For example, 1600 Amphitheatre Pkwy.
+     * @return type
+     */
+    public function getStreet(){
+        return $this->street;
+    }
+
+    /**
+     * The country. For example, USA. You can also provide the two-letter ISO 3166-1 alpha-2 country code.
+     * @return type
+     */
+    public function getCountry(){
+        return $this->country;
+    }
+
+    /**
+     * The locality. For example, Mountain View.
+     * @return type
+     */
+    public function getLocality(){
+        return $this->locality;
+    }
+
+    /**
+     * The postal code. For example, 94043.
+     * @return type
+     */
+    public function getPostalCode(){
+        return $this->postalCode;
+    }
+
+    
     // addressRegion   Text    The region. For example, CA.
     // postOfficeBoxNumber Text    The post office box number for PO box addresses.
-    // postalCode  Text    The postal code. For example, 94043.
-    // streetAddress   Text    The street address. For example, 1600 Amphitheatre Pkwy.
+    
 
     public function getGeoCoords()
     {

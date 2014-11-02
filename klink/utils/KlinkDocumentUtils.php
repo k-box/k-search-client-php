@@ -7,6 +7,24 @@
 class KlinkDocumentUtils
 {
 	
+	private static $mimeTypesToDocType = array(
+
+		'post' => 'web page',
+		'page' => 'web page',
+		'node' => 'web page',
+		'application/msword' => 'document',
+		'application/vnd.ms-excel' => 'spreadsheet',
+		'application/vnd.ms-powerpoint' => 'presentation',
+		'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' => 'spreadsheet',
+		'application/vnd.openxmlformats-officedocument.presentationml.presentation' => 'presentation',
+		'application/vnd.openxmlformats-officedocument.wordprocessingml.document' => 'document',
+		'application/pdf' => 'document'
+
+		);
+
+
+
+
 	/**
 	 * Computes the hash for uniquely identify the file
 	 * Uses SHA-512 variant of SHA-2 (Secure hash Algorithm)
@@ -47,8 +65,11 @@ class KlinkDocumentUtils
 	public static function isLocalDocument(KlinkDocumentDescriptor $descriptor, $instId, $adapterId){
 
 
+		return $descriptor->getInstitutionId() === $instId;
+		
 
-		throw new NotImplementedException();
+
+		
 		
 	}
 
@@ -57,9 +78,26 @@ class KlinkDocumentUtils
 	 * @param string $mimeType 
 	 * @return string the correspondent 
 	 */
-	public static function documentTypeFromMimeType($mimeType){
+	public static function documentTypeFromMimeType( $mimeType ){
 
-		return "";
+		if( array_key_exists($mimeType, self::$mimeTypesToDocType) ) {
+			return self::$mimeTypesToDocType[$mimeType];
+		}
+
+		return "document";
 	}
+
+	/**
+	 * Check if the specified mime type is one of the supported mimetypes for indexing
+	 * @param type $mimeType 
+	 * @return type
+	 */
+	public static function isMimeTypeSupported( $mimeType ){
+
+		return array_key_exists($mimeType, self::$mimeTypesToDocType);
+
+	}
+
+	
 
 }

@@ -7,52 +7,42 @@
 final class KlinkCoreClient
 {
 
-/**
- TODO: magari usare le eccezioni per indicare che c'è stato un errore
- * */
-
 	// ---- API endpoint constants
 
 
 	/**
 	 * DOCUMENTS_ENDPOINT
 	 */
-
 	const ALL_DOCUMENTS_ENDPOINT = 'documents/';
 
 
 	/**
 	 * SINGLE_DOCUMENT_ENDPOINT
 	 */
-
-	const SINGLE_DOCUMENT_ENDPOINT = 'document/{ID}';
+	const SINGLE_DOCUMENT_ENDPOINT = 'descriptor/{INSTITUTION_ID}/{LOCAL_DOC_ID}';
 
 
 	/**
 	 * SEARCH_ENDPOINT
 	 */
-
 	const SEARCH_ENDPOINT = 'search/';
 
 
 	/**
 	 * AUTOCOMPLETE_ENDPOINT
 	 */
-
 	const AUTOCOMPLETE_ENDPOINT = 'autocomplete/';
 
 
 	/**
 	 * ALL_INSTITUTIONS_ENDPOINT
 	 */
-
 	const ALL_INSTITUTIONS_ENDPOINT = 'institutions/';
 
 
 	/**
 	 * SINGLE_INSTITUTION_ENDPOINT
 	 */
-
 	const SINGLE_INSTITUTION_ENDPOINT = 'institutions/{ID}';
 
 
@@ -73,7 +63,7 @@ final class KlinkCoreClient
 	private $configuration = null;
 
 
-	function __construct(KlinkConfiguration $config )
+	function __construct( KlinkConfiguration $config )
 	{
 
 		KlinkCoreClient::test($config); //test the configuration for errors
@@ -87,10 +77,6 @@ final class KlinkCoreClient
 		}
 
 	}
-
-
-	//a Document descriptor is required to specify its complete ID (that's composed of SiteID:DocumentID).
-
 
 
 	// ----- Document interaction
@@ -135,7 +121,12 @@ final class KlinkCoreClient
 
 		$conn = self::_get_connection();
 
-		$rem = $conn->delete( self::SINGLE_DOCUMENT_ENDPOINT, array('ID' => $document->getId()) );
+		$rem = $conn->delete( self::SINGLE_DOCUMENT_ENDPOINT, 
+			array(
+				'INSTITUTION_ID' => $document->getInstitutionID(),
+				'LOCAL_DOC_ID' => $document->getLocalDocumentID(),
+				) 
+			);
 
 		if( KlinkHelpers::is_error( $rem ) ){
 			throw new KlinkException( (string)$rem );
@@ -170,14 +161,6 @@ final class KlinkCoreClient
 
 	}
 
-	/**
-	 * Get the currently indexed documents that are local/private of the institution
-	 * @return KlinkDocumentDescriptor[]
-	 */
-	function getLocalDocuments(){
-
-		return null;
-	}
 
 
 	// ----- Search functionality
@@ -187,11 +170,11 @@ final class KlinkCoreClient
 	 * @param string $terms the phrase or terms to search for
 	 * @param SearchType $type the type of the search to be perfomed, if null is specified the default behaviour is KlinkSearchType::GLOBAL
 	 * @param int $resultsPerPage the number of results per page
-	 * @param int $page the page to display
+	 * @param int $offset the page to display
 	 * @return KlinkSearchResult returns the document that match the searched terms
 	 * @throws KlinkException if something wrong happened during the communication with the core
 	 */
-	function search($terms, KlinkSearchType $type = null, $resultsPerPage = 10, $page = 0){
+	function search( $terms, KlinkSearchType $type = null, $resultsPerPage = 10, $offset = 0 ){
 
 
 
@@ -201,7 +184,7 @@ final class KlinkCoreClient
 
 		$conn = self::_get_connection();
 
-		$rem = $conn->get(self::SEARCH_ENDPOINT, new KlinkSearchResult(),
+		$rem = $conn->get( self::SEARCH_ENDPOINT, new KlinkSearchResult(),
 			array(
 				'query' => $terms,
 				'visibility' => $type
@@ -225,7 +208,7 @@ final class KlinkCoreClient
 	 * @throws KlinkException if something wrong happened during the communication with the core
 	 * @internal Reserved for future uses
 	 */
-	function autocomplete($terms, KlinkSearchType $type = null){
+	function autocomplete( $terms, KlinkSearchType $type = null ){
 
 		if(is_null($type)){
 			$type = KlinkSearchType::KLINK_PUBLIC;
@@ -250,7 +233,12 @@ final class KlinkCoreClient
 	 * @return KlinkInstitutionDetails
 	 * @throws KlinkException if something wrong happened during the communication with the core
 	 */
-	function updateInstitution(KlinkInstitutionDetails $info){
+	function updateInstitution( KlinkInstitutionDetails $info ){
+
+		/**
+		TODO: check info->id === $config->institutionId
+		*/
+
 		$conn = self::_get_connection();
 
 		$rem = $conn->put( self::SINGLE_INSTITUTION_ENDPOINT, $info );
@@ -268,7 +256,11 @@ final class KlinkCoreClient
 	 * @return type
 	 * @throws KlinkException if something wrong happened during the communication with the core
 	 */
-	function saveInstitution(KlinkInstitutionDetails $info){
+	function saveInstitution( KlinkInstitutionDetails $info ){
+
+		/**
+		TODO: check info->id === $config->institutionId
+		*/
 		
 		$conn = self::_get_connection();
 
@@ -325,13 +317,20 @@ final class KlinkCoreClient
 
 		KlinkHelpers::is_valid_id( $id );
 
-		$rem = $conn->get( self::SINGLE_DOCUMENT_ENDPOINT, new KlinkInstitutionDetails(), array('ID' => $id) );
+		$rem = $conn->get( self::SINGLE_INSTITUTION_ENDPOINT, new KlinkInstitutionDetails(), array('ID' => $id) );
 
 		if( KlinkHelpers::is_error( $rem ) ){
 			throw new KlinkException( (string)$rem );
 		}
 
 		return $rem;
+
+	}
+
+	function institutionExists( $idOrName ){
+
+		throw new Exception("Not Implemented");
+		
 
 	}
 

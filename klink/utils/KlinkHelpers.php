@@ -374,6 +374,36 @@ class KlinkHelpers
 		}
 	}
 
+	public static function is_valid_date_string( $value, $parameter_name, $error_message_format = 'The %s must be formatted as spaecified by the RFC3339' )
+	{
+
+		self::is_string_and_not_empty( $value, $parameter_name, $error_message_format );
+
+		// DateTime::RFC3339
+
+		$dt = date_create( $value );
+
+		if($dt !== false) {
+			$formatted = $dt->format(DateTime::RFC3339);
+
+			if( $formatted !== $value ){
+
+				$message = self::localize( sprintf( $error_message_format, $parameter_name ) );
+
+				throw new InvalidArgumentException( $message );
+
+			}
+			
+
+		}
+		else {
+			$message = self::localize( sprintf( $error_message_format, $parameter_name ) );
+
+			throw new InvalidArgumentException( $message );
+		}
+
+	}
+
 	/**
 	 * Check if the url is syntactically well formatted.
 	 * @param string $url 
@@ -449,6 +479,43 @@ class KlinkHelpers
 		}
 
 		//return true;
+
+	}
+
+
+	public static function is_valid_phonenumber( $value, $parameter_name, $error_message_format = 'The %s must be formatted as spaecified by the RFC3339' ){
+
+	}
+
+	public static function is_valid_mail( $value, $parameter_name, $error_message_format = 'The %s must be formatted as spaecified by the RFC3339' ){
+		
+	}
+
+
+
+
+	public static function now(){
+		$dt = date_create();
+
+		return $dt->format(DateTime::RFC3339);
+	}
+
+	public static function format_date( $a_date ){
+
+		// error_log('format date: ' . $a_date);
+
+		$dt = date_create( $a_date );
+
+		if($dt===false){
+			throw new InvalidArgumentException('Invalid date passed');
+			
+		}
+
+		$f = $dt->format(DateTime::RFC3339);
+
+		error_log('format date: ' . $a_date . ' -> ' . $f);
+
+		return $f;
 
 	}
 }
