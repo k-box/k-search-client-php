@@ -156,7 +156,7 @@ final class KlinkDocumentDescriptor
 
 	/**
 	 * authors
-	 * @var string
+	 * @var array
 	 */
 
 	public $authors;
@@ -422,7 +422,7 @@ final class KlinkDocumentDescriptor
 
         $instance->documentURI = $documentURI;
 
-        $instance->mimetype = $mimetype;
+        $instance->mimeType = $mimetype;
 
         $instance->documentType = KlinkDocumentUtils::documentTypeFromMimeType( $mimetype );
 

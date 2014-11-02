@@ -122,7 +122,7 @@ final class KlinkRestClient implements INetworkTransport
 			 * @param bool $debug Whether to enable debug messages on the log.
 			 *                       Default false.
 			 */
-			'debug' => true,
+			'debug' => false,
 		);
 
 		KlinkHelpers::is_valid_url( $baseApiUrl, 'baseApiUrl' );
