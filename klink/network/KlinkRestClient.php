@@ -122,7 +122,7 @@ final class KlinkRestClient implements INetworkTransport
 			 * @param bool $debug Whether to enable debug messages on the log.
 			 *                       Default false.
 			 */
-			'debug' => false,
+			'debug' => true,
 		);
 
 		KlinkHelpers::is_valid_url( $baseApiUrl, 'baseApiUrl' );
@@ -160,6 +160,13 @@ final class KlinkRestClient implements INetworkTransport
 
 		$result = $this->rest->get( $url, $this->all_request_options );
 
+		if($this->config['debug']){
+			error_log('###### REST GET RESPONSE ######');
+			error_log( $url );
+			error_log(print_r($result, true));
+			error_log('######');
+		}
+
 		if(KlinkHelpers::is_error($result)){
 			return $result;
 		}
@@ -195,6 +202,13 @@ final class KlinkRestClient implements INetworkTransport
 		$url = self::_construct_url( $this->baseApiUrl, $url, $params );
 
 		$result = $this->rest->get( $url, $this->all_request_options );
+
+		if($this->config['debug']){
+			error_log('###### REST GET_COLLECTION RESPONSE ######');
+			error_log( $url );
+			error_log(print_r($result, true));
+			error_log('######');
+		}
 
 		if(KlinkHelpers::is_error($result)){
 			return $result;
@@ -251,6 +265,14 @@ final class KlinkRestClient implements INetworkTransport
 
 		$result = $this->rest->post( $url, $headers );
 
+		if($this->config['debug']){
+			error_log('###### REST POST RESPONSE ######');
+			error_log( $url );
+			error_log( print_r( $headers, true) );
+			error_log(print_r($result, true));
+			error_log('######');
+		}
+
 		if(KlinkHelpers::is_error($result)){
 			return $result;
 		}
@@ -301,6 +323,14 @@ final class KlinkRestClient implements INetworkTransport
 
 		$result = $this->rest->post( $url, $headers );
 
+		if($this->config['debug']){
+			error_log('###### REST PUT RESPONSE ######');
+			error_log( $url );
+			error_log( print_r($header, true) );
+			error_log(print_r($result, true));
+			error_log('######');
+		}
+
 		if(KlinkHelpers::is_error($result)){
 			return $result;
 		}
@@ -349,6 +379,13 @@ final class KlinkRestClient implements INetworkTransport
 
 		$result = $this->rest->delete( $url, $this->all_request_options );
 
+		if($this->config['debug']){
+			error_log('###### REST DELETE RESPONSE ######');
+			error_log( $url );
+			error_log(print_r($result, true));
+			error_log('######');
+		}
+
 		if(KlinkHelpers::is_error($result)){
 			return $result;
 		}
@@ -357,11 +394,13 @@ final class KlinkRestClient implements INetworkTransport
 		//201 created
 		//202 accepted
 
+
+
 		if( $result['response']['code'] !== 200 && $result['response']['code'] !== 204 ){
 			return new KlinkError('http_request_failed', KlinkHelpers::localize($result['response']['message']));
 		}
 
-		if($result['headers']['content-type'] !== self::JSON_ENCODING){
+		if( $result['response']['code'] !== 204 && $result['headers']['content-type'] !== self::JSON_ENCODING){
 			return new KlinkError('http_response_format', KlinkHelpers::localize('Unsupported content encoding from the server.'));
 		}
 

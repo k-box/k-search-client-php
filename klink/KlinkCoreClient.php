@@ -19,7 +19,7 @@ final class KlinkCoreClient
 	/**
 	 * SINGLE_DOCUMENT_ENDPOINT
 	 */
-	const SINGLE_DOCUMENT_ENDPOINT = 'descriptor/{INSTITUTION_ID}/{LOCAL_DOC_ID}';
+	const SINGLE_DOCUMENT_ENDPOINT = 'descriptors/{INSTITUTION_ID}/{LOCAL_DOC_ID}';
 
 
 	/**

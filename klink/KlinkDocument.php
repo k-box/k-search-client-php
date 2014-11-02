@@ -14,19 +14,20 @@ class KlinkDocument {
 	 * @var KlinkDocumentDescriptor
 	 */
 
-	private $descriptor;
+	protected $descriptor;
 
 	/**
 	 * file
 	 * @var mixed
 	 */
 
-	private $documentData;
+	protected $documentData;
 
 	/**
 	 * 
 	 */
-	public function __constructor(KlinkDocumentDescriptor $descriptor, $data){
+	public function __construct(KlinkDocumentDescriptor $descriptor, $data){
+
 		$this->descriptor = $descriptor;
 
 		$this->documentData = $data;
@@ -39,6 +40,7 @@ class KlinkDocument {
 	 * @return KlinkDocumentDescriptor
 	 */
 	public function getDescriptor() {
+
 		return $this->descriptor;
 	}
 
