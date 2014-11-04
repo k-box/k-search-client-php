@@ -187,7 +187,9 @@ final class KlinkCoreClient
 		$rem = $conn->get( self::SEARCH_ENDPOINT, new KlinkSearchResult(),
 			array(
 				'query' => $terms,
-				'visibility' => $type
+				'visibility' => $type,
+				'numResults' => $resultsPerPage,
+				'startResult' => $offset
 			) );
 
 		if(KlinkHelpers::is_error($rem)){
