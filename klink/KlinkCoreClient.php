@@ -66,7 +66,7 @@ final class KlinkCoreClient
 	function __construct( KlinkConfiguration $config )
 	{
 
-		KlinkCoreClient::test($config); //test the configuration for errors
+		//KlinkCoreClient::test($config); //test the configuration for errors
 
 		$this->configuration = $config;
 
@@ -315,7 +315,7 @@ final class KlinkCoreClient
 
 		$conn = self::_get_connection();
 
-		KlinkHelpers::is_valid_id( $id );
+		KlinkHelpers::is_valid_id( $id, 'id' );
 
 		$rem = $conn->get( self::SINGLE_INSTITUTION_ENDPOINT, new KlinkInstitutionDetails(), array('ID' => $id) );
 
@@ -342,13 +342,28 @@ final class KlinkCoreClient
 	 * */
 	public static function test(KlinkConfiguration $config){
 
-		/**
-		 TODO: test the connection and the configuration with a simple call
-		 create a client
-		 do the test
-		 if fails -> error
-		 else -> ok
-		 * */
+		try{
+
+		  	$client = new KlinkCoreClient( $config );
+
+
+		 
+
+			 $res = $client->getInstitution( $config->getInstitutionId() );
+
+			 error_log( '###### TEST RESPONSE ###### ');
+			 error_log( print_r($res, true ) );
+
+		 	return true;
+
+		} catch( KlinkException $ke ){
+
+			error_log( '###### TEST EXCEPTION ###### ');
+		 	error_log( print_r($ke, true ) );
+
+			return false;
+
+		}
 
 	}
 
