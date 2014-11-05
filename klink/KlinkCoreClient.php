@@ -342,7 +342,7 @@ final class KlinkCoreClient
 	/**
 	 * Test the specified KlinkConfiguration for errors
 	 * */
-	public static function test(KlinkConfiguration $config){
+	public static function test(KlinkConfiguration $config, &$error){
 
 		try{
 
@@ -356,12 +356,16 @@ final class KlinkCoreClient
 			 error_log( '###### TEST RESPONSE ###### ');
 			 error_log( print_r($res, true ) );
 
+			 $error = null;
+
 		 	return true;
 
 		} catch( KlinkException $ke ){
 
 			error_log( '###### TEST EXCEPTION ###### ');
 		 	error_log( print_r($ke, true ) );
+
+		 	$error = $ke;
 
 			return false;
 
