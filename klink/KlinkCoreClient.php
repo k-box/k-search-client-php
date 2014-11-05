@@ -145,7 +145,7 @@ final class KlinkCoreClient
 	 */
 	function updateDocument( KlinkDocument $document ){
 
-		$rem = $this->removeDocument($document);
+		$rem = $this->removeDocument($document->getDescriptor());
 
 		if(KlinkHelpers::is_error( $rem )){
 			throw new KlinkException( (string)$rem );

@@ -502,8 +502,6 @@ class KlinkHelpers
 
 	public static function format_date( $a_date ){
 
-		// error_log('format date: ' . $a_date);
-
 		$dt = date_create( $a_date );
 
 		if($dt===false){
@@ -512,8 +510,6 @@ class KlinkHelpers
 		}
 
 		$f = $dt->format(DateTime::RFC3339);
-
-		error_log('format date: ' . $a_date . ' -> ' . $f);
 
 		return $f;
 
