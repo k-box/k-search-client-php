@@ -3,17 +3,17 @@
 //JSON_MAPPER
 
 
-$map = require __DIR__ . '/composer/autoload_namespaces.php';
+// $map = require __DIR__ . '/composer/autoload_namespaces.php';
 
-if($map && isset($map[''])){
+// if($map && isset($map[''])){
 
-	require_once( __DIR__ . '/avvertix/jsonmapper/src/JsonMapper/Exception.php' );
-	require_once( __DIR__ . '/avvertix/jsonmapper/src/JsonMapper.php' );
+// 	require_once( __DIR__ . '/avvertix/jsonmapper/src/JsonMapper/Exception.php' );
+// 	require_once( __DIR__ . '/avvertix/jsonmapper/src/JsonMapper.php' );
 
-	// $jsonMapper = $map[''];
+// 	// $jsonMapper = $map[''];
 
-	// var_dump($jsonMapper);
-}
+// 	// var_dump($jsonMapper);
+// }
 
 // foreach ($map as $namespace => $path) {
 //     //require_once( $path );
@@ -39,7 +39,7 @@ if ($classMap) {
 
 	foreach ($classMap as $key => $value) {
 
-		if(strpos($key, 'Test')===false){
+		if(strpos($key, 'Test')===false || strpos($key, 'test')===false){
 
 		// echo $value . PHP_EOL;
 		require_once($value);

@@ -2,6 +2,7 @@
   "autoload": {
     "classmap": [
       "klink",
+      "vendor/avvertix/jsonmapper",
       "test"
     ]
   },

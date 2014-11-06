@@ -6,8 +6,16 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
+    'Address' => $vendorDir . '/avvertix/jsonmapper/example/Address.php',
+    'Contact' => $vendorDir . '/avvertix/jsonmapper/example/Contact.php',
     'HttpClassTest' => $baseDir . '/test/HttpClassTest.php',
     'INetworkTransport' => $baseDir . '/klink/network/INetworkTransport.php',
+    'JsonMapper' => $vendorDir . '/avvertix/jsonmapper/src/JsonMapper.php',
+    'JsonMapperTest' => $vendorDir . '/avvertix/jsonmapper/tests/JsonMapperTest.php',
+    'JsonMapperTest_Broken' => $vendorDir . '/avvertix/jsonmapper/tests/JsonMapperTest/Broken.php',
+    'JsonMapperTest_Logger' => $vendorDir . '/avvertix/jsonmapper/tests/JsonMapperTest/Logger.php',
+    'JsonMapperTest_Simple' => $vendorDir . '/avvertix/jsonmapper/tests/JsonMapperTest/Simple.php',
+    'JsonMapper_Exception' => $vendorDir . '/avvertix/jsonmapper/src/JsonMapper/Exception.php',
     'KlinkAuthentication' => $baseDir . '/klink/network/auth/KlinkAuthentication.php',
     'KlinkAuthenticationTest' => $baseDir . '/test/KlinkAuthenticationTest.php',
     'KlinkConfiguration' => $baseDir . '/klink/KlinkConfiguration.php',
@@ -33,8 +41,12 @@ return array(
     'KlinkRestClientTest' => $baseDir . '/test/KlinkRestClientTest.php',
     'KlinkSearchResult' => $baseDir . '/klink/KlinkSearchResult.php',
     'KlinkSearchType' => $baseDir . '/klink/KlinkSearchType.php',
+    'KlinkValidators' => $baseDir . '/klink/utils/KlinkValidators.php',
     'KlinkVisibilityType' => $baseDir . '/klink/KlinkVisibilityType.php',
     'Klink_Address' => $baseDir . '/klink/KlinkInstitutionDetails.php',
     'TestBodyResponse' => $baseDir . '/test/TestBodyResponse.php',
     'TestResponse' => $baseDir . '/test/TestResponse.php',
+    'namespacetest\\NamespaceTest' => $vendorDir . '/avvertix/jsonmapper/tests/namespacetest/NamespaceTest.php',
+    'namespacetest\\Unit' => $vendorDir . '/avvertix/jsonmapper/tests/namespacetest/Unit.php',
+    'namespacetest\\UnitData' => $vendorDir . '/avvertix/jsonmapper/tests/namespacetest/UnitData.php',
 );
