@@ -274,9 +274,9 @@ final class KlinkHttp implements INetworkTransport {
 			'decompress' => true,
 			'sslverify' => false,
 			/**
-				SSL verify should be turned on and sslcertificates should contain the necessary certificates
+				SSL verify should be turned on and sslcertificates should contain the necessary certificates.
 			*/
-			//'sslcertificates' => ABSPATH . WPINC . '/certificates/ca-bundle.crt',
+			'sslcertificates' => dirname( __FILE__ ) . '/certificates/ca-bundle.crt', //
 			'stream' => false, //if true the body of the response will be directly saved to filename
 			'filename' => null,
 			'limit_response_size' => null,
