@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "f346c49726b421457dfa45f8dcea90e2",
+    "hash": "fa906a3b562d5db19f8eab46d30f6de1",
     "packages": [
         {
             "name": "avvertix/jsonmapper",
