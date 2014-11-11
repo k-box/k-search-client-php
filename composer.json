@@ -1,4 +1,11 @@
 {
+  "name": "klink/adapterboilerplate",
+    "authors": [
+        {
+            "name": "Alessio Vertemati",
+            "email": "a.vertemati@sirisacademic.com"
+        }
+    ],
   "autoload": {
     "classmap": [
       "klink",
