@@ -78,6 +78,12 @@ final class KlinkInstitutionDetails
      */
     public $thumbnailURI;
 
+    /**
+     * ...
+     * @var string
+     */
+    public $url;
+
 
     function __construct(){
 
