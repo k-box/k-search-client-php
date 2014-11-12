@@ -233,7 +233,7 @@ final class KlinkCoreClient
 	{
 		$conn = self::_get_connection();
 
-		$rem = $conn->delete( self::SINGLE_INSTITUTIONS_ENDPOINT, 
+		$rem = $conn->delete( self::SINGLE_INSTITUTION_ENDPOINT, 
 			array(
 				'ID' => $id,
 				) 
