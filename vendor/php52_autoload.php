@@ -35,17 +35,13 @@
 $classMap = require __DIR__ . '/composer/autoload_classmap.php';
 //$classMap = array_values($classMap);
 if ($classMap) {
-    //require_once( $classMap );
 
 	foreach ($classMap as $key => $value) {
 
-		if(strpos($key, 'Test')===false || strpos($key, 'test')===false){
+		if(strpos($key, 'Test')===false && strpos($key, 'test')===false){
 
-		// echo $value . PHP_EOL;
-		require_once($value);
+			require_once($value);
+		}
 	}
-	}
-
-    //print_r($classMap);
     
 }
