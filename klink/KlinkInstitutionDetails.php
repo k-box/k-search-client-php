@@ -40,7 +40,7 @@ final class KlinkInstitutionDetails
      * ...
      * @var string
      */
-    public $mail;
+    public $email;
 
     /**
      * ...
@@ -64,7 +64,7 @@ final class KlinkInstitutionDetails
 
     public $addressLocality;
 
-    public $addressPostalCode;
+    public $addressZip;
 
     /**
      * ...
@@ -95,7 +95,7 @@ final class KlinkInstitutionDetails
             $this->addressStreet, 
             $this->addressCountry, 
             $this->addressLocality, 
-            $this->addressPostalCode);
+            $this->addressZip);
 
     }
 
@@ -103,7 +103,7 @@ final class KlinkInstitutionDetails
         $this->addressStreet = $address->street;
         $this->addressCountry = $address->country;
         $this->addressLocality = $address->locality;
-        $this->addressPostalCode = $address->postalCode;
+        $this->addressZip = $address->postalCode;
 
         return $this;
     }
@@ -160,14 +160,14 @@ final class KlinkInstitutionDetails
      */
     public function getMail()
     {
-        return $this->mail;
+        return $this->email;
     }
 
     public function setMail( $mail )
     {
         KlinkHelpers::is_valid_mail( $number, 'phone number' );
 
-        $this->mail = $mail;
+        $this->email = $mail;
 
         return $this;
     }
@@ -256,7 +256,7 @@ final class KlinkInstitutionDetails
 
         $instance->creationDate = $joinedDate;
 
-        $instance->mail = null;
+        $instance->email = null;
 
         $instance->phone = null;
 
