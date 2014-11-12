@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Bootstrap file
  *
@@ -38,14 +37,8 @@ if( !defined( '__DIR__' ) ) {
 // use a plain old loader for php 5.2 while use composer loader for the new PHP versions
 
 if(defined('KLINK_COMPATIBILITY_MODE') && KLINK_COMPATIBILITY_MODE === true){
-
-	error_log( '>> Autoloading with PHP 5.2 capabilities <<' );
-
 	require_once('vendor/php52_autoload.php');
 }
 else {
-
-	error_log( '>> Autoloading with PHP 5.3+ capabilities <<' );
-
 	require_once('vendor/autoload.php');
 }
