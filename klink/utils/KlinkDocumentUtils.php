@@ -9,9 +9,9 @@ class KlinkDocumentUtils
 	
 	private static $mimeTypesToDocType = array(
 
-		'post' => 'web page',
-		'page' => 'web page',
-		'node' => 'web page',
+		'post' => 'web-page',
+		'page' => 'web-page',
+		'node' => 'web-page',
 		'application/msword' => 'document',
 		'application/vnd.ms-excel' => 'spreadsheet',
 		'application/vnd.ms-powerpoint' => 'presentation',
@@ -57,7 +57,7 @@ class KlinkDocumentUtils
 	}
 
 
-	public static function generateDocumentThumbnail($file, array $sizes){
+	public static function generateDocumentThumbnail($file, array $sizes = null){
 
 	}
 
