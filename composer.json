@@ -20,8 +20,6 @@
         }
     ],
   "require": {
-        "avvertix/jsonmapper": "0.4.*",
-        "illuminate/database": "4.1.*"
-
+        "avvertix/jsonmapper": "0.4.*"
     }
 }
