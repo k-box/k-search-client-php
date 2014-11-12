@@ -206,6 +206,18 @@ final class KlinkInstitutionDetails
         return date_create( $this->creationDate );
     }
 
+    public function getUrl()
+    {
+        return $this->url;
+    }
+
+    public function setUrl($url)
+    {
+        KlinkHelpers::is_valid_url( $url, 'url' );
+
+        $this->url = $url;
+    }
+
 
 
 
@@ -223,7 +235,7 @@ final class KlinkInstitutionDetails
      * @return KlinkInstitutionDetails
      * @throws InvalidArgumentException if some parameters are invalid
      */
-    public static function create($id, $name, $type = 'Organization',  $joinedDate = null){
+    public static function create($id, $name,  $type = 'Organization',  $joinedDate = null){
 
         KlinkHelpers::is_valid_id( $id, 'id' );
 
@@ -251,6 +263,17 @@ final class KlinkInstitutionDetails
         $instance->thumbnailURI = null;
 
         $instance->type = $type;
+
+        $instance->url = null;
+
+// id   string  true    {not blank}, {match: /^[a-zA-Z0-9-]+$/} The Object Id
+// name    string  true    {not blank} The Institution Name
+// type    string  true    {not blank} The Institution type, according to Schema.org
+// email   string  true    {email address}, {not blank}    
+// url string  true    {url}, {not blank}  
+// phone   string  true    {not blank} 
+// creationDate    string  true    {not blank} 
+// thumbnailURI    string  true    {not blank}, {url}
 
         return $instance;
 

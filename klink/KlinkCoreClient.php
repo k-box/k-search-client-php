@@ -13,7 +13,7 @@ final class KlinkCoreClient
 	/**
 	 * DOCUMENTS_ENDPOINT
 	 */
-	const ALL_DOCUMENTS_ENDPOINT = 'documents/';
+	const ALL_DOCUMENTS_ENDPOINT = 'descriptors/';
 
 
 	/**
@@ -72,7 +72,7 @@ final class KlinkCoreClient
 
 		foreach ($this->configuration->getCores() as $core) {
 
-			$this->rest[] = new KlinkRestClient($core->getCore(), $core);
+			$this->rest[] = new KlinkRestClient($core->getCore(), $core, array('debug' => $this->configuration->isDebugEnabled()));
 
 		}
 
@@ -229,6 +229,23 @@ final class KlinkCoreClient
 	}
 
 
+	public function deleteInstitution( $id )
+	{
+		$conn = self::_get_connection();
+
+		$rem = $conn->delete( self::SINGLE_INSTITUTIONS_ENDPOINT, 
+			array(
+				'ID' => $id,
+				) 
+			);
+
+		if( KlinkHelpers::is_error( $rem ) ){
+			throw new KlinkException( (string)$rem );
+		}
+
+		return $rem;
+	}
+
 	/**
 	 * Updates the details of the specified institution
 	 * @param KlinkInstitutionDetails $info 
@@ -241,13 +258,25 @@ final class KlinkCoreClient
 		TODO: check info->id === $config->institutionId
 		*/
 
-		$conn = self::_get_connection();
+		$rem = $this->deleteInstitution( $info->getID() );
 
-		$rem = $conn->put( self::SINGLE_INSTITUTION_ENDPOINT, $info );
+		if(KlinkHelpers::is_error( $rem )){
+			throw new KlinkException( (string)$rem );
+		}
+
+		$rem = $this->saveInstitution( $info );
 
 		if( KlinkHelpers::is_error( $rem ) ){
 			throw new KlinkException( (string)$rem );
 		}
+
+		// $conn = self::_get_connection();
+
+		// $rem = $conn->put( self::SINGLE_INSTITUTION_ENDPOINT, $info );
+
+		// if( KlinkHelpers::is_error( $rem ) ){
+		// 	throw new KlinkException( (string)$rem );
+		// }
 
 		return $rem;
 	}

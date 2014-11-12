@@ -54,6 +54,22 @@ final class KlinkConfiguration
 		return $this->cores;
 	}
 
+	private $debug = false;
+
+	public function enableDebug()
+	{
+		$this->debug = true;
+	}
+
+	public function disableDebug()
+	{
+		$this->debug = false;
+	}
+
+	public function isDebugEnabled()
+	{
+		return $this->debug;
+	}
 
 
 
