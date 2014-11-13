@@ -161,6 +161,31 @@ final class KlinkCoreClient
 
 	}
 
+	/**
+	 * Retrieve the Document Descriptor of an indexed document given the institution identifier and the local document identifier
+	 * @param string $institutionId 
+	 * @param string $documentId 
+	 * @return KlinkDocumentDescriptor
+	 */
+	function getDocument( $institutionId, $documentId ){
+
+		$conn = self::_get_connection();
+
+		KlinkHelpers::is_valid_id( $institutionId, 'institution id' );
+		KlinkHelpers::is_valid_id( $documentId, 'local document id' );
+
+		$rem = $conn->get( self::SINGLE_DOCUMENT_ENDPOINT, new KlinkDocumentDescriptor(), array(
+			'INSTITUTION_ID' => $institutionId,
+			'LOCAL_DOC_ID' => $documentId) );
+
+		if( KlinkHelpers::is_error( $rem ) ){
+			throw new KlinkException( (string)$rem );
+		}
+
+		return $rem;
+
+	}
+
 
 
 	// ----- Search functionality
