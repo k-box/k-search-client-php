@@ -15,7 +15,7 @@ final class KlinkDocumentDescriptor
 	 * @internal this property might be forever null
 	 */
 
-	public $id;
+	// public $id;
 
 	/**
 	 * getId
@@ -407,7 +407,7 @@ final class KlinkDocumentDescriptor
 
         $instance = new self();
 
-        $instance->id = $institutionID . '-' . $localDocumentID;
+        //$instance->id = $institutionID . '-' . $localDocumentID;
 
         $instance->institutionID = $institutionID;
 		
