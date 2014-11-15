@@ -193,13 +193,13 @@ final class KlinkCoreClient
 	/**
 	 * Description
 	 * @param string $terms the phrase or terms to search for
-	 * @param SearchType $type the type of the search to be perfomed, if null is specified the default behaviour is KlinkSearchType::GLOBAL
+	 * @param KlinkSearchType $type the type of the search to be perfomed, if null is specified the default behaviour is KlinkSearchType::GLOBAL
 	 * @param int $resultsPerPage the number of results per page
 	 * @param int $offset the page to display
 	 * @return KlinkSearchResult returns the document that match the searched terms
 	 * @throws KlinkException if something wrong happened during the communication with the core
 	 */
-	function search( $terms, KlinkSearchType $type = null, $resultsPerPage = 10, $offset = 0 ){
+	function search( $terms, $type = null, $resultsPerPage = 10, $offset = 0 ){
 
 
 
