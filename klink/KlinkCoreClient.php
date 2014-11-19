@@ -137,6 +137,39 @@ final class KlinkCoreClient
 	}
 
 	/**
+	 * Remove a document givent it's institution and local document identifier.
+	 * 
+	 * Performs a document removal given directly the institutions identifier and the local document identifier.
+	 * 
+	 * @param string $institution the institution identifier
+	 * @param string $document the local document identifier
+	 * @return boolean
+	 * @internal
+	 */
+	function removeDocumentById( $institution, $document ){
+
+		if( $institution !== $this->configuration->getInstitutionId() ){
+			throw new KlinkException("You cannot remove document you don't own");
+		}
+
+		$conn = self::_get_connection();
+
+		$rem = $conn->delete( self::SINGLE_DOCUMENT_ENDPOINT, 
+			array(
+				'INSTITUTION_ID' => $institution,
+				'LOCAL_DOC_ID' => $document,
+				) 
+			);
+
+		if( KlinkHelpers::is_error( $rem ) ){
+			throw new KlinkException( (string)$rem );
+		}
+
+		return $rem;
+
+	}
+
+	/**
 	 * Description
 	 * @param KlinkDocument $document the new information about the document. The document descriptor must have the same ID of the already existing document
 	 * @param type $document_content 
@@ -191,9 +224,12 @@ final class KlinkCoreClient
 	// ----- Search functionality
 
 	/**
-	 * Description
+	 * Performs a search over KLink.
+	 * 
+	 * Execute a KLink search on the reference KLink Core. The performed search reflects the specified parameters.
+	 * 
 	 * @param string $terms the phrase or terms to search for
-	 * @param KlinkSearchType $type the type of the search to be perfomed, if null is specified the default behaviour is KlinkSearchType::GLOBAL
+	 * @param KlinkSearchType $type the type of the search to be perfomed, if null is specified the default behaviour is KlinkSearchType::KLINK_PUBLIC
 	 * @param int $resultsPerPage the number of results per page
 	 * @param int $offset the page to display
 	 * @return KlinkSearchResult returns the document that match the searched terms
@@ -256,6 +292,7 @@ final class KlinkCoreClient
 
 	public function deleteInstitution( $id )
 	{
+
 		$conn = self::_get_connection();
 
 		$rem = $conn->delete( self::SINGLE_INSTITUTION_ENDPOINT, 
@@ -337,7 +374,7 @@ final class KlinkCoreClient
 	 * @return KlinkInstitutionDetails[] the list of institutions
 	 * @throws KlinkException if something wrong happened during the communication with the core
 	 */
-	function getInstitutions($nameOrId = null){
+	function getInstitutions( $nameOrId = null ){
 
 		$conn = self::_get_connection();
 
@@ -361,9 +398,10 @@ final class KlinkCoreClient
 	}
 
 	/**
-	 * Description
-	 * @param type $id 
-	 * @return type
+	 * Get the institutions details.
+	 * 
+	 * @param string $id 
+	 * @return KlinkInstitutionDetails
 	 * @throws KlinkException if something wrong happened during the communication with the core
 	 * @throws IllegalArgumentException if the id is not well formatted
 	 */
@@ -383,6 +421,12 @@ final class KlinkCoreClient
 
 	}
 
+	/**
+	 * Description
+	 * @param type $idOrName 
+	 * @return type
+	 * @internal 
+	 */
 	function institutionExists( $idOrName ){
 
 		throw new Exception("Not Implemented");
@@ -402,15 +446,12 @@ final class KlinkCoreClient
 
 		  	$client = new KlinkCoreClient( $config );
 
+			$res = $client->getInstitution( $config->getInstitutionId() );
 
-		 
+			error_log( '###### TEST RESPONSE ###### ');
+			error_log( print_r($res, true ) );
 
-			 $res = $client->getInstitution( $config->getInstitutionId() );
-
-			 error_log( '###### TEST RESPONSE ###### ');
-			 error_log( print_r($res, true ) );
-
-			 $error = null;
+			$error = null;
 
 		 	return true;
 
