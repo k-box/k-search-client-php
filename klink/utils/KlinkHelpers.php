@@ -487,8 +487,17 @@ class KlinkHelpers
 
 	}
 
-	public static function is_valid_mail( $value, $parameter_name, $error_message_format = 'The %s must be formatted as spaecified by the RFC3339' ){
+	public static function is_valid_mail( $value, $parameter_name, $error_message_format = 'The %s must be a valid email address' ){
 		
+		if (!filter_var( $value, FILTER_VALIDATE_EMAIL) ) {
+		    
+
+			$message = self::localize( sprintf( $error_message_format, $parameter_name ) );
+
+			throw new InvalidArgumentException( $message );
+
+		}
+
 	}
 
 
