@@ -384,13 +384,19 @@ final class KlinkCoreClient
 			throw new KlinkException( (string)$insts );
 		}
 
-		if( !is_null( $nameOrId ) ){
+		if( !is_null( $nameOrId ) && count( $insts ) > 0 ){
 
-			/**
-			 TODO: filtering
-			 * */
+			$filtered = array();
 
-			return $insts;
+			foreach ($insts as $i) {
+				
+				if( $i->getID() === $nameOrId || strpos( $i->getName(), $nameOrId ) !== false ){
+					$filtered[] = $i;
+				}
+
+			}
+
+			return $filtered;
 		}
 
 
@@ -496,4 +502,5 @@ final class KlinkCoreClient
 
 		return $this->rest[0];
 	}
+
 }
