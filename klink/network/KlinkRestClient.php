@@ -176,7 +176,7 @@ final class KlinkRestClient implements INetworkTransport
 		//201 created
 		//202 accepted
 
-		if( $result['response']['code'] !== 200 ){
+		if( (int)($result['response']['code']) !== 200 ){
 			return new KlinkError('http_request_failed', KlinkHelpers::localize($result['response']['message']));
 		}
 
@@ -219,7 +219,7 @@ final class KlinkRestClient implements INetworkTransport
 		//201 created
 		//202 accepted
 
-		if( $result['response']['code'] !== 200 ){
+		if( (int)($result['response']['code']) !== 200 ){
 			return new KlinkError('http_request_failed', KlinkHelpers::localize($result['response']['message']));
 		}
 
@@ -282,7 +282,7 @@ final class KlinkRestClient implements INetworkTransport
 		//201 created
 		//202 accepted
 
-		if($result['response']['code'] !== 200 && $result['response']['code'] !== 201){
+		if((int)($result['response']['code']) !== 200 && (int)($result['response']['code']) !== 201){
 			return new KlinkError('http_request_failed', KlinkHelpers::localize($result['response']['message']));
 		}
 
@@ -340,7 +340,7 @@ final class KlinkRestClient implements INetworkTransport
 		//201 created
 		//202 accepted
 
-		if($result['response']['code'] !== 200 && $result['response']['code'] !== 204){
+		if((int)($result['response']['code']) !== 200 && (int)($result['response']['code']) !== 204){
 			return new KlinkError('http_request_failed', KlinkHelpers::localize($result['response']['message']));
 		}
 
@@ -396,11 +396,11 @@ final class KlinkRestClient implements INetworkTransport
 
 
 
-		if( $result['response']['code'] !== 200 && $result['response']['code'] !== 204 ){
+		if( (int)($result['response']['code']) !== 200 && (int)($result['response']['code']) !== 204 ){
 			return new KlinkError('http_request_failed', KlinkHelpers::localize($result['response']['message']));
 		}
 
-		if( $result['response']['code'] !== 204 && $result['headers']['content-type'] !== self::JSON_ENCODING){
+		if( (int)($result['response']['code']) !== 204 && $result['headers']['content-type'] !== self::JSON_ENCODING){
 			return new KlinkError('http_response_format', KlinkHelpers::localize('Unsupported content encoding from the server.'));
 		}
 
