@@ -48,7 +48,7 @@ class HttpClassTest extends PHPUnit_Framework_TestCase
 
 		$this->assertFalse(KlinkHelpers::is_error($result), 'What the hell');
 
-		$this->assertEquals(200, $result['response']['code'], 'Something wront happened');
+		$this->assertEquals(200, $result['response']['code'], 'Something wrong happened');
 		$this->assertTrue(!empty($result['body']), 'The response body is empty');
 	}
 
@@ -82,8 +82,21 @@ class HttpClassTest extends PHPUnit_Framework_TestCase
 
 		$result = $this->http->get( $this->testendpoint . 'status/404');
 
-		$this->assertEquals(404, $result['response']['code'], 'Something wront happened');
+		$this->assertEquals(404, $result['response']['code'], 'Something wrong happened');
 		$this->assertEmpty($result['body'], 'Body not empty');
+
+	}
+
+	public function testHandleRedirect(){
+
+		$result = $this->http->get( $this->testendpoint . 'redirect/2');
+
+		$this->assertEquals(200, $result['response']['code'], 'Something wrong happened');
+		$this->assertNotEmpty($result['body'], 'Body empty');
+
+		$decoded = json_decode($result['body']);
+
+		$this->assertEquals('http://httpbin.org/get', $decoded->url, 'Expected url of get response');
 
 	}
 }

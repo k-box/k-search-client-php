@@ -33,7 +33,7 @@ final class KlinkHttp implements INetworkTransport {
 	private $localhost_url = 'http://localhost/';
 
 
-	function __construct($homeUrl) {
+	function __construct( $homeUrl = 'http://localhost/' ) {
 		$this->localhost_url = $homeUrl;
 	}
 
@@ -892,7 +892,10 @@ final class KlinkHttp implements INetworkTransport {
 			}
 		}
 
-		return wp_remote_request( $redirect_location, $args );
+		$objFetchSite = new KlinkHttp();
+
+		return $objFetchSite->request( $redirect_location, $args );
+
 	}
 
 	/**
