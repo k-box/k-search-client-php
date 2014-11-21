@@ -374,12 +374,18 @@ class KlinkHelpers
 		}
 	}
 
-	public static function is_valid_date_string( $value, $parameter_name, $error_message_format = 'The %s must be formatted as spaecified by the RFC3339' )
+	/**
+	 * Check if the passed date is a valid date and is formatted according to the RFC3339.
+	 * 
+	 * @param string $value the value to check
+	 * @param string $parameter_name the human understandable name of the parameter to be used in the error message
+	 * @param string $error_message_format only one %s is allowed, plese take into account that the format must be in english and will be localized in other languages
+	 * @throws InvalidArgumentException if the passed value is empty or null or is not a string
+	 */
+	public static function is_valid_date_string( $value, $parameter_name, $error_message_format = 'The %s must be formatted as specified by the RFC3339' )
 	{
 
 		self::is_string_and_not_empty( $value, $parameter_name, $error_message_format );
-
-		// DateTime::RFC3339
 
 		$dt = date_create( $value );
 
@@ -394,7 +400,6 @@ class KlinkHelpers
 
 			}
 			
-
 		}
 		else {
 			$message = self::localize( sprintf( $error_message_format, $parameter_name ) );
@@ -405,11 +410,12 @@ class KlinkHelpers
 	}
 
 	/**
-	 * Check if the url is syntactically well formatted.
-	 * @param string $url 
-	 * @param string $parameter_name 
-	 * @param string $error_message_format 
-	 * @throws IllegalArgumentException if the url is not well formatted or null or empty is given
+	 * Test if the url is syntactically well formed.
+	 * 
+	 * @param string $value the value to check
+	 * @param string $parameter_name the human understandable name of the parameter to be used in the error message
+	 * @param string $error_message_format only one %s is allowed, plese take into account that the format must be in english and will be localized in other languages
+	 * @throws InvalidArgumentException if the passed value is empty or null or is not a string
 	 */
 	public static function is_valid_url($url, $parameter_name, $error_message_format = 'The %s must be a valid url')
 	{
@@ -434,6 +440,17 @@ class KlinkHelpers
 
 	}
 
+	/**
+	 * Check if the specified identifier is a syntactically valid KLink identifier.
+	 * 
+	 * Test the specified identifier if is a syntactically valid KLink Identifier. 
+	 * A Klink identifier is valid if composed by letters, numbers and dash ([A-Za-z0-9\-]).
+	 * 
+	 * @param string $id the value to check
+	 * @param string $parameter_name the human understandable name of the parameter to be used in the error message
+	 * @param string $error_message_format only one %s is allowed, plese take into account that the format must be in english and will be localized in other languages
+	 * @throws InvalidArgumentException if the passed value is empty or null or is not a string
+	 */
 	public static function is_valid_id( $id, $parameter_name, $error_message_format = 'The %s must be a valid id. Valid ids are composed by alpha-numeric characters with no dashes, underscore, ? and spaces.' )
 	{
 
@@ -450,7 +467,8 @@ class KlinkHelpers
 	}
 
 	/**
-	 * Check is an array contains only elements of a particular class
+	 * Check is an array contains only elements of a particular class.
+	 * 
 	 * @param array $array the array to check
 	 * @param string $classname the class name to check
 	 * @throws InvalidArgumentException if an element of the array is not of type specified and is null or contains no elements
@@ -478,20 +496,69 @@ class KlinkHelpers
 
 		}
 
-		//return true;
+	}
+
+	/**
+	 * Check if the specified phone number is in an acceptable format.
+	 * 
+	 * 
+	 * 
+	 * @param string $value the value to check
+	 * @param string $parameter_name the human understandable name of the parameter to be used in the error message
+	 * @param string $error_message_format only one %s is allowed, plese take into account that the format must be in english and will be localized in other languages
+	 * @throws InvalidArgumentException if the passed value is empty or null or is not a string
+	 * @see http://stackoverflow.com/questions/123559/a-comprehensive-regex-for-phone-number-validation
+	 */
+	public static function is_valid_phonenumber( $value, $parameter_name, $error_message_format = 'The %s is not recognized as valid phone number' ){
+
+		self::is_string_and_not_empty( $value, $parameter_name, $error_message_format );
+
+
+		if( filter_var( $value, FILTER_VALIDATE_EMAIL) && @parse_url($value) !== false && filter_var($value, FILTER_VALIDATE_URL) ) {
+
+			$message = self::localize( sprintf( $error_message_format, $parameter_name ) );
+
+			throw new InvalidArgumentException( $message );
+
+		}
+
+		if ( !preg_match('/.*([0-9])+.*/i', $value) ){
+
+				$message = self::localize( sprintf( $error_message_format, $parameter_name ) );
+
+				throw new InvalidArgumentException( $message );
+
+		}
+
+		// print_r( var_export( preg_match('/^(?:(?:\(?(?:00|\+)([1-4]\d\d|[1-9]\d?)\)?)?[\-\.\ \\\/]?)?((?:\(?\d{1,}\)?[\-\.\ \\\/]?){0,})(?:[\-\.\ \\\/]?(?:#|ext\.?|extension|x)[\-\.\ \\\/]?(\d+))?$/i', $value), true) );
+		//die();
+
+		// if ( !preg_match('/^(?:(?:\(?(?:00|\+)([1-4]\d\d|[1-9]\d?)\)?)?[\-\.\ \\\/]?)?((?:\(?\d{1,}\)?[\-\.\ \\\/]?){0,})(?:[\-\.\ \\\/]?(?:#|ext\.?|extension|x)[\-\.\ \\\/]?(\d+))?$/i', $value) ){
+			
+		// 	$message = self::localize( sprintf( $error_message_format, $parameter_name ) );
+
+		// 	throw new InvalidArgumentException( $message );
+
+		// }
+
+		
 
 	}
 
-
-	public static function is_valid_phonenumber( $value, $parameter_name, $error_message_format = 'The %s must be formatted as spaecified by the RFC3339' ){
-
-	}
-
+	/**
+	 * Check if the email address specified is syntactically correct.
+	 * 
+	 * @param string $value the value to check
+	 * @param string $parameter_name the human understandable name of the parameter to be used in the error message
+	 * @param string $error_message_format only one %s is allowed, plese take into account that the format must be in english and will be localized in other languages
+	 * @throws InvalidArgumentException if the passed value is empty or null or is not a string
+	 */
 	public static function is_valid_mail( $value, $parameter_name, $error_message_format = 'The %s must be a valid email address' ){
 		
+		self::is_string_and_not_empty( $value, $parameter_name, $error_message_format );
+
 		if (!filter_var( $value, FILTER_VALIDATE_EMAIL) ) {
 		    
-
 			$message = self::localize( sprintf( $error_message_format, $parameter_name ) );
 
 			throw new InvalidArgumentException( $message );

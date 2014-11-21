@@ -30,6 +30,7 @@ return array(
     'KlinkError' => $baseDir . '/klink/KlinkError.php',
     'KlinkException' => $baseDir . '/klink/exception/KlinkException.php',
     'KlinkHelpers' => $baseDir . '/klink/utils/KlinkHelpers.php',
+    'KlinkHelpersTest' => $baseDir . '/test/KlinkHelpersTest.php',
     'KlinkHttp' => $baseDir . '/klink/network/KlinkHttp.php',
     'KlinkHttp_Cookie' => $baseDir . '/klink/network/KlinkHttp.php',
     'KlinkHttp_Curl' => $baseDir . '/klink/network/KlinkHttp.php',
