@@ -428,7 +428,7 @@ final class KlinkCoreClient
 	}
 
 	/**
-	 * Description
+	 * Check if the institution exists
 	 * @param type $idOrName 
 	 * @return type
 	 * @internal 
@@ -437,6 +437,30 @@ final class KlinkCoreClient
 
 		throw new Exception("Not Implemented");
 		
+
+	}
+
+	/**
+	 * Get the name of the institution give it's identifier.
+	 * 
+	 * Retrieve the institution's name corresponding to the specified id. The response is not cached.
+	 * 
+	 * @param string $id the institution's identifier
+	 * @return string|null the institution's name or null on error
+	 */
+	function getInstitutionName( $id )
+	{
+		try{
+
+			$inst = $this->getInstitution( $id );
+
+			return $inst->getName();
+
+		} catch( Exception $e ) {
+
+			return null;
+
+		}
 
 	}
 
@@ -454,8 +478,12 @@ final class KlinkCoreClient
 
 			$res = $client->getInstitution( $config->getInstitutionId() );
 
-			error_log( '###### TEST RESPONSE ###### ');
-			error_log( print_r($res, true ) );
+			if( $this->configuration->isDebugEnabled() ){
+
+				error_log( '###### TEST RESPONSE ###### ');
+				error_log( print_r($res, true ) );
+
+			}
 
 			$error = null;
 
@@ -463,8 +491,12 @@ final class KlinkCoreClient
 
 		} catch( KlinkException $ke ){
 
-			error_log( '###### TEST EXCEPTION ###### ');
-		 	error_log( print_r($ke, true ) );
+			if( $this->configuration->isDebugEnabled() ){
+
+				error_log( '###### TEST EXCEPTION ###### ');
+				error_log( print_r($res, true ) );
+				
+			}
 
 		 	$error = $ke;
 
