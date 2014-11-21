@@ -99,4 +99,20 @@ class HttpClassTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals('http://httpbin.org/get', $decoded->url, 'Expected url of get response');
 
 	}
+
+	public function testTimeoutRetry(){
+
+		$result = $this->http->get( 'http://10.255.255.1/', array( 'timeout' => 1, 'timeout_retry' => 1) );
+
+		print_r( $result );
+
+		// $this->assertEquals(200, $result['response']['code'], 'Something wrong happened');
+		// $this->assertNotEmpty($result['body'], 'Body empty');
+
+		// $decoded = json_decode($result['body']);
+
+		// $this->assertEquals('http://httpbin.org/get', $decoded->url, 'Expected url of get response');
+
+	}
+
 }

@@ -232,6 +232,16 @@ final class KlinkHttp implements INetworkTransport {
 			 *                           Default 5.
 			 */
 			'timeout' => 5,
+
+			/**
+			 * Filter the number of tentative that are performed for a request in case of timeout.
+			 *
+			 * @since 0.1.0
+			 *
+			 * @param int $timeout_retry_value The maximum numbers of retries in case of connection timeout.
+			 *                           Default 1.
+			 */
+			'timeout_retry' => 1,
 			/**
 			 * Filter the number of redirects allowed during an HTTP request.
 			 *
@@ -414,6 +424,17 @@ final class KlinkHttp implements INetworkTransport {
 		$response = $this->_dispatch_request( $url, $r );
 
 		KlinkHelpers::reset_mbstring_encoding();
+
+		if( KlinkHelpers::is_error( $response ) && 
+			!empty($response->get_error_message('http_request_timeout')) &&
+			$r['timeout_retry'] > 0 ){
+			// echo '>>>>>> We have a timeout with other  ' . $r['timeout_retry'] . ' retries' . PHP_EOL;
+
+			$r['timeout_retry'] = $r['timeout_retry'] - 1;
+
+			return self::request( $url, $r );
+		}
+
 
 		if ( KlinkHelpers::is_error( $response ) )
 			return $response;
@@ -868,7 +889,7 @@ final class KlinkHttp implements INetworkTransport {
 
 		// Don't redirect if we've run out of redirects.
 		if ( $args['redirection']-- <= 0 )
-			return new KlinkError( 'http_request_failed', KlinkHelpers::localize('Too many redirects.') );
+			return new KlinkError( 'http_request_failed_too_many_redirects', KlinkHelpers::localize('Too many redirects.') );
 
 		$redirect_location = $response['headers']['location'];
 
@@ -1061,15 +1082,18 @@ class KlinkHttp_Streams {
 		if ( false === $handle ) {
 			// SSL connection failed due to expired/invalid cert, or, OpenSSL configuration is broken.
 			if ( $secure_transport && 0 === $connection_error && '' === $connection_error_str )
-				return new KlinkError( 'http_request_failed', KlinkHelpers::localize( 'The SSL certificate for the host could not be verified.' ) );
+				return new KlinkError( 'http_request_ssl_failed', KlinkHelpers::localize( 'The SSL certificate for the host could not be verified.' ) );
 
-			return new KlinkError('http_request_failed', $connection_error . ': ' . $connection_error_str );
+			if ( 60 === $connection_error )
+				return new KlinkError( 'http_request_timeout', $connection_error_str );
+
+			return new KlinkError('http_request_ssl_failed', $connection_error . ': ' . $connection_error_str );
 		}
 
 		// Verify that the SSL certificate is valid for this request.
 		if ( $secure_transport && $ssl_verify ) {
 			if ( ! self::verify_ssl_certificate( $handle, $arrURL['host'] ) )
-				return new KlinkError( 'http_request_failed', KlinkHelpers::localize( 'The SSL certificate for the host could not be verified.' ) );
+				return new KlinkError( 'http_request_ssl_failed', KlinkHelpers::localize( 'The SSL certificate for the host could not be verified.' ) );
 		}
 
 		stream_set_timeout( $handle, $timeout, $utimeout );
@@ -1175,6 +1199,8 @@ class KlinkHttp_Streams {
 			unset( $strResponse );
 
 		}
+
+		$stream_info = stream_get_meta_data( $handle );
 
 		fclose( $handle );
 
@@ -1509,7 +1535,7 @@ class KlinkHttp_Curl {
 			}
 			if ( in_array( curl_getinfo( $handle, CURLINFO_HTTP_CODE ), array( 301, 302 ) ) ) {
 				curl_close( $handle );
-				return new KlinkError( 'http_request_failed', KlinkHelpers::localize( 'Too many redirects.' ) );
+				return new KlinkError( 'http_request_failed_too_many_redirects', KlinkHelpers::localize( 'Too many redirects.' ) );
 			}
 
 			curl_close( $handle );
@@ -1531,13 +1557,17 @@ class KlinkHttp_Curl {
 				fclose( $this->stream_handle );
 				return new KlinkError( 'http_request_failed', KlinkHelpers::localize( 'Failed to write request to temporary file.' ) );
 			}
+			if ( CURLE_OPERATION_TIMEDOUT /* 28 */ == $curl_error ) {
+				curl_close( $handle );
+				return new KlinkError( 'http_request_timeout', 'Operation timed out' );
+			}
 			if ( $curl_error = curl_error( $handle ) ) {
 				curl_close( $handle );
 				return new KlinkError( 'http_request_failed', $curl_error );
 			}
 			if ( in_array( curl_getinfo( $handle, CURLINFO_HTTP_CODE ), array( 301, 302 ) ) ) {
 				curl_close( $handle );
-				return new KlinkError( 'http_request_failed', KlinkHelpers::localize( 'Too many redirects.' ) );
+				return new KlinkError( 'http_request_failed_too_many_redirects', KlinkHelpers::localize( 'Too many redirects.' ) );
 			}
 		}
 
