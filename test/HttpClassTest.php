@@ -104,14 +104,9 @@ class HttpClassTest extends PHPUnit_Framework_TestCase
 
 		$result = $this->http->get( 'http://10.255.255.1/', array( 'timeout' => 1, 'timeout_retry' => 1) );
 
-		print_r( $result );
+		$this->assertTrue(KlinkHelpers::is_error($result), 'Expecting error');
 
-		// $this->assertEquals(200, $result['response']['code'], 'Something wrong happened');
-		// $this->assertNotEmpty($result['body'], 'Body empty');
-
-		// $decoded = json_decode($result['body']);
-
-		// $this->assertEquals('http://httpbin.org/get', $decoded->url, 'Expected url of get response');
+		$this->assertNotEmpty($result->get_error_message('http_request_timeout'), 'Expected timeout error');
 
 	}
 
