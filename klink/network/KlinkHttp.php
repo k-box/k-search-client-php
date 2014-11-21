@@ -1622,6 +1622,12 @@ class KlinkHttp_Curl {
 
 		$is_ssl = isset( $args['ssl'] ) && $args['ssl'];
 
+		//Check if running on Mac OS Yosemite (10.10) to overcome a known curl bug
+		if( php_uname("s") === 'Darwin' ){
+			return false;
+		}
+
+
 		if ( $is_ssl ) {
 			$curl_version = curl_version();
 			// Check whether this cURL version support SSL requests.
