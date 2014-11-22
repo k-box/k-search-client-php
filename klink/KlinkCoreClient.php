@@ -45,6 +45,12 @@ final class KlinkCoreClient
 	 */
 	const SINGLE_INSTITUTION_ENDPOINT = 'institutions/{ID}';
 
+	/**
+	 * The URL of the standalone Thumbnail generator API.
+	 */
+	const THUMBNAIL_GENERATOR_URL = 'http://klink-thumb2.azurewebsites.net/api/thumb/';
+
+	const THUMBAIL_GENERATOR_AUTHENTICATION = 'klink:#8e44ad';
 
 
 
@@ -266,12 +272,12 @@ final class KlinkCoreClient
 	/**
 	 * Give suggestion and autocomplete of the specified terms
 	 * @param mixed $terms could be a string or a plain array. If an array is given each element is considered separately and completion for each terms are provided
-	 * @param SearchType $type 
+	 * @param string $type KlinkSearchType::KLINK_PUBLIC or KlinkSearchType::KLINK_PRIVATE
 	 * @return string[] the possible suggestions
 	 * @throws KlinkException if something wrong happened during the communication with the core
 	 * @internal Reserved for future uses
 	 */
-	function autocomplete( $terms, KlinkSearchType $type = null ){
+	function autocomplete( $terms, $type = null ){
 
 		if(is_null($type)){
 			$type = KlinkSearchType::KLINK_PUBLIC;
@@ -478,7 +484,7 @@ final class KlinkCoreClient
 
 			$res = $client->getInstitution( $config->getInstitutionId() );
 
-			if( $this->configuration->isDebugEnabled() ){
+			if( $config->isDebugEnabled() ){
 
 				error_log( '###### TEST RESPONSE ###### ');
 				error_log( print_r($res, true ) );
@@ -491,7 +497,7 @@ final class KlinkCoreClient
 
 		} catch( KlinkException $ke ){
 
-			if( $this->configuration->isDebugEnabled() ){
+			if( $config->isDebugEnabled() ){
 
 				error_log( '###### TEST EXCEPTION ###### ');
 				error_log( print_r($res, true ) );
@@ -503,6 +509,88 @@ final class KlinkCoreClient
 			return false;
 
 		}
+
+	}
+
+	/**
+	 * Generate a PNG thumbnail of the given file.
+	 * 
+	 * @param string $fullFilePath the path of the file on disk where the reside the file to generate the thumbnail from.
+	 * @param string $fullImagePath the path in which the thumbnail will be saved. The path must have the name of the file in it (extension is png).
+	 * 
+	 * @throws KlinkException if the service cannot generate the thumbnail or the file is in the wrong format
+	 */
+	public static function generateThumbnail( $fullFilePath, $fullImagePath, $resolution = 'small', $debug = false )
+	{
+
+		KlinkHelpers::is_string_and_not_empty( $fullFilePath, 'file path' );
+
+		KlinkHelpers::is_string_and_not_empty( $fullImagePath, 'thumbnail image path' );
+
+
+		if( !file_exists( $fullFilePath ) ){
+			
+			throw new KlinkException("File not exists");
+
+		}
+
+		$mime = KlinkDocumentUtils::get_mime( $fullFilePath );
+
+
+		if( !KlinkDocumentUtils::isMimeTypeSupported( $mime ) ){
+
+			throw new KlinkException("Mimetype not supported");
+
+		}
+
+
+		$http = new KlinkHttp('http://localhost/');
+
+		if( $debug ) {
+
+			error_log( ' --> Generating thumbnail for ' . $fullFilePath );
+
+		}
+
+		$data = array(
+			'filename' => basename( $fullFilePath ),
+			'filemime' => KlinkDocumentUtils::get_mime($fullFilePath) ,
+			'filedata' => base64_encode( file_get_contents( $fullFilePath ) )
+			);
+
+		$headers = array(
+				'body' => json_encode($data),
+				'timeout' => 120,
+				'httpversion' => '1.1',
+				'compress' => 'true', //we compress the data that is sended for bandwith management
+				'headers' => array(
+					'Content-Type' => 'application/json',
+					'Authorization' => 'Basic ' . base64_encode( self::THUMBAIL_GENERATOR_AUTHENTICATION ) )
+			);
+
+		$result = $http->post( self::THUMBNAIL_GENERATOR_URL, $headers );
+
+		if(KlinkHelpers::is_error($result)){
+
+			if( $debug ){
+
+				echo 'Error ' . PHP_EOL;
+				error_log( print_r( $result, true ) );
+				error_log( ' ERROR <--' );
+
+			}
+
+			throw new KlinkException("The thumnail cannot be generated.");
+		}
+		else {
+
+			$decoded = json_decode( $result['body'] );
+
+			file_put_contents( $fullImagePath, file_get_contents( $decoded->DataUri ) );
+
+		}
+
+		return $fullImagePath;
 
 	}
 
