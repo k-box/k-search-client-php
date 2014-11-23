@@ -8,11 +8,15 @@
 
 // DO NOT EDIT AFTER THIS LINE ---------------------------------------
 
-if(defined('DEBUG')){
+if(defined('DEBUG') || defined( 'KLINKADAPTER_DEBUG' ) ){
 
 	ini_set('display_errors',1);
 	error_reporting(E_ALL);
 
+}
+
+if( !defined( 'KLINKADAPTER_DEBUG' ) ){
+	define( 'KLINKADAPTER_DEBUG', false );
 }
 
 // Limit the differences between php 5.2 constants and php 5.3 new ones
