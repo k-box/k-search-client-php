@@ -425,8 +425,10 @@ final class KlinkHttp implements INetworkTransport {
 
 		KlinkHelpers::reset_mbstring_encoding();
 
+		$timeouterror = KlinkHelpers::is_error( $response ) ? $response->get_error_message('http_request_timeout') : '';
+
 		if( KlinkHelpers::is_error( $response ) && 
-			!empty($response->get_error_message('http_request_timeout')) &&
+			!empty( $timeouterror ) &&
 			$r['timeout_retry'] > 0 ){
 			// echo '>>>>>> We have a timeout with other  ' . $r['timeout_retry'] . ' retries' . PHP_EOL;
 
