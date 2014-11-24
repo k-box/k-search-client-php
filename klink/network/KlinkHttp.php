@@ -231,7 +231,7 @@ final class KlinkHttp implements INetworkTransport {
 			 * @param int $timeout_value Time in seconds until a request times out.
 			 *                           Default 5.
 			 */
-			'timeout' => 5,
+			'timeout' => 8,
 
 			/**
 			 * Filter the number of tentative that are performed for a request in case of timeout.
@@ -280,7 +280,7 @@ final class KlinkHttp implements INetworkTransport {
 			'headers' => array(),
 			'cookies' => array(),
 			'body' => null,
-			'compress' => false,
+			'compress' => true,
 			'decompress' => true,
 			'sslverify' => false,
 			/**
