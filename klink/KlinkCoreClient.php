@@ -536,6 +536,8 @@ final class KlinkCoreClient
 
 		$mime = KlinkDocumentUtils::get_mime( $fullFilePath );
 
+		error_log( 'Generate thumbnail ' . $mime);
+
 
 		if( !KlinkDocumentUtils::isMimeTypeSupported( $mime ) ){
 
@@ -580,11 +582,24 @@ final class KlinkCoreClient
 
 			}
 
-			throw new KlinkException("The thumnail cannot be generated.");
+			throw new KlinkException("The thumbnail cannot be generated.");
 		}
 		else {
 
 			$decoded = json_decode( $result['body'] );
+
+			if( empty( $decoded->DataUri ) ){
+
+				if( $debug ){
+
+					echo 'Error ' . PHP_EOL;
+					error_log( print_r( $decoded, true ) );
+					error_log( ' ERROR <--' );
+
+				}
+
+				throw new KlinkException("The thumnail cannot be generated. Empty image response.");
+			}
 
 			file_put_contents( $fullImagePath, file_get_contents( $decoded->DataUri ) );
 

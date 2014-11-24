@@ -8,7 +8,7 @@
 
 // DO NOT EDIT AFTER THIS LINE ---------------------------------------
 
-if(defined('DEBUG') || defined( 'KLINKADAPTER_DEBUG' ) ){
+if( defined( 'KLINKADAPTER_DEBUG' ) && KLINKADAPTER_DEBUG ){
 
 	ini_set('display_errors',1);
 	error_reporting(E_ALL);
