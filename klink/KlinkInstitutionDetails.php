@@ -171,7 +171,7 @@ final class KlinkInstitutionDetails
 
     public function setMail( $mail )
     {
-        KlinkHelpers::is_valid_mail( $number, 'phone number' );
+        KlinkHelpers::is_valid_mail( $mail, 'mail' );
 
         $this->email = $mail;
 
