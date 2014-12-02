@@ -6,6 +6,24 @@ Is the starting point for creating a **K**Link Adapter. Offers some basic functi
 **Composer is used for autoload and bootstrap, so only one file in your project must be included**
 
 
+before doing anything please launch
+
+	composer update
+
+to resolve all the dependencies.
+
+Than in your project insert the line
+
+
+	require_once 'BoilerplateFolder/bootstrap.php'
+
+where `BoilerplateFolder` is the folder that contains the K-Link Adapter Boilerplate.
+
+All dependecies with composer are automatically loaded and basic klink configuration are setup.
+
+
+
+
 ## feature offered
 
 the Adapter boilerplate offers a common way to interact with the Klink Core API. The more advanced features will be offered by platform dependant Adapters. You can see the boilerplate as the common part of all adapters.
