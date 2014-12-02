@@ -43,6 +43,6 @@
     
     "require": {
         "php": ">=5.3.0",
-        "avvertix/jsonmapper" : "v0.4.x"
+        "avvertix/jsonmapper" : "0.4.x"
     }
 }
