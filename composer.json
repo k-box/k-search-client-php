@@ -1,6 +1,11 @@
 {
     "name": "klink/adapterboilerplate",
 
+    "version": "0.1.0",
+    "type": "library",
+    "homepage": "http://klink.azurewebsites.net",
+    "time": "2014-12-02",
+
     "authors": [
         {
             "name": "Alessio Vertemati",
@@ -11,6 +16,12 @@
             "email": "d.bernini@sirisacademic.com"
         }
     ],
+
+    "support": {
+        "issues": "https://gitlab.klink.dyndns.ws:3000/kadapters/adapterboilerplate/issues",
+        "wiki": "https://gitlab.klink.dyndns.ws:3000/kadapters/adapterboilerplate/wikis/home",
+        "source": "https://gitlab.klink.dyndns.ws:3000/kadapters/adapterboilerplate"
+    },
 
     "autoload": {
         "classmap": [
@@ -31,9 +42,7 @@
     ],
     
     "require": {
-        "avvertix/jsonmapper": "0.4.*"
-    },
-    "require-dev": {
-        "phpunit/phpunit": "3.8.*"
+        "php": ">=5.3.0",
+        "avvertix/jsonmapper" : "v0.4.x"
     }
 }
