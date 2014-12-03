@@ -68,13 +68,20 @@ final class KlinkCoreClient
 	 */
 	private $configuration = null;
 
+    /**
+     * Stores the (optional) Telemetry object
+     */
+    private $telemeter=null;
 
-	function __construct( KlinkConfiguration $config )
+
+	function __construct( KlinkConfiguration $config, IKlinkCoreTelemeter $telemeter=null )
 	{
 
 		//KlinkCoreClient::test($config); //test the configuration for errors
 
-		$this->configuration = $config;
+		$this->telemeter= $telemeter;
+
+        $this->configuration = $config;
 
 		foreach ($this->configuration->getCores() as $core) {
 
@@ -98,6 +105,9 @@ final class KlinkCoreClient
 
 		$conn = self::_get_connection();
 
+        if($this->telemeter!=null) $this->telemeter->beforeOperation($conn->getUrl(),__FUNCTION__);
+
+
 		$array = array(
 			'descriptor' => $document->getDescriptor(),
 			'documentData' => $document->getDocumentData(),
@@ -108,6 +118,8 @@ final class KlinkCoreClient
 		if(KlinkHelpers::is_error($rem)){
 			throw new KlinkException((string)$rem);
 		}
+
+        if($this->telemeter!=null) $this->telemeter->afterOperation($conn->getUrl(),__FUNCTION__);
 
 		return $rem;
 
@@ -125,7 +137,10 @@ final class KlinkCoreClient
 			throw new KlinkException("You cannot remove document you don't own");
 		}
 
+
 		$conn = self::_get_connection();
+
+        if($this->telemeter!=null) $this->telemeter->beforeOperation($conn->getUrl(),__FUNCTION__);
 
 		$rem = $conn->delete( self::SINGLE_DOCUMENT_ENDPOINT, 
 			array(
@@ -137,6 +152,8 @@ final class KlinkCoreClient
 		if( KlinkHelpers::is_error( $rem ) ){
 			throw new KlinkException( (string)$rem );
 		}
+
+        if($this->telemeter!=null) $this->telemeter->afterOperation($conn->getUrl(),__FUNCTION__);
 
 		return $rem;
 
@@ -160,6 +177,9 @@ final class KlinkCoreClient
 
 		$conn = self::_get_connection();
 
+        if($this->telemeter!=null) $this->telemeter->beforeOperation($conn->getUrl(),__FUNCTION__);
+
+
 		$rem = $conn->delete( self::SINGLE_DOCUMENT_ENDPOINT, 
 			array(
 				'INSTITUTION_ID' => $institution,
@@ -170,6 +190,8 @@ final class KlinkCoreClient
 		if( KlinkHelpers::is_error( $rem ) ){
 			throw new KlinkException( (string)$rem );
 		}
+
+        if($this->telemeter!=null) $this->telemeter->afterOperation($conn->getUrl(),__FUNCTION__);
 
 		return $rem;
 
@@ -210,6 +232,8 @@ final class KlinkCoreClient
 
 		$conn = self::_get_connection();
 
+        if($this->telemeter!=null) $this->telemeter->beforeOperation($conn->getUrl(),__FUNCTION__);
+
 		KlinkHelpers::is_valid_id( $institutionId, 'institution id' );
 		KlinkHelpers::is_valid_id( $documentId, 'local document id' );
 
@@ -220,6 +244,8 @@ final class KlinkCoreClient
 		if( KlinkHelpers::is_error( $rem ) ){
 			throw new KlinkException( (string)$rem );
 		}
+
+        if($this->telemeter!=null) $this->telemeter->afterOperation($conn->getUrl(),__FUNCTION__);
 
 		return $rem;
 
@@ -243,13 +269,13 @@ final class KlinkCoreClient
 	 */
 	function search( $terms, $type = null, $resultsPerPage = 10, $offset = 0 ){
 
-
-
 		if(is_null($type)){
 			$type = KlinkSearchType::KLINK_PUBLIC;
 		}
 
 		$conn = self::_get_connection();
+
+        if($this->telemeter!=null) $this->telemeter->beforeOperation($conn->getUrl(),__FUNCTION__);
 
 		$rem = $conn->get( self::SEARCH_ENDPOINT, new KlinkSearchResult(),
 			array(
@@ -262,6 +288,8 @@ final class KlinkCoreClient
 		if(KlinkHelpers::is_error($rem)){
 			throw new KlinkException((string)$rem);
 		}
+
+        if($this->telemeter!=null) $this->telemeter->afterOperation($conn->getUrl(),__FUNCTION__);
 
 		return $rem;
 	}
@@ -421,6 +449,8 @@ final class KlinkCoreClient
 
 		$conn = self::_get_connection();
 
+        if($this->telemeter!=null) $this->telemeter->beforeOperation($conn->getUrl(),__FUNCTION__);
+
 		KlinkHelpers::is_valid_id( $id, 'id' );
 
 		$rem = $conn->get( self::SINGLE_INSTITUTION_ENDPOINT, new KlinkInstitutionDetails(), array('ID' => $id) );
@@ -428,6 +458,8 @@ final class KlinkCoreClient
 		if( KlinkHelpers::is_error( $rem ) ){
 			throw new KlinkException( (string)$rem );
 		}
+
+        if($this->telemeter!=null) $this->telemeter->afterOperation($conn->getUrl(),__FUNCTION__);
 
 		return $rem;
 

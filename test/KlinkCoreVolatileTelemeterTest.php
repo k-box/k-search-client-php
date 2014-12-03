@@ -3,19 +3,23 @@
 /**
 * Test the KlinCoreClient Class for basic functionality
 */
-class KlinkCoreClientTest extends PHPUnit_Framework_TestCase
+class KlinkCoreVolatileTelemeterTest extends PHPUnit_Framework_TestCase
 {
-	public function setUp()
-	{
-	  	date_default_timezone_set('America/Los_Angeles');
+    private $telemeter;
 
-	  	$config = new KlinkConfiguration( 'K-uyv', 'KA', array(
-	  			new KlinkAuthentication( 'http://klink-staging.cloudapp.net:14000/kcore/', 'testUser', 'testPass' )
-	  		) );
+    public function setUp()
+    {
+        date_default_timezone_set('America/Los_Angeles');
 
-	    $this->core = new KlinkCoreClient($config);
+        $config = new KlinkConfiguration( 'K-uyv', 'KA', array(
+            new KlinkAuthentication( 'https://klink-staging.cloudapp.net:443/kcore/', 'testUser', 'testPass' )
+        ) );
 
-	}
+        $this->telemeter=new KlinkCoreVolatileTelemeter();
+
+        $this->core= new KlinkCoreClient($config,$this->telemeter);
+
+    }
 
 	// public function inputNoCorrectClass()
 	// {
@@ -28,47 +32,43 @@ class KlinkCoreClientTest extends PHPUnit_Framework_TestCase
 	// 	];
 	// }
 	
-	public function testGetInstitutions()
+	public function testGetInstitution()
 	{
 
+		$result = $this->core->getInstitution('CA');
 
-		$result = $this->core->getInstitutions();
+        $this->assertInstanceOf('KlinkInstitutionDetails', $result);
 
-		//print_r($result);
-
-		// KlinkInstitutionDetails Object
-		// (
-		//     [id] => K
-		//     [name] => Test institution
-		//     [mail] => info@tk.com
-		//     [telephone] => +9987634878237
-		//     [type] => NGO
-		//     [addressStreet] => Avenue Tchuy, 193
-		//     [addressCountry] => Kyrgyzstan
-		//     [addressLocality] => Bishkek
-		//     [addressPostalCode] => 720001
-		//     [creationDate] => 1975-12-25T14:15:16+05:00
-		//     [thumbnail] => http://api.randomuser.me/portraits/med/women/48.jpg
-		// )
-
-		$this->assertTrue(is_array($result), 'result must be an array');
-
-		$this->assertContainsOnlyInstancesOf('KlinkInstitutionDetails', $result);
-
-		//$this->assertContains('deserialization_error', $result->get_error_codes(), 'Expected "deserialization_error" error');
+        var_dump($this->telemeter->getAllExecutionInfo());
 
 	}
 
 	public function testSearch(){
-		
-		$term_to_search = 'search_term';
+
+		$term_to_search = 'pasture';
 
 		$result = $this->core->search($term_to_search);
 
-		$this->assertEquals($term_to_search, $result->getQuery());
-
 		$this->assertInstanceOf('KlinkSearchResult', $result);
+
+        var_dump($this->telemeter->getAllExecutionInfo());
 	}
+
+    public function testSearchLoop(){
+
+        $term_to_search = 'pasture';
+
+        for($i=0; $i<10; $i++) {
+
+            $result = $this->core->search($term_to_search);
+
+            $this->assertInstanceOf('KlinkSearchResult', $result);
+
+        }
+
+        var_dump($this->telemeter->getAllExecutionInfo());
+    }
+
 
 
  // //  /**
@@ -170,5 +170,5 @@ class KlinkCoreClientTest extends PHPUnit_Framework_TestCase
 
 	// 	$this->assertContains('class_expected', $result->get_error_codes(), 'Expected "class_expected" error');
 
-	// }
+	// }*/
 }

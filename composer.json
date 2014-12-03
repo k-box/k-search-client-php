@@ -10,6 +10,7 @@
     "classmap": [
       "klink",
       "vendor/avvertix/jsonmapper",
+        "vendor/josephbergevin/phptimer",
       "test"
     ]
   },
@@ -20,6 +21,7 @@
         }
     ],
   "require": {
-        "avvertix/jsonmapper": "0.4.*"
+      "avvertix/jsonmapper": "0.4.*",
+      "josephbergevin/phptimer": "dev-master"
     }
 }
