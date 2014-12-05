@@ -28,16 +28,11 @@
             "klink"
         ]
     },
-    "autoload-dev": {
-        "classmap": [
-            "test"
-        ]
-    },
 
     "repositories": [
         {
-            "type": "git",
-            "url": "https://github.com/avvertix/jsonmapper"
+            "type": "composer",
+            "url": "https://repo.klink.dyndns.ws/"
         }
     ],
     
