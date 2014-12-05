@@ -506,7 +506,12 @@ final class KlinkCoreClient
 	// ----- Static Utility Stuff
 
 	/**
-	 * Test the specified KlinkConfiguration for errors
+	 * Test the specified KlinkConfiguration for errors. 
+	 * The test will verify also that the authentication parameter and the istitutionid are valid.
+	 * 
+	 * @param KlinkConfiguration $config the configuration to test
+	 * @param Exception $error (in) the variable the will contain the detailed exception object
+	 * @return  boolean true if the test passes, false otherwise
 	 * */
 	public static function test(KlinkConfiguration $config, &$error){
 
@@ -514,7 +519,58 @@ final class KlinkCoreClient
 
 		  	$client = new KlinkCoreClient( $config );
 
-			$res = $client->getInstitution( $config->getInstitutionId() );
+		  	$res = null;
+
+		  	try{
+
+		  		$res = $client->getInstitutions();
+
+		  	} catch(KlinkException $kei){
+
+		  		// Expected
+		  		//Method Not Allowed
+
+		  		error_log( 'Exception message ' . $kei->getMessage() . PHP_EOL );
+
+
+		  		if( $kei->getMessage() != 'Method Not Allowed' ){
+
+			  		if( $config->isDebugEnabled() ){
+
+						error_log( '###### TEST EXCEPTION ###### ');
+						error_log( print_r($res, true ) );
+					
+					}
+
+				 	throw new Exception("Server not found or network problem.", 9, $kei);
+				}
+
+				//throw $keid;
+
+		  	}
+
+		  	try{
+
+				$res = $client->getInstitution( $config->getInstitutionId() );
+
+			} catch( KlinkException $keid ){
+
+				if( $keid->getMessage() == 'Not Found' ){
+
+			  		if( $config->isDebugEnabled() ){
+
+						error_log( '###### TEST EXCEPTION ###### ');
+						error_log( print_r($res, true ) );
+					
+					}
+
+				 	throw new Exception("Institution details not found.", 10, $keid);
+
+				}
+
+				throw new Exception("Server not found or network problem.", 11, $keid);
+
+			}
 
 			if( $config->isDebugEnabled() ){
 
@@ -540,6 +596,17 @@ final class KlinkCoreClient
 
 			return false;
 
+		} catch( Exception $e ){
+			if( $config->isDebugEnabled() ){
+
+				error_log( '###### TEST EXCEPTION ###### ');
+				error_log( print_r($res, true ) );
+				
+			}
+
+		 	$error = $e;
+
+			return false;
 		}
 
 	}
