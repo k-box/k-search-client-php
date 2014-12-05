@@ -19,4 +19,6 @@ interface IKlinkCoreTelemeter {
 
     public function getAllExecutionInfo();
 
+    public function exportToExcelFile($filename);
+
 } 
