@@ -8,16 +8,14 @@ Is the starting point for creating a **K**Link Adapter. Offers some basic functi
 
 before doing anything please launch
 
-	composer update
+	composer update --prefer-dist
 
 to resolve all the dependencies.
 
 Than in your project insert the line
 
+	require_once dirname(__DIR__).'/vendor/autoload.php';
 
-	require_once 'BoilerplateFolder/bootstrap.php'
-
-where `BoilerplateFolder` is the folder that contains the K-Link Adapter Boilerplate.
 
 All dependecies with composer are automatically loaded and basic klink configuration are setup.
 
@@ -36,6 +34,10 @@ Globally the Adapter module is in charge of two main functions:
 This boilerplate offers only the needed class to interact with the core with related data structures.
 
 More info on the core API can be found
+
+[waiting for new documentation page]
+
+[old docs:]
 
 - https://gitlab.klink.dyndns.ws:3000/kcore/kcore/wikis/kcore-apis
 - https://gitlab.klink.dyndns.ws:3000/klinkdocumentation/referencearchitecture/wikis/KLINK-Core-API
