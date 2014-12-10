@@ -432,7 +432,7 @@ final class KlinkRestClient implements INetworkTransport
 			return '';
 		}
 
-		return http_build_query( $array );
+		return http_build_query( $array, '', '&' );
 
 	}
 
