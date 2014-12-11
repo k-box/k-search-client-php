@@ -1,5 +1,9 @@
 <?php
 
+if( !defined( 'KLINKADAPTER_DEBUG' ) ){
+	define( 'KLINKADAPTER_DEBUG', false );
+}
+
 /**
 *  KlinkCoreClient.
 *  offers a clean API to perform actions on the Klink Core
