@@ -533,8 +533,9 @@ final class KlinkCoreClient
 
 		  		// Expected
 		  		//Method Not Allowed
-
-		  		error_log( 'Exception message ' . $kei->getMessage() . PHP_EOL );
+		  		if( $config->isDebugEnabled() ){
+		  			error_log( 'Exception message ' . $kei->getMessage() . PHP_EOL );
+		  		}
 
 
 		  		if( $kei->getMessage() != 'Method Not Allowed' ){
