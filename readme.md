@@ -102,14 +102,41 @@ $searchResult = $klinkCore->search( $searched_term );
 
 The `$searchResult` will contain an instance of `KlinkSearchResult` that contains the `KlinkDocumentDescriptors` found and the pagination details.
 
-
-Considering the results pagination to get the second page is requested as follows:
+To get the result item of a search you need to call
 
 ```php
-$searchResultSecondPage = $klinkCore->search($searched_term, KlinkSearchType::KLINK_PUBLIC, 10, 10 );
+/* KlinkDocumentDescriptors[] */ $results = $searchResult->getResults();
 ```
 
-The first `10` is the number of results per page and the second is the offset of the first new result.
+To get the total numer of results and the pagination information you need to invoke these methods:
+
+```php
+/* 
+	The grand total of results matched by the query 
+*/
+$totalFound = $searchResult->getTotalResults();
+
+/*
+	the number of results to retrieve, if no value is given the default value of 10 is used
+ */
+$resultsPerPage = $searchResult->getResultsPerPage() 
+
+/*
+     specify the index of the first result of the total result set for the search. This value is used for retrieve the other pages. The value is 0-based; the default value is 0.
+ */
+$start = $searchResult->getOffset();
+
+```
+
+Considering that the results could be more than what fits in a result page, you have the ability to select which page of the result set need to be displayed:
+
+```php
+$searchResultSecondPage = $klinkCore->search($searched_term, KlinkSearchType::KLINK_PUBLIC, $resultsPerPage, $start + $resultsPerPage );
+```
+
+The first `$resultsPerPage` is the number of results per page and the `$start` is the offset of the first new result.
+
+It highly suggested to use the results per page and offset value of the current `KlinkSearchResult` instance because the number of results per page and the offset could vary between different searches.
 
 
 ### getting institution details
