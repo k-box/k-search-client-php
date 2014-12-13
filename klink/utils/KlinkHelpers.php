@@ -72,15 +72,6 @@ class KlinkHelpers
 		self::mbstring_binary_safe_encoding( true );
 	}
 
-	/**
-	 * Cast a string to integer and make it positive
-	 * @param  string $maybeint
-	 * @return int
-	 */
-	public static function absint( $maybeint ) {
-		return abs( intval( $maybeint ) );
-	}
-
 
 	/**
 	 * Retrieve the description for the HTTP status.
@@ -577,6 +568,7 @@ class KlinkHelpers
 	}
 
 
+	// ---- Dates
 
 	/**
 	 * The current date and time formatted as RFC3339
@@ -608,4 +600,41 @@ class KlinkHelpers
 		return $f;
 
 	}
+
+
+	// ---- Input sanitation
+
+	/**
+	 * Cast a string to integer and make it positive
+	 * @param  string $maybeint
+	 * @return int
+	 */
+	public static function absint( $maybeint ) {
+		return abs( intval( $maybeint ) );
+	}
+
+	/**
+	 * Sanitize the input string.
+	 *
+	 * Perform security sanitation on the string and ensure the UTF-8 character encoding.
+	 * The performed conversion includes:
+	 * - iconv
+	 * - filter_var
+	 * - htmlentities
+	 * 
+	 * @param  string $value the string to sanitize
+	 * @return string the sanitized string
+	 */
+	public static function sanitize_string( $value )
+	{
+		# code...
+
+		$value = iconv( 'UTF-8', 'UTF-8//IGNORE', $value );
+
+		$value = filter_var( $value, FILTER_SANITIZE_STRING );
+
+		return htmlentities( $value, ENT_QUOTES, 'UTF-8', false );
+	}
+
+
 }

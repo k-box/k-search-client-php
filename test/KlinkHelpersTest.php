@@ -86,6 +86,17 @@ class KlinkHelpersTest extends PHPUnit_Framework_TestCase
 		  ['io-778@me.com'],
 		];	
 	}
+
+	public function sanitize_inputs(){
+		return [
+		  ['io@me.com', 'io@me.com'],
+		  ['http://ciao.com/', 'http://ciao.com/'],
+		  ['#bada55', '#bada55'],
+		  ['<b>string with html</b>', 'string with html'],
+		  ['"quotes"', '&#34;quotes&#34;'],
+		  ['<script>alert(\'\');</script>Is there a script?', 'alert(&#39;&#39;);Is there a script?'],
+		];	
+	}
 	
 	/**
 	 * Call protected/private method of a class.
@@ -148,6 +159,17 @@ class KlinkHelpersTest extends PHPUnit_Framework_TestCase
 
 		$this->assertTrue(true, 'invalid');
 
+	}
+
+	/**
+	 * @dataProvider sanitize_inputs
+	 */
+	public function testSanitizeString( $string, $expected ){
+
+		$sanitized = KlinkHelpers::sanitize_string( $string );
+
+
+		$this->assertEquals($expected, $sanitized);
 	}
 
 
