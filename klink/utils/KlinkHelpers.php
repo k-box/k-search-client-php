@@ -2,7 +2,7 @@
 
 
 /**
-* 
+* Some Helpers function for performing string operations, checks, encoding,...
 */
 class KlinkHelpers
 {
@@ -72,7 +72,11 @@ class KlinkHelpers
 		self::mbstring_binary_safe_encoding( true );
 	}
 
-
+	/**
+	 * Cast a string to integer and make it positive
+	 * @param  string $maybeint
+	 * @return int
+	 */
 	public static function absint( $maybeint ) {
 		return abs( intval( $maybeint ) );
 	}
@@ -320,6 +324,13 @@ class KlinkHelpers
 
 	}
 
+	/**
+	 * Check if a string ends with the specified string
+	 * @param  string $haystack the string to be checked
+	 * @param  string $needle the ending string to check
+	 * @return boolean true if $needle is the last part of the $haystack
+	 * @throws InvalidArgumentException if the passed value is empty or null or is not a string
+	 */
 	public static function string_ends_with( $haystack, $needle ){
 
 		self::is_string_and_not_empty($haystack, 'haystack');
@@ -501,8 +512,6 @@ class KlinkHelpers
 	/**
 	 * Check if the specified phone number is in an acceptable format.
 	 * 
-	 * 
-	 * 
 	 * @param string $value the value to check
 	 * @param string $parameter_name the human understandable name of the parameter to be used in the error message
 	 * @param string $error_message_format only one %s is allowed, plese take into account that the format must be in english and will be localized in other languages
@@ -569,13 +578,22 @@ class KlinkHelpers
 
 
 
-
+	/**
+	 * The current date and time formatted as RFC3339
+	 * @return string
+	 */
 	public static function now(){
 		$dt = date_create();
 
 		return $dt->format(DateTime::RFC3339);
 	}
 
+	/**
+	 * Format a date according to the RFC3339
+	 * @param  string $a_date the source date. Must be compatible to dates accepted by date_create
+	 * @see date_create
+	 * @return string
+	 */
 	public static function format_date( $a_date ){
 
 		$dt = date_create( $a_date );
