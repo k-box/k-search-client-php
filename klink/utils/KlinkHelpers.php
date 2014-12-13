@@ -627,8 +627,6 @@ class KlinkHelpers
 	 */
 	public static function sanitize_string( $value )
 	{
-		# code...
-
 		$value = iconv( 'UTF-8', 'UTF-8//IGNORE', $value );
 
 		$value = filter_var( $value, FILTER_SANITIZE_STRING );

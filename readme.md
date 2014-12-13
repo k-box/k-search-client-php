@@ -161,6 +161,14 @@ The addDocument will return an updated KlinkDocumentDescriptor with values in so
 
 ```php
 
+$filePath = "/uploads/document.pdf"; // the file path
+
+// ... only a few of the used variables will be showed here because there are helpers function you can use
+
+$hash = KlinkDocumentUtils::generateDocumentHash( $filePath );
+
+$mime_type = KlinkDocumentUtils::get_mime( $filePath );
+
 // first create a document descriptor
 
 $documentDescriptor = KlinkDocumentDescriptor::create(
@@ -168,11 +176,11 @@ $documentDescriptor = KlinkDocumentDescriptor::create(
     		$local_document_id,  // must be alphanumeric
     		$hash, // The SHA-2 hash of the file. Please use KlinkDocumentUtils::generateDocumentHash( $filePath )
     		$title, //the document title
-    		$this->mime_type, 
-    		$this->document_uri, //the public URI of the document
-    		$this->thumbnail_uri, //the public URI of the thumbnail
-    		$this->user_uploader, //the user that has uploaded the file in the format: "user <mail@mail.com>"
-    		$this->user_owner,  //the user that can be contacted for info about the document in the format: "user <mail@mail.com>"
+    		$mime_type, 
+    		$document_uri, //the public URI of the document
+    		$thumbnail_uri, //the public URI of the thumbnail
+    		$user_uploader, //the user that has uploaded the file in the format: "user <mail@mail.com>"
+    		$user_owner,  //the user that can be contacted for info about the document in the format: "user <mail@mail.com>"
     		KlinkVisibilityType::KLINK_PUBLIC, // the visibility of the document
     		KlinkHelpers::format_date( $creation_date ) //the creation date of the file
     	);
@@ -213,6 +221,28 @@ The KlinkHelpers class if full of useful methods for validation
 
 The KlinkDocumentUtils class contains the hash generation methods
 
+
+#### KlinkHelpers
+
+The KlinkHelpers class has the following utility methods that you need to be aware of:
+
+- `sanitize_string( $string )` Perform the sanitation of a string given by user input
+- `absint( $string )` convert a string to a positive integer
+- `now()` return the current date and time formatted as RFC3339
+- `format_date( $date_string )` return the given date formatted as RFC3339
+- `string_ends_with( $haystack, $needle )` test if a string ends has a particular suffix
+
+
+
+
+#### KlinkDocumentUtils
+
+The KlinkDocumentUtils class has the following utility methods that you need to be aware of:
+
+- `generateDocumentHash( $filePath )` generates the hash of the content of a document
+- `generateHash( $text )` generates the hash of the given text
+- `get_mime( $filePath )` return the mime type of a file
+- `isMimeTypeSupported( $mime )` test if the specified mime type is supported by the K-Link Core
 
 
 
