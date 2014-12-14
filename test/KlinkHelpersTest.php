@@ -97,6 +97,23 @@ class KlinkHelpersTest extends PHPUnit_Framework_TestCase
 		  ['<script>alert(\'\');</script>Is there a script?', 'alert(&#39;&#39;);Is there a script?'],
 		];	
 	}
+
+
+	public function invalid_url()
+	{
+		return [
+		  [null],
+		  ['null'],
+		  [''],
+		  [' '],
+		  [0],
+		  [':/ciao.pinco'],
+		  ['//www.example.co'],
+		  ['ciao'],
+		  ['s'],
+		  ['http://ciao']
+		];
+	}
 	
 	/**
 	 * Call protected/private method of a class.
@@ -146,6 +163,16 @@ class KlinkHelpersTest extends PHPUnit_Framework_TestCase
 	public function testIsPhoneValidWithInvalidData( $number ){
 
 		KlinkHelpers::is_valid_phonenumber( $number, "number" );
+
+	}
+
+	/**
+	 * @dataProvider invalid_url
+	 * @expectedException InvalidArgumentException
+	 */
+	public function testUrlValidationWithInvalidData( $number ){
+
+		KlinkHelpers::is_valid_url( $number, "url" );
 
 	}
 

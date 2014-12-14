@@ -424,7 +424,18 @@ class KlinkHelpers
 
 		self::is_string_and_not_empty( $url, $parameter_name, $error_message_format );
 
-		if( @parse_url($url) === false ) {
+		if (! filter_var($url, FILTER_VALIDATE_URL)) {
+			
+			$message = self::localize( sprintf( $error_message_format, $parameter_name ) );
+
+			throw new InvalidArgumentException( $message );
+
+		}
+
+
+		$parsed = @parse_url($url);
+
+		if( $parsed === false ) {
 
 			$message = self::localize( sprintf( $error_message_format, $parameter_name ) );
 
@@ -432,12 +443,10 @@ class KlinkHelpers
 
 		}
 
-		if (! filter_var($url, FILTER_VALIDATE_URL)) {
-			
+		if( !empty( $parsed['host'] ) && strpos( $parsed['host'], '.' ) === false ){
 			$message = self::localize( sprintf( $error_message_format, $parameter_name ) );
 
 			throw new InvalidArgumentException( $message );
-
 		}
 
 	}
