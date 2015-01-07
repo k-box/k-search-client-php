@@ -54,7 +54,7 @@ class KlinkDocumentUtils
 		'ics' => 'text/calendar',
 		'rtx' => 'text/richtext',
 		'css' => 'text/css',
-		'htm|html' => 'text/html',
+		'html|htm' => 'text/html',
 		'vtt' => 'text/vtt',
 		'dfxp' => 'application/ttaf+xml',
 		// Audio formats.
@@ -82,7 +82,7 @@ class KlinkDocumentUtils
 		'doc' => 'application/msword',
 		'pot|pps|ppt' => 'application/vnd.ms-powerpoint',
 		'wri' => 'application/vnd.ms-write',
-		'xla|xls|xlt|xlw' => 'application/vnd.ms-excel',
+		'xls|xla|xlt|xlw' => 'application/vnd.ms-excel',
 		'mdb' => 'application/vnd.ms-access',
 		'mpp' => 'application/vnd.ms-project',
 		'docx' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
@@ -203,7 +203,15 @@ class KlinkDocumentUtils
 		$key = array_key_exists($mimeType, $inverted);
 
 		if( $key ){
-			return $inverted[$mimeType];
+
+			$ext = $inverted[$mimeType];
+
+			$pos = strpos($ext, '|');
+			if( $pos !== false ){
+				$ext = substr( $ext, 0, $pos);
+			}
+
+			return $ext;
 		}
 
 		throw new InvalidArgumentException("Unknown mime type.");
