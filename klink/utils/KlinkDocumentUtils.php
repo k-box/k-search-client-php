@@ -158,19 +158,9 @@ class KlinkDocumentUtils
 	}
 
 
-	public static function generateDocumentThumbnail($file, array $sizes = null){
-
-	}
-
-
 	public static function isLocalDocument(KlinkDocumentDescriptor $descriptor, $instId, $adapterId){
 
-
 		return $descriptor->getInstitutionId() === $instId;
-		
-
-
-		
 		
 	}
 
@@ -196,6 +186,27 @@ class KlinkDocumentUtils
 	public static function isMimeTypeSupported( $mimeType ){
 
 		return array_key_exists($mimeType, self::$mimeTypesToDocType);
+
+	}
+
+	/**
+	 * Return the file extension that corresponds to the given mime type
+	 * @param  [type] $mimeType [description]
+	 * @return [type]           [description]
+	 * @throws InvalidArgumentException If the mime type is unkwnown or null or empty
+	 */
+	public static function getExtensionFromMimeType( $mimeType ){
+		KlinkHelpers::is_string_and_not_empty( $mimeType, 'mime type' );
+
+		$inverted = array_flip( self::$fileExtensionToMimeType );
+
+		$key = array_key_exists($mimeType, $inverted);
+
+		if( $key ){
+			return $inverted[$mimeType];
+		}
+
+		throw new InvalidArgumentException("Unknown mime type.");
 
 	}
 
