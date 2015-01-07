@@ -52,7 +52,7 @@ class KlinkDocument {
 	 */
 	public function getDocumentData() {
 
-		if(is_file($this->documentData)){
+		if(@is_file($this->documentData)){
 
 			return base64_encode( file_get_contents( $this->documentData ) );
 
