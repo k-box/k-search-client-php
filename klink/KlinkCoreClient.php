@@ -718,10 +718,9 @@ final class KlinkCoreClient
 	 * Generate a document thumbnail from the content of a file
 	 * @param  string  $mimeType      The mime type of the data that needs the thumbnail
 	 * @param  string  $data          The document data used for the thumbnail generation
-	 * @param  string  $fullImagePath the path in which the thumbnail will be saved. The path must have the name of the file in it (extension is png).
 	 * @return string|boolean                 The image content in PNG format or false in case of error
 	 */
-	public static function generateThumbnailFromContent( $mimeType, $data, $fullImagePath = '', $resolution = 'small', $debug = false )
+	public static function generateThumbnailFromContent( $mimeType, $data, $resolution = 'small', $debug = false )
 	{
 
 		KlinkHelpers::is_string_and_not_empty( $mimeType, 'mime type' );
