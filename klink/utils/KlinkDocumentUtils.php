@@ -18,7 +18,8 @@ class KlinkDocumentUtils
 		'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' => 'spreadsheet',
 		'application/vnd.openxmlformats-officedocument.presentationml.presentation' => 'presentation',
 		'application/vnd.openxmlformats-officedocument.wordprocessingml.document' => 'document',
-		'application/pdf' => 'document'
+		'application/pdf' => 'document',
+		'text/uri-list' => 'uri-list'
 
 		);
 
@@ -121,6 +122,7 @@ class KlinkDocumentUtils
 		'key' => 'application/vnd.apple.keynote',
 		'numbers' => 'application/vnd.apple.numbers',
 		'pages' => 'application/vnd.apple.pages',
+		'uri' => 'text/uri-list'
 		) ;
 
 
