@@ -12,6 +12,7 @@ class KlinkDocumentUtils
 		'post' => 'web-page',
 		'page' => 'web-page',
 		'node' => 'web-page',
+		'text/html' => 'web-page',
 		'application/msword' => 'document',
 		'application/vnd.ms-excel' => 'spreadsheet',
 		'application/vnd.ms-powerpoint' => 'presentation',
