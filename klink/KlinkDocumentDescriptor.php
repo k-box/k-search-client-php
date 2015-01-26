@@ -35,8 +35,8 @@ final class KlinkDocumentDescriptor
 	 */
 	public static function buildKlinkId($institutionID, $localDocumentID) {
 	    KlinkHelpers::is_valid_id( $institutionID, 'institution id' );
-        KlinkHelpers::is_valid_id( $localDocumentID, 'local document id' );	  
-	    return $institutionID . '-' . $localDocumentID;
+        KlinkHelpers::is_valid_id( $localDocumentID, 'local document id' );
+        return $institutionID . '-' . $localDocumentID;
 	}
 
 
