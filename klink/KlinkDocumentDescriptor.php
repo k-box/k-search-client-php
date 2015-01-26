@@ -25,11 +25,23 @@ final class KlinkDocumentDescriptor
 	// public function getId() {
 	// 	return $this->id;
 	// }
+	
+	
+	/**
+	 *
+	 * @param $institutionID string The Institution ID
+	 * @param $localDocumentID string The LocalDocument ID
+	 *
+	 */
+	public static buildKlinkId($institutionID, $localDocumentID) {
+	    KlinkHelpers::is_valid_id( $institutionID, 'institution id' );
+        KlinkHelpers::is_valid_id( $localDocumentID, 'local document id' );	  
+	    return $institutionID . '-' . $localDocumentID;
+	}
 
 
 	public function getKlinkId() {
-
-		return $this->institutionID . '-' . $this->localDocumentID;
+        return KlinkDocumentDescriptor::buildKlinkId($this->institutionID, $this->localDocumentID);
 	}
 
 
