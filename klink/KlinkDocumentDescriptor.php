@@ -33,7 +33,7 @@ final class KlinkDocumentDescriptor
 	 * @param $localDocumentID string The LocalDocument ID
 	 *
 	 */
-	public static buildKlinkId($institutionID, $localDocumentID) {
+	public static function buildKlinkId($institutionID, $localDocumentID) {
 	    KlinkHelpers::is_valid_id( $institutionID, 'institution id' );
         KlinkHelpers::is_valid_id( $localDocumentID, 'local document id' );	  
 	    return $institutionID . '-' . $localDocumentID;
