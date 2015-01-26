@@ -1,7 +1,7 @@
 {
     "name": "klink/adapterboilerplate",
 
-    "version": "0.1.5",
+    "version": "0.1.6",
     "type": "library",
     "homepage": "http://klink.azurewebsites.net",
     "time": "2014-12-02",
