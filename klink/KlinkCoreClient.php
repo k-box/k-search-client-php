@@ -722,7 +722,7 @@ final class KlinkCoreClient
 	 */
 	public static function generateThumbnailFromDocument( KlinkDocument $document)
 	{
-		return $this->generateThumbnailFromContent( $document->getDescriptor()->getMimeType(), base64_decode($document->getDocumentData()) );
+		return self::generateThumbnailFromContent( $document->getDescriptor()->getMimeType(), base64_decode($document->getDocumentData()) );
 	}
 
 
