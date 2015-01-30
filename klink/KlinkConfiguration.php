@@ -33,7 +33,7 @@ final class KlinkConfiguration
 
 	/**
 	 * The Adapter identifier
-	 * @return type
+	 * @return string
 	 */
 	public function getAdapterId() {
 		return $this->adapter_id;
