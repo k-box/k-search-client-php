@@ -48,7 +48,7 @@ class KlinkDocument {
 
 	/**
 	 * getFile
-	 * @return string the file path on the accessible filesystem
+	 * @return string the base64 encoded content of the document, if a file was passed as content the encoded content of the file is returned
 	 */
 	public function getDocumentData() {
 

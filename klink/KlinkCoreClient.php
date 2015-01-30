@@ -713,12 +713,25 @@ final class KlinkCoreClient
 
 	}
 
+	/**
+	 * Generate a document thumbnail from a KlinkDocument instance
+	 * @param  KlinkDocument $document the document that needs the thumbnail
+	 * @return string|boolean The image content in PNG format or false in case of error
+	 * @throws InvalidArgumentException If the document data is empty or null
+	 * @throws KlinkException If the mimetype is not compatible with the thumbnail generator or something bad happened
+	 */
+	public static function generateThumbnailFromDocument( KlinkDocument $document)
+	{
+		return $this->generateThumbnailFromContent( $document->getDescriptor()->getMimeType(), base64_decode($document->getDocumentData()) );
+	}
+
 
 	/**
 	 * Generate a document thumbnail from the content of a file
 	 * @param  string  $mimeType      The mime type of the data that needs the thumbnail
 	 * @param  string  $data          The document data used for the thumbnail generation
 	 * @return string|boolean                 The image content in PNG format or false in case of error
+	 * @internal
 	 */
 	public static function generateThumbnailFromContent( $mimeType, $data, $resolution = 'small', $debug = false )
 	{
