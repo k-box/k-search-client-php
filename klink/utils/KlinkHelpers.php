@@ -419,7 +419,7 @@ class KlinkHelpers
 	 * @param string $error_message_format only one %s is allowed, plese take into account that the format must be in english and will be localized in other languages
 	 * @throws InvalidArgumentException if the passed value is empty or null or is not a string
 	 */
-	public static function is_valid_url($url, $parameter_name, $error_message_format = 'The %s must be a valid url')
+	public static function is_valid_url($url, $parameter_name = 'value', $error_message_format = 'The %s must be a valid url')
 	{
 
 		self::is_string_and_not_empty( $url, $parameter_name, $error_message_format );
