@@ -69,14 +69,6 @@ final class KlinkDocumentDescriptor
 
 	public $localDocumentID;
 
-	// /**
-	//  * setLocalDocumentID
-	//  * @param $value
-	//  * @return void
-	//  */
-	// public function setLocalDocumentID($value) {
-	// 	$this->localDocumentID = $value;
-	// }
 	/**
 	 * getLocalDocumentID
 	 * @return string
@@ -199,14 +191,6 @@ final class KlinkDocumentDescriptor
 
 	public $mimeType;
 
-	// /**
-	//  * setType
-	//  * @param $value
-	//  * @return void
-	//  */
-	// public function setMimeType($value) {
-	// 	$this->mimeType = $value;
-	// }
 	/**
 	 * getType
 	 * @return string
@@ -224,14 +208,6 @@ final class KlinkDocumentDescriptor
 
 	public $creationDate;
 
-	// /**
-	//  * setCreationDate
-	//  * @param Date $value
-	//  * @return void
-	//  */
-	// public function setCreationDate(Date $value) {
-	// 	$this->creationDate = $value;
-	// }
 	/**
 	 * getCreationDate
 	 * @return string
@@ -277,8 +253,12 @@ final class KlinkDocumentDescriptor
 	 * setThumbnailURI
 	 * @param $value
 	 * @return void
+	 * @throws InvalidArgumentException If the given url is not syntactically valid
 	 */
 	public function setThumbnailURI($value) {
+
+		KlinkHelpers::is_valid_url($value);
+
 		$this->thumbnailURI = $value;
 
 		return $this;
@@ -330,14 +310,6 @@ final class KlinkDocumentDescriptor
 
 	public $documentType;
 
-	// /**
-	//  * setDocumentType
-	//  * @param $value
-	//  * @return void
-	//  */
-	// public function setDocumentType($value) {
-	// 	$this->documentType = $value;
-	// }
 	/**
 	 * getDocumentType
 	 * @return string
@@ -353,14 +325,6 @@ final class KlinkDocumentDescriptor
 
 	public $userUploader;
 
-	// /**
-	//  * setUserUploader
-	//  * @param $value
-	//  * @return void
-	//  */
-	// public function setUserUploader($value) {
-	// 	$this->userUploader = $value;
-	// }
 	/**
 	 * getUserUploader
 	 * @return string
@@ -388,12 +352,31 @@ final class KlinkDocumentDescriptor
 
 	
 
-
+	/**
+	 * The parameter-less constructor is used for deserialization 
+	 * purposes only and might be deprecated in future versions
+	 * @internal
+	 */
 	function __construct(){
 
 	}
 
-
+	/**
+	 * Build an instance of KlinkDocumentDescriptor
+	 * @param  string $institutionID   The id of the institution that owns the document
+	 * @param  string $localDocumentID The identifier of the document inside the Adapter
+	 * @param  string $hash            The SHA-2 hash of the document content. Use KlinkDocumentUtils::generateDocumentHash() to get the correct value.
+	 * @param  string $title           The title of the document
+	 * @param  string $mimetype        The mime-type of the document. Use KlinkDocumentUtils::get_mime() to get the correct value.
+	 * @param  string $documentURI     The public URL of the document's content
+	 * @param  string $thumbnailURI    The public URL of the document's thumbnail
+	 * @param  string $userUploader    The user that has uploaded the document
+	 * @param  string $userOwner       The user that owns the document
+	 * @param  string|null $visibility      The document visibility, the default is KlinkVisibilityType::KLINK_PUBLIC
+	 * @param  string|null $creationDate    The document creation date in RFC3339 format, the default value is the current timestamp
+	 * @return [type]                  [description]
+	 * @throws InvalidArgumentException If one or more parameters are invalid
+	 */
 	public static function create($institutionID, $localDocumentID, $hash, $title, $mimetype, $documentURI, $thumbnailURI, $userUploader, $userOwner, $visibility = null, $creationDate = null){
 
         KlinkHelpers::is_valid_id( $institutionID, 'institution id' );
@@ -415,11 +398,12 @@ final class KlinkDocumentDescriptor
 			$visibility = KlinkVisibilityType::KLINK_PUBLIC;
 		}
         
+        KlinkHelpers::is_valid_url($documentURI);
+
+        KlinkHelpers::is_valid_url($thumbnailURI);
 
 
         $instance = new self();
-
-        //$instance->id = $institutionID . '-' . $localDocumentID;
 
         $instance->institutionID = $institutionID;
 		
