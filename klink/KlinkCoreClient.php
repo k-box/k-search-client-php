@@ -4,6 +4,10 @@ if( !defined( 'KLINKADAPTER_DEBUG' ) ){
 	define( 'KLINKADAPTER_DEBUG', false );
 }
 
+if( !defined( 'KLINK_BOILERPLATE_VERSION' ) ){
+	define( 'KLINK_BOILERPLATE_VERSION', '0.2' );
+}
+
 /**
 *  KlinkCoreClient.
 *  offers a clean API to perform actions on the Klink Core

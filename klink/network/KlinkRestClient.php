@@ -104,16 +104,7 @@ final class KlinkRestClient implements INetworkTransport
 			 *
 			 * @param string $user_agent WordPress user agent string.
 			 */
-			'user-agent' => 'Klink/any;',
-			/**
-			 * Filter whether to pass URLs through http_validate_url() in an HTTP request.
-			 *
-			 * @since 0.1.0
-			 *
-			 * @param bool $pass_url Whether to pass URLs through http_validate_url().
-			 *                       Default false.
-			 */
-			// 'reject_unsafe_urls' => false,
+			'user-agent' => (defined('KLINK_BOILERPLATE_VERSION') && is_string(KLINK_BOILERPLATE_VERSION)) ? 'Klink/' . KLINK_BOILERPLATE_VERSION . ';' : 'Klink/any;',
 			/**
 			 * Enable debug messaging.
 			 *
@@ -123,6 +114,15 @@ final class KlinkRestClient implements INetworkTransport
 			 *                       Default false.
 			 */
 			'debug' => false,
+			/**
+			 * Filter the version of the HTTP protocol used in a request.
+			 *
+			 * @since 0.1.0
+			 *
+			 * @param string $version Version of HTTP used. Accepts '1.0' and '1.1'.
+			 *                        Default '1.0'.
+			 */
+			'httpversion' => '1.0',
 		);
 
 		KlinkHelpers::is_valid_url( $baseApiUrl, 'baseApiUrl' );
@@ -137,6 +137,10 @@ final class KlinkRestClient implements INetworkTransport
 
  		if(!is_null($authentication)){
 	 		$this->all_request_options['headers'] = array( 'Authorization' => 'Basic ' . base64_encode( $authentication->getUsername() . ':' . $authentication->getPassword() ) );
+	 		$this->all_request_options['timeout'] = $this->config['timeout'];
+	 		$this->all_request_options['redirection'] = $this->config['redirection'];
+	 		$this->all_request_options['user-agent'] = $this->config['user-agent'];
+	 		$this->all_request_options['httpversion'] = $this->config['httpversion'];
 	 	}
 
 		$this->rest = new KlinkHttp($this->baseApiUrl);
@@ -268,8 +272,9 @@ final class KlinkRestClient implements INetworkTransport
 		if($this->config['debug']){
 			error_log('###### REST POST RESPONSE ######');
 			error_log( $url );
+			$headers['body'] = substr($headers['body'], 0, 840);
 			error_log( print_r( $headers, true) );
-			error_log(print_r($result, true));
+			error_log( print_r($result, true) );
 			error_log('######');
 		}
 
@@ -326,8 +331,9 @@ final class KlinkRestClient implements INetworkTransport
 		if($this->config['debug']){
 			error_log('###### REST PUT RESPONSE ######');
 			error_log( $url );
+			$headers['body'] = substr($headers['body'], 0, 840);
 			error_log( print_r($header, true) );
-			error_log(print_r($result, true));
+			error_log( print_r($result, true) );
 			error_log('######');
 		}
 
