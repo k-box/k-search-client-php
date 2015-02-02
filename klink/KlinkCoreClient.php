@@ -27,13 +27,13 @@ final class KlinkCoreClient
 	/**
 	 * SINGLE_DOCUMENT_ENDPOINT
 	 */
-	const SINGLE_DOCUMENT_ENDPOINT = 'descriptors/{INSTITUTION_ID}/{LOCAL_DOC_ID}';
+	const SINGLE_DOCUMENT_ENDPOINT = 'descriptors/{VISIBILITY}/{INSTITUTION_ID}/{LOCAL_DOC_ID}';
 
 
 	/**
 	 * SEARCH_ENDPOINT
 	 */
-	const SEARCH_ENDPOINT = 'search/';
+	const SEARCH_ENDPOINT = 'search/{VISIBILITY}/';
 
 
 	/**
@@ -103,7 +103,8 @@ final class KlinkCoreClient
 	// ----- Document interaction
 
 	/**
-	 * Description
+	 * Add a document to the K-Link Core.
+	 * 
 	 * @param KlinkDocument $document 
 	 * @param type $document_content 
 	 * @return KlinkDocumentDescriptor
@@ -134,7 +135,7 @@ final class KlinkCoreClient
 	}
 
 	/**
-	 * Description
+	 * Removes a previously added document given it's KlinkDocumentDescriptor 
 	 * @param KlinkDocumentDescriptor $document 
 	 * @return boolean
 	 * @throws KlinkException if something wrong happened during the communication with the core
@@ -152,6 +153,7 @@ final class KlinkCoreClient
 
 		$rem = $conn->delete( self::SINGLE_DOCUMENT_ENDPOINT, 
 			array(
+				'VISIBILITY' => $document->getVisibility(),
 				'INSTITUTION_ID' => $document->getInstitutionID(),
 				'LOCAL_DOC_ID' => $document->getLocalDocumentID(),
 				) 
@@ -168,19 +170,30 @@ final class KlinkCoreClient
 	}
 
 	/**
-	 * Remove a document givent it's institution and local document identifier.
+	 * Remove a document given it's institution and local document identifier plus the it's visibility.
+	 *
+	 * If the visibility is not specified a KlinkVisibilityType::KLINK_PUBLIC is assumed
 	 * 
 	 * Performs a document removal given directly the institutions identifier and the local document identifier.
 	 * 
 	 * @param string $institution the institution identifier
 	 * @param string $document the local document identifier
+	 * @param string $visibility (optional) The visibility of the document to be retrieved. Acceptable values are: public, private. Default value KlinkVisibilityType::KLINK_PUBLIC.
 	 * @return boolean
+	 * @throws InvalidArgumentException If one or more parameters are invalid
 	 * @internal
 	 */
-	function removeDocumentById( $institution, $document ){
+	function removeDocumentById( $institution, $document, $visibility = null ){
 
 		if( $institution !== $this->configuration->getInstitutionId() ){
 			throw new KlinkException("You cannot remove document you don't own");
+		}
+
+		if(is_null($visibility)){
+			$visibility = KlinkVisibilityType::KLINK_PUBLIC;
+		}
+		else {
+			$visibility = KlinkVisibilityType::fromString($visibility);
 		}
 
 		$conn = self::_get_connection();
@@ -190,6 +203,7 @@ final class KlinkCoreClient
 
 		$rem = $conn->delete( self::SINGLE_DOCUMENT_ENDPOINT, 
 			array(
+				'VISIBILITY' => $visibility,
 				'INSTITUTION_ID' => $institution,
 				'LOCAL_DOC_ID' => $document,
 				) 
@@ -206,7 +220,10 @@ final class KlinkCoreClient
 	}
 
 	/**
-	 * Description
+	 * Updates a previously added document. 
+	 *
+	 * An existing KlinkDocumentDescriptor must be provided.
+	 * 
 	 * @param KlinkDocument $document the new information about the document. The document descriptor must have the same ID of the already existing document
 	 * @param type $document_content 
 	 * @return KlinkDocumentDescriptor
@@ -234,11 +251,20 @@ final class KlinkCoreClient
 	 * Retrieve the Document Descriptor of an indexed document given the institution identifier and the local document identifier
 	 * @param string $institutionId 
 	 * @param string $documentId 
+	 * @param string $visibility (optional) The visibility of the document to be retrieved. Acceptable values are: public, private. Default value KlinkVisibilityType::KLINK_PUBLIC.
 	 * @return KlinkDocumentDescriptor
+	 * @throws InvalidArgumentException If one or more parameters are invalid
 	 */
-	function getDocument( $institutionId, $documentId ){
+	function getDocument( $institutionId, $documentId, $visibility = null ){
 
 		$conn = self::_get_connection();
+
+		if(is_null($visibility)){
+			$visibility = KlinkVisibilityType::KLINK_PUBLIC;
+		}
+		else {
+			$visibility = KlinkVisibilityType::fromString($visibility);
+		}
 
         if($this->telemeter!=null) $this->telemeter->beforeOperation($conn->getUrl(),__FUNCTION__);
 
@@ -246,6 +272,7 @@ final class KlinkCoreClient
 		KlinkHelpers::is_valid_id( $documentId, 'local document id' );
 
 		$rem = $conn->get( self::SINGLE_DOCUMENT_ENDPOINT, new KlinkDocumentDescriptor(), array(
+			'VISIBILITY' => $document->getVisibility(),
 			'INSTITUTION_ID' => $institutionId,
 			'LOCAL_DOC_ID' => $documentId) );
 
@@ -287,8 +314,8 @@ final class KlinkCoreClient
 
 		$rem = $conn->get( self::SEARCH_ENDPOINT, new KlinkSearchResult(),
 			array(
+				'VISIBILITY' => $type,
 				'query' => $terms,
-				'visibility' => $type,
 				'numResults' => $resultsPerPage,
 				'startResult' => $offset
 			) );
@@ -331,7 +358,13 @@ final class KlinkCoreClient
 		*/
 	}
 
-
+	/**
+	 * Delete an institution from the K-Link Core
+	 * 
+	 * @param  string $id The institution identifier
+	 * @return boolean     true in case the institution has been succesfully removed
+	 * @throws KlinkException If the K-Link Core returned an error
+	 */
 	public function deleteInstitution( $id )
 	{
 
@@ -370,19 +403,12 @@ final class KlinkCoreClient
 			throw new KlinkException( (string)$rem, $rem->get_error_data_code() );
 		}
 
-		// $conn = self::_get_connection();
-
-		// $rem = $conn->put( self::SINGLE_INSTITUTION_ENDPOINT, $info );
-
-		// if( KlinkHelpers::is_error( $rem ) ){
-		// 	throw new KlinkException( (string)$rem );
-		// }
-
 		return $rem;
 	}
 
 	/**
-	 * Description
+	 * Saves a new institution into the K-Link Core
+	 * 
 	 * @param type KlinkInstitutionDetails $info 
 	 * @return type
 	 * @throws KlinkException if something wrong happened during the communication with the core
