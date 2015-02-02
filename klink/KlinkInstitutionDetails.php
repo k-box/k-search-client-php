@@ -131,7 +131,7 @@ final class KlinkInstitutionDetails
 
     /**
      * The name of the institution
-     * @return type
+     * @return string
      */
     public function getName()
     {
@@ -146,7 +146,7 @@ final class KlinkInstitutionDetails
 
     /**
      * The institution telephone number
-     * @return type
+     * @return string
      */
     public function getPhoneNumber()
     {
@@ -162,7 +162,7 @@ final class KlinkInstitutionDetails
 
     /**
      * The institution e-mail address for contact purposes
-     * @return type
+     * @return string
      */
     public function getMail()
     {
@@ -180,7 +180,7 @@ final class KlinkInstitutionDetails
 
     /**
      * The institution ID
-     * @return type
+     * @return string
      */
     public function getID()
     {
