@@ -20,6 +20,41 @@
  * @since 0.1.0
  */
 final class KlinkError {
+
+	/**
+	 * Class information expected for deserialization purposes
+	 */
+	const ERROR_CLASS_EXPECTED = 'class_expected';
+	const ERRORCODE_CLASS_EXPECTED = 48;
+
+	const ERROR_DESERIALIZATION_ERROR = 'deserialization_error';
+	const ERRORCODE_DESERIALIZATION_ERROR = 49;
+
+	/**
+	 * Failed HTTP request
+	 */
+	const ERROR_HTTP_REQUEST_FAILED = 'http_request_failed';
+	const ERRORCODE_HTTP_REQUEST_FAILED = 1516;
+	
+	/**
+	 * Wrong response format
+	 */
+	const ERROR_HTTP_RESPONSE_FORMAT = 'http_response_format';
+	const ERRORCODE_HTTP_RESPONSE_FORMAT = 2342;
+
+	const ERROR_HTTP_FAILURE = 'http_failure';
+	const ERRORCODE_HTTP_FAILURE = 108;
+
+
+	const ERROR_HTTP_REQUEST_SSL_FAILED = 'http_request_ssl_failed';
+	const ERROR_HTTP_REQUEST_TIMEOUT = 'http_request_timeout';
+	const ERRORCODE_HTTP_REQUEST_SSL_FAILED = 801;
+	const ERRORCODE_HTTP_REQUEST_TIMEOUT = 999;
+
+	const ERROR_HTTP_REQUEST_FAILED_TOO_MANY_REDIRECTS = 'http_request_failed_too_many_redirects';
+	const ERRORCODE_HTTP_REQUEST_FAILED_TOO_MANY_REDIRECTS = 99;
+
+
 	/**
 	 * Stores the list of errors.
 	 *
@@ -209,6 +244,15 @@ final class KlinkError {
 		if ( isset($this->error_data[$code]) )
 			return $this->error_data[$code];
 		return null;
+	}
+
+	public function get_error_data_code($code = '') {
+		if ( empty($code) )
+			$code = $this->get_error_code();
+
+		if ( isset($this->error_data[$code]) )
+			return (int)$this->error_data[$code];
+		return 0;
 	}
 
 	/**

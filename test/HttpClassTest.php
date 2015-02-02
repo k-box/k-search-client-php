@@ -15,30 +15,6 @@ class HttpClassTest extends PHPUnit_Framework_TestCase
 	    $this->testendpoint = "http://httpbin.org/";
 	}
 
-	// public function inputNumbers()
- //  {
- //    return [
- //      [2, 2, 4],
- //      [2.5, 2.5, 5]
- //    ];
- //  }
-	
- //  /**
- //   * @dataProvider inputNumbers
- //   */
- //  public function testCanAddNumbers($x, $y, $sum)
- //  {
- //    $this->assertEquals($sum, $this->calculator->add($x, $y));
- //  }
-
- //  /**
- //    * @expectedException InvalidArgumentException
- //    */
- //  public function testThrowsExceptionIfNonNumberIsPassed()
- //  {
- //    $calc = new Calculator;
- //    $calc->add('a', 'b');
- //  }
 	public function testHttpGet()
 	{
 		$result = $this->http->get( $this->testendpoint . 'ip');
@@ -102,11 +78,11 @@ class HttpClassTest extends PHPUnit_Framework_TestCase
 
 	public function testTimeoutRetry(){
 
-		$result = $this->http->get( 'http://10.255.255.1/', array( 'timeout' => 1, 'timeout_retry' => 1) );
+		$result = $this->http->get( 'http://www.google.com:81', array( 'timeout' => 1, 'timeout_retry' => 1) );
 
 		$this->assertTrue(KlinkHelpers::is_error($result), 'Expecting error');
 
-		$this->assertNotEmpty($result->get_error_message('http_request_timeout'), 'Expected timeout error');
+		$this->assertNotEmpty($result->get_error_message( KlinkError::ERROR_HTTP_REQUEST_TIMEOUT), 'Expected timeout error');
 
 	}
 

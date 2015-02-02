@@ -9,9 +9,7 @@ class KlinkRestClientTest extends PHPUnit_Framework_TestCase
 	{
 	  	date_default_timezone_set('America/Los_Angeles');
 
-	    $this->rest = new KlinkRestClient("http://httpbin.org/", null); //new KlinkAuthentication('http://klink-experim.cloudapp.net:14000/', 'testUser', 'testPass')
-
-	    //$this->testendpoint = "http://httpbin.org/";
+	    $this->rest = new KlinkRestClient("http://httpbin.org/", null);
 	}
 
 	public function inputNoCorrectClass()
@@ -27,12 +25,21 @@ class KlinkRestClientTest extends PHPUnit_Framework_TestCase
 
 	public function inputUrlConstruction(){
 		return [
-		  ['http://base', '', null, 'http://base/' ],
-		  ['http://base', '', [], 'http://base/' ],
-		  ['http://base/', 'method', [], 'http://base/method' ],
-		  ['http://base/', 'method/{ID}', [ 'ID' => 5 ], 'http://base/method/5' ],
-		  ['http://base/', 'method', [ 'query' => 'test' ], 'http://base/method?query=test' ],
-		  ['http://base/', 'method/{VISIBILITY}/', ['query' => 'test', 'VISIBILITY' => 'public' ], 'http://base/method/public/?query=test' ],
+		  ['http://base.com', '', null, 'http://base.com/' ],
+		  ['http://base.com', '', [], 'http://base.com/' ],
+		  ['http://base.com/', 'method', [], 'http://base.com/method' ],
+		  ['http://base.com/', 'method/{ID}', [ 'ID' => 5 ], 'http://base.com/method/5' ],
+		  ['http://base.com/', 'method', [ 'query' => 'test' ], 'http://base.com/method?query=test' ],
+		  ['http://base.com/', 'method/{VISIBILITY}/', ['query' => 'test', 'VISIBILITY' => 'public' ], 'http://base.com/method/public/?query=test' ],
+		];	
+	}
+
+	public function statusResponseCheckErrors(){
+		return [
+		  ['status/400', 400 ],
+		  ['status/401', 401 ],
+		  ['status/403', 403 ],
+		  ['status/500', 500 ],
 		];	
 	}
 	
@@ -82,15 +89,26 @@ class KlinkRestClientTest extends PHPUnit_Framework_TestCase
 
 	}
 
+	/**
+	 * @dataProvider statusResponseCheckErrors
+	 */
+	public function testGetErrorStatusCodes($url, $expectedCode)
+	{
+		$result = $this->rest->get( $url, new TestResponse() );
+
+		$this->assertTrue(KlinkHelpers::is_error($result), 'What the hell');
+
+		$this->assertEquals($expectedCode, $result->get_error_data_code(), 'message');
+
+	}
+
 	public function testGetDeserializationError()
 	{
 		$result = $this->rest->get( 'get', new TestResponse() );
 
-		// print_r($result);
-
 		$this->assertTrue(KlinkHelpers::is_error($result), 'Error expected');
 
-		$this->assertContains('deserialization_error', $result->get_error_codes(), 'Expected "deserialization_error" error');
+		$this->assertContains(KlinkError::ERROR_DESERIALIZATION_ERROR, $result->get_error_codes(), 'Expected "deserialization_error" error');
 
 	}
 
@@ -114,26 +132,13 @@ class KlinkRestClientTest extends PHPUnit_Framework_TestCase
 
 		$jsoned = json_encode($data);
 
-		// print_r(json_encode($data));
-
 		$result = $this->rest->post( 'post', $data, new TestBodyResponse() );
-
-		// print_r($result);
 
 		$this->assertFalse(KlinkHelpers::is_error($result), 'Everything should work');
 
 		$this->assertInstanceOf('TestBodyResponse', $result);
 
 		$this->assertEquals($jsoned, $result->data, 'Expected data needs to be equal to the sended data');
-
-		// $this->assertEquals(200, $result['response']['code'], 'Something wront happened');
-		// $this->assertTrue(!empty($result['body']), 'The response body is empty');
-
-		// $this->assertEquals('application/json', $result['headers']['content-type'], 'Expected JSON response');
-
-		// $decoded = json_decode($result['body']);
-
-		// $this->assertObjectHasAttribute('key', $decoded->json, 'returned json not have the key property');
 
 	}
 
@@ -145,13 +150,9 @@ class KlinkRestClientTest extends PHPUnit_Framework_TestCase
 
 		$result = $this->rest->get( 'ip', $testValue );
 
-		// $this->assertEquals(404, $result['response']['code'], 'Something wront happened');
-
-		//class_expected
-
 		$this->assertTrue(KlinkHelpers::is_error($result), 'Expected error');
 
-		$this->assertContains('class_expected', $result->get_error_codes(), 'Expected "class_expected" error');
+		$this->assertContains(KlinkError::ERROR_CLASS_EXPECTED, $result->get_error_codes(), 'Expected "class_expected" error');
 
 	}
 

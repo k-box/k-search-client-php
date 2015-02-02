@@ -120,7 +120,7 @@ final class KlinkCoreClient
 		$rem = $conn->post( self::ALL_DOCUMENTS_ENDPOINT, $array, new KlinkDocumentDescriptor() );
 
 		if(KlinkHelpers::is_error($rem)){
-			throw new KlinkException((string)$rem);
+			throw new KlinkException((string)$rem, $rem->get_error_data_code());
 		}
 
         if($this->telemeter!=null) $this->telemeter->afterOperation($conn->getUrl(),__FUNCTION__);
@@ -154,7 +154,7 @@ final class KlinkCoreClient
 			);
 
 		if( KlinkHelpers::is_error( $rem ) ){
-			throw new KlinkException( (string)$rem );
+			throw new KlinkException( (string)$rem, $rem->get_error_data_code() );
 		}
 
         if($this->telemeter!=null) $this->telemeter->afterOperation($conn->getUrl(),__FUNCTION__);
@@ -192,7 +192,7 @@ final class KlinkCoreClient
 			);
 
 		if( KlinkHelpers::is_error( $rem ) ){
-			throw new KlinkException( (string)$rem );
+			throw new KlinkException( (string)$rem, $rem->get_error_data_code() );
 		}
 
         if($this->telemeter!=null) $this->telemeter->afterOperation($conn->getUrl(),__FUNCTION__);
@@ -213,13 +213,13 @@ final class KlinkCoreClient
 		$rem = $this->removeDocument($document->getDescriptor());
 
 		if(KlinkHelpers::is_error( $rem )){
-			throw new KlinkException( (string)$rem );
+			throw new KlinkException( (string)$rem, $rem->get_error_data_code() );
 		}
 
 		$rem = $this->addDocument( $document );
 
 		if( KlinkHelpers::is_error( $rem ) ){
-			throw new KlinkException( (string)$rem );
+			throw new KlinkException( (string)$rem, $rem->get_error_data_code() );
 		}
 
 		return $rem;
@@ -246,7 +246,7 @@ final class KlinkCoreClient
 			'LOCAL_DOC_ID' => $documentId) );
 
 		if( KlinkHelpers::is_error( $rem ) ){
-			throw new KlinkException( (string)$rem );
+			throw new KlinkException( (string)$rem, $rem->get_error_data_code() );
 		}
 
         if($this->telemeter!=null) $this->telemeter->afterOperation($conn->getUrl(),__FUNCTION__);
@@ -290,7 +290,7 @@ final class KlinkCoreClient
 			) );
 
 		if(KlinkHelpers::is_error($rem)){
-			throw new KlinkException((string)$rem);
+			throw new KlinkException((string)$rem, $rem->get_error_data_code());
 		}
 
         if($this->telemeter!=null) $this->telemeter->afterOperation($conn->getUrl(),__FUNCTION__);
@@ -340,7 +340,7 @@ final class KlinkCoreClient
 			);
 
 		if( KlinkHelpers::is_error( $rem ) ){
-			throw new KlinkException( (string)$rem );
+			throw new KlinkException( (string)$rem, $rem->get_error_data_code() );
 		}
 
 		return $rem;
@@ -354,20 +354,16 @@ final class KlinkCoreClient
 	 */
 	function updateInstitution( KlinkInstitutionDetails $info ){
 
-		/**
-		TODO: check info->id === $config->institutionId
-		*/
-
 		$rem = $this->deleteInstitution( $info->getID() );
 
 		if(KlinkHelpers::is_error( $rem )){
-			throw new KlinkException( (string)$rem );
+			throw new KlinkException( (string)$rem, $rem->get_error_data_code() );
 		}
 
 		$rem = $this->saveInstitution( $info );
 
 		if( KlinkHelpers::is_error( $rem ) ){
-			throw new KlinkException( (string)$rem );
+			throw new KlinkException( (string)$rem, $rem->get_error_data_code() );
 		}
 
 		// $conn = self::_get_connection();
@@ -388,17 +384,13 @@ final class KlinkCoreClient
 	 * @throws KlinkException if something wrong happened during the communication with the core
 	 */
 	function saveInstitution( KlinkInstitutionDetails $info ){
-
-		/**
-		TODO: check info->id === $config->institutionId
-		*/
 		
 		$conn = self::_get_connection();
 
 		$rem = $conn->post( self::ALL_INSTITUTIONS_ENDPOINT, $info, 'KlinkInstitutionDetails' );
 
 		if( KlinkHelpers::is_error( $rem ) ){
-			throw new KlinkException( (string)$rem );
+			throw new KlinkException( (string)$rem, $rem->get_error_data_code() );
 		}
 
 		return $rem;
@@ -419,7 +411,7 @@ final class KlinkCoreClient
 		$insts = $conn->getCollection( self::ALL_INSTITUTIONS_ENDPOINT, array(), 'KlinkInstitutionDetails' );
 
 		if( KlinkHelpers::is_error( $insts ) ){
-			throw new KlinkException( (string)$insts );
+			throw new KlinkException( (string)$insts, $insts->get_error_data_code() );
 		}
 
 		if( !is_null( $nameOrId ) && count( $insts ) > 0 ){
@@ -460,7 +452,7 @@ final class KlinkCoreClient
 		$rem = $conn->get( self::SINGLE_INSTITUTION_ENDPOINT, new KlinkInstitutionDetails(), array('ID' => $id) );
 
 		if( KlinkHelpers::is_error( $rem ) ){
-			throw new KlinkException( (string)$rem );
+			throw new KlinkException( (string)$rem, $rem->get_error_data_code() );
 		}
 
         if($this->telemeter!=null) $this->telemeter->afterOperation($conn->getUrl(),__FUNCTION__);

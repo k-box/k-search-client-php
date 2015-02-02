@@ -340,10 +340,10 @@ final class KlinkHttp implements INetworkTransport {
 		$arrURL = @parse_url( $url );
 
 		if ( empty( $url ) || empty( $arrURL['scheme'] ) )
-			return new KlinkError('http_request_failed', KlinkHelpers::localize('A valid URL was not provided.'));
+			return new KlinkError(KlinkError::ERROR_HTTP_REQUEST_FAILED, KlinkHelpers::localize('A valid URL was not provided.'));
 
 		if ( $this->block_request( $url ) )
-			return new KlinkError( 'http_request_failed', KlinkHelpers::localize( 'User has blocked requests through HTTP.' ) );
+			return new KlinkError( KlinkError::ERROR_HTTP_REQUEST_FAILED, KlinkHelpers::localize( 'User has blocked requests through HTTP.' ) );
 
 		/*
 		 * Determine if this is a https call and pass that on to the transport functions
@@ -370,7 +370,7 @@ final class KlinkHttp implements INetworkTransport {
 		if ( $r['stream'] ) {
 			$r['blocking'] = true;
 			if ( ! self::is_writable( dirname( $r['filename'] ) ) )
-				return new KlinkError( 'http_request_failed', KlinkHelpers::localize( 'Destination directory for file streaming does not exist or is not writable.' ) );
+				return new KlinkError( KlinkError::ERROR_HTTP_REQUEST_FAILED, KlinkHelpers::localize( 'Destination directory for file streaming does not exist or is not writable.' ) );
 		}
 
 		if ( is_null( $r['headers'] ) )
@@ -425,7 +425,7 @@ final class KlinkHttp implements INetworkTransport {
 
 		KlinkHelpers::reset_mbstring_encoding();
 
-		$timeouterror = KlinkHelpers::is_error( $response ) ? $response->get_error_message('http_request_timeout') : '';
+		$timeouterror = KlinkHelpers::is_error( $response ) ? $response->get_error_message(KlinkError::ERROR_HTTP_REQUEST_TIMEOUT) : '';
 
 		if( KlinkHelpers::is_error( $response ) && 
 			!empty( $timeouterror ) &&
@@ -503,7 +503,7 @@ final class KlinkHttp implements INetworkTransport {
 
 		$class = $this->_get_first_available_transport( $args, $url );
 		if ( !$class )
-			return new KlinkError( 'http_failure', KlinkHelpers::localize( 'There are no HTTP transports available which can complete the requested request.' ) );
+			return new KlinkError( KlinkError::ERROR_HTTP_FAILURE, KlinkHelpers::localize( 'There are no HTTP transports available which can complete the requested request.' ) );
 
 		// Transport claims to support request, instantiate it and give it a whirl.
 		if ( empty( $transports[$class] ) )
@@ -891,7 +891,7 @@ final class KlinkHttp implements INetworkTransport {
 
 		// Don't redirect if we've run out of redirects.
 		if ( $args['redirection']-- <= 0 )
-			return new KlinkError( 'http_request_failed_too_many_redirects', KlinkHelpers::localize('Too many redirects.') );
+			return new KlinkError( KlinkError::ERROR_HTTP_REQUEST_FAILED_TOO_MANY_REDIRECTS, KlinkHelpers::localize('Too many redirects.') );
 
 		$redirect_location = $response['headers']['location'];
 
@@ -1067,7 +1067,7 @@ class KlinkHttp_Streams {
 		// Store error string.
 		$connection_error_str = null;
 
-		if ( !KLINKADAPTER_DEBUG ) {
+		if ( defined('KLINKADAPTER_DEBUG') && !KLINKADAPTER_DEBUG ) {
 			// In the event that the SSL connection fails, silence the many PHP Warnings.
 			if ( $secure_transport )
 				$error_reporting = error_reporting(0);
@@ -1084,18 +1084,18 @@ class KlinkHttp_Streams {
 		if ( false === $handle ) {
 			// SSL connection failed due to expired/invalid cert, or, OpenSSL configuration is broken.
 			if ( $secure_transport && 0 === $connection_error && '' === $connection_error_str )
-				return new KlinkError( 'http_request_ssl_failed', KlinkHelpers::localize( 'The SSL certificate for the host could not be verified.' ) );
+				return new KlinkError( KlinkError::ERROR_HTTP_REQUEST_SSL_FAILED, KlinkHelpers::localize( 'The SSL certificate for the host could not be verified.' ) );
 
 			if ( 60 === $connection_error )
-				return new KlinkError( 'http_request_timeout', $connection_error_str );
+				return new KlinkError( KlinkError::ERROR_HTTP_REQUEST_TIMEOUT, $connection_error_str );
 
-			return new KlinkError('http_request_ssl_failed', $connection_error . ': ' . $connection_error_str );
+			return new KlinkError(KlinkError::ERROR_HTTP_REQUEST_SSL_FAILED, $connection_error . ': ' . $connection_error_str );
 		}
 
 		// Verify that the SSL certificate is valid for this request.
 		if ( $secure_transport && $ssl_verify ) {
 			if ( ! self::verify_ssl_certificate( $handle, $arrURL['host'] ) )
-				return new KlinkError( 'http_request_ssl_failed', KlinkHelpers::localize( 'The SSL certificate for the host could not be verified.' ) );
+				return new KlinkError( KlinkError::ERROR_HTTP_REQUEST_SSL_FAILED, KlinkHelpers::localize( 'The SSL certificate for the host could not be verified.' ) );
 		}
 
 		stream_set_timeout( $handle, $timeout, $utimeout );
@@ -1144,12 +1144,12 @@ class KlinkHttp_Streams {
 
 		// If streaming to a file setup the file handle.
 		if ( $r['stream'] ) {
-			if ( ! WP_DEBUG )
+			if ( defined('KLINKADAPTER_DEBUG') && !KLINKADAPTER_DEBUG )
 				$stream_handle = @fopen( $r['filename'], 'w+' );
 			else
 				$stream_handle = fopen( $r['filename'], 'w+' );
 			if ( ! $stream_handle )
-				return new KlinkError( 'http_request_failed', sprintf( KlinkHelpers::localize( 'Could not open handle for fopen() to %s' ), $r['filename'] ) );
+				return new KlinkError( KlinkError::ERROR_HTTP_REQUEST_FAILED, sprintf( KlinkHelpers::localize( 'Could not open handle for fopen() to %s' ), $r['filename'] ) );
 
 			$bytes_written = 0;
 			while ( ! feof($handle) && $keep_reading ) {
@@ -1175,7 +1175,7 @@ class KlinkHttp_Streams {
 				if ( $bytes_written_to_file != $this_block_size ) {
 					fclose( $handle );
 					fclose( $stream_handle );
-					return new KlinkError( 'http_request_failed', KlinkHelpers::localize( 'Failed to write request to temporary file.' ) );
+					return new KlinkError( KlinkError::ERROR_HTTP_REQUEST_FAILED, KlinkHelpers::localize( 'Failed to write request to temporary file.' ) );
 				}
 
 				$bytes_written += $bytes_written_to_file;
@@ -1489,12 +1489,12 @@ class KlinkHttp_Curl {
 
 		// If streaming to a file open a file handle, and setup our curl streaming handler.
 		if ( $r['stream'] ) {
-			if ( ! WP_DEBUG )
+			if ( defined('KLINKADAPTER_DEBUG') && !KLINKADAPTER_DEBUG )
 				$this->stream_handle = @fopen( $r['filename'], 'w+' );
 			else
 				$this->stream_handle = fopen( $r['filename'], 'w+' );
 			if ( ! $this->stream_handle )
-				return new KlinkError( 'http_request_failed', sprintf( KlinkHelpers::localize( 'Could not open handle for fopen() to %s' ), $r['filename'] ) );
+				return new KlinkError( KlinkError::ERROR_HTTP_REQUEST_FAILED, sprintf( KlinkHelpers::localize( 'Could not open handle for fopen() to %s' ), $r['filename'] ) );
 		} else {
 			$this->stream_handle = false;
 		}
@@ -1533,11 +1533,11 @@ class KlinkHttp_Curl {
 
 			if ( $curl_error = curl_error( $handle ) ) {
 				curl_close( $handle );
-				return new KlinkError( 'http_request_failed', $curl_error );
+				return new KlinkError( KlinkError::ERROR_HTTP_REQUEST_FAILED, $curl_error );
 			}
 			if ( in_array( curl_getinfo( $handle, CURLINFO_HTTP_CODE ), array( 301, 302 ) ) ) {
 				curl_close( $handle );
-				return new KlinkError( 'http_request_failed_too_many_redirects', KlinkHelpers::localize( 'Too many redirects.' ) );
+				return new KlinkError( KlinkError::ERROR_HTTP_REQUEST_FAILED_TOO_MANY_REDIRECTS, KlinkHelpers::localize( 'Too many redirects.' ) );
 			}
 
 			curl_close( $handle );
@@ -1557,19 +1557,19 @@ class KlinkHttp_Curl {
 		if ( $curl_error || ( 0 == strlen( $theBody ) && empty( $theHeaders['headers'] ) ) ) {
 			if ( CURLE_WRITE_ERROR /* 23 */ == $curl_error &&  $r['stream'] ) {
 				fclose( $this->stream_handle );
-				return new KlinkError( 'http_request_failed', KlinkHelpers::localize( 'Failed to write request to temporary file.' ) );
+				return new KlinkError( KlinkError::ERROR_HTTP_REQUEST_FAILED, KlinkHelpers::localize( 'Failed to write request to temporary file.' ) );
 			}
 			if ( CURLE_OPERATION_TIMEDOUT /* 28 */ == $curl_error ) {
 				curl_close( $handle );
-				return new KlinkError( 'http_request_timeout', 'Operation timed out' );
+				return new KlinkError( KlinkError::ERROR_HTTP_REQUEST_TIMEOUT, 'Operation timed out' );
 			}
 			if ( $curl_error = curl_error( $handle ) ) {
 				curl_close( $handle );
-				return new KlinkError( 'http_request_failed', $curl_error );
+				return new KlinkError( KlinkError::ERROR_HTTP_REQUEST_FAILED, $curl_error );
 			}
 			if ( in_array( curl_getinfo( $handle, CURLINFO_HTTP_CODE ), array( 301, 302 ) ) ) {
 				curl_close( $handle );
-				return new KlinkError( 'http_request_failed_too_many_redirects', KlinkHelpers::localize( 'Too many redirects.' ) );
+				return new KlinkError( KlinkError::ERROR_HTTP_REQUEST_FAILED_TOO_MANY_REDIRECTS, KlinkHelpers::localize( 'Too many redirects.' ) );
 			}
 		}
 

@@ -531,7 +531,7 @@ class KlinkHelpers
 
 		}
 
-		if ( !preg_match('/.*([0-9])+.*/i', $value) ){
+		if ( !preg_match('/^([\+0-9\s\(\)\.\-x])+$/i', $value) ){
 
 				$message = self::localize( sprintf( $error_message_format, $parameter_name ) );
 

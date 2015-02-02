@@ -153,7 +153,7 @@ final class KlinkRestClient implements INetworkTransport
 	function get( $url, $expected_return_type, array $params = null ){
 
 		if(!self::_check_expected_return_type($expected_return_type)){
-			return new KlinkError('class_expected', KlinkHelpers::localize('The specified return type is not a class.'));
+			return new KlinkError(KlinkError::ERROR_CLASS_EXPECTED, KlinkHelpers::localize('The specified return type is not a class.'), KlinkError::ERRORCODE_CLASS_EXPECTED);
 		}
 
 		$url = self::_construct_url($this->baseApiUrl, $url, $params );
@@ -177,11 +177,11 @@ final class KlinkRestClient implements INetworkTransport
 		//202 accepted
 
 		if( (int)($result['response']['code']) !== 200 ){
-			return new KlinkError('http_request_failed', KlinkHelpers::localize($result['response']['message']));
+			return new KlinkError(KlinkError::ERROR_HTTP_REQUEST_FAILED, KlinkHelpers::localize($result['response']['message']), (int)($result['response']['code']));
 		}
 
 		if($result['headers']['content-type'] !== self::JSON_ENCODING){
-			return new KlinkError('http_response_format', KlinkHelpers::localize('Unsupported content encoding from the server.'));
+			return new KlinkError(KlinkError::ERROR_HTTP_RESPONSE_FORMAT, KlinkHelpers::localize('Unsupported content encoding from the server.'), KlinkError::ERRORCODE_HTTP_RESPONSE_FORMAT);
 		}
 
 		// $this->assertEquals('application/json', $result['headers']['content-type'], 'Expected JSON response');
@@ -196,7 +196,7 @@ final class KlinkRestClient implements INetworkTransport
 	{
 		
 		if(!self::_check_expected_return_type($expected_return_type)){
-			return new KlinkError('class_expected', KlinkHelpers::localize('The specified return type is not a class.'));
+			return new KlinkError(KlinkError::ERROR_CLASS_EXPECTED, KlinkHelpers::localize('The specified return type is not a class.'), KlinkError::ERRORCODE_CLASS_EXPECTED);
 		}
 
 		$url = self::_construct_url( $this->baseApiUrl, $url, $params );
@@ -220,11 +220,11 @@ final class KlinkRestClient implements INetworkTransport
 		//202 accepted
 
 		if( (int)($result['response']['code']) !== 200 ){
-			return new KlinkError('http_request_failed', KlinkHelpers::localize($result['response']['message']));
+			return new KlinkError(KlinkError::ERROR_HTTP_REQUEST_FAILED, KlinkHelpers::localize($result['response']['message']), (int)($result['response']['code']));
 		}
 
 		if($result['headers']['content-type'] !== self::JSON_ENCODING){
-			return new KlinkError('http_response_format', KlinkHelpers::localize('Unsupported content encoding from the server.'));
+			return new KlinkError(KlinkError::ERROR_HTTP_RESPONSE_FORMAT, KlinkHelpers::localize('Unsupported content encoding from the server.'), KlinkError::ERRORCODE_HTTP_RESPONSE_FORMAT);
 		}
 
 		// $this->assertEquals('application/json', $result['headers']['content-type'], 'Expected JSON response');
@@ -251,7 +251,7 @@ final class KlinkRestClient implements INetworkTransport
 	function post( $url, $data, $expected_return_type, array $params = null ){
 		
 		if(!self::_check_expected_return_type($expected_return_type)){
-			return new KlinkError('class_expected', KlinkHelpers::localize('The specified return type is not a class.'));
+			return new KlinkError(KlinkError::ERROR_CLASS_EXPECTED, KlinkHelpers::localize('The specified return type is not a class.'), KlinkError::ERRORCODE_CLASS_EXPECTED);
 		}
 
 		$url = self::_construct_url( $this->baseApiUrl, $url, $params );
@@ -283,11 +283,11 @@ final class KlinkRestClient implements INetworkTransport
 		//202 accepted
 
 		if((int)($result['response']['code']) !== 200 && (int)($result['response']['code']) !== 201){
-			return new KlinkError('http_request_failed', KlinkHelpers::localize($result['response']['message']));
+			return new KlinkError(KlinkError::ERROR_HTTP_REQUEST_FAILED, KlinkHelpers::localize($result['response']['message']), (int)($result['response']['code']));
 		}
 
 		if($result['headers']['content-type'] !== self::JSON_ENCODING){
-			return new KlinkError('http_response_format', KlinkHelpers::localize('Unsupported content encoding from the server.'));
+			return new KlinkError(KlinkError::ERROR_HTTP_RESPONSE_FORMAT, KlinkHelpers::localize('Unsupported content encoding from the server.'), KlinkError::ERRORCODE_HTTP_RESPONSE_FORMAT);
 		}
 
 		// $this->assertEquals('application/json', $result['headers']['content-type'], 'Expected JSON response');
@@ -309,7 +309,7 @@ final class KlinkRestClient implements INetworkTransport
 	function put( $url, $data, $expected_return_type = null, array $params = null ){
 
 		if(!is_null($expected_return_type) && !self::_check_expected_return_type($expected_return_type)){
-			return new KlinkError('class_expected', KlinkHelpers::localize('The specified return type is not a class.'));
+			return new KlinkError(KlinkError::ERROR_CLASS_EXPECTED, KlinkHelpers::localize('The specified return type is not a class.'), KlinkError::ERRORCODE_CLASS_EXPECTED);
 		}
 
 		$url = self::_construct_url($this->baseApiUrl, $url, $params);
@@ -341,13 +341,13 @@ final class KlinkRestClient implements INetworkTransport
 		//202 accepted
 
 		if((int)($result['response']['code']) !== 200 && (int)($result['response']['code']) !== 204){
-			return new KlinkError('http_request_failed', KlinkHelpers::localize($result['response']['message']));
+			return new KlinkError(KlinkError::ERROR_HTTP_REQUEST_FAILED, KlinkHelpers::localize($result['response']['message']), (int)($result['response']['code']));
 		}
 
 		if(!is_null($expected_return_type)){
 
 			if($result['headers']['content-type'] !== self::JSON_ENCODING){
-				return new KlinkError('http_response_format', KlinkHelpers::localize('Unsupported content encoding from the server.'));
+				return new KlinkError(KlinkError::ERROR_HTTP_RESPONSE_FORMAT, KlinkHelpers::localize('Unsupported content encoding from the server.'), KlinkError::ERRORCODE_HTTP_RESPONSE_FORMAT);
 			}
 
 			// $this->assertEquals('application/json', $result['headers']['content-type'], 'Expected JSON response');
@@ -372,7 +372,7 @@ final class KlinkRestClient implements INetworkTransport
 	function delete( $url, array $params = null ){
 
 		// if(!self::_check_expected_return_type($expected_return_type)){
-		// 	return new KlinkError('class_expected', KlinkHelpers::localize('The specified return type is not a class.'));
+		// 	return new KlinkError(KlinkError::ERROR_CLASS_EXPECTED, KlinkHelpers::localize('The specified return type is not a class.'));
 		// }
 
 		$url = self::_construct_url($this->baseApiUrl, $url, $params );
@@ -397,11 +397,11 @@ final class KlinkRestClient implements INetworkTransport
 
 
 		if( (int)($result['response']['code']) !== 200 && (int)($result['response']['code']) !== 204 ){
-			return new KlinkError('http_request_failed', KlinkHelpers::localize($result['response']['message']));
+			return new KlinkError(KlinkError::ERROR_HTTP_REQUEST_FAILED, KlinkHelpers::localize($result['response']['message']), (int)($result['response']['code']));
 		}
 
 		if( (int)($result['response']['code']) !== 204 && $result['headers']['content-type'] !== self::JSON_ENCODING){
-			return new KlinkError('http_response_format', KlinkHelpers::localize('Unsupported content encoding from the server.'));
+			return new KlinkError(KlinkError::ERROR_HTTP_RESPONSE_FORMAT, KlinkHelpers::localize('Unsupported content encoding from the server.'), KlinkError::ERRORCODE_HTTP_RESPONSE_FORMAT);
 		}
 
 		return true;
@@ -510,7 +510,7 @@ final class KlinkRestClient implements INetworkTransport
 		}
 		catch(Exception $je){
 
-			return new KlinkError('deserialization_error', $je->getMessage());
+			return new KlinkError(KlinkError::ERROR_DESERIALIZATION_ERROR, $je->getMessage(), KlinkError::ERRORCODE_DESERIALIZATION_ERROR);
 
 		}
 
@@ -530,7 +530,7 @@ final class KlinkRestClient implements INetworkTransport
 		}
 		catch(Exception $je){
 
-			return new KlinkError('deserialization_error', $je->getMessage());
+			return new KlinkError(KlinkError::ERROR_DESERIALIZATION_ERROR, $je->getMessage(), KlinkError::ERRORCODE_DESERIALIZATION_ERROR);
 
 		}
 		

@@ -24,7 +24,9 @@ class KlinkDocument {
 	protected $documentData;
 
 	/**
-	 * 
+	 * Create an instance of a KlinkDocument
+	 * @param KlinkDocumentDescriptor $descriptor The descriptor of the document
+	 * @param string $data The plain document data or the absolute file path of the document content
 	 */
 	public function __construct(KlinkDocumentDescriptor $descriptor, $data){
 
