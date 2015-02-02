@@ -466,7 +466,7 @@ final class KlinkCoreClient
 	/**
 	 * Get the institutions details.
 	 * 
-	 * @param string $id 
+	 * @param string $id the institution identifier
 	 * @return KlinkInstitutionDetails
 	 * @throws KlinkException if something wrong happened during the communication with the core
 	 * @throws IllegalArgumentException if the id is not well formatted
@@ -493,14 +493,18 @@ final class KlinkCoreClient
 
 	/**
 	 * Check if the institution exists
-	 * @param type $idOrName 
-	 * @return type
-	 * @internal 
+	 * @param string $idOrName the institution identifier or the name.
+	 * @return boolean true if the institution exists, false otherwise 
+	 * @throws IllegalArgumentException if the $idOrName is not a non-empty string
+	 * @throws KlinkException if something wrong happened during the communication with the core
 	 */
 	function institutionExists( $idOrName ){
 
-		throw new Exception("Not Implemented");
+		KlinkHelpers::is_string_and_not_empty( $idOrName, 'idOrName' );
+
+		$foundSomething = $this->getInstitutions( $idOrName );
 		
+		return !empty($foundSomething);
 
 	}
 
@@ -554,7 +558,7 @@ final class KlinkCoreClient
 		  	} catch(KlinkException $kei){
 
 		  		// Expected
-		  		//Method Not Allowed
+		  		// Method Not Allowed if invoking the version 1 of the K-Link Core api
 		  		if( $config->isDebugEnabled() ){
 		  			error_log( 'Exception message ' . $kei->getMessage() . PHP_EOL );
 		  		}
