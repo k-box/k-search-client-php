@@ -132,14 +132,14 @@ final class KlinkSearchResult
 
 	/**
 	 * The current list of Results
-	 * @var KlinkDocumentDescriptor[]
+	 * @var KlinkSearchResultItem[]
 	 */
 
 	public $items;
 
 	/**
 	 * The current list of Results
-	 * @return KlinkDocumentDescriptor[]
+	 * @return KlinkSearchResultItem[]
 	 */
 	public function getResults() {
 		return $this->items;
@@ -159,43 +159,37 @@ final class KlinkSearchResult
 		$this->queryTime = $queryTime;
 		$this->numFound = $numFound;
 		$this->itemCount = $itemsCount;
-		$this->items = array(
-
-			new KlinkDocumentDescriptor('K-a11', 'K', 'a11', KlinkDocumentUtils::generateHash('test'))
-
-			);
+		$this->items = array();
 	}
 
 
-	/**
-	 * for json serialization purposes
-	 * @return type
-	 */
-	public function to_array(){
-		$json = array();
-	    foreach($this as $key => $value) {
-	        if(is_array($value)){
-	        	$json[$key] = array();
+	// /**
+	//  * for json serialization purposes
+	//  * @return type
+	//  */
+	// public function to_array(){
+	// 	$json = array();
+	//     foreach($this as $key => $value) {
+	//         if(is_array($value)){
+	//         	$json[$key] = array();
 
-	        	foreach ($value as $v) {
+	//         	foreach ($value as $v) {
 	        			
-	        		//if has to_array I call it
+	//         		//if has to_array I call it
 
-	        		//otherwise just a json encode
+	//         		//otherwise just a json encode
 
 
 
-	        	}
+	//         	}
 
 	    		
-	    	}
-	    	else {
-		        $json[$key] = $value;
-		    }
-	    }
-	    return $json; // or json_encode($json)
-	}
-
-
+	//     	}
+	//     	else {
+	// 	        $json[$key] = $value;
+	// 	    }
+	//     }
+	//     return $json; // or json_encode($json)
+	// }
 
 }

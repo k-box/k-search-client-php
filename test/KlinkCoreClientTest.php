@@ -43,13 +43,30 @@ class KlinkCoreClientTest extends PHPUnit_Framework_TestCase
 
 	public function testSearch(){
 		
-		$term_to_search = 'search_term';
+		$term_to_search = '*';
 
 		$result = $this->core->search($term_to_search);
 
 		$this->assertEquals($term_to_search, $result->getTerms());
 
 		$this->assertInstanceOf('KlinkSearchResult', $result);
+
+		$items = $result->getResults();
+
+		if(!empty($items)){
+
+			// just check if the deserialization has done a good job (at least for the first element)
+
+			$this->assertContainsOnlyInstancesOf('KlinkSearchResultItem', $items);
+
+			$first = $items[0];
+
+			$this->assertInstanceOf('KlinkDocumentDescriptor', $first->getDescriptor());
+
+			$this->assertNotNull($first->getDescriptor(), 'Null descriptor');
+
+			$this->assertNotNull($first->title, 'Null title, the magic __get is not working');
+		}
 	}
 
 }
