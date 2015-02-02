@@ -272,7 +272,7 @@ final class KlinkCoreClient
 		KlinkHelpers::is_valid_id( $documentId, 'local document id' );
 
 		$rem = $conn->get( self::SINGLE_DOCUMENT_ENDPOINT, new KlinkDocumentDescriptor(), array(
-			'VISIBILITY' => $document->getVisibility(),
+			'VISIBILITY' => $visibility,
 			'INSTITUTION_ID' => $institutionId,
 			'LOCAL_DOC_ID' => $documentId) );
 
