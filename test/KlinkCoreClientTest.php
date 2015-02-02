@@ -66,6 +66,8 @@ class KlinkCoreClientTest extends PHPUnit_Framework_TestCase
 			$this->assertNotNull($first->getDescriptor(), 'Null descriptor');
 
 			$this->assertNotNull($first->title, 'Null title, the magic __get is not working');
+
+			$this->assertNotNull($first->getInstitutionID(), 'Null instituionid, the magic __call is not working');
 		}
 	}
 
