@@ -52,6 +52,19 @@ final class KlinkSearchResultItem
     }
 
 
+    public function __call($method, $parameters) {
+
+
+        if (method_exists($this->document_descriptor, $method))
+		{
+			return call_user_func_array(array($this->document_descriptor, $method), $parameters);
+		}
+
+		return call_user_func_array(array($this, $method), $parameters);
+    }
+
+
+
 
 	/**
 	 * @internal
