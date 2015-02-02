@@ -1,6 +1,8 @@
 # AdapterBoilerplate
 
-Is the starting point for creating a **K**Link Adapter. Offers some basic functionality for interacting with the KLink Core API and exposes the main interfaces that represents the data needed for every operation. The use of interfaces has been preferred over classes given the fact that the implementation can be different if an ORM is used or the CMS has some particular requirements.
+> This version will work only on K-Link Cores that supports the API version 2.
+
+Is the starting point for creating a **K**-Link Adapter. Offers some basic functionality for interacting with the KLink Core API and exposes the main interfaces that represents the data needed for every operation. The use of interfaces has been preferred over classes given the fact that the implementation can be different if an ORM is used or the CMS has some particular requirements.
 
 ## Feature offered
 
