@@ -380,10 +380,10 @@ final class KlinkHttp implements INetworkTransport {
 		$arrURL = self::parse_url( $url );
 
 		if ( empty( $url ) || empty( $arrURL['scheme'] ) )
-			return new KlinkError(KlinkError::ERROR_HTTP_REQUEST_FAILED, KlinkHelpers::localize('A valid URL was not provided.'));
+			return new KlinkError(KlinkError::ERROR_HTTP_REQUEST_FAILED, KlinkHelpers::localize('A valid URL was not provided.'), KlinkError::ERRORCODE_HTTP_REQUEST_FAILED);
 
 		if ( $this->block_request( $url ) )
-			return new KlinkError( KlinkError::ERROR_HTTP_REQUEST_FAILED, KlinkHelpers::localize( 'User has blocked requests through HTTP.' ) );
+			return new KlinkError( KlinkError::ERROR_HTTP_REQUEST_FAILED, KlinkHelpers::localize( 'User has blocked requests through HTTP.' ), KlinkError::ERRORCODE_HTTP_REQUEST_FAILED );
 
 		/*
 		 * Determine if this is a https call and pass that on to the transport functions
@@ -410,7 +410,7 @@ final class KlinkHttp implements INetworkTransport {
 		if ( $r['stream'] ) {
 			$r['blocking'] = true;
 			if ( ! self::is_writable( dirname( $r['filename'] ) ) )
-				return new KlinkError( KlinkError::ERROR_HTTP_REQUEST_FAILED, KlinkHelpers::localize( 'Destination directory for file streaming does not exist or is not writable.' ) );
+				return new KlinkError( KlinkError::ERROR_HTTP_REQUEST_FAILED, KlinkHelpers::localize( 'Destination directory for file streaming does not exist or is not writable.' ), KlinkError::ERRORCODE_HTTP_REQUEST_FAILED );
 		}
 
 		if ( is_null( $r['headers'] ) )
@@ -1189,7 +1189,7 @@ class KlinkHttp_Streams {
 			else
 				$stream_handle = fopen( $r['filename'], 'w+' );
 			if ( ! $stream_handle )
-				return new KlinkError( KlinkError::ERROR_HTTP_REQUEST_FAILED, sprintf( KlinkHelpers::localize( 'Could not open handle for fopen() to %s' ), $r['filename'] ) );
+				return new KlinkError( KlinkError::ERROR_HTTP_REQUEST_FAILED, sprintf( KlinkHelpers::localize( 'Could not open handle for fopen() to %s' ), $r['filename'] ), KlinkError::ERRORCODE_HTTP_REQUEST_FAILED );
 
 			$bytes_written = 0;
 			while ( ! feof($handle) && $keep_reading ) {
@@ -1215,7 +1215,7 @@ class KlinkHttp_Streams {
 				if ( $bytes_written_to_file != $this_block_size ) {
 					fclose( $handle );
 					fclose( $stream_handle );
-					return new KlinkError( KlinkError::ERROR_HTTP_REQUEST_FAILED, KlinkHelpers::localize( 'Failed to write request to temporary file.' ) );
+					return new KlinkError( KlinkError::ERROR_HTTP_REQUEST_FAILED, KlinkHelpers::localize( 'Failed to write request to temporary file.' ), KlinkError::ERRORCODE_HTTP_REQUEST_FAILED );
 				}
 
 				$bytes_written += $bytes_written_to_file;
@@ -1534,7 +1534,7 @@ class KlinkHttp_Curl {
 			else
 				$this->stream_handle = fopen( $r['filename'], 'w+' );
 			if ( ! $this->stream_handle )
-				return new KlinkError( KlinkError::ERROR_HTTP_REQUEST_FAILED, sprintf( KlinkHelpers::localize( 'Could not open handle for fopen() to %s' ), $r['filename'] ) );
+				return new KlinkError( KlinkError::ERROR_HTTP_REQUEST_FAILED, sprintf( KlinkHelpers::localize( 'Could not open handle for fopen() to %s' ), $r['filename'] ), KlinkError::ERRORCODE_HTTP_REQUEST_FAILED );
 		} else {
 			$this->stream_handle = false;
 		}
@@ -1573,7 +1573,7 @@ class KlinkHttp_Curl {
 
 			if ( $curl_error = curl_error( $handle ) ) {
 				curl_close( $handle );
-				return new KlinkError( KlinkError::ERROR_HTTP_REQUEST_FAILED, $curl_error );
+				return new KlinkError( KlinkError::ERROR_HTTP_REQUEST_FAILED, $curl_error, KlinkError::ERRORCODE_HTTP_REQUEST_FAILED );
 			}
 			if ( in_array( curl_getinfo( $handle, CURLINFO_HTTP_CODE ), array( 301, 302 ) ) ) {
 				curl_close( $handle );
@@ -1597,7 +1597,7 @@ class KlinkHttp_Curl {
 		if ( $curl_error || ( 0 == strlen( $theBody ) && empty( $theHeaders['headers'] ) ) ) {
 			if ( CURLE_WRITE_ERROR /* 23 */ == $curl_error &&  $r['stream'] ) {
 				fclose( $this->stream_handle );
-				return new KlinkError( KlinkError::ERROR_HTTP_REQUEST_FAILED, KlinkHelpers::localize( 'Failed to write request to temporary file.' ) );
+				return new KlinkError( KlinkError::ERROR_HTTP_REQUEST_FAILED, KlinkHelpers::localize( 'Failed to write request to temporary file.' ), KlinkError::ERRORCODE_HTTP_REQUEST_FAILED );
 			}
 			if ( CURLE_OPERATION_TIMEDOUT /* 28 */ == $curl_error ) {
 				curl_close( $handle );
@@ -1605,7 +1605,7 @@ class KlinkHttp_Curl {
 			}
 			if ( $curl_error = curl_error( $handle ) ) {
 				curl_close( $handle );
-				return new KlinkError( KlinkError::ERROR_HTTP_REQUEST_FAILED, $curl_error );
+				return new KlinkError( KlinkError::ERROR_HTTP_REQUEST_FAILED, $curl_error, KlinkError::ERRORCODE_HTTP_REQUEST_FAILED );
 			}
 			if ( in_array( curl_getinfo( $handle, CURLINFO_HTTP_CODE ), array( 301, 302 ) ) ) {
 				curl_close( $handle );
