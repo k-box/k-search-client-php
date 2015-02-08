@@ -33,6 +33,12 @@
         ]
     },
 
+    "autoload-dev": {
+        "classmap": [
+            "test"
+        ]
+    },
+
     "repositories": [
         {
             "type": "composer",
