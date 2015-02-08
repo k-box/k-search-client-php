@@ -137,11 +137,13 @@ final class KlinkRestClient implements INetworkTransport
 
  		if(!is_null($authentication)){
 	 		$this->all_request_options['headers'] = array( 'Authorization' => 'Basic ' . base64_encode( $authentication->getUsername() . ':' . $authentication->getPassword() ) );
-	 		$this->all_request_options['timeout'] = $this->config['timeout'];
-	 		$this->all_request_options['redirection'] = $this->config['redirection'];
-	 		$this->all_request_options['user-agent'] = $this->config['user-agent'];
-	 		$this->all_request_options['httpversion'] = $this->config['httpversion'];
 	 	}
+
+	 	$this->all_request_options['timeout'] = $this->config['timeout'];
+ 		$this->all_request_options['redirection'] = $this->config['redirection'];
+ 		$this->all_request_options['user-agent'] = $this->config['user-agent'];
+ 		$this->all_request_options['httpversion'] = $this->config['httpversion'];
+ 		$this->all_request_options['debug'] = $this->config['debug'];
 
 		$this->rest = new KlinkHttp($this->baseApiUrl);
 	}
