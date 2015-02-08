@@ -337,15 +337,12 @@ final class KlinkHttp implements INetworkTransport {
 			$defaults['redirection'] = 0;
 
 		$r = array_merge( $defaults, $args );
-		/**
-		 * Filter the arguments used in an HTTP request.
-		 *
-		 * @since 0.1.0
-		 *
-		 * @param array  $r   An array of HTTP request arguments.
-		 * @param string $url The request URL.
-		 */
-		//$r = apply_filters( 'http_request_args', $r, $url );
+		
+		if( isset($r['debug']) && $r['debug']){
+			if(!defined('KLINKADAPTER_DEBUG')){
+				define('KLINKADAPTER_DEBUG', true);
+			}
+		}
 
 		// The transports decrement this, store a copy of the original value for loop purposes.
 		if ( ! isset( $r['_redirection'] ) )
