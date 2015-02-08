@@ -511,6 +511,13 @@ final class KlinkRestClient implements INetworkTransport
 		try{
 
 			$decoded = json_decode($json, true);
+
+			if(is_null($decoded)){
+
+				$error_string = $this->get_last_json_error();
+
+				return new KlinkError(KlinkError::ERROR_DESERIALIZATION_ERROR, $error_string, KlinkError::ERRORCODE_DESERIALIZATION_ERROR);
+			}
 			
 			$deserialized = $this->jm->map($decoded, $class);
 			return $deserialized;
@@ -530,6 +537,13 @@ final class KlinkRestClient implements INetworkTransport
 		try{
 
 			$decoded = json_decode($json, true);
+
+			if(is_null($decoded)){
+
+				$error_string = $this->get_last_json_error();
+
+				return new KlinkError(KlinkError::ERROR_DESERIALIZATION_ERROR, $error_string, KlinkError::ERRORCODE_DESERIALIZATION_ERROR);
+			}
 			
 			$deserialized = $this->jm->mapArray($decoded, new ArrayObject(), $class);
 
@@ -542,6 +556,36 @@ final class KlinkRestClient implements INetworkTransport
 
 		}
 		
+	}
+
+	private function get_last_json_error()
+	{
+		$error_string = 'json deserialization error';
+
+		if(function_exists('json_last_error')){
+			switch (json_last_error()) {
+			    case JSON_ERROR_DEPTH:
+			        $error_string = 'Maximum stack depth exceeded';
+			    break;
+			    case JSON_ERROR_STATE_MISMATCH:
+			        $error_string = 'Underflow or the modes mismatch';
+			    break;
+			    case JSON_ERROR_CTRL_CHAR:
+			        $error_string = 'Unexpected control character found';
+			    break;
+			    case JSON_ERROR_SYNTAX:
+			        $error_string = 'Syntax error, malformed JSON';
+			    break;
+			    case JSON_ERROR_UTF8:
+			        $error_string = 'Malformed UTF-8 characters, possibly incorrectly encoded';
+			    break;
+			    default:
+			        $error_string = 'Unknown error';
+			    break;
+			}
+		}
+
+		return $error_string;
 	}
 }
 
