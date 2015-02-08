@@ -35,6 +35,9 @@ final class KlinkError {
 	 */
 	const ERROR_HTTP_REQUEST_FAILED = 'http_request_failed';
 	const ERRORCODE_HTTP_REQUEST_FAILED = 1516;
+
+	const ERROR_CONNECTION_REFUSED = 'http_connection_refused';
+	const ERRORCODE_CONNECTION_REFUSED = 1517;
 	
 	/**
 	 * Wrong response format

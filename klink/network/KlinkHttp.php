@@ -1115,16 +1115,26 @@ class KlinkHttp_Streams {
 				error_reporting( $error_reporting );
 
 		} else {
-			$handle = stream_socket_client( $connect_host . ':' . $arrURL['port'], $connection_error, $connection_error_str, $connect_timeout, STREAM_CLIENT_CONNECT, $context );
+			$handle = @stream_socket_client( $connect_host . ':' . $arrURL['port'], $connection_error, $connection_error_str, $connect_timeout, STREAM_CLIENT_CONNECT, $context );
+
+			if ( defined('KLINKADAPTER_DEBUG') && KLINKADAPTER_DEBUG ) {
+				error_log( 'KlinkHttp_Streams request error: ' . var_export($handle, true) . ' - ' . $connection_error . ': ' . $connection_error_str);
+			}
 		}
 
+			
+
 		if ( false === $handle ) {
+
 			// SSL connection failed due to expired/invalid cert, or, OpenSSL configuration is broken.
 			if ( $secure_transport && 0 === $connection_error && '' === $connection_error_str )
 				return new KlinkError( KlinkError::ERROR_HTTP_REQUEST_SSL_FAILED, KlinkHelpers::localize( 'The SSL certificate for the host could not be verified.' ) );
 
 			if ( 60 === $connection_error )
-				return new KlinkError( KlinkError::ERROR_HTTP_REQUEST_TIMEOUT, $connection_error_str );
+				return new KlinkError( KlinkError::ERROR_HTTP_REQUEST_TIMEOUT, $connection_error_str, KlinkError::ERRORCODE_HTTP_REQUEST_TIMEOUT );
+
+			if ( 61 === $connection_error )
+				return new KlinkError( KlinkError::ERROR_CONNECTION_REFUSED, $connection_error_str, KlinkError::ERRORCODE_CONNECTION_REFUSED );
 
 			return new KlinkError(KlinkError::ERROR_HTTP_REQUEST_SSL_FAILED, $connection_error . ': ' . $connection_error_str );
 		}
