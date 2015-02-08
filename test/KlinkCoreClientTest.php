@@ -5,11 +5,18 @@
 */
 class KlinkCoreClientTest extends PHPUnit_Framework_TestCase
 {
+	/**
+	 * The institution identifier to be used in the test
+	 *
+	 * @var string
+	 */
+	const INSTITUION_ID = 'KLINK';
+
 	public function setUp()
 	{
 	  	date_default_timezone_set('Europe/Rome');
 
-	  	$config = new KlinkConfiguration( 'KLINK', 'KA', array(
+	  	$config = new KlinkConfiguration( self::INSTITUION_ID, 'KA', array(
 	  			new KlinkAuthentication( 'https://klink-dev0.cloudapp.net/kcore/', 'admin@klink.org', 'admin.klink' )
 	  		) );
 
@@ -18,20 +25,6 @@ class KlinkCoreClientTest extends PHPUnit_Framework_TestCase
 	    $this->core = new KlinkCoreClient($config);
 
 	}
-
-	// public function inputNoCorrectClass()
-	// {
-	// 	return [
-	// 	  [[]],
-	// 	  [null],
-	// 	  [''],
-	// 	  [10],
-	// 	  ['NonExistingNamespace\TotallyNonexistentClass']
-	// 	];
-	// }
-	
-	//TODO: test add institution + update + delete
-	//TODO: test add doc + get + delete
 
 	public function testGetInstitutions()
 	{
@@ -74,4 +67,68 @@ class KlinkCoreClientTest extends PHPUnit_Framework_TestCase
 		}
 	}
 
+
+	public function testIndexAndRemoveDocument()
+	{
+
+		$content = 'This is the <strong>content</strong>';
+
+		$hash = KlinkDocumentUtils::generateHash($content);
+
+		$document_id = 'test';
+
+		$descriptor = KlinkDocumentDescriptor::create(
+			self::INSTITUION_ID, $document_id, $hash, 'Title', 
+			'text/html', 'http://localhost/test/document', 
+			'http://localhost/test/thumbnail', 'user <user@user.com>', 'user <user@user.com>');
+
+		$document = new KlinkDocument($descriptor, $content);
+
+		// Add test
+		$add_response = $this->core->addDocument( $document );
+
+		$this->assertInstanceOf('KlinkDocumentDescriptor', $add_response);
+
+		// Get test
+		$get_response = $this->core->getDocument( self::INSTITUION_ID, $document_id );
+
+		$this->assertInstanceOf('KlinkDocumentDescriptor', $get_response);
+
+		$this->assertEquals($hash, $get_response->getHash(), 'different hash');
+
+		// Remove test
+		$remove_response = $this->core->removeDocument( $descriptor );
+
+		// Get confirms
+		try{
+			
+			$get_response = $this->core->getDocument( self::INSTITUION_ID, $document_id );
+
+			$this->assertFalse(true, 'The confirmation should repond with a Not found exception');
+
+		}catch(KlinkException $kex){
+
+			$this->assertEquals(404, $kex->getCode(), 'Expecting not found');
+		}
+		
+	}
+
+	public function testCreateAndRemoveInstitution()
+	{
+		$inst = KlinkInstitutionDetails::create('testInst', 'testInst');
+
+		$inst->setMail('mail@mail.com');
+		$inst->setPhoneNumber('+55555555');
+		$inst->setThumbnail('http://thumbnail.org');
+		$inst->setUrl('http://institution.org');
+
+		$save_response = $this->core->saveInstitution($inst);
+
+		$this->assertInstanceOf('KlinkInstitutionDetails', $save_response);
+
+		$this->assertEquals($inst->getId(), $save_response->getId(), 'different id');
+
+		$this->core->deleteInstitution('testInst');
+
+	}
 }
