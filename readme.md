@@ -23,9 +23,11 @@ the Adapter boilerplate offers a common way to interact with the Klink Core API.
 
 before doing anything please launch
 
-	composer update --prefer-dist
+	composer install --prefer-dist
 
 to resolve all the dependencies. The `--prefer-dist` is used to force to resolve the dependencies on the private composer repository and not to donwload from git.
+
+if you don't need to run php unit test with phpunit please use the composer `--no-dev` flag.
 
 Than in your project insert the line
 
