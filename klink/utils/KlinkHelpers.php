@@ -413,40 +413,38 @@ class KlinkHelpers
 
 	/**
 	 * Test if the url is syntactically well formed.
+	 *
+	 * The test does not use PHP FILTER_VALIDATE_URL or parse_url given the fact that in some versions of PHP 
+	 * url like http://t.co and http//git.io which are valid according to the spec (https://url.spec.whatwg.org/ and RFC3986)
+	 * not pass the test. Also recent versions of Wordpress Http stack added a replacement for the parse_url 
+	 * failings on PHP < 5.4.7 (https://core.trac.wordpress.org/browser/tags/4.1/src/wp-includes/class-http.php#L692)
+	 *
+	 * Thanks to Mathias Bynens that did a very valuable job in searching for a regular expression that matches the URL 
+	 * according to the spec (https://mathiasbynens.be/demo/url-regex) this method could use a well tested sets of regexp.
+	 * Also Mathias has put a very long set of test cases for valid and invalid urls.
+	 *
+	 * The regular expression used was created by Diego Pernini (https://gist.github.com/dperini/729294) and in particular
+	 * the reworked version to use with preg_match posted in the comments (https://gist.github.com/dperini/729294#comment-15527)
+	 *
+	 * Internals: a little shortcode has been added to test for localhost which is not supported by the regular expression used
 	 * 
 	 * @param string $value the value to check
 	 * @param string $parameter_name the human understandable name of the parameter to be used in the error message
 	 * @param string $error_message_format only one %s is allowed, plese take into account that the format must be in english and will be localized in other languages
 	 * @throws InvalidArgumentException if the passed value is empty or null or is not a string
 	 */
-	public static function is_valid_url($url, $parameter_name = 'value', $error_message_format = 'The %s must be a valid url')
+	public static function is_valid_url($url, $parameter_name = 'url', $error_message_format = 'The %s must be a valid url')
 	{
 
 		self::is_string_and_not_empty( $url, $parameter_name, $error_message_format );
 
-		if (! filter_var($url, FILTER_VALIDATE_URL)) {
+		if ( !preg_match('%^(?:https?):\/\/(localhost|127\.0\.0\.1)\/+.*$%iu', $url) &&
+			 !preg_match('%^(?:(?:https?|ftp)://)(?:\S+(?::\S*)?@)?(?:(?!(?:10|127)(?:\.\d{1,3}){3})(?!(?:169\.254|192\.168)(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z\x{00a1}-\x{ffff}0-9]-*)*[a-z\x{00a1}-\x{ffff}0-9]+)(?:\.(?:[a-z\x{00a1}-\x{ffff}0-9]-*)*[a-z\x{00a1}-\x{ffff}0-9]+)*(?:\.(?:[a-z\x{00a1}-\x{ffff}]{2,})))(?::\d{2,5})?(?:/\S*)?$%iuS', $url) ) {
 			
 			$message = self::localize( sprintf( $error_message_format, $parameter_name ) );
 
 			throw new InvalidArgumentException( $message );
 
-		}
-
-
-		$parsed = @parse_url($url);
-
-		if( $parsed === false ) {
-
-			$message = self::localize( sprintf( $error_message_format, $parameter_name ) );
-
-			throw new InvalidArgumentException( $message );
-
-		}
-
-		if( !empty( $parsed['host'] ) && strpos( $parsed['host'], '.' ) === false ){
-			$message = self::localize( sprintf( $error_message_format, $parameter_name ) );
-
-			throw new InvalidArgumentException( $message );
 		}
 
 	}
