@@ -1611,7 +1611,7 @@ class KlinkHttp_Curl {
 				return new KlinkError( KlinkError::ERROR_HTTP_REQUEST_TIMEOUT, 'Operation timed out' );
 			}
 			if ( CURLE_COULDNT_CONNECT /* 7 */ == $curl_error ){
-				return new KlinkError( KlinkError::ERROR_CONNECTION_REFUSED, $connection_error_str, KlinkError::ERRORCODE_CONNECTION_REFUSED );
+				return new KlinkError( KlinkError::ERROR_CONNECTION_REFUSED, 'Connection refused', KlinkError::ERRORCODE_CONNECTION_REFUSED );
 			}
 			if ( $curl_error = curl_error( $handle ) ) {
 				curl_close( $handle );
