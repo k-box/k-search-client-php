@@ -126,6 +126,46 @@ final class KlinkHttp implements INetworkTransport {
 	}
 
 	/**
+     * A wrapper for PHP's parse_url() function that handles edgecases in < PHP 5.4.7
+     *
+     * PHP 5.4.7 expanded parse_url()'s ability to handle non-absolute url's, including
+     * schemeless and relative url's with :// in the path, this works around those
+     * limitations providing a standard output on PHP 5.2~5.4+.
+     *
+     * Error suppression is used as prior to PHP 5.3.3, an E_WARNING would be generated
+     * when URL parsing failed.
+     *
+     * @since 4.1.0
+     * @access protected
+     *
+     * @param string $url The URL to parse.
+     * @return bool|array False on failure; Array of URL components on success;
+     *                    See parse_url()'s return values.
+     */
+    public static function parse_url( $url ) {
+            $parts = @parse_url( $url );
+            if ( ! $parts ) {
+                    // < PHP 5.4.7 compat, trouble with relative paths including a scheme break in the path
+                    if ( '/' == $url[0] && false !== strpos( $url, '://' ) ) {
+                            // Since we know it's a relative path, prefix with a scheme/host placeholder and try again
+                            if ( ! $parts = @parse_url( 'placeholder://placeholder' . $url ) ) {
+                                    return $parts;
+                            }
+                            // Remove the placeholder values
+                            unset( $parts['scheme'], $parts['host'] );
+                    } else {
+                            return $parts;
+                    }
+            }
+            // < PHP 5.4.7 compat, doesn't detect schemeless URL's host field
+            if ( '//' == substr( $url, 0, 2 ) && ! isset( $parts['host'] ) ) {
+                    list( $parts['host'], $slashless_path ) = explode( '/', substr( $parts['path'], 2 ), 2 );
+                    $parts['path'] = "/{$slashless_path}";
+            }
+            return $parts;
+    }
+
+	/**
 	 * Determine a writable directory for temporary files.
 	 TODO: move to utils
 	 *
@@ -142,8 +182,8 @@ final class KlinkHttp implements INetworkTransport {
 	 */
 	private function get_temp_dir() {
 		static $temp;
-		if ( defined('WP_TEMP_DIR') )
-			return KlinkHelpers::trailingslashit(WP_TEMP_DIR);
+		// if ( defined('WP_TEMP_DIR') )
+		// 	return KlinkHelpers::trailingslashit(WP_TEMP_DIR);
 
 		if ( $temp )
 			return KlinkHelpers::trailingslashit( $temp );
@@ -158,9 +198,9 @@ final class KlinkHttp implements INetworkTransport {
 		if ( @is_dir( $temp ) && self::is_writable( $temp ) )
 			return KlinkHelpers::trailingslashit( $temp );
 
-		$temp = WP_CONTENT_DIR . '/';
-		if ( is_dir( $temp ) && self::is_writable( $temp ) )
-			return $temp;
+		// $temp = WP_CONTENT_DIR . '/';
+		// if ( is_dir( $temp ) && self::is_writable( $temp ) )
+		// 	return $temp;
 
 		$temp = '/tmp/';
 		return $temp;
@@ -337,7 +377,7 @@ final class KlinkHttp implements INetworkTransport {
 		// 	$url = wp_kses_bad_protocol( $url, array( 'http', 'https', 'ssl' ) );
 		// }
 
-		$arrURL = @parse_url( $url );
+		$arrURL = self::parse_url( $url );
 
 		if ( empty( $url ) || empty( $arrURL['scheme'] ) )
 			return new KlinkError(KlinkError::ERROR_HTTP_REQUEST_FAILED, KlinkHelpers::localize('A valid URL was not provided.'));
@@ -352,7 +392,7 @@ final class KlinkHttp implements INetworkTransport {
 		$r['ssl'] = $arrURL['scheme'] == 'https' || $arrURL['scheme'] == 'ssl';
 
 		// Determine if this request is to OUR install of WordPress.
-		$homeURL = parse_url( $this->localhost_url );
+		$homeURL = self::parse_url( $this->localhost_url );
 		$r['local'] = 'localhost' == $arrURL['host'] || ( isset( $homeURL['host'] ) && $homeURL['host'] == $arrURL['host'] );
 		unset( $homeURL );
 
@@ -829,10 +869,10 @@ final class KlinkHttp implements INetworkTransport {
 		if ( false !== strpos( $maybe_relative_path, '://' ) )
 			return $maybe_relative_path;
 
-		if ( ! $url_parts = @parse_url( $url ) )
+		if ( ! $url_parts = self::parse_url( $url ) )
 			return $maybe_relative_path;
 
-		if ( ! $relative_url_parts = @parse_url( $maybe_relative_path ) )
+		if ( ! $relative_url_parts = self::parse_url( $maybe_relative_path ) )
 			return $maybe_relative_path;
 
 		$absolute_path = $url_parts['scheme'] . '://' . $url_parts['host'];
@@ -959,7 +999,7 @@ class KlinkHttp_Streams {
 	/**
 	 * Send a HTTP request to a URI using PHP Streams.
 	 *
-	 * @see WP_Http::request For default options descriptions.
+	 * @see KlinkHttp::request For default options descriptions.
 	 *
 	 * @since 0.1.0
 	 * @since 3.7.0 Combined with the fsockopen transport and switched to stream_socket_client().
@@ -990,7 +1030,7 @@ class KlinkHttp_Streams {
 		// Construct Cookie: header if any cookies are set.
 		KlinkHttp::buildCookieHeader( $r );
 
-		$arrURL = parse_url($url);
+		$arrURL = KlinkHttp::parse_url($url);
 
 		$connect_host = $arrURL['host'];
 
@@ -1751,7 +1791,7 @@ final class KlinkHttp_Cookie {
 	 */
 	public function __construct( $data, $requested_url = '' ) {
 		if ( $requested_url )
-			$arrURL = @parse_url( $requested_url );
+			$arrURL = KlinkHttp::parse_url( $requested_url );
 		if ( isset( $arrURL['host'] ) )
 			$this->domain = $arrURL['host'];
 		$this->path = isset( $arrURL['path'] ) ? $arrURL['path'] : '/';
@@ -1822,7 +1862,7 @@ final class KlinkHttp_Cookie {
 			return false;
 
 		// Get details on the URL we're thinking about sending to.
-		$url = parse_url( $url );
+		$url = KlinkHttp::parse_url( $url );
 		$url['port'] = isset( $url['port'] ) ? $url['port'] : ( 'https' == $url['scheme'] ? 443 : 80 );
 		$url['path'] = isset( $url['path'] ) ? $url['path'] : '/';
 
