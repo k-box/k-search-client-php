@@ -9,7 +9,7 @@ class KlinkCoreClientTest extends PHPUnit_Framework_TestCase
 	{
 	  	date_default_timezone_set('Europe/Rome');
 
-	  	$config = new KlinkConfiguration( 'K-uyv', 'KA', array(
+	  	$config = new KlinkConfiguration( 'KLINK', 'KA', array(
 	  			new KlinkAuthentication( 'https://klink-dev0.cloudapp.net/kcore/', 'admin@klink.org', 'admin.klink' )
 	  		) );
 
@@ -30,6 +30,9 @@ class KlinkCoreClientTest extends PHPUnit_Framework_TestCase
 	// 	];
 	// }
 	
+	//TODO: test add institution + update + delete
+	//TODO: test add doc + get + delete
+
 	public function testGetInstitutions()
 	{
 
