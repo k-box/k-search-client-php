@@ -31,8 +31,9 @@ if you don't need to run php unit test with phpunit please use the composer `--n
 
 Than in your project insert the line
 
+```php
 	require_once dirname(__DIR__).'/vendor/autoload.php';
-
+```
 
 ## Examples
 
