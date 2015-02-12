@@ -145,7 +145,17 @@ final class KlinkSearchResult
 		return $this->items;
 	}
 
+	/**
+	 * Store the activated filters for this search
+	 * @internal
+	 */
+	public $filters;
 
+	/**
+	 * Store the available facets starting from this search
+	 * @internal
+	 */
+	public $facets;
 
 
 
