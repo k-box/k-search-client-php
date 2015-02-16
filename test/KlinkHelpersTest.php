@@ -198,6 +198,16 @@ class KlinkHelpersTest extends PHPUnit_Framework_TestCase
 		  ['http://223.255.255.254'],
 		];
 	}
+
+
+	public function camel_case_to_unserscore()
+	{
+		return [
+		  ['camelCase', 'camel_case'],
+		  ['StartWithACamel', 'start_with_a_camel'],
+		  
+		];	
+	}
 	
 	/**
 	 * Call protected/private method of a class.
@@ -292,5 +302,14 @@ class KlinkHelpersTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals($expected, $sanitized);
 	}
 
+	/**
+	 * @dataProvider camel_case_to_unserscore
+	 */
+	public function testToUnderscoreCase($input, $expected)
+	{
+		$converted = KlinkHelpers::to_underscore_case($input);
+
+		$this->assertEquals($expected, $converted);
+	}
 
 }

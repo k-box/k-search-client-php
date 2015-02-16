@@ -641,5 +641,16 @@ class KlinkHelpers
 		return htmlentities( $value, ENT_QUOTES, 'UTF-8', false );
 	}
 
+	/**
+	 * Convert a string from camel case (e.g. methodName) to underscore case (e.g. method_name)
+	 * 
+	 * @param string $input the string to conver
+	 * @return the underscore case version of the $input
+	 */
+	public static function to_underscore_case($input)
+	{
+		return ltrim(strtolower(preg_replace('/[A-Z]/', '_$0', $input)), '_');
+	}
+
 
 }

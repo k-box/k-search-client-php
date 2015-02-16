@@ -257,3 +257,31 @@ The KlinkDocumentUtils class has the following utility methods that you need to 
 to run Unit Tests you must have phpunit version 4.3 or above and the php configuration must have the following extension enabled:
 
 - `php_gd2` for imaging functions with full png support (if you are on Mac OS Yosemite you might have GD bundled, but with no png support)
+
+
+## Facets
+
+To specify the facet name please make use of the constants defined in the class `KlinkFacet` (some are highlighted in the code block below) or use the `KlinkFacetsBuilder`
+
+
+```php
+
+	/**
+	 * Define the facet name for the @see KlinkDocumentDescriptor::$documentType field
+	 */
+	const DOCUMENT_TYPE = 'documentType';
+
+	/**
+	 * Define the facet name for the @see KlinkDocumentDescriptor::$language field
+	 */
+	const LANGUAGE = 'language';
+
+	/**
+	 * Define the facet name for the @see KlinkDocumentDescriptor::$institutionId field
+	 */
+	const INSTITUTION_ID = 'institution_id';
+
+```
+
+### Klink Facets builder
+
