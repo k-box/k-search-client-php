@@ -301,10 +301,11 @@ final class KlinkCoreClient
 	 * @param KlinkSearchType $type the type of the search to be perfomed, if null is specified the default behaviour is KlinkSearchType::KLINK_PUBLIC
 	 * @param int $resultsPerPage the number of results per page
 	 * @param int $offset the page to display
+	 * @param KlinkFacet[] $facets The facets that needs to be retrieved or what will be retrieved. Default null, no facets will be calculated or filtered.
 	 * @return KlinkSearchResult returns the document that match the searched terms
 	 * @throws KlinkException if something wrong happened during the communication with the core
 	 */
-	function search( $terms, $type = null, $resultsPerPage = 10, $offset = 0 ){
+	function search( $terms, $type = null, $resultsPerPage = 10, $offset = 0, $facets = null ){
 
 		if(is_null($type)){
 			$type = KlinkSearchType::KLINK_PUBLIC;
@@ -331,6 +332,65 @@ final class KlinkCoreClient
 		return $rem;
 	}
 
+	/**
+	 * Retrieve only the specified facets from the available documents that has the specified visibility
+	 *
+	 * to construct the facets parameter @see KlinkFacetsBuilder
+	 *
+	 * @param KlinkFacet[]|string[] $facets The facets to be retrieved. You can pass also an array of string with the facet names, the default configuration will be applyied
+	 * @param string $visibility The visibility 
+	 * @return [type] [description]
+	 */
+	public function facets( $facets = null, $visibility = 'public' )
+	{
+
+		if(!is_null($facets)){
+			KlinkHelpers::is_array_of_type($facets, 'KlinkFacet', 'facets');
+		}
+
+
+		// TODO: come diavolo concateno i dati dell'array per ottenere dei campi sensati
+
+
+		$conn = self::_get_connection();
+
+		$rem = $conn->get( self::SEARCH_ENDPOINT, new KlinkSearchResult(),
+			array(
+				'VISIBILITY' => KlinkSearchType::KLINK_PUBLIC,
+				'query' => '*',
+				'numResults' => 0,
+				'startResult' => 0,
+				'facets' => 'language,documentType',
+				'facet_documentType_mincount' => '1',
+				'facet_language_mincount' => '1',
+				'facet_documentType_prefix' => 'doc',
+				'filter_documentType' => 'presentation'
+			) );
+
+
+
+		if(KlinkHelpers::is_error($rem)){
+			print_r($rem);
+			return 'ERROR';
+		}
+
+
+		// filters and facets are empty if not enabled upon query execution
+
+
+
+		return $rem;
+	}
+
+	/**
+	 * Tutte le facets possibili per public o private
+	 * @return [type] [description]
+	 */
+	public function getInstitutionSummary( $id, $visibility = 'public')
+	{
+		# code...
+		# visibility could be array with both public and private
+	}
 
 	// ----- Suggestions
 

@@ -20,7 +20,7 @@ class KlinkCoreClientTest extends PHPUnit_Framework_TestCase
 	  			new KlinkAuthentication( 'https://klink-dev0.cloudapp.net/kcore/', 'admin@klink.org', 'admin.klink' )
 	  		) );
 
-	  	// $config->enableDebug();
+	  	$config->enableDebug();
 
 	    $this->core = new KlinkCoreClient($config);
 
@@ -39,6 +39,76 @@ class KlinkCoreClientTest extends PHPUnit_Framework_TestCase
 
 	public function testSearch(){
 		
+		$term_to_search = '*';
+
+		$result = $this->core->search($term_to_search);
+
+		$this->assertEquals($term_to_search, $result->getTerms());
+
+		$this->assertInstanceOf('KlinkSearchResult', $result);
+
+		$this->assertEquals('public', $result->getVisibility());
+
+		$this->assertFalse($result->getFacets());
+
+		$items = $result->getResults();
+
+		if(!empty($items)){
+
+			// just check if the deserialization has done a good job (at least for the first element)
+
+			$this->assertContainsOnlyInstancesOf('KlinkSearchResultItem', $items);
+
+			$first = $items[0];
+
+			$this->assertInstanceOf('KlinkDocumentDescriptor', $first->getDescriptor());
+
+			$this->assertNotNull($first->getDescriptor(), 'Null descriptor');
+
+			$this->assertNotNull($first->title, 'Null title, the magic __get is not working');
+
+			$this->assertNotNull($first->getInstitutionID(), 'Null instituionid, the magic __call is not working');
+		}
+	}
+
+	public function testPrivateSearch(){
+		
+		$term_to_search = '*';
+
+		$result = $this->core->search($term_to_search, 'private');
+
+		$this->assertEquals($term_to_search, $result->getTerms());
+
+		$this->assertInstanceOf('KlinkSearchResult', $result);
+
+		$this->assertEquals('private', $result->getVisibility());
+
+		$this->assertFalse($result->getFacets());
+
+		$items = $result->getResults();
+
+		if(!empty($items)){
+
+			// just check if the deserialization has done a good job (at least for the first element)
+
+			$this->assertContainsOnlyInstancesOf('KlinkSearchResultItem', $items);
+
+			$first = $items[0];
+
+			$this->assertInstanceOf('KlinkDocumentDescriptor', $first->getDescriptor());
+
+			$this->assertNotNull($first->getDescriptor(), 'Null descriptor');
+
+			$this->assertNotNull($first->title, 'Null title, the magic __get is not working');
+
+			$this->assertNotNull($first->getInstitutionID(), 'Null instituionid, the magic __call is not working');
+		}
+	}
+
+	public function testSearchWithFacets(){
+		
+		// TODO: add value for the facets parameter
+
 		$term_to_search = '*';
 
 		$result = $this->core->search($term_to_search);
@@ -130,5 +200,26 @@ class KlinkCoreClientTest extends PHPUnit_Framework_TestCase
 
 		$this->core->deleteInstitution('testInst');
 
+	}
+
+	public function testFacets()
+	{
+
+		$facet_one = new KlinkFacet("test");
+
+		// TODO: assert concording array values
+
+		$facet_two = new KlinkFacet("test", 10, 'prefix', 12, 'filter');
+
+		// TODO: assert concording array values
+
+
+		// TODO: assert search without facets call to getFacets() should return false
+
+		$answer = $this->core->facets();
+
+		print_r($answer);
+
+		// test: if no facet is enabled the facets array in the result should be empty
 	}
 }
