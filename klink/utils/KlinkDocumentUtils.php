@@ -2,7 +2,7 @@
 
 
 /**
-* 
+* Utility functions to handle specific operations on documents given the file path
 */
 class KlinkDocumentUtils
 {
@@ -20,7 +20,12 @@ class KlinkDocumentUtils
 		'application/vnd.openxmlformats-officedocument.presentationml.presentation' => 'presentation',
 		'application/vnd.openxmlformats-officedocument.wordprocessingml.document' => 'document',
 		'application/pdf' => 'document',
-		'text/uri-list' => 'uri-list'
+		'text/uri-list' => 'uri-list',
+		'image/jpg' => 'image',
+		'image/jpeg' => 'image',
+		'image/gif' => 'image',
+		'image/png' => 'image',
+		'image/tiff' => 'image',
 
 		);
 
@@ -183,8 +188,9 @@ class KlinkDocumentUtils
 
 	/**
 	 * Check if the specified mime type is one of the supported mimetypes for indexing
-	 * @param type $mimeType 
-	 * @return type
+	 * 
+	 * @param string $mimeType the mime type to check for
+	 * @return boolean true if supported, false otherwise
 	 */
 	public static function isMimeTypeSupported( $mimeType ){
 
@@ -194,9 +200,9 @@ class KlinkDocumentUtils
 
 	/**
 	 * Return the file extension that corresponds to the given mime type
-	 * @param  [type] $mimeType [description]
-	 * @return [type]           [description]
-	 * @throws InvalidArgumentException If the mime type is unkwnown or null or empty
+	 * @param  string $mimeType the mime-type of the file
+	 * @return string           the known file extension
+	 * @throws InvalidArgumentException If the mime type is unkwnown, null or empty
 	 */
 	public static function getExtensionFromMimeType( $mimeType ){
 		KlinkHelpers::is_string_and_not_empty( $mimeType, 'mime type' );
@@ -223,9 +229,10 @@ class KlinkDocumentUtils
 
 	/**
 	 * Get the mime type of the specified file
-	 * @param string $file the file to get the mime type
 	 * 
-	 * @return string|null the mime type or null in case of error
+	 * @param string $file the path of the file to get the mime type
+	 * 
+	 * @return string|boolean the mime type or false in case of error
 	 */
 	public static function get_mime($file) {
 		if (function_exists("finfo_file")) {
@@ -249,13 +256,6 @@ class KlinkDocumentUtils
 
         	}
 
-
-		// } else if (!stristr(ini_get("disable_functions"), "shell_exec")) {
-		// 	// http://stackoverflow.com/a/134930/1593459
-		// 	$file = escapeshellarg($file);
-		// 	$mime = shell_exec("file -bi " . $file);
-		// 	return $mime;
-		// } else {
 			return false;
 		}
 	}
