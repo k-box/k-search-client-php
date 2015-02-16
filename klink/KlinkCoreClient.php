@@ -288,6 +288,8 @@ final class KlinkCoreClient
 
 
 
+
+
 	// ----- Search functionality
 
 	/**
@@ -650,7 +652,7 @@ final class KlinkCoreClient
 	 * 
 	 * @throws KlinkException if the service cannot generate the thumbnail or the file is in the wrong format
 	 */
-	public static function generateThumbnail( $fullFilePath, $fullImagePath, $resolution = 'small', $debug = false )
+	public static function generateThumbnail( $fullFilePath, $fullImagePath, $resolution = 'default', $debug = false )
 	{
 
 		KlinkHelpers::is_string_and_not_empty( $fullFilePath, 'file path' );
@@ -666,7 +668,9 @@ final class KlinkCoreClient
 
 		$mime = KlinkDocumentUtils::get_mime( $fullFilePath );
 
-		error_log( 'Generate thumbnail ' . $mime);
+		if( $debug ){
+			error_log( 'Generate thumbnail ' . $fullFilePath . '[' . $mime . ']' );
+		}
 
 
 		if( !KlinkDocumentUtils::isMimeTypeSupported( $mime ) ){
@@ -674,6 +678,33 @@ final class KlinkCoreClient
 			throw new KlinkException("Mimetype not supported");
 
 		}
+
+
+		$doc_type = KlinkDocumentUtils::documentTypeFromMimeType( $mime );
+
+		if( $doc_type === 'image' ){
+			//we already have an image so let's resize it
+			
+			try{
+			
+				$image = new KlinkImageResize($fullFilePath);
+				$image->resizeToWidth(300);
+				$image->save($fullImagePath, KlinkImageResize::IMAGETYPE_PNG);
+
+			}
+			catch(Exception $ie){
+
+				if( $debug ) {
+					error_log( ' --> Thumbnail from image cannot be generated ' . $ie->getMessage() );
+				}
+
+
+				throw new KlinkException("The thumbnail cannot be generated. ($ie->getMessage())");
+			}
+
+			return $fullImagePath;
+		}
+
 
 
 		$http = new KlinkHttp('http://localhost/');
@@ -740,7 +771,10 @@ final class KlinkCoreClient
 	}
 
 	/**
-	 * Generate a document thumbnail from a KlinkDocument instance
+	 * Generate a document thumbnail from a KlinkDocument instance.
+	 *
+	 * This method does not supports Image documents, please use @see generateThumbnail
+	 * 
 	 * @param  KlinkDocument $document the document that needs the thumbnail
 	 * @return string|boolean The image content in PNG format or false in case of error
 	 * @throws InvalidArgumentException If the document data is empty or null
@@ -753,7 +787,10 @@ final class KlinkCoreClient
 
 
 	/**
-	 * Generate a document thumbnail from the content of a file
+	 * Generate a document thumbnail from the content of a file.
+	 *
+	 * This method does not supports Image documents, please use @see generateThumbnail
+	 * 
 	 * @param  string  $mimeType      The mime type of the data that needs the thumbnail
 	 * @param  string  $data          The document data used for the thumbnail generation
 	 * @return string|boolean                 The image content in PNG format or false in case of error
@@ -773,6 +810,14 @@ final class KlinkCoreClient
 
 			throw new KlinkException("Mimetype not supported");
 
+		}
+
+		$doc_type = KlinkDocumentUtils::documentTypeFromMimeType( $mime );
+
+		if( $doc_type === 'image' ){
+			
+			throw new KlinkException("Image format currently not supported.");
+			
 		}
 
 
