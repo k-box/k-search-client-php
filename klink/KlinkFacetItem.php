@@ -3,7 +3,7 @@
 /**
 * Describe a single facet
 */
-final class KlinkFacetItems
+final class KlinkFacetItem
 {
 	
 	/**

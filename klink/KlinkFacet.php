@@ -14,19 +14,28 @@ final class KlinkFacet
 
 
 	/**
-	 * KlinkFacetItems[]
-	 * @var KlinkFacetItems[]
+	 * KlinkFacetItem[]
+	 * @var KlinkFacetItem[]
 	 */
 	public $items = null;
 
 
-	private $min = 2;
+	protected $min = 2;
 
-	private $count = 10;
+	protected $count = 10;
 
-	private $filter = null;
+	protected $filter = null;
 
-	private $prefix = null;
+	protected $prefix = null;
+
+	/**
+	 * @internal reserved for deserialization
+	 */
+	function __construct()
+	{
+
+	}
+
 
 	/**
 	 * Create a new facet instance
@@ -37,18 +46,24 @@ final class KlinkFacet
 	 * @param int $count  configure the number of terms to return for the given facet
 	 * @param string $filter specify the filtering value to applied to the search for the given facet
 	 */
-	function __construct($name='', $min = 2, $prefix = null, $count = 10, $filter = null)
+	public static function create($name, $min = 2, $prefix = null, $count = 10, $filter = null)
 	{
-		$this->name = $name;
-		$this->min = $min;
-		$this->count = $count;
-		$this->filter = $filter;
-		$this->prefix = $prefix;
+		$ret = new self;
+
+		$ret->name = $name;
+		$ret->min = $min;
+		$ret->count = $count;
+		$ret->filter = $filter;
+		$ret->prefix = $prefix;
+
+		return $ret;
 	}
 
 	public function getName(){
 		return $this->name;
 	}
+
+
 
 
 	public function getMin(){
@@ -65,6 +80,26 @@ final class KlinkFacet
 
 	public function getPrefix(){
 		return $this->prefix;
+	}
+
+	public function setMin($value){
+		$this->min = $value;
+		return $this;
+	}
+
+	public function setCount($value){
+		$this->count = $value;
+		return $this;
+	}
+
+	public function setFilter($value){
+		$this->filter = $value;
+		return $this;
+	}
+
+	public function setPrefix($value){
+		$this->prefix = $value;
+		return $this;
 	}
 
 	/**
@@ -86,17 +121,16 @@ final class KlinkFacet
 
 		$ser = array(
 			"facets" => $this->getName(),
-			"facet_$this->getName()_count" => '',
-			"facet_$this->getName()_mincount" => '',
-			
+			'facet_'.$this->getName().'_count' => $this->getCount(),
+			'facet_'.$this->getName().'_mincount' => $this->getMin(),
 		);
 
 		if(!is_null($this->getFilter())){
-			$ser["filter_$this->getName()"] = $this->getFilter();
+			$ser['filter_'.$this->getName()] = $this->getFilter();
 		}
 
 		if(!is_null($this->getPrefix())){
-			$ser["facet_$this->getName()_prefix"] = $this->getPrefix();
+			$ser['facet_'.$this->getName().'_prefix'] = $this->getPrefix();
 		}
 
 		return $ser;
