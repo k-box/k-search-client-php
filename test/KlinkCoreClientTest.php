@@ -202,23 +202,24 @@ class KlinkCoreClientTest extends PHPUnit_Framework_TestCase
 
 	}
 
+	/**
+	 * @expectedException InvalidArgumentException
+	 */
+	public function testFacetsWithWrongParameter()
+	{
+		$answer = $this->core->facets(array('hi', 'facet!'));
+	}
+
 	public function testFacets()
 	{
-
-		$facet_one = new KlinkFacet("test");
-
-		// TODO: assert concording array values
-
-		$facet_two = new KlinkFacet("test", 10, 'prefix', 12, 'filter');
-
-		// TODO: assert concording array values
-
 
 		// TODO: assert search without facets call to getFacets() should return false
 
 		$answer = $this->core->facets();
 
 		print_r($answer);
+
+		// todo: test if array of facets
 
 		// test: if no facet is enabled the facets array in the result should be empty
 	}
