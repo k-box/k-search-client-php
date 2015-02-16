@@ -250,18 +250,43 @@ The KlinkDocumentUtils class has the following utility methods that you need to 
 - `isMimeTypeSupported( $mime )` test if the specified mime type is supported by the K-Link Core
 
 
-
-
-## Unit Test
-
-to run Unit Tests you must have phpunit version 4.3 or above and the php configuration must have the following extension enabled:
-
-- `php_gd2` for imaging functions with full png support (if you are on Mac OS Yosemite you might have GD bundled, but with no png support)
-
-
 ## Facets
 
+Facets are specified as instances of the class KlinkFacet. To create an instance of the KlinkFacet class use the create method
+
+```php
+	/**
+	 * Create a new facet instance.
+	 * 
+	 * For the facet name plase refer to @see KlinkFacet class constants
+	 * 
+	 * @param string $name   the name of the facet, see the constants defined in this class
+	 * @param int $min Specify the minimun frequency for the facet-term to be return for the given, default 2
+	 * @param string $prefix retrieve the facet items that have such prefix in the text 
+	 * @param int $count  configure the number of terms to return for the given facet
+	 * @param string $filter specify the filtering value to applied to the search for the given facet
+	 * 
+	 * @throws InvalidArgumentException If $name if not a valid facet name @see KlinkFacet
+	 */
+	public static function create($name, $min = 2, $prefix = null, $count = 10, $filter = null)
+
+```
+
 To specify the facet name please make use of the constants defined in the class `KlinkFacet` (some are highlighted in the code block below) or use the `KlinkFacetsBuilder`
+
+```php
+
+// create a default instance for the document type field
+
+$facet_one = KlinkFacet::create(KlinkFacet::DOCUMENT_TYPE);
+
+// create a custom instance for the document type field
+
+$facet_two = KlinkFacet::create(KlinkFacet::DOCUMENT_TYPE, 10, 'prefix', 12, 'filter');
+
+```
+
+
 
 
 ```php
@@ -285,3 +310,13 @@ To specify the facet name please make use of the constants defined in the class 
 
 ### Klink Facets builder
 
+
+
+
+---------------------------
+
+## Unit Test
+
+to run Unit Tests you must have phpunit version 4.3 or above and the php configuration must have the following extension enabled:
+
+- `php_gd2` for imaging functions with full png support (if you are on Mac OS Yosemite you might have GD bundled, but with no png support)
