@@ -198,6 +198,10 @@ class KlinkDocumentUtils
 
 	}
 
+	public static function getDocumentTypes(){
+		return array_values(self::$mimeTypesToDocType);
+	}
+
 	/**
 	 * Return the file extension that corresponds to the given mime type
 	 * @param  string $mimeType the mime-type of the file

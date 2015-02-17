@@ -105,13 +105,26 @@ class KlinkCoreClientTest extends PHPUnit_Framework_TestCase
 		}
 	}
 
+	/**
+	 * @expectedException InvalidArgumentException
+	 */
+	public function testSearchFacetParameterValidation(){
+
+		$result = $this->core->search($term_to_search. 'public', 10, 0, $facets = null);
+
+
+	}
+
+
 	public function testSearchWithFacets(){
 		
 		// TODO: add value for the facets parameter
 
 		$term_to_search = '*';
 
-		$result = $this->core->search($term_to_search);
+
+
+		$result = $this->core->search($term_to_search. 'public', 10, 0, $facets = null);
 
 		$this->assertEquals($term_to_search, $result->getTerms());
 
@@ -212,6 +225,8 @@ class KlinkCoreClientTest extends PHPUnit_Framework_TestCase
 
 	public function testFacets()
 	{
+
+		KlinkFacet::CIAO();
 
 		// TODO: assert search without facets call to getFacets() should return false
 

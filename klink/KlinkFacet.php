@@ -21,7 +21,7 @@ final class KlinkFacet
 	/**
 	 * Define the facet name for the @see KlinkDocumentDescriptor::$institutionId field
 	 */
-	const INSTITUTION_ID = 'institution_id';
+	const INSTITUTION_ID = 'institutionId';
 
 
 
