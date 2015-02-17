@@ -201,6 +201,23 @@ $document = new KlinkDocument($documentDescriptor, $filePath);
 $newDocumentDescriptor = $klinkCore->addDocument( $document );
 ```
 
+### Get Institution statistics
+
+The KlinkCoreClient class can also give some basic aggregated statistics for an institution given it's id
+
+#### Get the number of public documents
+
+```php
+$count = $klinkCore->getPublicDocumentsCount( $id );
+$count = $klinkCore->getPublicDocumentsCount(); // the currently configured institution identifier is assumed
+```
+
+#### Get the number of private documents
+
+```php
+$count = $klinkCore->getPrivateDocumentsCount( $id );
+$count = $klinkCore->getPrivateDocumentsCount(); // the currently configured institution identifier is assumed
+```
 
 ### generate a thumbnail
 

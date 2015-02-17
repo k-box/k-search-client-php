@@ -317,6 +317,7 @@ final class KlinkCoreClient
 			KlinkHelpers::is_array_of_type($facets, 'KlinkFacet', 'facets');
 		}
 
+
 		$conn = self::_get_connection();
 
         if($this->telemeter!=null) $this->telemeter->beforeOperation($conn->getUrl(),__FUNCTION__);
@@ -592,6 +593,72 @@ final class KlinkCoreClient
 		}
 
 	}
+
+
+	// ----- Document statistics
+
+
+	/**
+	 * Returns the number of public documents that the specified institution has
+	 * 
+	 * If the institution is not specified the configured institution for the connection will be assumed.
+	 * 
+	 * @param string $institution (optional) the institution ID
+	 * @return the number of public document, in case of error false is returned
+	 * @throws InvalidArgumentException if the specified institution is not a valid institution identifier
+	 */
+	public function getPublicDocumentsCount( $institution = null )
+	{
+
+		if(is_null($institution)){
+			$institution = $this->configuration->getInstitutionId();
+		}
+
+		KlinkHelpers::is_valid_id($institution, 'institution');
+
+		try{
+
+			$search = $this->search("*", KlinkSearchType::KLINK_PUBLIC, 0, 0, KlinkFacetsBuilder::create()->institution($institution)->build());
+
+			return $search->getTotalResults();
+
+		}catch(KlinkException $ke){
+			return false;
+		}
+	}
+
+	/**
+	 * Returns the number of private documents that are owned by the institution. 
+	 * 
+	 * If the institution is not specified the configured institution for the connection will be assumed.
+	 * 
+	 * Remember that institution's private documents are only accessible if directly connected to the institution's core with 
+	 * a user that has the right permissions.
+	 * 
+	 * @param string $institution (optional) the institution ID
+	 * @return the number of private document, in case of error (or the operation is forbidden) false is returned
+	 * @throws InvalidArgumentException if the specified institution is not a valid institution identifier
+	 */
+	public function getPrivateDocumentsCount($institution = null)
+	{
+
+		if(is_null($institution)){
+			$institution = $this->configuration->getInstitutionId();
+		}
+
+		KlinkHelpers::is_valid_id($institution, 'institution');
+
+		try{
+
+			$search = $this->search("*", KlinkSearchType::KLINK_PRIVATE, 0, 0, KlinkFacetsBuilder::create()->institution($institution)->build());
+
+			return $search->getTotalResults();
+
+		}catch(KlinkException $ke){
+			return false;
+		}
+	}
+
 
 	
 	// ----- Static Utility Stuff

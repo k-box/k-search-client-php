@@ -306,6 +306,56 @@ class KlinkCoreClientTest extends PHPUnit_Framework_TestCase
 
 
 
+	public function testPublicDocumentsCount()
+	{
+		
+		$count = $this->core->getPublicDocumentsCount();
+
+		$this->assertNotNull($count);
+
+		$this->assertTrue(is_integer($count));
+
+		$this->assertTrue($count >= 0);
+
+
+		$count_two = $this->core->getPublicDocumentsCount(self::INSTITUION_ID);
+
+		$this->assertNotNull($count_two);
+
+		$this->assertTrue(is_integer($count_two));
+
+		$this->assertTrue($count_two >= 0);
+
+
+
+		$this->assertEquals($count, $count_two);
+	}
+
+
+
+	public function testPrivateDocumentsCount($value='')
+	{
+		$count = $this->core->getPrivateDocumentsCount();
+
+		$this->assertNotNull($count);
+
+		$this->assertTrue(is_integer($count));
+
+		$this->assertTrue($count >= 0);
+
+
+		$count_two = $this->core->getPrivateDocumentsCount(self::INSTITUION_ID);
+
+		$this->assertNotNull($count_two);
+
+		$this->assertTrue(is_integer($count_two));
+
+		$this->assertTrue($count_two >= 0);
+
+
+
+		$this->assertEquals($count, $count_two);
+	}
 
 
 
