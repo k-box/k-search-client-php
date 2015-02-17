@@ -20,7 +20,7 @@ class KlinkCoreClientTest extends PHPUnit_Framework_TestCase
 	  			new KlinkAuthentication( 'https://klink-dev0.cloudapp.net/kcore/', 'admin@klink.org', 'admin.klink' )
 	  		) );
 
-	  	$config->enableDebug();
+	  	// $config->enableDebug();
 
 	    $this->core = new KlinkCoreClient($config);
 
@@ -226,7 +226,7 @@ class KlinkCoreClientTest extends PHPUnit_Framework_TestCase
 	public function testFacets()
 	{
 
-		KlinkFacet::CIAO();
+		
 
 		// TODO: assert search without facets call to getFacets() should return false
 
