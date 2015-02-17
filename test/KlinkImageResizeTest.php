@@ -3,8 +3,8 @@
 /**
 * Test the KlinkKlinkImageResize Class for basic functionality
 * 
-* @requires OS Linux
 * @requires extension gd
+* @requires extension exif
 */
 class KlinkImageResizeTest extends PHPUnit_Framework_TestCase 
 {
@@ -214,17 +214,6 @@ class KlinkImageResizeTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(IMAGETYPE_PNG, exif_imagetype($filename));
     }
 
-    public function testSaveChmod() {
-        $image = $this->createImage(200, 100, 'png');
-
-        $resize = new KlinkImageResize($image);
-
-        $filename = $this->getTempFile();
-
-        $resize->save($filename, null, null, 0600);
-
-        $this->assertEquals(600, substr(decoct(fileperms($filename)), 3));
-    }
 
     public function testGet(){
         $resize = KlinkImageResize::createFromString(base64_decode($this->image_string));
@@ -238,6 +227,11 @@ class KlinkImageResizeTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(79, strlen($image));
     }
 
+    /**
+     * @requires function imagecreatefromgif
+     * @requires function imagegif
+     * @requires function finfo_open
+     */
     public function testOutputGif() {
         $image = $this->createImage(200, 100, 'gif');
 
@@ -257,6 +251,9 @@ class KlinkImageResizeTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('image/gif', $type);
     }
 
+    /**
+     * @requires function finfo_open
+     */
     public function testOutputJpg() {
         $image = $this->createImage(200, 100, 'jpeg');
 
@@ -276,6 +273,10 @@ class KlinkImageResizeTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('image/jpeg', $type);
     }
 
+    /**
+     * @requires function imagecreatefrompng
+     * @requires function finfo_open
+     */
     public function testOutputPng() {
         $image = $this->createImage(200, 100, 'png');
 

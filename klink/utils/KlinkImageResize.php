@@ -68,6 +68,12 @@ class KlinkImageResize {
      * @throws Exception
      */
     public static function createFromFile($filename){
+
+        if(is_null($filename)){
+            throw new Exception("Filename cannot be empty", 1);
+            
+        }
+
         $s = new self();
         $s->load($filename);
         return $s;
@@ -242,7 +248,7 @@ class KlinkImageResize {
             break;
         }
 
-        if ($permissions) {
+        if ($permissions && function_exists('chmod')) {
             chmod($filename, $permissions);
         }
 
