@@ -2,12 +2,17 @@
 
 /**
 * Test the KlinkKlinkImageResize Class for basic functionality
+* 
+* @requires OS Linux
+* @requires extension gd
 */
 class KlinkImageResizeTest extends PHPUnit_Framework_TestCase 
 {
 	public function setUp()
 	{
 	  	date_default_timezone_set('America/Los_Angeles');
+
+        error_reporting(E_ALL & E_STRICT);
 
 	}
 

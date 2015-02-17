@@ -311,17 +311,25 @@ final class KlinkCoreClient
 			$type = KlinkSearchType::KLINK_PUBLIC;
 		}
 
+
+
+		if(!empty($facets)){
+			KlinkHelpers::is_array_of_type($facets, 'KlinkFacet', 'facets');
+		}
+
 		$conn = self::_get_connection();
 
         if($this->telemeter!=null) $this->telemeter->beforeOperation($conn->getUrl(),__FUNCTION__);
 
-		$rem = $conn->get( self::SEARCH_ENDPOINT, new KlinkSearchResult(),
-			array(
+
+        $search_params = array_merge(array(
 				'VISIBILITY' => $type,
 				'query' => $terms,
 				'numResults' => $resultsPerPage,
 				'startResult' => $offset
-			) );
+			), $this->_collapse_facets($facets));
+
+		$rem = $conn->get( self::SEARCH_ENDPOINT, new KlinkSearchResult(), $search_params );
 
 		if(KlinkHelpers::is_error($rem)){
 			throw new KlinkException((string)$rem, $rem->get_error_data_code());
@@ -341,45 +349,36 @@ final class KlinkCoreClient
 	 * @param string $visibility The visibility 
 	 * @return [type] [description]
 	 */
-	public function facets( $facets = null, $visibility = 'public' )
+	public function facets( $facets, $visibility = 'public', $term = '*' )
 	{
 
 		if(!is_null($facets)){
 			KlinkHelpers::is_array_of_type($facets, 'KlinkFacet', 'facets');
 		}
 
+		KlinkHelpers::is_string_and_not_empty($term, 'term');
 
-		// TODO: come diavolo concateno i dati dell'array per ottenere dei campi sensati
-
+		if(empty($facets)){
+			throw new IllegalArgumentException("You have to specify at least one facet", 2);
+		}
 
 		$conn = self::_get_connection();
 
-		$rem = $conn->get( self::SEARCH_ENDPOINT, new KlinkSearchResult(),
-			array(
-				'VISIBILITY' => KlinkSearchType::KLINK_PUBLIC,
-				'query' => '*',
+		$params = array_merge(array(
+				'VISIBILITY' => $visibility,
+				'query' => $term,
 				'numResults' => 0,
-				'startResult' => 0,
-				'facets' => 'language,documentType',
-				'facet_documentType_mincount' => '1',
-				'facet_language_mincount' => '1',
-				'facet_documentType_prefix' => 'doc',
-				'filter_documentType' => 'presentation'
-			) );
+				'startResult' => 0
+			), $this->_collapse_facets($facets));
 
+		$rem = $conn->get( self::SEARCH_ENDPOINT, new KlinkSearchResult(), $params );
 
 
 		if(KlinkHelpers::is_error($rem)){
-			print_r($rem);
-			return 'ERROR';
+			throw new KlinkException((string)$rem, $rem->get_error_data_code());
 		}
 
-
-		// filters and facets are empty if not enabled upon query execution
-
-
-
-		return $rem;
+		return $rem->getFacets();
 	}
 
 	/**
@@ -969,4 +968,30 @@ final class KlinkCoreClient
 		return $this->rest[0];
 	}
 
+
+	/**
+	 * 
+	 */
+	private function _collapse_facets($facet_array)
+	{
+		$arr = [];
+		$return = [];
+		$fs = [];
+
+		if(empty($facet_array)){
+			return $return;
+		}
+		
+		foreach ($facet_array as $facet) {
+			$arr = $facet->toKlinkParameter();
+
+			$fs[] = $arr['facets'];
+			unset($arr['facets']);
+			$return = array_merge($return, $arr);
+		}
+
+		$return['facets'] = implode(',', $fs);
+
+		return $return;
+	}
 }

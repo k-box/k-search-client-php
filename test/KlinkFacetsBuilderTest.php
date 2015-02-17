@@ -87,28 +87,32 @@ class KlinkFacetsBuilderTest extends PHPUnit_Framework_TestCase
 
 	}
 
-	/**
-	 * @dataProvider valid_facetNamesProvider
-	 */
-	public function testMagicStaticMethodCall($facet)
-	{
+	// /**
+	//  * @dataProvider valid_facetNamesProvider
+	//  */
+	// public function testMagicStaticMethodCall($facet)
+	// {
 		
-		$builder = KlinkFacetsBuilder::i()->{$facet}();
+	// 	$builder = KlinkFacetsBuilder::{$facet}();
 
-		$this->assertInstanceOf('KlinkFacetsBuilder', $builder);
+	// 	$this->assertInstanceOf('KlinkFacetsBuilder', $builder);
 
-	}
+	// }
 
-	/**
-	 * @dataProvider invalid_facetNamesProvider
-	 * @expectedException BadMethodCallException
-	 */
-	public function testMagicStaticMethodCallWithInvalidFacet($facet)
-	{
+	// /**
+	//  * @dataProvider invalid_facetNamesProvider
+	//  * @expectedException BadMethodCallException
+	//  */
+	// public function testMagicStaticMethodCallWithInvalidFacet($facet)
+	// {
 		
-		$builder = KlinkFacetsBuilder::{$facet}();
+	// 	$builder = KlinkFacetsBuilder::{$facet}();
 
-	}
+	// 	$this->markTestIncomplete(
+ //          'This test has not been implemented yet.'
+ //        );
+
+	// }
 
 
 	public function testBuilderAll()
@@ -123,13 +127,12 @@ class KlinkFacetsBuilderTest extends PHPUnit_Framework_TestCase
 	}
 
 	/**
-	 * @dataProvider valid_facetNamesProvider
 	 * @expectedException BadMethodCallException
 	 */
 	public function testTwoOrMoreTimesCall($facet)
 	{
 		
-		KlinkFacetsBuilder::{$facet}()->{$facet}();
+		KlinkFacetsBuilder::create()->documentType()->documentType();
 
 	}
 
