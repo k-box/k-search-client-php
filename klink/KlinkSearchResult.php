@@ -154,12 +154,23 @@ final class KlinkSearchResult
 	/**
 	 * Store the available facets starting from this search
 	 * @internal
+	 * @var KlinkFacet[]
 	 */
 	public $facets;
 
+	/**
+	 * Return the facets for this search
+	 * @return KlinkFacet[]|false the array of facets if any, false if no facets where requested on the search
+	 */
+	public function getFacets()
+	{
+		return empty($this->facets) ? false : $this->facets;
+	}
 
 
-
+	/**
+	 * @internal no one can create an instance of this class and remain alive
+	 */
 	function __construct($query = '', $queryTime = '', $numFound = 20, $itemsCount=10)
 	{
 		$this->numResults = 10;
@@ -171,35 +182,5 @@ final class KlinkSearchResult
 		$this->itemCount = $itemsCount;
 		$this->items = array();
 	}
-
-
-	// /**
-	//  * for json serialization purposes
-	//  * @return type
-	//  */
-	// public function to_array(){
-	// 	$json = array();
-	//     foreach($this as $key => $value) {
-	//         if(is_array($value)){
-	//         	$json[$key] = array();
-
-	//         	foreach ($value as $v) {
-	        			
-	//         		//if has to_array I call it
-
-	//         		//otherwise just a json encode
-
-
-
-	//         	}
-
-	    		
-	//     	}
-	//     	else {
-	// 	        $json[$key] = $value;
-	// 	    }
-	//     }
-	//     return $json; // or json_encode($json)
-	// }
 
 }

@@ -16,6 +16,8 @@ class KlinkCoreClientTest extends PHPUnit_Framework_TestCase
 	{
 	  	date_default_timezone_set('Europe/Rome');
 
+	  	error_reporting(E_ALL & E_STRICT);
+
 	  	$config = new KlinkConfiguration( self::INSTITUION_ID, 'KA', array(
 	  			new KlinkAuthentication( 'https://klink-dev0.cloudapp.net/kcore/', 'admin@klink.org', 'admin.klink' )
 	  		) );
@@ -25,6 +27,25 @@ class KlinkCoreClientTest extends PHPUnit_Framework_TestCase
 	    $this->core = new KlinkCoreClient($config);
 
 	}
+
+
+
+	public function invalid_facet_param()
+	{
+		return [
+			[['string1']],
+			[[1]],
+			[['string1', 'string2']],
+			[[1,2,3]],
+			[['string', 1]],
+			[['string', 'string', 1]],
+			[['string', 1,2,3]],
+		];
+	}
+
+
+
+
 
 	public function testGetInstitutions()
 	{
@@ -42,6 +63,90 @@ class KlinkCoreClientTest extends PHPUnit_Framework_TestCase
 		$term_to_search = '*';
 
 		$result = $this->core->search($term_to_search);
+
+		$this->assertEquals($term_to_search, $result->getTerms());
+
+		$this->assertInstanceOf('KlinkSearchResult', $result);
+
+		$this->assertEquals('public', $result->getVisibility());
+
+		$this->assertFalse($result->getFacets());
+
+		$items = $result->getResults();
+
+		if(!empty($items)){
+
+			// just check if the deserialization has done a good job (at least for the first element)
+
+			$this->assertContainsOnlyInstancesOf('KlinkSearchResultItem', $items);
+
+			$first = $items[0];
+
+			$this->assertInstanceOf('KlinkDocumentDescriptor', $first->getDescriptor());
+
+			$this->assertNotNull($first->getDescriptor(), 'Null descriptor');
+
+			$this->assertNotNull($first->title, 'Null title, the magic __get is not working');
+
+			$this->assertNotNull($first->getInstitutionID(), 'Null instituionid, the magic __call is not working');
+		}
+
+		$this->assertFalse($result->getFacets());
+
+	}
+
+	public function testPrivateSearch(){
+		
+		$term_to_search = '*';
+
+		$result = $this->core->search($term_to_search, 'private');
+
+		$this->assertEquals($term_to_search, $result->getTerms());
+
+		$this->assertInstanceOf('KlinkSearchResult', $result);
+
+		$this->assertEquals('private', $result->getVisibility());
+
+		$this->assertFalse($result->getFacets());
+
+		$items = $result->getResults();
+
+		if(!empty($items)){
+
+			// just check if the deserialization has done a good job (at least for the first element)
+
+			$this->assertContainsOnlyInstancesOf('KlinkSearchResultItem', $items);
+
+			$first = $items[0];
+
+			$this->assertInstanceOf('KlinkDocumentDescriptor', $first->getDescriptor());
+
+			$this->assertNotNull($first->getDescriptor(), 'Null descriptor');
+
+			$this->assertNotNull($first->title, 'Null title, the magic __get is not working');
+
+			$this->assertNotNull($first->getInstitutionID(), 'Null instituionid, the magic __call is not working');
+		}
+	}
+
+	/**
+	 * @expectedException InvalidArgumentException
+	 * @dataProvider invalid_facet_param
+	 */
+	public function testSearchFacetParameterValidation($facets){
+
+		$result = $this->core->search('term', 'public', 10, 0, $facets);
+
+	}
+
+
+	public function testSearchWithFacets(){
+		
+		$term_to_search = '*';
+
+		$f = KlinkFacetsBuilder::all();
+
+		$result = $this->core->search($term_to_search, 'public', 10, 0, $f);
 
 		$this->assertEquals($term_to_search, $result->getTerms());
 
@@ -65,6 +170,14 @@ class KlinkCoreClientTest extends PHPUnit_Framework_TestCase
 
 			$this->assertNotNull($first->getInstitutionID(), 'Null instituionid, the magic __call is not working');
 		}
+
+		$facets = $result->getFacets();
+
+		$this->assertTrue(!empty($facets));
+
+		$this->assertEquals(count($f), count($facets));
+
+		$this->assertContainsOnlyInstancesOf('KlinkFacet', $facets);		
 	}
 
 
@@ -130,5 +243,82 @@ class KlinkCoreClientTest extends PHPUnit_Framework_TestCase
 
 		$this->core->deleteInstitution('testInst');
 
+	}
+
+	/**
+	 * @expectedException InvalidArgumentException
+	 * @dataProvider invalid_facet_param
+	 */
+	public function testFacetsWithWrongParameter($param)
+	{
+		$answer = $this->core->facets($param);
+	}
+
+	public function testFacets()
+	{
+
+		$f = KlinkFacetsBuilder::all();	
+
+		$answer = $this->core->facets($f);
+
+		$this->assertTrue(!empty($answer));
+
+		$this->assertEquals(count($f), count($answer));
+
+		$this->assertContainsOnlyInstancesOf('KlinkFacet', $answer);
+
+
+
+		$f = KlinkFacetsBuilder::create()->documentType('document')->build();	
+
+		$answer = $this->core->facets($f);
+
+		$this->assertTrue(!empty($answer));
+
+		$this->assertEquals(count($f), count($answer));
+
+		$this->assertContainsOnlyInstancesOf('KlinkFacet', $answer);
+
+		
+	}
+
+
+
+	public function testFacetArrayCollapse()
+	{
+		$f = KlinkFacetsBuilder::all();
+
+		$f_count = count($f);
+
+		$collapsed = $this->invokeMethod($this->core, '_collapse_facets', array($f));
+
+		$this->assertArrayHasKey('facets', $collapsed);
+
+		$this->assertEquals($f_count, count(explode(',', $collapsed['facets'])));
+
+
+
+		$collapsed_two = $this->invokeMethod($this->core, '_collapse_facets', array(null));
+
+		$this->assertEquals([], $collapsed_two);
+
+	}
+
+
+
+
+
+
+
+
+	// to test private methods
+
+	public function invokeMethod(&$object, $methodName, array $parameters = array())
+	{
+	    $reflection = new \ReflectionClass(get_class($object));
+	    $method = $reflection->getMethod($methodName);
+	    $method->setAccessible(true);
+
+	    return $method->invokeArgs($object, $parameters);
 	}
 }

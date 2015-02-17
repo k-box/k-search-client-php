@@ -250,7 +250,185 @@ The KlinkDocumentUtils class has the following utility methods that you need to 
 - `isMimeTypeSupported( $mime )` test if the specified mime type is supported by the K-Link Core
 
 
+## Facets
 
+Facets are specified as instances of the class KlinkFacet. To create an instance of the KlinkFacet class use the create method
+
+```php
+	/**
+	 * Create a new facet instance.
+	 * 
+	 * For the facet name plase refer to @see KlinkFacet class constants
+	 * 
+	 * @param string $name   the name of the facet, see the constants defined in this class
+	 * @param int $min Specify the minimun frequency for the facet-term to be return for the given, default 2
+	 * @param string $prefix retrieve the facet items that have such prefix in the text 
+	 * @param int $count  configure the number of terms to return for the given facet
+	 * @param string $filter specify the filtering value to applied to the search for the given facet
+	 * 
+	 * @throws InvalidArgumentException If $name if not a valid facet name @see KlinkFacet
+	 */
+	public static function create($name, $min = 2, $prefix = null, $count = 10, $filter = null)
+
+```
+
+To specify the facet name please make use of the constants defined in the class `KlinkFacet` (some are highlighted in the code block below) or use the `KlinkFacetsBuilder`
+
+```php
+
+// create a default instance for the document type field
+
+$facet_one = KlinkFacet::create(KlinkFacet::DOCUMENT_TYPE);
+
+// create a custom instance for the document type field
+
+$facet_two = KlinkFacet::create(KlinkFacet::DOCUMENT_TYPE, 10, 'prefix', 12, 'filter');
+
+```
+
+
+
+
+```php
+
+	/**
+	 * Define the facet name for the @see KlinkDocumentDescriptor::$documentType field
+	 */
+	const DOCUMENT_TYPE = 'documentType';
+
+	/**
+	 * Define the facet name for the @see KlinkDocumentDescriptor::$language field
+	 */
+	const LANGUAGE = 'language';
+
+	/**
+	 * Define the facet name for the @see KlinkDocumentDescriptor::$institutionId field
+	 */
+	const INSTITUTION_ID = 'institutionId';
+
+```
+
+### Klink Facets builder
+
+The facets builder enable the fluent creation of the array of KlinkFacet needed for the search or for the direct facets extraction (`facets()`).
+
+The facets builder also check for basic validation of the parameters, as an example the documentType facet must receive a valid document type for filtering and the institutionId facet requires a valid istitution identifier.
+
+As you might have seen in the previous section, creating an array of facets could be tedious and time consuming. The aim of the facets builder is to enable a faster approach to facets parameter creation.
+
+#### Get all the supported facets
+
+```php
+
+	$facets_array = KlinkFacetsBuilder::all();
+
+```
+
+
+#### Supported facets and parameters
+
+The builder have a method for each supported facet:
+
+- `documentType()` for the documentType field in KlinkDocumentDescriptor;
+- `language()` for the language field in KlinkDocumentDescriptor;
+- `institution()` for the institutionId field in KlinkDocumentDescriptor;
+
+Each method is called a *facet buidling method* and return the instance of the KlinkFacetsBuilder to enable method chaining.
+
+To get the builded array of KlinkFacets call the `build()` method on an instance of KlinkFacetsBuilder.
+
+```php
+
+	$array_of_facets = KlinkFacetsBuilder::create()->documentType()->build();
+
+	$array_of_facets = KlinkFacetsBuilder::create()->documentType()->language('en')->build();
+
+	$array_of_facets = KlinkFacetsBuilder::create()->institution('KLINK')->documentType('presentation')->build();
+
+```
+
+
+Each facet building method could receive a variable number of parameters. Here is the general rule:
+
+- no parameters -> default behaviour with mincount = 2 and count = 10, no filter
+- 1 parameter of type string -> assumed as filter, other values are at it's defaults
+- 1 parameter of type int -> assumed as the count for the number of terms to be returned
+- 2 parameters of type int -> first the count and second the mincount
+- 3 parameters, the first of type string and the others of type int -> 1: filter, 2: count, 3: mincount
+
+### Examples
+
+```php
+
+	// enabling the “language” facet
+	KlinkFacetsBuilder::create()->language()->build();
+
+	// enabling the “language” facet and retrieve only the 3 most frequent facets of such field
+	KlinkFacetsBuilder::create()->language(3)->build();	
+
+	// filtering the documents by documentType “presentation”
+	KlinkFacetsBuilder::create()->documentType('presentation');
+
+	// filtering the documents by documentType “presentation” or document”
+	KlinkFacetsBuilder::create()->documentType('presentation,document');
+
+```
+
+Please consider that you will receive a `BadMethodCallException` if you call more than once a facet building method.
+
+
+#### know potential breaking situations
+
+if you will have an error like this (with error reporting all active)
+
+	Non-static method KlinkFacetsBuilder::documentType() should not be called statically, assuming $this from incompatible context
+
+is probably caused by the fact that in PHP 5.6 (at least to the authors knowledge) methods with or without the static modifier are the same
+
+For example 1 and 2 are the same method and 2 gives a syntax error because is considered the same as 1.
+
+```php
+
+	public function documentType() { } // 1
+
+	public static function documentType() { } // 2
+
+```
+
+At the time of writing seems that older versions of PHP calls the __callStatic magic method (feel free to report if not true) to get the correct 
+instance of the builder before invoking the method.
+
+To solve this problem you can do
+
+```php
+
+	// 1 create an instance by yourself
+	$builder = (new KlinkFacetsBuilder)->documentType();
+
+	// 2 use the instance method 
+	$builder = KlinkFacetsBuilder::create()->documentType();
+
+	// 3 use the shortcut instance method, called i 
+	$builder = KlinkFacetsBuilder::i()->documentType();	
+
+```
+
+---------------------------
+
+## Constants and values
+
+### Document Type values
+
+Here is the list of possible document types:
+
+- `web-page` : A website page or an html document,
+- `document` : A generic document (PDF, Word),
+- `spreadsheet` : A spreadshett (Excel),
+- `presentation` : A presentation (PowerPoint),
+- `image` : An image (jpg, gif or png).
+
+
+---------------------------
 
 ## Unit Test
 

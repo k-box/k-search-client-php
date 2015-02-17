@@ -22,4 +22,7 @@ final class KlinkSearchType
 	 */
 	const KLINK_PUBLIC = 'public';
 
+
+
+	// TODO: method for check visibility value
 }

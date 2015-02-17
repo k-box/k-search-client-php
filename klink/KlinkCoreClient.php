@@ -301,26 +301,35 @@ final class KlinkCoreClient
 	 * @param KlinkSearchType $type the type of the search to be perfomed, if null is specified the default behaviour is KlinkSearchType::KLINK_PUBLIC
 	 * @param int $resultsPerPage the number of results per page
 	 * @param int $offset the page to display
+	 * @param KlinkFacet[] $facets The facets that needs to be retrieved or what will be retrieved. Default null, no facets will be calculated or filtered.
 	 * @return KlinkSearchResult returns the document that match the searched terms
 	 * @throws KlinkException if something wrong happened during the communication with the core
 	 */
-	function search( $terms, $type = null, $resultsPerPage = 10, $offset = 0 ){
+	function search( $terms, $type = null, $resultsPerPage = 10, $offset = 0, $facets = null ){
 
 		if(is_null($type)){
 			$type = KlinkSearchType::KLINK_PUBLIC;
+		}
+
+
+
+		if(!empty($facets)){
+			KlinkHelpers::is_array_of_type($facets, 'KlinkFacet', 'facets');
 		}
 
 		$conn = self::_get_connection();
 
         if($this->telemeter!=null) $this->telemeter->beforeOperation($conn->getUrl(),__FUNCTION__);
 
-		$rem = $conn->get( self::SEARCH_ENDPOINT, new KlinkSearchResult(),
-			array(
+
+        $search_params = array_merge(array(
 				'VISIBILITY' => $type,
 				'query' => $terms,
 				'numResults' => $resultsPerPage,
 				'startResult' => $offset
-			) );
+			), $this->_collapse_facets($facets));
+
+		$rem = $conn->get( self::SEARCH_ENDPOINT, new KlinkSearchResult(), $search_params );
 
 		if(KlinkHelpers::is_error($rem)){
 			throw new KlinkException((string)$rem, $rem->get_error_data_code());
@@ -331,6 +340,56 @@ final class KlinkCoreClient
 		return $rem;
 	}
 
+	/**
+	 * Retrieve only the specified facets from the available documents that has the specified visibility
+	 *
+	 * to construct the facets parameter @see KlinkFacetsBuilder
+	 *
+	 * @param KlinkFacet[]|string[] $facets The facets to be retrieved. You can pass also an array of string with the facet names, the default configuration will be applyied
+	 * @param string $visibility The visibility 
+	 * @return [type] [description]
+	 */
+	public function facets( $facets, $visibility = 'public', $term = '*' )
+	{
+
+		if(!is_null($facets)){
+			KlinkHelpers::is_array_of_type($facets, 'KlinkFacet', 'facets');
+		}
+
+		KlinkHelpers::is_string_and_not_empty($term, 'term');
+
+		if(empty($facets)){
+			throw new IllegalArgumentException("You have to specify at least one facet", 2);
+		}
+
+		$conn = self::_get_connection();
+
+		$params = array_merge(array(
+				'VISIBILITY' => $visibility,
+				'query' => $term,
+				'numResults' => 0,
+				'startResult' => 0
+			), $this->_collapse_facets($facets));
+
+		$rem = $conn->get( self::SEARCH_ENDPOINT, new KlinkSearchResult(), $params );
+
+
+		if(KlinkHelpers::is_error($rem)){
+			throw new KlinkException((string)$rem, $rem->get_error_data_code());
+		}
+
+		return $rem->getFacets();
+	}
+
+	/**
+	 * Tutte le facets possibili per public o private
+	 * @return [type] [description]
+	 */
+	public function getInstitutionSummary( $id, $visibility = 'public')
+	{
+		# code...
+		# visibility could be array with both public and private
+	}
 
 	// ----- Suggestions
 
@@ -909,4 +968,30 @@ final class KlinkCoreClient
 		return $this->rest[0];
 	}
 
+
+	/**
+	 * 
+	 */
+	private function _collapse_facets($facet_array)
+	{
+		$arr = [];
+		$return = [];
+		$fs = [];
+
+		if(empty($facet_array)){
+			return $return;
+		}
+		
+		foreach ($facet_array as $facet) {
+			$arr = $facet->toKlinkParameter();
+
+			$fs[] = $arr['facets'];
+			unset($arr['facets']);
+			$return = array_merge($return, $arr);
+		}
+
+		$return['facets'] = implode(',', $fs);
+
+		return $return;
+	}
 }
