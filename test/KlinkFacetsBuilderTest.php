@@ -30,7 +30,7 @@ class KlinkFacetsBuilderTest extends PHPUnit_Framework_TestCase
 
 		$names = array_values($this->currently_supported);
 
-		$valids = [];
+		$valids = array();
 
 		foreach ($names as $name) {
 			array_push($valids, [''.$name.'']);

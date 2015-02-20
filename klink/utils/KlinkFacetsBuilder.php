@@ -271,7 +271,9 @@ final class KlinkFacetsBuilder
 
 	    }
 
-	    if(func_num_args() == 1 && empty(func_num_args())){
+	    $num_args = func_num_args();
+
+	    if(func_num_args() == 1 && empty($num_args)){
 	    	return null;
 	    }
 
