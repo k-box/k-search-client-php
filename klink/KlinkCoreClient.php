@@ -808,7 +808,8 @@ final class KlinkCoreClient
 
 		$doc_type = KlinkDocumentUtils::documentTypeFromMimeType( $mime );
 
-		if( $doc_type === 'image' ){
+
+		if( $doc_type === 'image' && !defined(KLINK_COMPATIBILITY_MODE) ){
 			//we already have an image so let's resize it
 			
 			try{
@@ -1041,9 +1042,9 @@ final class KlinkCoreClient
 	 */
 	private function _collapse_facets($facet_array)
 	{
-		$arr = [];
-		$return = [];
-		$fs = [];
+		$arr = array();
+		$return = array();
+		$fs = array();
 
 		if(empty($facet_array)){
 			return $return;

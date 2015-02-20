@@ -40,7 +40,7 @@ final class KlinkFacetsBuilder
 	 * 
 	 * @var KlinkFacet[]
 	 */
-	private $facets = []; // the array of facets parameters
+	private $facets = array(); // the array of facets parameters
 
 	
 	function __construct()
@@ -49,9 +49,9 @@ final class KlinkFacetsBuilder
 
         $this->known_constants = $oClass->getConstants();
 
-        $this->already_builded = [];
+        $this->already_builded = array();
 
-        $this->facets = [];
+        $this->facets = array();
 	}
 
 
@@ -263,7 +263,7 @@ final class KlinkFacetsBuilder
 	private function _handle_facet_parameters()
 	{
 
-		$default = ['filter' => null, 'mincount' => self::DEFAULT_MINCOUNT, 'count' => self::DEFAULT_COUNT, 'prefix' => null];
+		$default = array('filter' => null, 'mincount' => self::DEFAULT_MINCOUNT, 'count' => self::DEFAULT_COUNT, 'prefix' => null);
 
 	    if (func_num_args() == 0) {
 
@@ -277,18 +277,18 @@ final class KlinkFacetsBuilder
 
 	    if (func_num_args() == 1 && is_string(func_get_arg(0))) {
 
-	    	return array_merge( $default, ['filter' => func_get_arg(0)] );
+	    	return array_merge( $default, array('filter' => func_get_arg(0)) );
 
 	    }
 	    else if (func_num_args() == 1 && is_integer(func_get_arg(0))) {
 
-	    	return array_merge( $default, ['count' => func_get_arg(0)] );
+	    	return array_merge( $default, array('count' => func_get_arg(0)) );
 	    	
 	    }
 	    else if(func_num_args() == 2 && func_get_args() === array_filter(func_get_args(), 'is_int')){
 	    	// only ints
 
-	    	return array_merge( $default, ['count' => func_get_arg(0), 'mincount' => func_get_arg(1)] );
+	    	return array_merge( $default, array('count' => func_get_arg(0), 'mincount' => func_get_arg(1)) );
 	    }
 	    else if(func_num_args() == 3){
 
@@ -296,7 +296,7 @@ final class KlinkFacetsBuilder
 	    	$splice = array_splice($args, 1);
 
 	    	if(is_string(func_get_arg(0)) && $splice === array_filter($splice, 'is_int')) {
-		    	return array_merge( $default, ['filter' => func_get_arg(0), 'count' => func_get_arg(1), 'mincount' => func_get_arg(2)] );	
+		    	return array_merge( $default, array('filter' => func_get_arg(0), 'count' => func_get_arg(1), 'mincount' => func_get_arg(2)) );	
 		    }
 
 	    }
@@ -312,7 +312,7 @@ final class KlinkFacetsBuilder
 
 		foreach ($this->known_constants as $name => $facetName) {
 
-			$instance = call_user_func_array(array($this, $facetName), []);
+			$instance = call_user_func_array(array($this, $facetName), array());
 
 		}
 
