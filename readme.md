@@ -35,6 +35,42 @@ Than in your project insert the line
 	require_once dirname(__DIR__).'/vendor/autoload.php';
 ```
 
+### PHP 5.2
+
+If you need to use the Boilerplate on PHP version below the 5.3, at now, you have to perform some basic tasks on an environment with PHP 5.3 and then use the fallback autoloader.
+
+First you have to create a build of the Adapter Boilerplate on a system with PHP >= 5.3 running
+
+	composer install --prefer-dist --no-dev
+
+Now you can use the fallback autoloader that replaces the autoload steps not supported by PHP 5.2 using a class Map approach.
+
+In your project please include the `bootstrap.php` file that you will find in the Adapter Boilerplate directory
+
+```php
+	require_once KLINK_BOILERPLATE_FOLDER.'/bootstrap.php';
+```
+
+where `KLINK_BOILERPLATE_FOLDER` is the folder that contains the Adapter Boilerplate build.
+
+
+A loading and connection test for PHP 5.2 is available in the `php52-test.php` file situated in the root directory of the Adapter Boilerplate. To run the test simply use the command line as follows:
+
+	php php52-test.php
+
+after entering the Boilerplate root folder. Make sure that the PHP version invoked is lower than the 5.3 otherwise the composer base autoloading will be executed.
+
+If everything is ok you will see an output like this:
+
+```
+-------------------
+Testing K-Link Core connection to dev0
+   SUCCESS
+-------------------
+```
+
+Otherwise the detailed error log will be printed.
+
 ## Examples
 
 To use the K-Link Core services all you need is to interact with the `KlinkCoreClient` class.
@@ -452,3 +488,5 @@ Here is the list of possible document types:
 to run Unit Tests you must have phpunit version 4.3 or above and the php configuration must have the following extension enabled:
 
 - `php_gd2` for imaging functions with full png support (if you are on Mac OS Yosemite you might have GD bundled, but with no png support)
+
+Unit tests at now can be executed only on PHP version 5.4 or above.

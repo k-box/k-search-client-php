@@ -48,22 +48,29 @@ echo PHP_EOL;
 echo 'Hello ' . hash( 'sha512', 'Hello' )  . PHP_EOL;
 echo PHP_EOL;
 
+echo '-------------------'.PHP_EOL;
 
-$data = new Klink_Address();
-$data->street = "STreet";
-$data->city = "City";
+echo 'Testing K-Link Core connection to dev0'.PHP_EOL;
 
-echo PHP_EOL;
-$jsoned = json_encode($data);
-echo $jsoned;
-echo PHP_EOL;
 
-$jm = new JsonMapper();
-$jm->bExceptionOnUndefinedProperty = true;
 
-$deserialized = $jm->map( json_decode( $jsoned ), new Klink_Address() );
+$config = new KlinkConfiguration( 'KLINK', 'KA', array(
+		new KlinkAuthentication( 'https://klink-dev0.cloudapp.net/kcore/', 'admin@klink.org', 'admin.klink' )
+	) );
 
-var_dump($deserialized);
+$config->enableDebug();
 
-print_r($deserialized);
+$test_error = null;
 
+$execution = KlinkCoreClient::test($config, $test_error);
+
+if($execution){
+	echo '   SUCCESS'.PHP_EOL;
+}
+else {
+	var_dump($execution);
+}
+
+print_r($test_error);
+
+echo '-------------------'.PHP_EOL;
