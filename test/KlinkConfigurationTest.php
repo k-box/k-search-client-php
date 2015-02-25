@@ -14,20 +14,20 @@ class KlinkConfigurationTest extends PHPUnit_Framework_TestCase
 
 	public function inputNoCorrect()
 	{
-		return [
-		  [null, null, array()],
-		  ['null',null, array()],
-		  ['', null, array()],
-		  [' ', null, array()],
-		  ['K', 'KA', array()],
-		  ['K', 'KA', array(0)],
-		  ['K', 'KA', array('0')],
-		  ['K', 'KA', array('null')],
-		  ['K', 'KA', array(null)],
-		  ['K', 'KA', array('key' => 'value')],
-		  ['K', 'KA', array(new KlinkAuthentication( 'http://klink-experim.cloudapp.net:14000/kcore/', 'testUser', 'testPass' ), 'a string' )],
-		  ['K', 'KA', array(null, new KlinkAuthentication( 'http://klink-experim.cloudapp.net:14000/kcore/', 'testUser', 'testPass' ) )],
-		];
+		return array(
+		  array(null, null, array()),
+		  array('null',null, array()),
+		  array('', null, array()),
+		  array(' ', null, array()),
+		  array('K', 'KA', array()),
+		  array('K', 'KA', array(0)),
+		  array('K', 'KA', array('0')),
+		  array('K', 'KA', array('null')),
+		  array('K', 'KA', array(null)),
+		  array('K', 'KA', array('key' => 'value')),
+		  array('K', 'KA', array(new KlinkAuthentication( 'http://klink-experim.cloudapp.net:14000/kcore/', 'testUser', 'testPass' ), 'a string' )),
+		  array('K', 'KA', array(null, new KlinkAuthentication( 'http://klink-experim.cloudapp.net:14000/kcore/', 'testUser', 'testPass' ) )),
+		);
 	}
 
 

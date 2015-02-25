@@ -14,33 +14,33 @@ class KlinkRestClientTest extends PHPUnit_Framework_TestCase
 
 	public function inputNoCorrectClass()
 	{
-		return [
-		  [[]],
-		  [null],
-		  [''],
-		  [10],
-		  ['NonExistingNamespace\TotallyNonexistentClass']
-		];
+		return array(
+		  array(array()),
+		  array(null),
+		  array(''),
+		  array(10),
+		  array('NonExistingNamespace\TotallyNonexistentClass'),
+		);
 	}
 
 	public function inputUrlConstruction(){
-		return [
-		  ['http://base.com', '', null, 'http://base.com/' ],
-		  ['http://base.com', '', [], 'http://base.com/' ],
-		  ['http://base.com/', 'method', [], 'http://base.com/method' ],
-		  ['http://base.com/', 'method/{ID}', [ 'ID' => 5 ], 'http://base.com/method/5' ],
-		  ['http://base.com/', 'method', [ 'query' => 'test' ], 'http://base.com/method?query=test' ],
-		  ['http://base.com/', 'method/{VISIBILITY}/', ['query' => 'test', 'VISIBILITY' => 'public' ], 'http://base.com/method/public/?query=test' ],
-		];	
+		return array(
+		  array('http://base.com', '', null, 'http://base.com/' ),
+		  array('http://base.com', '', array(), 'http://base.com/' ),
+		  array('http://base.com/', 'method', array(), 'http://base.com/method' ),
+		  array('http://base.com/', 'method/{ID}', array( 'ID' => 5 ), 'http://base.com/method/5' ),
+		  array('http://base.com/', 'method', array( 'query' => 'test' ), 'http://base.com/method?query=test' ),
+		  array('http://base.com/', 'method/{VISIBILITY}/', array('query' => 'test', 'VISIBILITY' => 'public' ), 'http://base.com/method/public/?query=test' ),
+		);	
 	}
 
 	public function statusResponseCheckErrors(){
-		return [
-		  ['status/400', 400 ],
-		  ['status/401', 401 ],
-		  ['status/403', 403 ],
-		  ['status/500', 500 ],
-		];	
+		return array(
+		  array('status/400', 400 ),
+		  array('status/401', 401 ),
+		  array('status/403', 403 ),
+		  array('status/500', 500 ),
+		);
 	}
 	
 	/**

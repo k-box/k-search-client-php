@@ -32,15 +32,15 @@ class KlinkCoreClientTest extends PHPUnit_Framework_TestCase
 
 	public function invalid_facet_param()
 	{
-		return [
-			[['string1']],
-			[[1]],
-			[['string1', 'string2']],
-			[[1,2,3]],
-			[['string', 1]],
-			[['string', 'string', 1]],
-			[['string', 1,2,3]],
-		];
+		return array(
+			array(array('string1')),
+			array(array(1)),
+			array(array('string1', 'string2')),
+			array(array(1,2,3)),
+			array(array('string', 1)),
+			array(array('string', 'string', 1)),
+			array(array('string', 1,2,3)),
+		);
 	}
 
 
@@ -300,7 +300,7 @@ class KlinkCoreClientTest extends PHPUnit_Framework_TestCase
 
 		$collapsed_two = $this->invokeMethod($this->core, '_collapse_facets', array(null));
 
-		$this->assertEquals([], $collapsed_two);
+		$this->assertEquals(array(), $collapsed_two);
 
 	}
 

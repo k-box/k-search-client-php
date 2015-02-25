@@ -14,24 +14,24 @@ class KlinkAuthenticationTest extends PHPUnit_Framework_TestCase
 
 	public function inputNoCorrect()
 	{
-		return [
-		  [null, null, null],
-		  ['null', 'null', 'null'],
-		  ['', '', ''],
-		  [' ', 'user', 'pass'],
-		  [0, 0, 0],
-		  ['http://www.ciao.org', 0, 0],
-		  ['http://www.ciao.org', '', 0],
-		  ['http://www.ciao.org', ' ', 0],
-		  ['http://www.ciao.org', 'dcd', 0],
-		  ['http://www.ciao.org', '0', 0],
-		  ['http://www.ciao.org', 'username', 0],
-		  ['http://www.ciao.org', 'username', '0'],
-		  [':/ciao.pinco', 'user', 'pass'],
-		  ['//www.example.com/path?googleguy=googley', 'user', 'pass'],
-		  ['ciao', 'user', 'pass'],
-		  ['s', 'user', 'pass']
-		];
+		return array(
+		  array(null, null, null),
+		  array('null', 'null', 'null'),
+		  array('', '', ''),
+		  array(' ', 'user', 'pass'),
+		  array(0, 0, 0),
+		  array('http://www.ciao.org', 0, 0),
+		  array('http://www.ciao.org', '', 0),
+		  array('http://www.ciao.org', ' ', 0),
+		  array('http://www.ciao.org', 'dcd', 0),
+		  array('http://www.ciao.org', '0', 0),
+		  array('http://www.ciao.org', 'username', 0),
+		  array('http://www.ciao.org', 'username', '0'),
+		  array(':/ciao.pinco', 'user', 'pass'),
+		  array('//www.example.com/path?googleguy=googley', 'user', 'pass'),
+		  array('ciao', 'user', 'pass'),
+		  array('s', 'user', 'pass')
+		);
 	}
 
 

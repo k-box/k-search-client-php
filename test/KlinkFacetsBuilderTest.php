@@ -33,7 +33,7 @@ class KlinkFacetsBuilderTest extends PHPUnit_Framework_TestCase
 		$valids = array();
 
 		foreach ($names as $name) {
-			array_push($valids, [''.$name.'']);
+			array_push($valids, array(''.$name.''));
 		}
 
 		return $valids;
@@ -42,35 +42,35 @@ class KlinkFacetsBuilderTest extends PHPUnit_Framework_TestCase
 
 	public function invalid_facetNamesProvider()
 	{
-		return [
-			['mob'],
-			['phone'],
-			['john_smith'],
-			['judo'],
-		];
+		return array(
+			array('mob'),
+			array('phone'),
+			array('john_smith'),
+			array('judo'),
+		);
 	}
 
 
 	public function valid_params()
 	{
-		return [
-			[[], null],
-			[['string'], ['filter' => 'string', 'mincount' => KlinkFacetsBuilder::DEFAULT_MINCOUNT, 'count' => KlinkFacetsBuilder::DEFAULT_COUNT, 'prefix' => null]],
-			[[1], ['filter' => null, 'mincount' => KlinkFacetsBuilder::DEFAULT_MINCOUNT, 'count' => 1, 'prefix' => null]],
-			[[1,2], ['filter' => null, 'mincount' => 2, 'count' => 1, 'prefix' => null]],
-			[['string', 1, 2], ['filter' => 'string', 'mincount' => 2, 'count' => 1, 'prefix' => null]],
-		];
+		return array(
+			array(array(), null),
+			array(array('string'), array('filter' => 'string', 'mincount' => KlinkFacetsBuilder::DEFAULT_MINCOUNT, 'count' => KlinkFacetsBuilder::DEFAULT_COUNT, 'prefix' => null)),
+			array(array(1), array('filter' => null, 'mincount' => KlinkFacetsBuilder::DEFAULT_MINCOUNT, 'count' => 1, 'prefix' => null)),
+			array(array(1,2), array('filter' => null, 'mincount' => 2, 'count' => 1, 'prefix' => null)),
+			array(array('string', 1, 2), array('filter' => 'string', 'mincount' => 2, 'count' => 1, 'prefix' => null)),
+		);
 	}
 
 	public function invalid_params()
 	{
-		return [
-			[['string1', 'string2']],
-			[[1,2,3]],
-			[['string', 1]],
-			[['string', 'string', 1]],
-			[['string', 1,2,3]],
-		];
+		return array(
+			array(array('string1', 'string2')),
+			array(array(1,2,3)),
+			array(array('string', 1)),
+			array(array('string', 'string', 1)),
+			array(array('string', 1,2,3)),
+		);
 	}
 
 
