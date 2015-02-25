@@ -86,9 +86,9 @@ final class KlinkRestClient implements INetworkTransport
 			 * @since 0.1.0
 			 *
 			 * @param int $timeout_value Time in seconds until a request times out.
-			 *                           Default 5.
+			 *                           Default 120.
 			 */
-			'timeout' => 5,
+			'timeout' => 120,
 			/**
 			 * Filter the number of redirects allowed during an HTTP request.
 			 *
