@@ -159,7 +159,7 @@ class KlinkImageResizeTest extends PHPUnit_Framework_TestCase
         $image = $this->createImage(200, 100, 'png');
         $resize = new KlinkImageResize($image);
 
-        $resize->crop(50, 50, false, $resize::cropRIGHT);
+        $resize->crop(50, 50, false, KlinkImageResize::cropRIGHT);
 
         $reflection_class = new ReflectionClass('KlinkImageResize');
         $source_x = $reflection_class->getProperty('source_x');
@@ -298,7 +298,7 @@ class KlinkImageResizeTest extends PHPUnit_Framework_TestCase
 
     private function createImage($width, $height, $type) {
         if (!in_array($type, $this->image_types)) {
-            throw new \Exception('Unsupported image type');
+            throw new Exception('Unsupported image type');
         }
 
         $image = imagecreatetruecolor($width, $height);

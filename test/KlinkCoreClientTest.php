@@ -10,7 +10,7 @@ class KlinkCoreClientTest extends PHPUnit_Framework_TestCase
 	 *
 	 * @var string
 	 */
-	const INSTITUION_ID = 'KLINK';
+	// const INSTITUION_ID = 'KLINK';
 
 	public function setUp()
 	{
@@ -18,8 +18,8 @@ class KlinkCoreClientTest extends PHPUnit_Framework_TestCase
 
 	  	error_reporting(E_ALL & E_STRICT);
 
-	  	$config = new KlinkConfiguration( self::INSTITUION_ID, 'KA', array(
-	  			new KlinkAuthentication( 'https://klink-dev0.cloudapp.net/kcore/', 'admin@klink.org', 'admin.klink' )
+	  	$config = new KlinkConfiguration( INSTITUION_ID, 'KA', array(
+	  			new KlinkAuthentication( CORE_URL, CORE_USER, CORE_PASS )
 	  		) );
 
 	  	// $config->enableDebug();
@@ -97,6 +97,8 @@ class KlinkCoreClientTest extends PHPUnit_Framework_TestCase
 
 	public function testPrivateSearch(){
 		
+		$this->markTestIncomplete();
+
 		$term_to_search = '*';
 
 		$result = $this->core->search($term_to_search, 'private');
@@ -191,7 +193,7 @@ class KlinkCoreClientTest extends PHPUnit_Framework_TestCase
 		$document_id = 'test';
 
 		$descriptor = KlinkDocumentDescriptor::create(
-			self::INSTITUION_ID, $document_id, $hash, 'Title', 
+			INSTITUION_ID, $document_id, $hash, 'Title', 
 			'text/html', 'http://localhost/test/document', 
 			'http://localhost/test/thumbnail', 'user <user@user.com>', 'user <user@user.com>');
 
@@ -203,7 +205,7 @@ class KlinkCoreClientTest extends PHPUnit_Framework_TestCase
 		$this->assertInstanceOf('KlinkDocumentDescriptor', $add_response);
 
 		// Get test
-		$get_response = $this->core->getDocument( self::INSTITUION_ID, $document_id );
+		$get_response = $this->core->getDocument( INSTITUION_ID, $document_id );
 
 		$this->assertInstanceOf('KlinkDocumentDescriptor', $get_response);
 
@@ -215,7 +217,7 @@ class KlinkCoreClientTest extends PHPUnit_Framework_TestCase
 		// Get confirms
 		try{
 			
-			$get_response = $this->core->getDocument( self::INSTITUION_ID, $document_id );
+			$get_response = $this->core->getDocument( INSTITUION_ID, $document_id );
 
 			$this->assertFalse(true, 'The confirmation should repond with a Not found exception');
 
@@ -318,7 +320,7 @@ class KlinkCoreClientTest extends PHPUnit_Framework_TestCase
 		$this->assertTrue($count >= 0);
 
 
-		$count_two = $this->core->getPublicDocumentsCount(self::INSTITUION_ID);
+		$count_two = $this->core->getPublicDocumentsCount(INSTITUION_ID);
 
 		$this->assertNotNull($count_two);
 
@@ -335,6 +337,9 @@ class KlinkCoreClientTest extends PHPUnit_Framework_TestCase
 
 	public function testPrivateDocumentsCount($value='')
 	{
+
+		$this->markTestIncomplete();
+
 		$count = $this->core->getPrivateDocumentsCount();
 
 		$this->assertNotNull($count);
@@ -344,7 +349,7 @@ class KlinkCoreClientTest extends PHPUnit_Framework_TestCase
 		$this->assertTrue($count >= 0);
 
 
-		$count_two = $this->core->getPrivateDocumentsCount(self::INSTITUION_ID);
+		$count_two = $this->core->getPrivateDocumentsCount(INSTITUION_ID);
 
 		$this->assertNotNull($count_two);
 
@@ -365,7 +370,7 @@ class KlinkCoreClientTest extends PHPUnit_Framework_TestCase
 
 	public function invokeMethod(&$object, $methodName, array $parameters = array())
 	{
-	    $reflection = new \ReflectionClass(get_class($object));
+	    $reflection = new ReflectionClass(get_class($object));
 	    $method = $reflection->getMethod($methodName);
 	    $method->setAccessible(true);
 
