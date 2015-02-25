@@ -15,9 +15,9 @@
     </testsuites>
     <php>
         <const name="INSTITUION_ID" value="KLINK"/>
-        <const name="CORE_URL" value="https://klink-staging.cloudapp.net/kcore/"/>
+        <const name="CORE_URL" value="https://klink-dev0.cloudapp.net/kcore/"/>
         <const name="CORE_USER" value="admin@klink.org"/>
-        <const name="CORE_PASS" value="f50345078ddaa64"/>
+        <const name="CORE_PASS" value="admin.klink"/>
  
 
     </php>

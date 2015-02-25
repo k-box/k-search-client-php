@@ -96,8 +96,6 @@ class KlinkCoreClientTest extends PHPUnit_Framework_TestCase
 	}
 
 	public function testPrivateSearch(){
-		
-		$this->markTestIncomplete();
 
 		$term_to_search = '*';
 
@@ -337,8 +335,6 @@ class KlinkCoreClientTest extends PHPUnit_Framework_TestCase
 
 	public function testPrivateDocumentsCount($value='')
 	{
-
-		$this->markTestIncomplete();
 
 		$count = $this->core->getPrivateDocumentsCount();
 
