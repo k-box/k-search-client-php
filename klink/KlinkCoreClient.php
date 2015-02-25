@@ -701,7 +701,7 @@ final class KlinkCoreClient
 					
 					}
 
-				 	throw new Exception("Server not found or network problem.", 9, $kei);
+				 	throw new KlinkException("Server not found or network problem.", 9, $kei);
 				}
 
 				//throw $keid;
@@ -723,11 +723,11 @@ final class KlinkCoreClient
 					
 					}
 
-				 	throw new Exception("Institution details not found.", 10, $keid);
+				 	throw new KlinkException("Institution details not found.", 10, $keid);
 
 				}
 
-				throw new Exception("Server not found or network problem.", 11, $keid);
+				throw new KlinkException("Server not found or network problem.", 11, $keid);
 
 			}
 
