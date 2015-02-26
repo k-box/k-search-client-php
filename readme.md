@@ -1,6 +1,6 @@
 # AdapterBoilerplate
 
-> This version will work only on K-Link Cores that supports the API version 2.
+> This version will work only on K-Link Cores that supports the API version 2.1
 
 Is the starting point for creating a **K**-Link Adapter. Offers some basic functionality for interacting with the KLink Core API and exposes the main interfaces that represents the data needed for every operation. The use of interfaces has been preferred over classes given the fact that the implementation can be different if an ORM is used or the CMS has some particular requirements.
 
@@ -485,8 +485,37 @@ Here is the list of possible document types:
 
 ## Unit Test
 
+**Unit tests can only be executed on PHP 5.3 or above**
+
 to run Unit Tests you must have phpunit version 4.3 or above and the php configuration must have the following extension enabled:
 
 - `php_gd2` for imaging functions with full png support (if you are on Mac OS Yosemite you might have GD bundled, but with no png support)
 
-Unit tests at now can be executed only on PHP version 5.4 or above.
+Some tests maybe skipped depending on your environment configuration (for example specific tests for linux environment will be skipped when executed on Windows).
+
+All tests have been executed on the following versions of PHP
+
+- 5.3.14
+- 5.4.4
+- 5.5
+- 5.6 with curl enabled
+
+
+Unit tests are peformed on repository push and build with the following configuration:
+
+K-Link Core used: klink.dev0.cloudapp.net
+
+to run the unit tests by yourself you have to perform
+
+	composer install --prefer-dist
+
+and let composer download also the required-dev dependencies. After that you can invoke
+
+	php vendor/bin/phpunit
+
+to execute the tests with yout version of php (of any version of PHP)
+
+
+
+
+
