@@ -74,6 +74,17 @@ class KlinkFacetsBuilderTest extends PHPUnit_Framework_TestCase
 	}
 
 
+	public function facets_methods()
+	{
+		return array(
+			array(KlinkFacet::DOCUMENT_TYPE, KlinkFacet::DOCUMENT_TYPE),
+			array(KlinkFacet::DOCUMENT_GROUPS, KlinkFacet::DOCUMENT_GROUPS),
+			array(KlinkFacet::INSTITUTION_ID, KlinkFacet::INSTITUTION_ID),
+			array(KlinkFacet::LANGUAGE, KlinkFacet::LANGUAGE),
+		);
+	}
+
+
 
 
 
@@ -87,15 +98,43 @@ class KlinkFacetsBuilderTest extends PHPUnit_Framework_TestCase
 
 	}
 
+	/**
+	 * @dataProvider facets_methods
+	 */
+	public function testBuilderDefaults($method, $expected_active_facet)
+	{
+		
+		$ft = KlinkFacetsBuilder::create()->{$method}()->build();
+
+		$this->assertNotEmpty($ft);
+
+		$this->assertCount(1, $ft);
+
+		$first = $ft[0];
+
+		$this->assertEquals( $expected_active_facet, $first->getName());
+
+	}
+
 	// /**
-	//  * @dataProvider valid_facetNamesProvider
+	//  * @dataProvider facets_methods
 	//  */
-	// public function testMagicStaticMethodCall($facet)
+	// public function testMagicStaticMethodCall($facet, $expected_active_facet)
 	// {
 		
-	// 	$builder = KlinkFacetsBuilder::{$facet}();
+		// $builder = @KlinkFacetsBuilder::{$facet}();
 
-	// 	$this->assertInstanceOf('KlinkFacetsBuilder', $builder);
+		// $this->assertInstanceOf('KlinkFacetsBuilder', $builder);
+
+		// $ft = $builder->build();
+
+		// $this->assertNotEmpty($ft);
+
+		// $this->assertCount(1, $ft);
+
+		// $first = $ft[0];
+
+		// $this->assertEquals( $expected_active_facet, $first->getName());
 
 	// }
 
