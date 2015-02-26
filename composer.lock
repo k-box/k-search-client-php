@@ -4,21 +4,15 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "fb0c78cab26500f9c36dd8da3f58da2e",
+    "hash": "073f6a9acc59e1a4b9a486a4ae2731a4",
     "packages": [
         {
             "name": "avvertix/jsonmapper",
             "version": "v0.4.2",
             "source": {
                 "type": "git",
-                "url": "https://github.com/avvertix/jsonmapper.git",
+                "url": "https://github.com/avvertix/jsonmapper",
                 "reference": "f2d458f248a19e3e63d9afa690c044d0e1593132"
-            },
-            "dist": {
-                "type": "tar",
-                "url": "http://repo.klink.dyndns.ws//dist/avvertix-jsonmapper-f2d458f248a19e3e63d9afa690c044d0e1593132-zip-15dd9c.tar",
-                "reference": "f2d458f248a19e3e63d9afa690c044d0e1593132",
-                "shasum": "fe61ed0c0c6364bcb5de0b74b2e4b93fc0ae7e97"
             },
             "require-dev": {
                 "phpunit/phpunit": "4.2.*"
@@ -43,8 +37,7 @@
             "description": "Map nested JSON structures onto PHP classes",
             "support": {
                 "email": "christian.weiske@netresearch.de",
-                "issues": "https://github.com/netresearch/jsonmapper/issues",
-                "source": "https://github.com/avvertix/jsonmapper/tree/v0.4.2"
+                "issues": "https://github.com/netresearch/jsonmapper/issues"
             },
             "time": "2014-10-28 11:25:55"
         }
