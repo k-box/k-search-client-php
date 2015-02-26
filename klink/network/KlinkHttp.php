@@ -1606,7 +1606,7 @@ class KlinkHttp_Curl {
 				fclose( $this->stream_handle );
 				return new KlinkError( KlinkError::ERROR_HTTP_REQUEST_FAILED, KlinkHelpers::localize( 'Failed to write request to temporary file.' ), KlinkError::ERRORCODE_HTTP_REQUEST_FAILED );
 			}
-			if ( CURLE_OPERATION_TIMEDOUT /* 28 */ == $curl_error ) {
+			if ( defined('CURLE_OPERATION_TIMEDOUT') && CURLE_OPERATION_TIMEDOUT /* 28 */ == $curl_error || defined('CURLE_OPERATION_TIMEOUTED') && CURLE_OPERATION_TIMEOUTED /* 28 */ == $curl_error ) {
 				curl_close( $handle );
 				return new KlinkError( KlinkError::ERROR_HTTP_REQUEST_TIMEOUT, 'Operation timed out' );
 			}
