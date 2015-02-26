@@ -356,7 +356,7 @@ final class KlinkDocumentDescriptor
 	/**
 	 * List of Location String(s), if  this field is left empty then this value will be set during the indexing process
 	 * 
-	 * @var string[]
+	 * @var array
 	 */
 	public $locationsString;
 
@@ -370,14 +370,14 @@ final class KlinkDocumentDescriptor
 	/**
 	 * List of topics contained in the document
 	 * 
-	 * @var string[]
+	 * @var array
 	 */
 	public $topicTerms;
 
 	/**
 	 * The list of folders where the document can be found. Every folder is the  “document storage” relative path of the file. The path separator is “/” (slash)
 	 * 
-	 * @var string[]
+	 * @var array
 	 */
 	public $documentFolders;
 
@@ -387,14 +387,14 @@ final class KlinkDocumentDescriptor
 	 *
 	 *
 	 * @internal Please do not edit this field directly, use @see addDocumentGroup, @see removeDocumentGroup or @see setDocumentGroups 
-	 * @var string[]
+	 * @var array
 	 */
 	public $documentGroups;
 
 	/**
 	 * The (overrided) titles of the document, as defined by users when inserting the document in a group
 	 * 
-	 * @var string[]
+	 * @var array
 	 */
 	public $titleAliases;
 
@@ -410,7 +410,7 @@ final class KlinkDocumentDescriptor
 	}
 	/**
 	 * getDocumentGroups
-	 * @return string[]
+	 * @return array
 	 */
 	public function getDocumentGroups() {
 		return $this->documentGroups;

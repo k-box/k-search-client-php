@@ -76,4 +76,19 @@ class KlinkDocumentDescriptorTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals('second title', $first[0]);
 
 	}
+
+	public function testDeserialization()
+	{
+
+		$json = file_get_contents(__DIR__ . '/json/documentdescriptor.json');
+
+		$this->jm = new JsonMapper();
+		$this->jm->bExceptionOnUndefinedProperty = true;
+
+		$decoded = json_decode($json, true);
+
+		$deserialized = $this->jm->map($decoded, new KlinkDocumentDescriptor());
+
+		$this->assertInstanceOf('KlinkDocumentDescriptor', $deserialized);
+	}
 }
