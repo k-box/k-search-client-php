@@ -350,6 +350,59 @@ final class KlinkDocumentDescriptor
 		return $this->userOwner;
 	}
 
+
+	// --- Core v2.1 fields
+	
+	/**
+	 * List of Location String(s), if  this field is left empty then this value will be set during the indexing process
+	 * 
+	 * @var string[]
+	 */
+	public $locationsString;
+
+	/**
+	 * List of @see KlinkLocationDescriptor that the document talks about
+	 * 
+	 * @var KlinkLocationDescriptor[]
+	 */
+	public $locations;
+
+	/**
+	 * List of topics contained in the document
+	 * 
+	 * @var string[]
+	 */
+	public $topicTerms;
+
+	/**
+	 * The list of folders where the document can be found. Every folder is the  “document storage” relative path of the file. The path separator is “/” (slash)
+	 * 
+	 * @var string[]
+	 */
+	public $documentFolders;
+
+	/**
+	 * The list of groups assigned to the document. Each string in the list is in the form “user_id:group_id”
+	 * where: group_id is the identifier of the group, and the user_id is the user identifier of the user owning the group (the _ids are internally defined by the DMS)
+	 * 
+	 * @var string[]
+	 */
+	public $documentGroups;
+
+	/**
+	 * The (overrided) titles of the document, as defined by users when inserting the document in a group
+	 * 
+	 * @var string[]
+	 */
+	public $titleAliases;
+
+
+
+
+
+
+	// ---
+
 	
 
 	/**
