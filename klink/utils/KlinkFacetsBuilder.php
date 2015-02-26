@@ -78,6 +78,53 @@ final class KlinkFacetsBuilder
 			$instance = new KlinkFacetsBuilder;
 		}
 
+		if(in_array(KlinkFacet::DOCUMENT_GROUPS, $instance->already_builded)){
+			throw new BadMethodCallException("The document groups facet has been already added", 1);
+		}
+
+		$builded_params = call_user_func_array(array($instance, '_handle_facet_parameters'), func_get_args());
+
+		$facet = null;
+
+		if(is_null($builded_params)){
+			$facet = KlinkFacet::create(KlinkFacet::DOCUMENT_GROUPS, 1);
+		}
+		else {
+
+			if(!is_null($builded_params['filter']) && !in_array($builded_params['filter'], KlinkDocumentUtils::getDocumentTypes())){
+				throw new InvalidArgumentException("Invalid document type for filter", 2);
+			}
+
+			$facet = KlinkFacet::create(KlinkFacet::DOCUMENT_GROUPS, 
+						$builded_params['mincount'], 
+						$builded_params['prefix'], 
+						$builded_params['count'], 
+						$builded_params['filter']);
+		}
+
+		$instance->facets[] = $facet;
+		$instance->already_builded[] = KlinkFacet::DOCUMENT_GROUPS;
+
+		return $instance;
+	}
+
+	/**
+	 * Facets for the document groups
+	 * @return KlinkFacetsBuilder
+	 * @throws BadMethodCallException if called two or more times on the same builder
+	 */
+	public function documentGroups()
+	{
+
+		$isStatic = !(isset($this) && get_class($this) == __CLASS__); //This check is caused by the non-sense of PHP 5.6 that call the same method not considering the static modifier
+
+		if(!$isStatic){
+			$instance = $this;
+		}
+		else {
+			$instance = new KlinkFacetsBuilder;
+		}
+
 		if(in_array(KlinkFacet::DOCUMENT_TYPE, $instance->already_builded)){
 			throw new BadMethodCallException("The document type facet has been already added", 1);
 		}

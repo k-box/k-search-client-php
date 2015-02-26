@@ -204,7 +204,34 @@ class KlinkHelpersTest extends PHPUnit_Framework_TestCase
 		return array(
 		  array('camelCase', 'camel_case'),
 		  array('StartWithACamel', 'start_with_a_camel'),
-		  
+		);
+	}
+
+
+	public function invalid_groups()
+	{
+		return array(
+		  array(array()),
+		  array('null'),
+		  array(null),
+		  array(true),
+		  array(false),
+		  array('-10:ciao'),
+		  array('-10:-19'),
+		  array('0:ciao'),
+		  array('0:.10'),
+		  array('0:-5'),
+		  array('ciao:5'),
+		);
+	}
+
+	public function valid_groups()
+	{
+		return array(
+		  array('0:1'),
+		  array('0:110'),
+		  array('12:1'),
+		  array('100:11029'),
 		);
 	}
 	
@@ -275,6 +302,25 @@ class KlinkHelpersTest extends PHPUnit_Framework_TestCase
 	public function testUrlValidationWithValidData( $number ){
 
 		KlinkHelpers::is_valid_url( $number, "url" );
+
+	}
+
+	/**
+	 * @dataProvider invalid_groups
+	 * @expectedException InvalidArgumentException
+	 */
+	public function testDocumentGroupValidationWithInvalidData( $group ){
+
+		KlinkHelpers::is_valid_document_group( $group );
+
+	}
+
+	/**
+	 * @dataProvider valid_groups
+	 */
+	public function testDocumentGroupValidationWithValidData( $group ){
+
+		KlinkHelpers::is_valid_document_group( $group );
 
 	}
 

@@ -23,6 +23,12 @@ final class KlinkFacet
 	 */
 	const INSTITUTION_ID = 'institutionId';
 
+	/**
+	 * Define the facet name for the @see KlinkDocumentDescriptor::$documentGroups field
+	 */
+	const DOCUMENT_GROUPS = 'documentGroups';
+
+
 
 
 

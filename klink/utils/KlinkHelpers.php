@@ -476,6 +476,31 @@ class KlinkHelpers
 	}
 
 	/**
+	 * Check if the specified value is a well formatted document group identifier.
+	 *
+	 * Valid document groups are formatted as a couple of positive integers separated by a colon like 10:20 or 0:15
+	 * 
+	 * @param  string  $value                the value to check
+	 * @param  string  $parameter_name       [description]
+	 * @param  string  $error_message_format [description]
+	 * @throws InvalidArgumentException if the passed value is not a valid document group
+	 */
+	public static function is_valid_document_group( $value, $parameter_name = 'group', $error_message_format = 'The %s must be a valid document group. Valid document groups have user_id:group_id structure where user_id and group_id are positive integers.' )
+	{
+
+		self::is_string_and_not_empty( $value, $parameter_name, $error_message_format );
+
+		if ( !preg_match('/^\d{1,}:\d{1,}$/', $value) ) {
+			
+			$message = self::localize( sprintf( $error_message_format, $parameter_name ) );
+
+			throw new InvalidArgumentException( $message );
+
+		}
+
+	}
+
+	/**
 	 * Check is an array contains only elements of a particular class.
 	 * 
 	 * @param array $array the array to check

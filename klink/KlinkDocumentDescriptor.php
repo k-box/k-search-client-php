@@ -384,7 +384,9 @@ final class KlinkDocumentDescriptor
 	/**
 	 * The list of groups assigned to the document. Each string in the list is in the form “user_id:group_id”
 	 * where: group_id is the identifier of the group, and the user_id is the user identifier of the user owning the group (the _ids are internally defined by the DMS)
-	 * 
+	 *
+	 *
+	 * @internal Please do not edit this field directly, use @see addDocumentGroup, @see removeDocumentGroup or @see setDocumentGroups 
 	 * @var string[]
 	 */
 	public $documentGroups;
@@ -397,9 +399,124 @@ final class KlinkDocumentDescriptor
 	public $titleAliases;
 
 
+	/**
+	 * setDocumentGroups
+	 * @param string[] $value the new values for the document groups, each element in the array must be formatted as user_id:group_id, where user_id adn group_id are integers and user_id could be 0
+	 * @return void
+	 * @throws InvalidArgumentException If the @see $value array is not well formed
+	 */
+	public function setDocumentGroups($value) {
+		$this->documentGroups = $value;
+	}
+	/**
+	 * getDocumentGroups
+	 * @return string[]
+	 */
+	public function getDocumentGroups() {
+		return $this->documentGroups;
+	}
+
+	/**
+	 * Add a document groups if not exists
+	 * @param integer $user_id  The identifier of the user owner of the group (use 0 if is an institution group)
+	 * @param integer $group_id The identifier of the group
+	 * @return KlinkDocumentDescriptor
+	 * @throws InvalidArgumentException If @see $user_id or @group_id are negative numbers
+	 */
+	public function addDocumentGroup($user_id, $group_id)
+	{
+
+		$composed_id = $user_id.':'.$group_id;
+
+		KlinkHelpers::is_valid_document_group($composed_id);
+
+		if(empty($this->documentGroups)){
+			$this->documentGroups = array($composed_id);
+		}
+		else if(!in_array($composed_id, $this->documentGroups)){
+			$this->documentGroups[] = $composed_id;
+		}
+		
+		return $this;
+	}
+
+	/**
+	 * Removes a group from the document groups list
+	 *
+	 * If the requested group does not exists the document groups field will not be touched and no error will be raised
+	 * 
+	 * @param  [type] $user_id  The identifier of the user owner of the group (use 0 if is an institution group)
+	 * @param  [type] $group_id The identifier of the group
+	 * @return KlinkDocumentDescriptor
+	 * @throws InvalidArgumentException If @see $user_id or @group_id are negative numbers
+	 */
+	public function removeDocumentGroup($user_id, $group_id)
+	{
+		
+		$composed_id = $user_id.':'.$group_id;
+
+		KlinkHelpers::is_valid_document_group($composed_id);
+
+		if(!empty($this->documentGroups) && in_array($composed_id, $this->documentGroups)){
+			// let's remove the group
+			$this->documentGroups = array_values(array_diff($this->documentGroups, array($composed_id)));
+		}
+
+
+		return $this;
+	}
 
 
 
+	/**
+	 * Adds a new title alias for the document (if not already exists)
+	 * @param string $title the title to add
+	 * @return KlinkDocumentDescriptor
+	 */
+	public function addTitleAlias($title)
+	{
+		if(empty($this->titleAliases) && !empty($title)){
+			$this->titleAliases = array($title);
+		}
+		else if(!empty($title) && !empty($this->titleAliases) && !in_array($title, $this->titleAliases)) {
+			$this->titleAliases[] = $title;
+		}
+
+		return $this;
+	}
+
+	/**
+	 * Removes a title, if exists, from the known document title aliases
+	 *
+	 * The method is case sensitive.
+	 * 
+	 * @param  string $title  The title to remove
+	 * @return KlinkDocumentDescriptor
+	 */
+	public function removeTitleAlias($title)
+	{
+		if(!empty($title) && !empty($this->titleAliases) && in_array($title, $this->titleAliases)) {
+			$this->titleAliases = array_values(array_diff($this->titleAliases, array($title)));
+		}
+
+		return $this;
+	}
+
+	/**
+	 * setTitleAliases
+	 * @param string[] $value
+	 * @return void
+	 */
+	public function setTitleAliases($value) {
+		$this->titleAliases = $value;
+	}
+	/**
+	 * getTitleAliases
+	 * @return string[]
+	 */
+	public function getTitleAliases() {
+		return $this->titleAliases;
+	}
 
 	// ---
 
