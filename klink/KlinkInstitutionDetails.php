@@ -106,10 +106,10 @@ final class KlinkInstitutionDetails
     }
 
     public function setAddress(Klink_Address $address){
-        $this->addressStreet = $address->street;
-        $this->addressCountry = $address->country;
-        $this->addressLocality = $address->locality;
-        $this->addressZip = $address->postalCode;
+        $this->addressStreet = $address->getStreet();
+        $this->addressCountry = $address->getCountry();
+        $this->addressLocality = $address->getLocality();
+        $this->addressZip = $address->getPostalCode();
 
         return $this;
     }
