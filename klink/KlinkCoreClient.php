@@ -809,7 +809,7 @@ final class KlinkCoreClient
 		$doc_type = KlinkDocumentUtils::documentTypeFromMimeType( $mime );
 
 
-		if( $doc_type === 'image' && !defined(KLINK_COMPATIBILITY_MODE) ){
+		if( $doc_type === 'image' && !defined('KLINK_COMPATIBILITY_MODE') ){
 			//we already have an image so let's resize it
 			
 			try{
