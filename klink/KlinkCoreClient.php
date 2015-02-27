@@ -809,14 +809,14 @@ final class KlinkCoreClient
 		$doc_type = KlinkDocumentUtils::documentTypeFromMimeType( $mime );
 
 
-		if( $doc_type === 'image' && !defined('KLINK_COMPATIBILITY_MODE') ){
+		if( $doc_type === 'image' && !defined('KLINK_COMPATIBILITY_MODE') && defined('IMAGETYPE_PNG') ){
 			//we already have an image so let's resize it
 			
 			try{
 			
 				$image = new KlinkImageResize($fullFilePath);
 				$image->resizeToWidth(300);
-				$image->save($fullImagePath, KlinkImageResize::IMAGETYPE_PNG);
+				$image->save($fullImagePath, IMAGETYPE_PNG);
 
 			}
 			catch(Exception $ie){
