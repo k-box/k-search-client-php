@@ -5,7 +5,7 @@ if( !defined( 'KLINKADAPTER_DEBUG' ) ){
 }
 
 if( !defined( 'KLINK_BOILERPLATE_VERSION' ) ){
-	define( 'KLINK_BOILERPLATE_VERSION', '0.2' );
+	define( 'KLINK_BOILERPLATE_VERSION', '0.3.5' );
 }
 
 /**
@@ -230,12 +230,6 @@ final class KlinkCoreClient
 	 * @throws KlinkException if something wrong happened during the communication with the core
 	 */
 	function updateDocument( KlinkDocument $document ){
-
-		$rem = $this->removeDocument($document->getDescriptor());
-
-		if(KlinkHelpers::is_error( $rem )){
-			throw new KlinkException( (string)$rem, $rem->get_error_data_code() );
-		}
 
 		$rem = $this->addDocument( $document );
 
