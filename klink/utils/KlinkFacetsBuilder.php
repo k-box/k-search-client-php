@@ -79,7 +79,7 @@ final class KlinkFacetsBuilder
 		}
 
 		if(in_array(KlinkFacet::DOCUMENT_TYPE, $instance->already_builded)){
-			throw new BadMethodCallException("The document groups facet has been already added", 1);
+			throw new BadMethodCallException("The document type facet has been already added", 1);
 		}
 
 		$builded_params = call_user_func_array(array($instance, '_handle_facet_parameters'), func_get_args());
@@ -91,8 +91,19 @@ final class KlinkFacetsBuilder
 		}
 		else {
 
-			if(!is_null($builded_params['filter']) && !in_array($builded_params['filter'], KlinkDocumentUtils::getDocumentTypes())){
-				throw new InvalidArgumentException("Invalid document type for filter", 2);
+			if(!is_null($builded_params['filter'])){
+
+				$exploded = explode(',', $builded_params['filter']);
+
+				$valids = KlinkDocumentUtils::getDocumentTypes();
+
+				foreach ($exploded as $single_filter) {
+					if(!in_array($single_filter, $valids)){
+						throw new InvalidArgumentException("Invalid document type ". $single_filter ."for filter", 2);
+					}
+				}
+
+
 			}
 
 			$facet = KlinkFacet::create(KlinkFacet::DOCUMENT_TYPE, 

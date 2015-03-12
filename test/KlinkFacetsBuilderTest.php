@@ -50,6 +50,28 @@ class KlinkFacetsBuilderTest extends PHPUnit_Framework_TestCase
 		);
 	}
 
+	public function valid_documentTypes()
+	{
+		return array(
+			array('web-page'),
+			array('document'),
+			array('spreadsheet'),
+			array('presentation'),
+			array('presentation,document'),
+			array('presentation,web-page,spreadsheet'),
+			array('uri-list'),
+		);
+	}
+
+	public function invalid_documentTypes()
+	{
+		return array(
+			array('banas'),
+			array('orange'),
+			array('jiuce,apple'),
+		);
+	}
+
 
 	public function valid_params()
 	{
@@ -188,13 +210,28 @@ class KlinkFacetsBuilderTest extends PHPUnit_Framework_TestCase
 
 
 	/**
-	 * @dataProvider invalid_facetNamesProvider
+	 * @dataProvider invalid_documentTypes
 	 * @expectedException InvalidArgumentException
 	 */
 	public function testDocumentTypeFacetWithInvalidType($documentType)
 	{
 		
 		KlinkFacetsBuilder::i()->documentType($documentType);
+
+	}
+
+	/**
+	 * [testDocumentTypeFacetWithValidType description]
+	 * @dataProvider valid_documentTypes
+	 */
+	public function testDocumentTypeFacetWithValidType($documentType)
+	{
+		
+		$facets = KlinkFacetsBuilder::i()->documentType($documentType)->build();
+
+		$this->assertContainsOnlyInstancesOf('KlinkFacet', $facets);
+
+		$this->assertCount(1, $facets, 'message');
 
 	}
 
