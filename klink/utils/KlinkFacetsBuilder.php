@@ -21,7 +21,7 @@
 final class KlinkFacetsBuilder
 {
 
-	const DEFAULT_MINCOUNT = 2;
+	const DEFAULT_MINCOUNT = 1;
 
 	const DEFAULT_COUNT = 10;
 
