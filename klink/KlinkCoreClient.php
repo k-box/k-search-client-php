@@ -56,9 +56,9 @@ final class KlinkCoreClient
 	/**
 	 * The URL of the standalone Thumbnail generator API.
 	 */
-	const THUMBNAIL_GENERATOR_URL = 'http://klink-thumb2.azurewebsites.net/api/thumb/';
+	const THUMBNAIL_GENERATOR_URL = 'https://klink-test1.cloudapp.net/kcore/thumbnails/';
 
-	const THUMBAIL_GENERATOR_AUTHENTICATION = 'klink:#8e44ad';
+	// const THUMBAIL_GENERATOR_AUTHENTICATION = 'klink:#8e44ad';
 
 
 
@@ -830,6 +830,9 @@ final class KlinkCoreClient
 
 		$http = new KlinkHttp('http://localhost/');
 
+		$cores = $this->configuration->getCores();
+		$authentication = $cores[0];
+
 		if( $debug ) {
 
 			error_log( ' --> Generating thumbnail for ' . $fullFilePath );
@@ -837,9 +840,9 @@ final class KlinkCoreClient
 		}
 
 		$data = array(
-			'filename' => basename( $fullFilePath ),
-			'filemime' => KlinkDocumentUtils::get_mime($fullFilePath) ,
-			'filedata' => base64_encode( file_get_contents( $fullFilePath ) )
+			'fileName' => basename( $fullFilePath ),
+			'fileMime' => KlinkDocumentUtils::get_mime($fullFilePath) ,
+			'fileData' => base64_encode( file_get_contents( $fullFilePath ) )
 			);
 
 		$headers = array(
@@ -849,7 +852,7 @@ final class KlinkCoreClient
 				'compress' => 'true', //we compress the data that is sended for bandwith management
 				'headers' => array(
 					'Content-Type' => 'application/json',
-					'Authorization' => 'Basic ' . base64_encode( self::THUMBAIL_GENERATOR_AUTHENTICATION ) )
+					'Authorization' => 'Basic ' . base64_encode( $authentication->getUsername() . ':' . $authentication->getPassword() ))
 			);
 
 		$result = $http->post( self::THUMBNAIL_GENERATOR_URL, $headers );
@@ -870,7 +873,7 @@ final class KlinkCoreClient
 
 			$decoded = json_decode( $result['body'] );
 
-			if( empty( $decoded->DataUri ) ){
+			if( empty( $decoded->dataURI ) ){
 
 				if( $debug ){
 
@@ -883,7 +886,7 @@ final class KlinkCoreClient
 				throw new KlinkException("The thumbnail cannot be generated. Empty image response.");
 			}
 
-			file_put_contents( $fullImagePath, file_get_contents( $decoded->DataUri ) );
+			file_put_contents( $fullImagePath, file_get_contents( $decoded->dataURI ) );
 
 		}
 
@@ -944,10 +947,13 @@ final class KlinkCoreClient
 
 		$http = new KlinkHttp('http://localhost/');
 
+		$cores = $this->configuration->getCores();
+		$authentication = $cores[0];
+
 		$data = array(
-			'filename' => md5( KlinkHelpers::now() ) . '.' . $fileExtension,
-			'filemime' => $mimeType ,
-			'filedata' => base64_encode( $data )
+			'fileName' => md5( KlinkHelpers::now() ) . '.' . $fileExtension,
+			'fileMime' => $mimeType ,
+			'fileData' => base64_encode( $data )
 			);
 
 		$headers = array(
@@ -957,7 +963,7 @@ final class KlinkCoreClient
 				'compress' => 'true', //we compress the data that is sended for bandwith management
 				'headers' => array(
 					'Content-Type' => 'application/json',
-					'Authorization' => 'Basic ' . base64_encode( self::THUMBAIL_GENERATOR_AUTHENTICATION ) )
+					'Authorization' => 'Basic ' . base64_encode( $authentication->getUsername() . ':' . $authentication->getPassword() ))
 			);
 
 		$result = $http->post( self::THUMBNAIL_GENERATOR_URL, $headers );
@@ -978,7 +984,7 @@ final class KlinkCoreClient
 
 			$decoded = json_decode( $result['body'] );
 
-			if( empty( $decoded->DataUri ) ){
+			if( empty( $decoded->dataURI ) ){
 
 				if( $debug ){
 
@@ -991,15 +997,22 @@ final class KlinkCoreClient
 				throw new KlinkException("The thumbnail cannot be generated. Empty image response.");
 			}
 
-			// file_put_contents( $fullImagePath, file_get_contents( $decoded->DataUri ) );
+			// file_put_contents( $fullImagePath, file_get_contents( $decoded->dataURI ) );
 
-			return file_get_contents( $decoded->DataUri );
+			return file_get_contents( $decoded->dataURI );
 
 		}
 
 		throw new KlinkException("The thumbnail cannot be generated. Unexpected end of function.");
 
 	}
+
+
+	// public function generateThumbnailOfWebSite()
+	// {
+	// 	# code...
+	// 	// remvember to remove the last slash from the url otherwise the Core will get mad
+	// }
 
 
 	// ----- Private Stuff
