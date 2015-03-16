@@ -265,7 +265,8 @@ final class KlinkRestClient implements INetworkTransport
 		$headers = array_merge_recursive(
 			$this->all_request_options, 
 			array(
-				'body' => json_encode($data), 
+				'body' => json_encode($data),
+				'timeout_retry' => 3,
 				'headers' => array('Content-Type' => self::JSON_ENCODING)
 			));
 

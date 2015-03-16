@@ -1602,6 +1602,12 @@ class KlinkHttp_Curl {
 
 		// If an error occurred, or, no response.
 		if ( $curl_error || ( 0 == strlen( $theBody ) && empty( $theHeaders['headers'] ) ) ) {
+
+			if(defined('KLINKADAPTER_DEBUG')){
+				error_log( 'Curl transfer information');
+				error_log(print_r(curl_getinfo($handle), true));
+			}
+
 			if ( CURLE_WRITE_ERROR /* 23 */ == $curl_error &&  $r['stream'] ) {
 				fclose( $this->stream_handle );
 				return new KlinkError( KlinkError::ERROR_HTTP_REQUEST_FAILED, KlinkHelpers::localize( 'Failed to write request to temporary file.' ), KlinkError::ERRORCODE_HTTP_REQUEST_FAILED );

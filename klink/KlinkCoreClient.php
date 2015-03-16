@@ -5,7 +5,7 @@ if( !defined( 'KLINKADAPTER_DEBUG' ) ){
 }
 
 if( !defined( 'KLINK_BOILERPLATE_VERSION' ) ){
-	define( 'KLINK_BOILERPLATE_VERSION', '0.3.6' );
+	define( 'KLINK_BOILERPLATE_VERSION', '0.3.7' );
 }
 
 /**
@@ -846,6 +846,7 @@ final class KlinkCoreClient
 				'body' => json_encode($data),
 				'timeout' => 120,
 				'httpversion' => '1.1',
+				'timeout_retry' => 3,
 				'compress' => 'true', //we compress the data that is sended for bandwith management
 				'headers' => array(
 					'Content-Type' => 'application/json',
@@ -954,6 +955,7 @@ final class KlinkCoreClient
 				'body' => json_encode($data),
 				'timeout' => 120,
 				'httpversion' => '1.1',
+				'timeout_retry' => 3,
 				'compress' => 'true', //we compress the data that is sended for bandwith management
 				'headers' => array(
 					'Content-Type' => 'application/json',
