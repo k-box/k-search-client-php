@@ -467,13 +467,15 @@ final class KlinkHttp implements INetworkTransport {
 		if( KlinkHelpers::is_error( $response ) && 
 			!empty( $timeouterror ) &&
 			$r['timeout_retry'] > 0 ){
-			// echo '>>>>>> We have a timeout with other  ' . $r['timeout_retry'] . ' retries' . PHP_EOL;
 
-			$r['timeout_retry'] = $r['timeout_retry'] - 1;
+				$r['timeout_retry'] = $r['timeout_retry'] - 1;
+				$r['timeout'] = $r['timeout'] * 2;
 
-			$r['timeout'] = $r['timeout'] * 2;
+				if(defined('KLINKADAPTER_DEBUG_INTERNAL') && KLINKADAPTER_DEBUG_INTERNAL){
+					error_log( 'Timeout retry next #' . $r['timeout_retry'] . ' seconds ' . $r['timeout']);
+				}
 
-			return self::request( $url, $r );
+				return self::request( $url, $r );
 		}
 
 
