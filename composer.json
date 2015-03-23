@@ -1,7 +1,7 @@
 {
     "name": "klink/adapterboilerplate",
     "description": "The Library for interacting with the K-Link Core (version 2 of the API is supported)",
-    "version": "0.3.8",
+    "version": "0.3.9",
     "type": "library",
     "homepage": "http://klink.azurewebsites.net",
     "time": "2015-03-07",

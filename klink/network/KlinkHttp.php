@@ -1090,6 +1090,7 @@ class KlinkHttp_Streams {
 		$context = stream_context_create( array(
 			'ssl' => array(
 				'verify_peer' => $ssl_verify,
+				'verify_peer_name' => $ssl_verify,
 				//'CN_match' => $arrURL['host'], // This is handled by self::verify_ssl_certificate()
 				'capture_peer_cert' => $ssl_verify,
 				'SNI_enabled' => true,
