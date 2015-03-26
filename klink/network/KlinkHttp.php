@@ -1925,7 +1925,7 @@ final class KlinkHttp_Cookie {
 		 * @param string $value The cookie value.
 		 * @param string $name  The cookie name.
 		 */
-		return $this->name . '=' . apply_filters( 'klink_http_cookie_value', $this->value, $this->name );
+		return $this->name . '=' . $this->value;
 	}
 
 	/**
