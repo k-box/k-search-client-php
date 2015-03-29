@@ -314,7 +314,7 @@ Facets are specified as instances of the class KlinkFacet. To create an instance
 	 * For the facet name plase refer to @see KlinkFacet class constants
 	 * 
 	 * @param string $name   the name of the facet, see the constants defined in this class
-	 * @param int $min Specify the minimun frequency for the facet-term to be return for the given, default 2
+	 * @param int $min Specify the minimun frequency for the facet-term to be returned, default 2
 	 * @param string $prefix retrieve the facet items that have such prefix in the text 
 	 * @param int $count  configure the number of terms to return for the given facet
 	 * @param string $filter specify the filtering value to applied to the search for the given facet
@@ -405,9 +405,12 @@ Each facet building method could receive a variable number of parameters. Here i
 
 - no parameters -> default behaviour with mincount = 2 and count = 10, no filter
 - 1 parameter of type string -> assumed as filter, other values are at it's defaults
-- 1 parameter of type int -> assumed as the count for the number of terms to be returned
+- 1 parameter of type int -> assumed as the mincount (the minimun frequency for the facet-term to be returned)
 - 2 parameters of type int -> first the count and second the mincount
 - 3 parameters, the first of type string and the others of type int -> 1: filter, 2: count, 3: mincount
+
+
+**please note that in version 0.3.9 and below the single integer parameter case behaviour was to set the `count` parameter of the facet**.
 
 ### Examples
 
@@ -416,8 +419,10 @@ Each facet building method could receive a variable number of parameters. Here i
 	// enabling the “language” facet
 	KlinkFacetsBuilder::create()->language()->build();
 
-	// enabling the “language” facet and retrieve only the 3 most frequent facets of such field
-	KlinkFacetsBuilder::create()->language(3)->build();	
+	// enabling the “language” facet and retrieve only the 3 most frequent facets of such field using the default mincount attribute
+	KlinkFacetsBuilder::create()->language(3, KlinkFacetsBuilder::DEFAULT_MINCOUNT)->build();	
+	//or using a custom mincount. In this case the minimum frequency for considering the facet is 1, so if there is at least one document the facet will be returned
+	KlinkFacetsBuilder::create()->language(3, 1)->build();	
 
 	// filtering the documents by documentType “presentation”
 	KlinkFacetsBuilder::create()->documentType('presentation');

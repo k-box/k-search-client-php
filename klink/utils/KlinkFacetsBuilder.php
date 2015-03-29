@@ -338,7 +338,7 @@ final class KlinkFacetsBuilder
 	    }
 	    else if (func_num_args() == 1 && is_integer(func_get_arg(0))) {
 
-	    	return array_merge( $default, array('count' => func_get_arg(0)) );
+	    	return array_merge( $default, array('mincount' => func_get_arg(0)) );
 	    	
 	    }
 	    else if(func_num_args() == 2 && func_get_args() === array_filter(func_get_args(), 'is_int')){
