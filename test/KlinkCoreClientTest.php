@@ -175,7 +175,7 @@ class KlinkCoreClientTest extends PHPUnit_Framework_TestCase
 
 		$this->assertTrue(!empty($facets));
 
-		$this->assertEquals(count($f)-1, count($facets));
+		$this->assertEquals(count($f), count($facets));
 
 		$this->assertContainsOnlyInstancesOf('KlinkFacet', $facets);		
 	}
@@ -263,7 +263,7 @@ class KlinkCoreClientTest extends PHPUnit_Framework_TestCase
 
 		$this->assertTrue(!empty($answer));
 
-		$this->assertEquals(count($f)-1, count($answer));
+		$this->assertEquals(count($f), count($answer));
 
 		$this->assertContainsOnlyInstancesOf('KlinkFacet', $answer);
 

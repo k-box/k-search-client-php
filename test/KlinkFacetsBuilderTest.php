@@ -20,7 +20,7 @@ class KlinkFacetsBuilderTest extends PHPUnit_Framework_TestCase
 
 	  	$oClass = new ReflectionClass('KlinkFacet');
 
-        $this->currently_supported = $oClass->getConstants();
+        $this->currently_supported = array(KlinkFacet::DOCUMENT_TYPE,KlinkFacet::LANGUAGE,KlinkFacet::INSTITUTION_ID,KlinkFacet::DOCUMENT_GROUPS);
 
 	}
 
@@ -28,7 +28,7 @@ class KlinkFacetsBuilderTest extends PHPUnit_Framework_TestCase
 	public function valid_facetNamesProvider()
 	{
 
-		$names = array_values($this->currently_supported);
+		$names = $this->currently_supported;
 
 		$valids = array();
 
@@ -118,7 +118,7 @@ class KlinkFacetsBuilderTest extends PHPUnit_Framework_TestCase
 		
 		$current = KlinkFacetsBuilder::allNames();
 
-		$this->assertEquals( array_values($this->currently_supported), $current);
+		$this->assertEquals( $this->currently_supported, $current);
 
 	}
 
