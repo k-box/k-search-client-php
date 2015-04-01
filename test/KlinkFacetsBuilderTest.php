@@ -103,6 +103,14 @@ class KlinkFacetsBuilderTest extends PHPUnit_Framework_TestCase
 			array(KlinkFacet::DOCUMENT_GROUPS, KlinkFacet::DOCUMENT_GROUPS),
 			array(KlinkFacet::INSTITUTION_ID, KlinkFacet::INSTITUTION_ID),
 			array(KlinkFacet::LANGUAGE, KlinkFacet::LANGUAGE),
+			// array(KlinkFacet::LOCAL_DOCUMENT_ID, KlinkFacet::LOCAL_DOCUMENT_ID),
+			// array(KlinkFacet::DOCUMENT_ID, KlinkFacet::DOCUMENT_ID),
+		);
+	}
+
+	public function filters_methods()
+	{
+		return array(
 			array(KlinkFacet::LOCAL_DOCUMENT_ID, KlinkFacet::LOCAL_DOCUMENT_ID),
 			array(KlinkFacet::DOCUMENT_ID, KlinkFacet::DOCUMENT_ID),
 		);
@@ -137,6 +145,40 @@ class KlinkFacetsBuilderTest extends PHPUnit_Framework_TestCase
 		$first = $ft[0];
 
 		$this->assertEquals( $expected_active_facet, $first->getName());
+
+	}
+
+	/**
+	 * @expectedException InvalidArgumentException
+	 * @dataProvider filters_methods
+	 */
+	public function testFiltersInvalidInput($method, $value){
+
+		$ft = KlinkFacetsBuilder::create()->{$method}()->build();
+
+	}
+
+	public function testFilters()
+	{
+
+		$ft = KlinkFacetsBuilder::create()->localDocumentId('10')->build();
+
+		$this->assertNotEmpty($ft);
+
+		$this->assertCount(1, $ft);
+
+		$first = $ft[0];
+
+
+		$ft = KlinkFacetsBuilder::create()->localDocumentId(['10', '12'])->build();
+
+		$this->assertNotEmpty($ft);
+
+		$this->assertCount(1, $ft);
+
+		$first = $ft[0];
+
+		$this->assertEquals('10,12', $first->getFilter());
 
 	}
 

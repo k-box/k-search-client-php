@@ -173,7 +173,7 @@ final class KlinkFacetsBuilder
 	 * @return KlinkFacetsBuilder
 	 * @throws BadMethodCallException if called two or more times on the same builder
 	 */
-	public function localDocumentId($filter = null)
+	public function localDocumentId($filter)
 	{
 
 		$isStatic = !(isset($this) && get_class($this) == __CLASS__); //This check is caused by the non-sense of PHP 5.6 that call the same method not considering the static modifier
@@ -193,8 +193,8 @@ final class KlinkFacetsBuilder
 
 		$facet = null;
 
-		if(is_null($filter)){
-			$facet = KlinkFacet::create(KlinkFacet::LOCAL_DOCUMENT_ID, 1);
+		if(empty($filter)){
+			throw new InvalidArgumentException("The filter value cannot be empty", 2);
 		}
 		else {
 
@@ -224,7 +224,7 @@ final class KlinkFacetsBuilder
 	 * @return KlinkFacetsBuilder
 	 * @throws BadMethodCallException if called two or more times on the same builder
 	 */
-	public function documentId($filter = null)
+	public function documentId($filter)
 	{
 
 		$isStatic = !(isset($this) && get_class($this) == __CLASS__); //This check is caused by the non-sense of PHP 5.6 that call the same method not considering the static modifier
@@ -244,8 +244,8 @@ final class KlinkFacetsBuilder
 
 		$facet = null;
 
-		if(is_null($filter)){
-			$facet = KlinkFacet::create(KlinkFacet::DOCUMENT_ID, 1);
+		if(empty($filter)){
+			throw new InvalidArgumentException("The filter value cannot be empty", 2);
 		}
 		else {
 
@@ -473,7 +473,7 @@ final class KlinkFacetsBuilder
 		foreach ($known as $facetName) {
 
 			$instance = call_user_func_array(array($this, $facetName), array());
-			
+
 		}
 
 		return $this->build();
