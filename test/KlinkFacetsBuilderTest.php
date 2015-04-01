@@ -103,6 +103,8 @@ class KlinkFacetsBuilderTest extends PHPUnit_Framework_TestCase
 			array(KlinkFacet::DOCUMENT_GROUPS, KlinkFacet::DOCUMENT_GROUPS),
 			array(KlinkFacet::INSTITUTION_ID, KlinkFacet::INSTITUTION_ID),
 			array(KlinkFacet::LANGUAGE, KlinkFacet::LANGUAGE),
+			array(KlinkFacet::LOCAL_DOCUMENT_ID, KlinkFacet::LOCAL_DOCUMENT_ID),
+			array(KlinkFacet::DOCUMENT_ID, KlinkFacet::DOCUMENT_ID),
 		);
 	}
 

@@ -28,8 +28,18 @@ final class KlinkFacet
 	 */
 	const DOCUMENT_GROUPS = 'documentGroups';
 
+	/**
+	 * Define the facet name for the @see KlinkDocumentDescriptor::$localDocumentID field
+	 */
+	const LOCAL_DOCUMENT_ID = 'localDocumentId';
+
+	/**
+	 * Define the facet name for the @see KlinkDocumentDescriptor::getKlinkId() field
+	 */
+	const DOCUMENT_ID = 'documentId';
 
 
+	public static $ONLY_FILTER = array(KlinkFacet::LOCAL_DOCUMENT_ID, KlinkFacet::DOCUMENT_ID);
 
 
 
@@ -157,17 +167,21 @@ final class KlinkFacet
 	public function toKlinkParameter()
 	{
 
-		$ser = array(
-			"facets" => $this->getName(),
-			'facet_'.$this->getName().'_count' => $this->getCount(),
-			'facet_'.$this->getName().'_mincount' => $this->getMin(),
-		);
+		$ser = array();
+
+		if(!in_array($this->getName(), KlinkFacet::$ONLY_FILTER)){
+			$ser = array_merge(array(
+				"facets" => $this->getName(),
+				'facet_'.$this->getName().'_count' => $this->getCount(),
+				'facet_'.$this->getName().'_mincount' => $this->getMin(),
+			), $ser);
+		}
 
 		if(!is_null($this->getFilter())){
 			$ser['filter_'.$this->getName()] = $this->getFilter();
 		}
 
-		if(!is_null($this->getPrefix())){
+		if(!is_null($this->getPrefix()) && !in_array($this->getName(), KlinkFacet::$ONLY_FILTER) ){
 			$ser['facet_'.$this->getName().'_prefix'] = $this->getPrefix();
 		}
 
