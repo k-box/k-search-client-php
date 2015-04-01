@@ -412,6 +412,36 @@ Each facet building method could receive a variable number of parameters. Here i
 
 **please note that in version 0.3.9 and below the single integer parameter case behaviour was to set the `count` parameter of the facet**.
 
+
+### Filters
+
+For commodity there are also some filters (that cannot be invoked as facets) that are supported:
+
+- localDocumentId (`KlinkFacet::LOCAL_DOCUMENT_ID`): enable to select a specific set of documents given the local document identifier (`KlinkDocumentDescriptor::getLocalDocumentID()`) before executing a search; The search will be executed over the specified collection.
+- documentId (`KlinkFacet::DOCUMENT_ID`): enable to select a specific set of documents identified by the K-Link Document Identifer ((`KlinkDocumentDescriptor::getKlinkId()`) before applying search parameters; The search will be executed over the specified collection.
+
+On filters you can only specify the filtering parameter and not the mincount and count parameter as for normal facets.
+
+The `KlinkFacetBuilder` class supports also adding filters. Filters can be mixed with facets. The filter parameter can be a single string value or an array of strings.
+
+
+```php
+
+	// filter for the local document identifier 10
+	$array_of_facets = KlinkFacetsBuilder::create()->localDocumentId('10')->build();
+
+	// filter for the local document identifiers 10 and 12
+	$array_of_facets = KlinkFacetsBuilder::create()->localDocumentId(['10', '12'])->build();
+
+	// filter for the K-Link Document identifier
+	$array_of_facets = KlinkFacetsBuilder::create()->documentId('KLINK-10')->build();
+	// remember that the K-Link document identifer is composed by institutionID followed by a dash and the local document identifier
+	$array_of_facets = KlinkFacetsBuilder::create()->documentId('CA-10')->build();
+
+
+```
+
+
 ### Examples
 
 ```php
