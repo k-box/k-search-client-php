@@ -361,9 +361,10 @@ final class KlinkDocumentDescriptor
 	public $locationsString;
 
 	/**
-	 * List of @see KlinkLocationDescriptor that the document talks about
+	 * List of places that the document talks about.
 	 * 
-	 * @var KlinkLocationDescriptor[]
+	 * @see KlinkGeoJsonFeature
+	 * @var KlinkGeoJsonFeature[]
 	 */
 	public $locations;
 
@@ -519,6 +520,47 @@ final class KlinkDocumentDescriptor
 	}
 
 	// ---
+
+	/**
+	 * [getLocationsString description]
+	 * @return [type] [description]
+	 */
+	public function getLocationsString(){
+		return $this->locationsString;
+	}
+
+	/**
+	 * [setLocationsString description]
+	 * @param [type] $locationStrings [description]
+	 */
+	public function setLocationsString($locationStrings){
+		$this->locationsString = $locationStrings;
+	}
+
+
+
+	/**
+	 * 
+	 * @return KlinkGeoJsonFeature[] the array of features, according to the 
+	 * GeoJSON specification, that describes the places found in the document
+	 */
+	public function getLocations(){
+		return $this->locations;
+	}
+
+	/**
+	 * Set the places that the document talks about.
+	 * 
+	 * @param KlinkGeoJsonFeature[] $locations The array of features according to the GeoJson Specification
+	 */
+	public function setLocations($locations){
+
+		$this->locations = $locations;
+
+	}
+
+
+
 
 	
 

@@ -22,7 +22,11 @@ class KlinkCoreClientTest extends PHPUnit_Framework_TestCase
 	  			new KlinkAuthentication( CORE_URL, CORE_USER, CORE_PASS )
 	  		) );
 
-	  	$config->enableDebug();
+	  	if(in_array('--debug', $_SERVER['argv'])){
+	  		$config->enableDebug();	
+	  	}
+
+	  	
 
 	    $this->core = new KlinkCoreClient($config);
 

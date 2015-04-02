@@ -91,4 +91,56 @@ class KlinkDocumentDescriptorTest extends PHPUnit_Framework_TestCase
 
 		$this->assertInstanceOf('KlinkDocumentDescriptor', $deserialized);
 	}
+
+	public function testGeoJsonDeserialization()
+	{
+
+		$json = file_get_contents(__DIR__ . '/json/documentdescriptor.json');
+
+		$this->jm = new JsonMapper();
+		$this->jm->bExceptionOnUndefinedProperty = true;
+
+		$decoded = json_decode($json, true);
+
+		$deserialized = $this->jm->map($decoded, new KlinkDocumentDescriptor());
+
+		$this->assertInstanceOf('KlinkDocumentDescriptor', $deserialized);
+
+		$location_strings = $deserialized->getLocationsString();
+
+		$locations = $deserialized->getLocations();
+
+		$this->assertEquals(4, count($location_strings), 'Unexpected number of location strings');
+
+		$this->assertEquals(array(
+			"Zimov’ye Dushanbe",
+		    "Kyrgyzstan",
+		    "Europe",
+      		"Yuzhniy Ferganskiy Kanal Imeni Andreyeva"), $location_strings);
+
+
+		$this->assertEquals(count($location_strings), count($locations));
+
+		$this->assertContainsOnlyInstancesOf('KlinkGeoJsonFeature', $locations);
+
+		$first = $locations[0];
+
+		$this->assertEquals('Feature', $first->getType());
+
+		$this->assertInstanceOf('KlinkGeoJsonGeometry', $first->getGeometry());
+
+		if($first->getGeometry()->getType() === KlinkGeoJsonGeometry::TYPE_POINT){
+			$this->assertEquals(2, count($first->getGeometry()->getCoordinates()), 'Point geometry should have directly the coordinates in a single array');
+		}
+		else {
+			$this->assertEquals(1, count($first->getGeometry()->getCoordinates()));	
+		}		
+
+		$this->assertEquals(array(
+		    'name' => 'Zimov’ye Dushanbe',
+		    'geonameID' => '8406256',
+		    'countryCode' => 'KG'), $first->getProperties());
+
+
+	}
 }

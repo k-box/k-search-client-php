@@ -170,7 +170,7 @@ class KlinkFacetsBuilderTest extends PHPUnit_Framework_TestCase
 		$first = $ft[0];
 
 
-		$ft = KlinkFacetsBuilder::create()->localDocumentId(['10', '12'])->build();
+		$ft = KlinkFacetsBuilder::create()->localDocumentId(array('10', '12'))->build();
 
 		$this->assertNotEmpty($ft);
 
