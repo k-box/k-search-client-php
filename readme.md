@@ -37,9 +37,19 @@ Than in your project insert the line
 
 ### PHP 5.2
 
-If you need to use the Boilerplate on PHP version below the 5.3, at now, you have to perform some basic tasks on an environment with PHP 5.3 and then use the fallback autoloader.
+If you need to use the Boilerplate on PHP version below the 5.3 you can follow two paths:
 
-First you have to create a build of the Adapter Boilerplate on a system with PHP >= 5.3 running
+1. Building the Boilerplate as a standalone library.
+2. Create a composer project, on a machine that have PHP >= 5.3, that requires the Boilerplate and then distribute the build.
+
+**Please note that both strategies requires a system with PHP >=5.3 and composer to be used for building the Boilerplate dependencies.**
+
+
+#### Solution 1
+
+For the **solution 1** you can download the Boilerplate (v0.3.11 or above) from http://repo.klink.dyndns.ws/#!/boilerplate
+
+Next you have to uncompress the file, for example in a folder named `adapter`. You can now launch a Terminal/Shell in that directory and launch the composer install
 
 	composer install --prefer-dist --no-dev
 
@@ -54,11 +64,11 @@ In your project please include the `bootstrap.php` file that you will find in th
 where `KLINK_BOILERPLATE_FOLDER` is the folder that contains the Adapter Boilerplate build.
 
 
-A loading and connection test for PHP 5.2 is available in the `php52-test.php` file situated in the root directory of the Adapter Boilerplate. To run the test simply use the command line as follows:
+A loading and connection test for PHP 5.2 is available in the `php52-test.php` file situated in the `test` directory of the Adapter Boilerplate itself. To run the test simply use the command line as follows (considering your working directory is the root of the Adapter Boilerplate and thet in the same folder you have the `bootsrap.php` file):
 
-	php php52-test.php
+	php test/php52-test.php
 
-after entering the Boilerplate root folder. Make sure that the PHP version invoked is lower than the 5.3 otherwise the composer base autoloading will be executed.
+Make sure to invoke the test using a PHP version lower than the 5.3 otherwise the composer base autoloading will be executed.
 
 If everything is ok you will see an output like this:
 
@@ -70,6 +80,10 @@ Testing K-Link Core connection to dev0
 ```
 
 Otherwise the detailed error log will be printed.
+
+#### Solution 2
+
+To Be Documented.
 
 ## Examples
 
