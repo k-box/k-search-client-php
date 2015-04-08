@@ -163,6 +163,108 @@ final class KlinkFacetsBuilder
 	}
 
 	/**
+	 * Filter for the localDocumentId.
+	 *
+	 * This is not a facet and so you cannot use mincount, prefix, count.
+	 *
+	 * If no value is passed for $filter parameter the filter will not be applied on the request to the Core.
+	 *
+	 * @param string|array $filter the value to use for filtering. String or array, default null.
+	 * @return KlinkFacetsBuilder
+	 * @throws BadMethodCallException if called two or more times on the same builder
+	 */
+	public function localDocumentId($filter)
+	{
+
+		$isStatic = !(isset($this) && get_class($this) == __CLASS__); //This check is caused by the non-sense of PHP 5.6 that call the same method not considering the static modifier
+
+		if(!$isStatic){
+			$instance = $this;
+		}
+		else {
+			$instance = new KlinkFacetsBuilder;
+		}
+
+		if(in_array(KlinkFacet::LOCAL_DOCUMENT_ID, $instance->already_builded)){
+			throw new BadMethodCallException("The local document id filter has been already added", 1);
+		}
+
+		// $builded_params = call_user_func_array(array($instance, '_handle_facet_parameters'), func_get_args());
+
+		$facet = null;
+
+		if(empty($filter)){
+			throw new InvalidArgumentException("The filter value cannot be empty", 2);
+		}
+		else {
+
+			$value = is_array($filter) ? implode(',', $filter) : $filter;
+
+			$facet = KlinkFacet::create(KlinkFacet::LOCAL_DOCUMENT_ID, 
+						KlinkFacetsBuilder::DEFAULT_MINCOUNT, 
+						null, 
+						KlinkFacetsBuilder::DEFAULT_COUNT, 
+						$value);
+		}
+
+		$instance->facets[] = $facet;
+		$instance->already_builded[] = KlinkFacet::LOCAL_DOCUMENT_ID;
+
+		return $instance;
+	}
+
+	/**
+	 * Filter for the documentId.
+	 *
+	 * This is not a facet and so you cannot use mincount, prefix, count.
+	 *
+	 * If no value is passed for $filter parameter the filter will not be applied on the request to the Core.
+	 *
+	 * @param string|array $filter the value to use for filtering. String or array, default null.
+	 * @return KlinkFacetsBuilder
+	 * @throws BadMethodCallException if called two or more times on the same builder
+	 */
+	public function documentId($filter)
+	{
+
+		$isStatic = !(isset($this) && get_class($this) == __CLASS__); //This check is caused by the non-sense of PHP 5.6 that call the same method not considering the static modifier
+
+		if(!$isStatic){
+			$instance = $this;
+		}
+		else {
+			$instance = new KlinkFacetsBuilder;
+		}
+
+		if(in_array(KlinkFacet::DOCUMENT_ID, $instance->already_builded)){
+			throw new BadMethodCallException("The document id filter has been already added", 1);
+		}
+
+		// $builded_params = call_user_func_array(array($instance, '_handle_facet_parameters'), func_get_args());
+
+		$facet = null;
+
+		if(empty($filter)){
+			throw new InvalidArgumentException("The filter value cannot be empty", 2);
+		}
+		else {
+
+			$value = is_array($filter) ? implode(',', $filter) : $filter;
+
+			$facet = KlinkFacet::create(KlinkFacet::DOCUMENT_ID, 
+						KlinkFacetsBuilder::DEFAULT_MINCOUNT, 
+						null, 
+						KlinkFacetsBuilder::DEFAULT_COUNT, 
+						$value);
+		}
+
+		$instance->facets[] = $facet;
+		$instance->already_builded[] = KlinkFacet::DOCUMENT_ID;
+
+		return $instance;
+	}
+
+	/**
 	 * Facet for the document language
 	 * - TO BE DOCUMENTED -
 	 * 
@@ -300,7 +402,7 @@ final class KlinkFacetsBuilder
 	 */
 	public function build()
 	{
-		return $this->facets;
+		return array_filter($this->facets);
 	}
 
 
@@ -338,7 +440,7 @@ final class KlinkFacetsBuilder
 	    }
 	    else if (func_num_args() == 1 && is_integer(func_get_arg(0))) {
 
-	    	return array_merge( $default, array('count' => func_get_arg(0)) );
+	    	return array_merge( $default, array('mincount' => func_get_arg(0)) );
 	    	
 	    }
 	    else if(func_num_args() == 2 && func_get_args() === array_filter(func_get_args(), 'is_int')){
@@ -366,7 +468,9 @@ final class KlinkFacetsBuilder
 
 		$instance = $this;
 
-		foreach ($this->known_constants as $name => $facetName) {
+		$known = $this->_allNames();
+
+		foreach ($known as $facetName) {
 
 			$instance = call_user_func_array(array($this, $facetName), array());
 
@@ -378,10 +482,13 @@ final class KlinkFacetsBuilder
 
 	protected function _allNames()
 	{
-		return array_values( $this->known_constants );
+		return array_filter( array_values( $this->known_constants ), array($this, '_filterConstantValues'));
 	}
 
 
+	protected function _filterConstantValues($el){
+		return !in_array($el, KlinkFacet::$ONLY_FILTER);
+	}
 
 
 	// Static facilities for start building -------------------------------------------------------

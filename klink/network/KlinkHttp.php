@@ -338,9 +338,9 @@ final class KlinkHttp implements INetworkTransport {
 
 		$r = array_merge( $defaults, $args );
 		
-		if( isset($r['debug']) && $r['debug']){
-			if(!defined('KLINKADAPTER_DEBUG')){
-				define('KLINKADAPTER_DEBUG', true);
+		if( (isset($r['debug']) && $r['debug']) || (defined('KLINKADAPTER_DEBUG') && KLINKADAPTER_DEBUG)){
+			if(!defined('KLINKADAPTER_DEBUG_INTERNAL')){
+				define('KLINKADAPTER_DEBUG_INTERNAL', true);
 			}
 		}
 
@@ -467,11 +467,15 @@ final class KlinkHttp implements INetworkTransport {
 		if( KlinkHelpers::is_error( $response ) && 
 			!empty( $timeouterror ) &&
 			$r['timeout_retry'] > 0 ){
-			// echo '>>>>>> We have a timeout with other  ' . $r['timeout_retry'] . ' retries' . PHP_EOL;
 
-			$r['timeout_retry'] = $r['timeout_retry'] - 1;
+				$r['timeout_retry'] = $r['timeout_retry'] - 1;
+				$r['timeout'] = $r['timeout'] * 2;
 
-			return self::request( $url, $r );
+				if(defined('KLINKADAPTER_DEBUG_INTERNAL') && KLINKADAPTER_DEBUG_INTERNAL){
+					error_log( 'Timeout retry next #' . $r['timeout_retry'] . ' seconds ' . $r['timeout']);
+				}
+
+				return self::request( $url, $r );
 		}
 
 
@@ -1086,6 +1090,7 @@ class KlinkHttp_Streams {
 		$context = stream_context_create( array(
 			'ssl' => array(
 				'verify_peer' => $ssl_verify,
+				'verify_peer_name' => $ssl_verify,
 				//'CN_match' => $arrURL['host'], // This is handled by self::verify_ssl_certificate()
 				'capture_peer_cert' => $ssl_verify,
 				'SNI_enabled' => true,
@@ -1104,7 +1109,7 @@ class KlinkHttp_Streams {
 		// Store error string.
 		$connection_error_str = null;
 
-		if ( defined('KLINKADAPTER_DEBUG') && !KLINKADAPTER_DEBUG ) {
+		if ( defined('KLINKADAPTER_DEBUG_INTERNAL') && !KLINKADAPTER_DEBUG_INTERNAL ) {
 			// In the event that the SSL connection fails, silence the many PHP Warnings.
 			if ( $secure_transport )
 				$error_reporting = error_reporting(0);
@@ -1117,7 +1122,7 @@ class KlinkHttp_Streams {
 		} else {
 			$handle = @stream_socket_client( $connect_host . ':' . $arrURL['port'], $connection_error, $connection_error_str, $connect_timeout, STREAM_CLIENT_CONNECT, $context );
 
-			if ( defined('KLINKADAPTER_DEBUG') && KLINKADAPTER_DEBUG ) {
+			if ( defined('KLINKADAPTER_DEBUG_INTERNAL') && KLINKADAPTER_DEBUG_INTERNAL ) {
 				error_log( 'KlinkHttp_Streams request error: ' . var_export($handle, true) . ' - ' . $connection_error . ': ' . $connection_error_str);
 			}
 		}
@@ -1191,7 +1196,7 @@ class KlinkHttp_Streams {
 
 		// If streaming to a file setup the file handle.
 		if ( $r['stream'] ) {
-			if ( defined('KLINKADAPTER_DEBUG') && !KLINKADAPTER_DEBUG )
+			if ( defined('KLINKADAPTER_DEBUG_INTERNAL') && !KLINKADAPTER_DEBUG_INTERNAL )
 				$stream_handle = @fopen( $r['filename'], 'w+' );
 			else
 				$stream_handle = fopen( $r['filename'], 'w+' );
@@ -1536,7 +1541,7 @@ class KlinkHttp_Curl {
 
 		// If streaming to a file open a file handle, and setup our curl streaming handler.
 		if ( $r['stream'] ) {
-			if ( defined('KLINKADAPTER_DEBUG') && !KLINKADAPTER_DEBUG )
+			if ( defined('KLINKADAPTER_DEBUG_INTERNAL') && !KLINKADAPTER_DEBUG_INTERNAL )
 				$this->stream_handle = @fopen( $r['filename'], 'w+' );
 			else
 				$this->stream_handle = fopen( $r['filename'], 'w+' );
@@ -1602,6 +1607,12 @@ class KlinkHttp_Curl {
 
 		// If an error occurred, or, no response.
 		if ( $curl_error || ( 0 == strlen( $theBody ) && empty( $theHeaders['headers'] ) ) ) {
+
+			if(defined('KLINKADAPTER_DEBUG_INTERNAL')){
+				error_log( 'Curl transfer information');
+				error_log(print_r(curl_getinfo($handle), true));
+			}
+
 			if ( CURLE_WRITE_ERROR /* 23 */ == $curl_error &&  $r['stream'] ) {
 				fclose( $this->stream_handle );
 				return new KlinkError( KlinkError::ERROR_HTTP_REQUEST_FAILED, KlinkHelpers::localize( 'Failed to write request to temporary file.' ), KlinkError::ERRORCODE_HTTP_REQUEST_FAILED );
@@ -1914,7 +1925,7 @@ final class KlinkHttp_Cookie {
 		 * @param string $value The cookie value.
 		 * @param string $name  The cookie name.
 		 */
-		return $this->name . '=' . apply_filters( 'klink_http_cookie_value', $this->value, $this->name );
+		return $this->name . '=' . $this->value;
 	}
 
 	/**

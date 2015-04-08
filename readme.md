@@ -37,9 +37,19 @@ Than in your project insert the line
 
 ### PHP 5.2
 
-If you need to use the Boilerplate on PHP version below the 5.3, at now, you have to perform some basic tasks on an environment with PHP 5.3 and then use the fallback autoloader.
+If you need to use the Boilerplate on PHP version below the 5.3 you can follow two paths:
 
-First you have to create a build of the Adapter Boilerplate on a system with PHP >= 5.3 running
+1. Building the Boilerplate as a standalone library.
+2. Create a composer project, on a machine that have PHP >= 5.3, that requires the Boilerplate and then distribute the build.
+
+**Please note that both strategies requires a system with PHP >=5.3 and composer to be used for building the Boilerplate dependencies.**
+
+
+#### Solution 1
+
+For the **solution 1** you can download the Boilerplate (v0.3.11 or above) from http://repo.klink.dyndns.ws/#!/boilerplate
+
+Next you have to uncompress the file, for example in a folder named `adapter`. You can now launch a Terminal/Shell in that directory and launch the composer install
 
 	composer install --prefer-dist --no-dev
 
@@ -54,11 +64,11 @@ In your project please include the `bootstrap.php` file that you will find in th
 where `KLINK_BOILERPLATE_FOLDER` is the folder that contains the Adapter Boilerplate build.
 
 
-A loading and connection test for PHP 5.2 is available in the `php52-test.php` file situated in the root directory of the Adapter Boilerplate. To run the test simply use the command line as follows:
+A loading and connection test for PHP 5.2 is available in the `php52-test.php` file situated in the `test` directory of the Adapter Boilerplate itself. To run the test simply use the command line as follows (considering your working directory is the root of the Adapter Boilerplate and thet in the same folder you have the `bootsrap.php` file):
 
-	php php52-test.php
+	php test/php52-test.php
 
-after entering the Boilerplate root folder. Make sure that the PHP version invoked is lower than the 5.3 otherwise the composer base autoloading will be executed.
+Make sure to invoke the test using a PHP version lower than the 5.3 otherwise the composer base autoloading will be executed.
 
 If everything is ok you will see an output like this:
 
@@ -70,6 +80,10 @@ Testing K-Link Core connection to dev0
 ```
 
 Otherwise the detailed error log will be printed.
+
+#### Solution 2
+
+To Be Documented.
 
 ## Examples
 
@@ -314,7 +328,7 @@ Facets are specified as instances of the class KlinkFacet. To create an instance
 	 * For the facet name plase refer to @see KlinkFacet class constants
 	 * 
 	 * @param string $name   the name of the facet, see the constants defined in this class
-	 * @param int $min Specify the minimun frequency for the facet-term to be return for the given, default 2
+	 * @param int $min Specify the minimun frequency for the facet-term to be returned, default 2
 	 * @param string $prefix retrieve the facet items that have such prefix in the text 
 	 * @param int $count  configure the number of terms to return for the given facet
 	 * @param string $filter specify the filtering value to applied to the search for the given facet
@@ -405,9 +419,42 @@ Each facet building method could receive a variable number of parameters. Here i
 
 - no parameters -> default behaviour with mincount = 2 and count = 10, no filter
 - 1 parameter of type string -> assumed as filter, other values are at it's defaults
-- 1 parameter of type int -> assumed as the count for the number of terms to be returned
+- 1 parameter of type int -> assumed as the mincount (the minimun frequency for the facet-term to be returned)
 - 2 parameters of type int -> first the count and second the mincount
 - 3 parameters, the first of type string and the others of type int -> 1: filter, 2: count, 3: mincount
+
+
+**please note that in version 0.3.9 and below the single integer parameter case behaviour was to set the `count` parameter of the facet**.
+
+
+### Filters
+
+For commodity there are also some filters (that cannot be invoked as facets) that are supported:
+
+- localDocumentId (`KlinkFacet::LOCAL_DOCUMENT_ID`): enable to select a specific set of documents given the local document identifier (`KlinkDocumentDescriptor::getLocalDocumentID()`) before executing a search; The search will be executed over the specified collection.
+- documentId (`KlinkFacet::DOCUMENT_ID`): enable to select a specific set of documents identified by the K-Link Document Identifer ((`KlinkDocumentDescriptor::getKlinkId()`) before applying search parameters; The search will be executed over the specified collection.
+
+On filters you can only specify the filtering parameter and not the mincount and count parameter as for normal facets.
+
+The `KlinkFacetBuilder` class supports also adding filters. Filters can be mixed with facets. The filter parameter can be a single string value or an array of strings.
+
+
+```php
+
+	// filter for the local document identifier 10
+	$array_of_facets = KlinkFacetsBuilder::create()->localDocumentId('10')->build();
+
+	// filter for the local document identifiers 10 and 12
+	$array_of_facets = KlinkFacetsBuilder::create()->localDocumentId(['10', '12'])->build();
+
+	// filter for the K-Link Document identifier
+	$array_of_facets = KlinkFacetsBuilder::create()->documentId('KLINK-10')->build();
+	// remember that the K-Link document identifer is composed by institutionID followed by a dash and the local document identifier
+	$array_of_facets = KlinkFacetsBuilder::create()->documentId('CA-10')->build();
+
+
+```
+
 
 ### Examples
 
@@ -416,8 +463,10 @@ Each facet building method could receive a variable number of parameters. Here i
 	// enabling the “language” facet
 	KlinkFacetsBuilder::create()->language()->build();
 
-	// enabling the “language” facet and retrieve only the 3 most frequent facets of such field
-	KlinkFacetsBuilder::create()->language(3)->build();	
+	// enabling the “language” facet and retrieve only the 3 most frequent facets of such field using the default mincount attribute
+	KlinkFacetsBuilder::create()->language(3, KlinkFacetsBuilder::DEFAULT_MINCOUNT)->build();	
+	//or using a custom mincount. In this case the minimum frequency for considering the facet is 1, so if there is at least one document the facet will be returned
+	KlinkFacetsBuilder::create()->language(3, 1)->build();	
 
 	// filtering the documents by documentType “presentation”
 	KlinkFacetsBuilder::create()->documentType('presentation');

@@ -10,12 +10,12 @@ class KlinkRestClientAuthenticationTest extends PHPUnit_Framework_TestCase
 	  	date_default_timezone_set('America/Los_Angeles');
 
 	    $this->rest = new KlinkRestClient(
-	    	"https://klink-dev0.cloudapp.net/kcore/",
-	    	new KlinkAuthentication('https://klink-dev0.cloudapp.net/kcore/', 'admin@klink.org', 'admin.klink'));
+	    	CORE_URL,
+	    	new KlinkAuthentication(CORE_URL, CORE_USER, CORE_PASS));
 
 	    $this->rest2 = new KlinkRestClient(
-	    	"https://klink-dev0.cloudapp.net/kcore/",
-	    	new KlinkAuthentication('https://klink-dev0.cloudapp.net/kcore/', 'admin@klink.org', '.klink'));
+	    	CORE_URL,
+	    	new KlinkAuthentication(CORE_URL, CORE_USER, '.klink'));
 
 	}
 	
@@ -31,7 +31,7 @@ class KlinkRestClientAuthenticationTest extends PHPUnit_Framework_TestCase
 
 	public function testGetOnWrongAuth()
 	{
-		$result = $this->rest2->get( 'institutions/KLINK', new KlinkInstitutionDetails() );
+		$result = $this->rest2->get( 'institutions/' . INSTITUION_ID, new KlinkInstitutionDetails() );
 
 		$this->assertTrue(KlinkHelpers::is_error($result), 'What the hell');
 

@@ -159,6 +159,8 @@ class KlinkHelpersTest extends PHPUnit_Framework_TestCase
 		  array('http://t.co/'),
 		  array('http://localhost/'),
 		  array('http://127.0.0.1/'),
+		  array('http://192.168.0.7/kcore/'),
+		  array('https://212.42.104.135/kcore/'),
 		  array('http://foo.com/blah_blah'),
 		  array('http://foo.com/blah_blah/'),
 		  array('http://foo.com/blah_blah_(wikipedia)'),

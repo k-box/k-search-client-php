@@ -20,7 +20,7 @@ class KlinkFacetsBuilderTest extends PHPUnit_Framework_TestCase
 
 	  	$oClass = new ReflectionClass('KlinkFacet');
 
-        $this->currently_supported = $oClass->getConstants();
+        $this->currently_supported = array(KlinkFacet::DOCUMENT_TYPE,KlinkFacet::LANGUAGE,KlinkFacet::INSTITUTION_ID,KlinkFacet::DOCUMENT_GROUPS);
 
 	}
 
@@ -28,7 +28,7 @@ class KlinkFacetsBuilderTest extends PHPUnit_Framework_TestCase
 	public function valid_facetNamesProvider()
 	{
 
-		$names = array_values($this->currently_supported);
+		$names = $this->currently_supported;
 
 		$valids = array();
 
@@ -78,7 +78,7 @@ class KlinkFacetsBuilderTest extends PHPUnit_Framework_TestCase
 		return array(
 			array(array(), null),
 			array(array('string'), array('filter' => 'string', 'mincount' => KlinkFacetsBuilder::DEFAULT_MINCOUNT, 'count' => KlinkFacetsBuilder::DEFAULT_COUNT, 'prefix' => null)),
-			array(array(1), array('filter' => null, 'mincount' => KlinkFacetsBuilder::DEFAULT_MINCOUNT, 'count' => 1, 'prefix' => null)),
+			array(array(1), array('filter' => null, 'mincount' => 1, 'count' => KlinkFacetsBuilder::DEFAULT_COUNT, 'prefix' => null)),
 			array(array(1,2), array('filter' => null, 'mincount' => 2, 'count' => 1, 'prefix' => null)),
 			array(array('string', 1, 2), array('filter' => 'string', 'mincount' => 2, 'count' => 1, 'prefix' => null)),
 		);
@@ -103,6 +103,16 @@ class KlinkFacetsBuilderTest extends PHPUnit_Framework_TestCase
 			array(KlinkFacet::DOCUMENT_GROUPS, KlinkFacet::DOCUMENT_GROUPS),
 			array(KlinkFacet::INSTITUTION_ID, KlinkFacet::INSTITUTION_ID),
 			array(KlinkFacet::LANGUAGE, KlinkFacet::LANGUAGE),
+			// array(KlinkFacet::LOCAL_DOCUMENT_ID, KlinkFacet::LOCAL_DOCUMENT_ID),
+			// array(KlinkFacet::DOCUMENT_ID, KlinkFacet::DOCUMENT_ID),
+		);
+	}
+
+	public function filters_methods()
+	{
+		return array(
+			array(KlinkFacet::LOCAL_DOCUMENT_ID, KlinkFacet::LOCAL_DOCUMENT_ID),
+			array(KlinkFacet::DOCUMENT_ID, KlinkFacet::DOCUMENT_ID),
 		);
 	}
 
@@ -116,7 +126,7 @@ class KlinkFacetsBuilderTest extends PHPUnit_Framework_TestCase
 		
 		$current = KlinkFacetsBuilder::allNames();
 
-		$this->assertEquals( array_values($this->currently_supported), $current);
+		$this->assertEquals( $this->currently_supported, $current);
 
 	}
 
@@ -135,6 +145,40 @@ class KlinkFacetsBuilderTest extends PHPUnit_Framework_TestCase
 		$first = $ft[0];
 
 		$this->assertEquals( $expected_active_facet, $first->getName());
+
+	}
+
+	/**
+	 * @expectedException InvalidArgumentException
+	 * @dataProvider filters_methods
+	 */
+	public function testFiltersInvalidInput($method, $value){
+
+		$ft = KlinkFacetsBuilder::create()->{$method}()->build();
+
+	}
+
+	public function testFilters()
+	{
+
+		$ft = KlinkFacetsBuilder::create()->localDocumentId('10')->build();
+
+		$this->assertNotEmpty($ft);
+
+		$this->assertCount(1, $ft);
+
+		$first = $ft[0];
+
+
+		$ft = KlinkFacetsBuilder::create()->localDocumentId(array('10', '12'))->build();
+
+		$this->assertNotEmpty($ft);
+
+		$this->assertCount(1, $ft);
+
+		$first = $ft[0];
+
+		$this->assertEquals('10,12', $first->getFilter());
 
 	}
 
