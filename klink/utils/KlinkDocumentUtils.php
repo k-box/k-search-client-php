@@ -232,6 +232,26 @@ class KlinkDocumentUtils
 	}
 
 	/**
+	 * Gets the inferred mime type using the file extension
+	 * @param  string $extension The file extension
+	 * @return string            The mime type
+	 * @throws InvalidArgumentException if $extnesion is null or is unknown.
+	 */
+	public static function getMimeTypeFromExtension( $extension ){
+		
+		KlinkHelpers::is_string_and_not_empty( $extension, 'mime type' );
+
+		foreach ( self::$fileExtensionToMimeType as $exts => $mime ) {
+                if ( preg_match( '!^(' . $exts . ')$!i', $extension ) ) {
+                        return $mime;
+                }
+        }
+
+		throw new InvalidArgumentException("Unknown mime type.");
+
+	}
+
+	/**
 	 * Get the mime type of the specified file
 	 * 
 	 * @param string $file the path of the file to get the mime type
@@ -239,24 +259,21 @@ class KlinkDocumentUtils
 	 * @return string|boolean the mime type or false in case of error
 	 */
 	public static function get_mime($file) {
-		if (function_exists("finfo_file")) {
+
+		$is_url = !preg_match('%^https?:\/\/.*$%iu', $file);
+		
+		if (function_exists("finfo_file") && file_exists($file) && !$is_url) {
 			$finfo = finfo_open(FILEINFO_MIME_TYPE); // return mime type ala mimetype extension
 			$mime = finfo_file($finfo, $file);
 			finfo_close($finfo);
 			return $mime;
-		} else if (function_exists("mime_content_type")) {
-			return mime_content_type($file);
 		} else {
 
 			$extension = pathinfo( $file, PATHINFO_EXTENSION );
 
 			if ( !empty( $extension ) ) {
 
-				foreach ( self::$fileExtensionToMimeType as $exts => $mime ) {
-	                    if ( preg_match( '!^(' . $exts . ')$!i', $extension ) ) {
-	                            return $mime;
-	                    }
-	            }
+				return self::getMimeTypeFromExtension( $extension );
 
         	}
 

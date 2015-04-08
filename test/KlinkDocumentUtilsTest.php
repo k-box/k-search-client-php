@@ -106,6 +106,20 @@ class KlinkDocumentUtilsTest extends PHPUnit_Framework_TestCase
 		);
 	}
 
+
+	public function fileInput(){
+
+		return array(
+
+			array('application/pdf', 'http://www.ecco.un/bel.pdf'),
+			array('application/msword', 'http://www.ecco.un/bel.doc'),
+			array('application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'http://www.ecco.un/bel.docx'),
+			array('application/pdf', '/user/share/pdf.pdf'),
+			array('application/pdf', 'http://temp.klink.dyndns.ws//dumps/CampAlatoo/for_klink/2010_oblojki_catalog_kg_ru.pdf]2010_oblojki_catalog_kg_ru.pdf'),
+
+		);
+	}
+
 	
 	/**
 	 * Call protected/private method of a class.
@@ -138,6 +152,23 @@ class KlinkDocumentUtilsTest extends PHPUnit_Framework_TestCase
  	{
 
  		$actual = KlinkDocumentUtils::getExtensionFromMimeType( $mimeType );
+
+ 		$this->assertEquals( $expected, $actual);
+ 		
+ 	}
+
+ 	/**
+ 	 * [testGetMimeType description]
+ 	 * @param  [type] $expected [description]
+ 	 * @param  [type] $file     [description]
+ 	 * @return [type]           [description]
+ 	 *
+ 	 * @dataProvider fileInput
+ 	 */
+ 	public function testGetMimeType( $expected, $file )
+ 	{
+
+ 		$actual = KlinkDocumentUtils::get_mime( $file );
 
  		$this->assertEquals( $expected, $actual);
  		
