@@ -934,7 +934,7 @@ final class KlinkCoreClient
 
 		}
 
-		$doc_type = KlinkDocumentUtils::documentTypeFromMimeType( $mime );
+		$doc_type = KlinkDocumentUtils::documentTypeFromMimeType( $mimeType );
 
 		if( $doc_type === 'image' ){
 			
