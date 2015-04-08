@@ -56,9 +56,7 @@ final class KlinkCoreClient
 	/**
 	 * The URL of the standalone Thumbnail generator API.
 	 */
-	const THUMBNAIL_GENERATOR_URL = 'https://klink-test1.cloudapp.net/kcore/thumbnails/';
-
-	// const THUMBAIL_GENERATOR_AUTHENTICATION = 'klink:#8e44ad';
+	const THUMBNAIL_GENERATOR_URL = 'thumbnails/'; //https://klink-test1.cloudapp.net/kcore/
 
 
 
@@ -761,7 +759,7 @@ final class KlinkCoreClient
 	 * 
 	 * @throws KlinkException if the service cannot generate the thumbnail or the file is in the wrong format
 	 */
-	public static function generateThumbnail( $fullFilePath, $fullImagePath, $resolution = 'default', $debug = false )
+	public function generateThumbnail( $fullFilePath, $fullImagePath, $resolution = 'default', $debug = false )
 	{
 
 		KlinkHelpers::is_string_and_not_empty( $fullFilePath, 'file path' );
@@ -816,12 +814,6 @@ final class KlinkCoreClient
 		}
 
 
-
-		$http = new KlinkHttp('http://localhost/');
-
-		$cores = $this->configuration->getCores();
-		$authentication = $cores[0];
-
 		if( $debug ) {
 
 			error_log( ' --> Generating thumbnail for ' . $fullFilePath );
@@ -834,41 +826,30 @@ final class KlinkCoreClient
 			'fileData' => base64_encode( file_get_contents( $fullFilePath ) )
 			);
 
-		$headers = array(
-				'body' => json_encode($data),
-				'timeout' => 120,
-				'httpversion' => '1.1',
-				'timeout_retry' => 3,
-				'compress' => 'true', //we compress the data that is sended for bandwith management
-				'headers' => array(
-					'Content-Type' => 'application/json',
-					'Authorization' => 'Basic ' . base64_encode( $authentication->getUsername() . ':' . $authentication->getPassword() ))
-			);
+		$conn = self::_get_connection();
 
-		$result = $http->post( self::THUMBNAIL_GENERATOR_URL, $headers );
+		$rem = $conn->post( self::THUMBNAIL_GENERATOR_URL, $data, new KlinkThumbnail() );
 
-		if(KlinkHelpers::is_error($result)){
+		if(KlinkHelpers::is_error($rem)){
 
 			if( $debug ){
 
 				echo 'Error ' . PHP_EOL;
-				error_log( print_r( $result, true ) );
+				error_log( print_r( $rem, true ) );
 				error_log( ' ERROR <--' );
 
 			}
 
-			throw new KlinkException("The thumbnail cannot be generated.");
+			throw new KlinkException((string)$rem, $rem->get_error_data_code());
 		}
 		else {
 
-			$decoded = json_decode( $result['body'] );
-
-			if( empty( $decoded->dataURI ) ){
+			if( empty( $rem->dataURI ) ){
 
 				if( $debug ){
 
 					echo 'Error ' . PHP_EOL;
-					error_log( print_r( $decoded, true ) );
+					error_log( print_r( $rem, true ) );
 					error_log( ' ERROR <--' );
 
 				}
@@ -876,7 +857,7 @@ final class KlinkCoreClient
 				throw new KlinkException("The thumbnail cannot be generated. Empty image response.");
 			}
 
-			file_put_contents( $fullImagePath, file_get_contents( $decoded->dataURI ) );
+			file_put_contents( $fullImagePath, file_get_contents( $rem->dataURI ) );
 
 		}
 
@@ -894,7 +875,7 @@ final class KlinkCoreClient
 	 * @throws InvalidArgumentException If the document data is empty or null
 	 * @throws KlinkException If the mimetype is not compatible with the thumbnail generator or something bad happened
 	 */
-	public static function generateThumbnailFromDocument( KlinkDocument $document)
+	public function generateThumbnailFromDocument( KlinkDocument $document)
 	{
 		return self::generateThumbnailFromContent( $document->getDescriptor()->getMimeType(), base64_decode($document->getDocumentData()) );
 	}
@@ -910,7 +891,7 @@ final class KlinkCoreClient
 	 * @return string|boolean                 The image content in PNG format or false in case of error
 	 * @internal
 	 */
-	public static function generateThumbnailFromContent( $mimeType, $data, $resolution = 'small', $debug = false )
+	public function generateThumbnailFromContent( $mimeType, $data, $resolution = 'small', $debug = false )
 	{
 
 		KlinkHelpers::is_string_and_not_empty( $mimeType, 'mime type' );
@@ -929,16 +910,10 @@ final class KlinkCoreClient
 		$doc_type = KlinkDocumentUtils::documentTypeFromMimeType( $mimeType );
 
 		if( $doc_type === 'image' ){
-			
+
 			throw new KlinkException("Image format currently not supported.");
 			
 		}
-
-
-		$http = new KlinkHttp('http://localhost/');
-
-		$cores = $this->configuration->getCores();
-		$authentication = $cores[0];
 
 		$data = array(
 			'fileName' => md5( KlinkHelpers::now() ) . '.' . $fileExtension,
@@ -946,63 +921,69 @@ final class KlinkCoreClient
 			'fileData' => base64_encode( $data )
 			);
 
-		$headers = array(
-				'body' => json_encode($data),
-				'timeout' => 120,
-				'httpversion' => '1.1',
-				'timeout_retry' => 3,
-				'compress' => 'true', //we compress the data that is sended for bandwith management
-				'headers' => array(
-					'Content-Type' => 'application/json',
-					'Authorization' => 'Basic ' . base64_encode( $authentication->getUsername() . ':' . $authentication->getPassword() ))
-			);
+		$conn = self::_get_connection();
 
-		$result = $http->post( self::THUMBNAIL_GENERATOR_URL, $headers );
+		$rem = $conn->post( self::THUMBNAIL_GENERATOR_URL, $data, new KlinkThumbnail() );
 
-		if(KlinkHelpers::is_error($result)){
+		if(KlinkHelpers::is_error($rem)){
+			throw new KlinkException((string)$rem, $rem->get_error_data_code());
+		}
+
+		if( empty( $rem->dataURI ) ){
 
 			if( $debug ){
 
-				echo 'Error ' . PHP_EOL;
-				error_log( print_r( $result, true ) );
+				error_log( 'Error ' . PHP_EOL);
+				error_log( print_r( $rem, true ) );
 				error_log( ' ERROR <--' );
 
 			}
 
-			throw new KlinkException("The thumbnail cannot be generated.");
+			throw new KlinkException("The thumbnail has not been generated. Empty image response.");
 		}
-		else {
 
-			$decoded = json_decode( $result['body'] );
+		return file_get_contents( $rem->dataURI );
 
-			if( empty( $decoded->dataURI ) ){
-
-				if( $debug ){
-
-					echo 'Error ' . PHP_EOL;
-					error_log( print_r( $decoded, true ) );
-					error_log( ' ERROR <--' );
-
-				}
-
-				throw new KlinkException("The thumbnail cannot be generated. Empty image response.");
-			}
-
-			// file_put_contents( $fullImagePath, file_get_contents( $decoded->dataURI ) );
-
-			return file_get_contents( $decoded->dataURI );
-
-		}
 
 		throw new KlinkException("The thumbnail cannot be generated. Unexpected end of function.");
 
 	}
 
-
-	public function generateThumbnailOfWebSite($url)
+	/**
+	 * Generate a thumbnail of the given URL. Only web pages are supported.
+	 *
+	 * @param string $url the url of the page for the screenshot
+	 * @param string $image_file If specified is the path in which the file will be saved. Put null if you want the data back as the function return (default: null)
+	 * @return string|int|boolean The image content in PNG format if $image_file is null, the return of file_put_contents if a file path is specified
+	 * @throws InvalidArgumentException If the specified URL is not well formed
+	 * @throws KlinkException If the mimetype is not compatible with the thumbnail generator or the thumbnail cannot be generated
+	 */
+	public function generateThumbnailOfWebSite($url, $image_file = null)
 	{
-		# code...
-		// remvember to remove the last slash from the url otherwise the Core will get mad
+
+		KlinkHelpers::is_valid_url( $url, 'url' );
+
+		if(!is_null($image_file)){
+			KlinkHelpers::is_string_and_not_empty( $image_file, 'thumbnail image path cannot be empty' );
+		}
+
+		$url_length = strlen($url);
+
+		// remember to remove the last slash from the url otherwise the Core will get mad
+		if($url[$url_length-1] == '/'){
+
+			$url[$url_length-1] = ' ';
+
+			$url = trim($url);
+		}
+
+		$data = self::generateThumbnailFromContent( 'text/uri-list', $url);
+
+		if(!is_null($image_file)){
+			return file_put_contents( $fullImagePath, file_get_contents( $decoded->dataURI ) );
+		}
+
+		return $data;
 	}
 
 
