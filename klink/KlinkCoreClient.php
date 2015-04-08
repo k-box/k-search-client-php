@@ -388,31 +388,20 @@ final class KlinkCoreClient
 
 	// ----- Suggestions
 
-	/**
-	 * Give suggestion and autocomplete of the specified terms
-	 * @param mixed $terms could be a string or a plain array. If an array is given each element is considered separately and completion for each terms are provided
-	 * @param string $type KlinkSearchType::KLINK_PUBLIC or KlinkSearchType::KLINK_PRIVATE
-	 * @return string[] the possible suggestions
-	 * @throws KlinkException if something wrong happened during the communication with the core
-	 * @internal Reserved for future uses
-	 */
-	function autocomplete( $terms, $type = null ){
+	// function autocomplete( $terms, $type = null ){
 
-		if(is_null($type)){
-			$type = KlinkSearchType::KLINK_PUBLIC;
-		}
+	// 	if(is_null($type)){
+	// 		$type = KlinkSearchType::KLINK_PUBLIC;
+	// 	}
 
-		$conn = self::_get_connection();
+	// 	$conn = self::_get_connection();
 
-		return $conn->getCollection(self::AUTOCOMPLETE_ENDPOINT, 
-			array(
-				'query' => $terms,
-				'visibility' => $type
-			), 'string');
-		/**
-			TODO: verificare che il return su array di stringhe possa funzionare
-		*/
-	}
+	// 	return $conn->getCollection(self::AUTOCOMPLETE_ENDPOINT, 
+	// 		array(
+	// 			'query' => $terms,
+	// 			'visibility' => $type
+	// 		), 'string');
+	// }
 
 	/**
 	 * Delete an institution from the K-Link Core
@@ -1010,11 +999,11 @@ final class KlinkCoreClient
 	}
 
 
-	// public function generateThumbnailOfWebSite()
-	// {
-	// 	# code...
-	// 	// remvember to remove the last slash from the url otherwise the Core will get mad
-	// }
+	public function generateThumbnailOfWebSite($url)
+	{
+		# code...
+		// remvember to remove the last slash from the url otherwise the Core will get mad
+	}
 
 
 	// ----- Private Stuff
