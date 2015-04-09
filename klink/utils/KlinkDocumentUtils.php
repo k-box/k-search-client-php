@@ -194,12 +194,12 @@ class KlinkDocumentUtils
 	 */
 	public static function isMimeTypeSupported( $mimeType ){
 
-		return array_key_exists($mimeType, self::$mimeTypesToDocType);
+		return @array_key_exists($mimeType, self::$mimeTypesToDocType);
 
 	}
 
 	public static function getDocumentTypes(){
-		return array_values(self::$mimeTypesToDocType);
+		return @array_values(self::$mimeTypesToDocType);
 	}
 
 	/**
@@ -260,9 +260,14 @@ class KlinkDocumentUtils
 	 */
 	public static function get_mime($file) {
 
-		$is_url = !preg_match('%^https?:\/\/.*$%iu', $file);
-		
-		if (function_exists("finfo_file") && file_exists($file) && !$is_url) {
+		KlinkHelpers::is_string_and_not_empty( $file, 'file' );
+
+		$is_url = !!preg_match('%^https?:\/\/.*$%iu', $file);
+
+		$file_exists = @file_exists($file);
+		$not_is_url  = !$is_url;
+
+		if (function_exists("finfo_file") && $file_exists && $not_is_url) {
 			$finfo = finfo_open(FILEINFO_MIME_TYPE); // return mime type ala mimetype extension
 			$mime = finfo_file($finfo, $file);
 			finfo_close($finfo);
@@ -277,7 +282,10 @@ class KlinkDocumentUtils
 
         	}
 
-			return false;
+			throw new InvalidArgumentException('Cannot get mime type from file ' . $file . ': Empty extension.' . 
+				' [is file: ' . var_export($file_exists, true) . 
+				 ', is url: ' . var_export($is_url, true) .
+				 ', extension: ' . var_export($extension, true). ']' , 2);
 		}
 	}
 
