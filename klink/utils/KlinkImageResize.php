@@ -39,7 +39,7 @@ class KlinkImageResize {
     const cropRIGHT = 5;
     
     public $quality_jpg = 75;
-    public $quality_png = 0;
+    public $quality_png = 9;
 
     public $source_type;
 
