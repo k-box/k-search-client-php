@@ -223,7 +223,7 @@ class KlinkDocumentUtilsTest extends PHPUnit_Framework_TestCase
  	 * @param  [type] $file     [description]
  	 * @return [type]           [description]
  	 *
- 	 * @dataProvider fileInputException
+ 	 * @dataProvider fileInputForException
  	 * @expectedException InvalidArgumentException
  	 */
  	public function testGetMimeTypeException( $expected, $file )
