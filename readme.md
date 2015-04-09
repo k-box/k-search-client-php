@@ -16,6 +16,17 @@ the Adapter boilerplate offers a common way to interact with the Klink Core API.
 - Document thumbnail creator service
 
 
+## Requirements
+
+- PHP 5.2.6 or above
+- PHP GD library for image support on PHP >= 5.3
+- Network connectivity
+
+Tested on PHP 5.2.17, 5.3.14, 5.4.4, 5.5, 5.6.5 on Windows, Mac OS (Yosemite) and Ubuntu 14.04.
+
+Composer dependency management and unit tests are available only on PHP 5.3 or above.
+
+
 ## Usage
 
 **Composer is used for autoload and bootstrap, so only one file in your project must be included** (please take note that the composer magic works only on php 5.3 or above).
@@ -68,13 +79,13 @@ A loading and connection test for PHP 5.2 is available in the `php52-test.php` f
 
 	php test/php52-test.php
 
-Make sure to invoke the test using a PHP version lower than the 5.3 otherwise the composer base autoloading will be executed.
+Make sure to invoke the test using a PHP version lower than the 5.3 otherwise the composer based autoloading will be executed.
 
 If everything is ok you will see an output like this:
 
 ```
 -------------------
-Testing K-Link Core connection to dev0
+Testing K-Link Core connection to test1
    SUCCESS
 -------------------
 ```
@@ -271,27 +282,115 @@ $count = $klinkCore->getPrivateDocumentsCount(); // the currently configured ins
 
 ### generate a thumbnail
 
-In order to generate a thumbnail of the document you can use the static method `KlinkCoreClient::generateThumbnail`. The thumbnail will be in **PNG** format. Consider that only pdf, doc[x], xls[x] and ppt[x] are supported.
+In order to generate a **PNG** thumbnail of the document you can use the following methods:
+
+- `generateThumbnail`: generate a thumbnail given the source file and the output file;
+- `generateThumbnailFromContent`: generate a thumbnail of the given file content;
+- `generateThumbnailFromDocument`: generate a thumbnail of a KlinkDocument;
+- `generateThumbnailOfWebSite`: generate a thumbnail that is the screenshot of the specified url/web page (must be an html page).
+
+Supported file formats:
+
+`generateThumbnail`, `generateThumbnailFromContent` and `generateThumbnailFromDocument` supports pdf, docx, xlsx, pptx and the following image formats: gif, png and jpg. Please note that the image formats are only supported on PHP 5.3 or above with the GD extension enabled (the GD library must be compiled for supporting gif, jpg and png formats and in particular **the PNG support is mandatory** given that the thumbnail output is in PNG format).
+
+`generateThumbnailOfWebSite` only supports URL that have the output in HTML format (Don't feed with url that output PDFs or something else).
+
+
+#### `generateThumbnail`
 
 This method takes two absolute paths, the first is the path of the document that needs the thumbnail and the second is the path where the generated thumbnail will be saved. The image `$fullImagePath` must contain the file name and the `.png` extension.
 
 ```php
+$client = new KlinkCoreClient( /* ... */);
 
-KlinkCoreClient::generateThumbnail( 
+$image_file_path = $client->generateThumbnail( 
 	$fullFilePath, // The document absolute path
 	$fullImagePath // The absolute path of the file where the generated PNG will be saved
 	);
-
 ```
 
-This method could raise Exception if connection problem to the service occurs.
+This method could raise:
+- `InvalidArgumentException` if at least one of the required parameter have a wrong value
+- `KlinkException` if connection problem to the service occurs.
+
+#### `generateThumbnailFromContent`
+
+This method requires two parameters: the first is the mime type of the content and the second is the data for which you would have the thumbnail.
+
+The method returns the generated image content.
+
+```php
+$client = new KlinkCoreClient( /* ... */);
+
+$file_path = '/a/file.pdf';
+
+$data = file_get_contents($file_path);
+
+$mime_type = KlinkDocumentUtils::get_mime($file_path);
+
+$image_content = $client->generateThumbnailFromContent( 
+	$mime_type, // The mime type of the given data
+	$data // the data
+	);
+```
+
+This method could raise:
+- `InvalidArgumentException` if at least one of the required parameter have a wrong value
+- `KlinkException` if connection problem to the service occurs.
+
+
+
+#### `generateThumbnailFromDocument`
+
+Generates the thumbnail of the given `KlinkDocument`. The method returns the generated image content.
+
+```php
+$client = new KlinkCoreClient( /* ... */);
+
+$descriptor = KlinkDocumentDescriptor::create( /* ... */ );
+
+$document = new KlinkDocument($descriptor, 'Content OR file path');
+
+$image_content = $client->generateThumbnailFromDocument( 
+	$document // The document
+	);
+```
+
+**Attenction** `generateThumbnailFromDocument` attemp to get the documentData from the `KlinkDocument`, if a valid file path was specified as the document data it will try to load the file content using php [file_get_contents](http://php.net/manual/en/function.file-get-contents.php).
+
+This method could raise:
+- `InvalidArgumentException` if at least one of the required parameter have a wrong value
+- `KlinkException` if connection problem to the service occurs.
+
+
+#### `generateThumbnailOfWebSite`
+
+This method has 1 required paramter which is the `$url` of the page. The second parameter, `$image_file`, is optional and if specified must be a valid path where the thumbnail will be saved.
+
+This method returns the image content in PNG format if `$image_file` parameter is null or the [file_put_contents](http://php.net/manual/en/function.file-put-contents.php) return value if a file path is specified in the `$image_file` parameter.
+
+```php
+$client = new KlinkCoreClient( /* ... */);
+
+$url = 'http://www.google.com';
+
+$image_content = $client->generateThumbnailOfWebSite( 
+	$url // The web page URL
+	);
+```
+
+This method could raise:
+- `InvalidArgumentException` if at least one of the required parameter have a wrong value
+- `KlinkException` if connection problem to the service occurs.
+
+
 
 
 ### Helpers and validators
 
-The KlinkHelpers class if full of useful methods for validation
+The `KlinkHelpers` class if full of useful methods for validation
 
-The KlinkDocumentUtils class contains the hash generation methods
+The `KlinkDocumentUtils` class contains the **hash generation methods**
 
 
 #### KlinkHelpers
@@ -547,12 +646,13 @@ All tests have been executed on the following versions of PHP
 - 5.3.14
 - 5.4.4
 - 5.5
-- 5.6 with curl enabled
+- 5.6.5 with curl enabled
 
 
-Unit tests are peformed on repository push and build with the following configuration:
+Unit tests are peformed on repository push and build with the following configuration (see `phpunit.xml` file):
 
-K-Link Core used: klink.dev0.cloudapp.net
+K-Link Core used: klink-test1.cloudapp.net
+Institution ID: KLINK
 
 to run the unit tests by yourself you have to perform
 
@@ -562,9 +662,4 @@ and let composer download also the required-dev dependencies. After that you can
 
 	php vendor/bin/phpunit
 
-to execute the tests with yout version of php (of any version of PHP)
-
-
-
-
-
+to execute the tests with your version of php (of any version of PHP).
