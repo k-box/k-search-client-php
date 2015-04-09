@@ -884,11 +884,11 @@ final class KlinkCoreClient
 	/**
 	 * Generate a document thumbnail from the content of a file.
 	 *
-	 * This method does not supports Image documents, please use @see generateThumbnail
+	 * The file content MUST NOT be encoded in base64 format
 	 * 
 	 * @param  string  $mimeType      The mime type of the data that needs the thumbnail
 	 * @param  string  $data          The document data used for the thumbnail generation
-	 * @return string|boolean                 The image content in PNG format or false in case of error
+	 * @return string|boolean         The image content in PNG format or false in case of error
 	 * @internal
 	 */
 	public function generateThumbnailFromContent( $mimeType, $data, $resolution = 'small', $debug = false )
@@ -909,10 +909,27 @@ final class KlinkCoreClient
 
 		$doc_type = KlinkDocumentUtils::documentTypeFromMimeType( $mimeType );
 
-		if( $doc_type === 'image' ){
-
-			throw new KlinkException("Image format currently not supported.");
+		if( $doc_type === 'image' && !defined('KLINK_COMPATIBILITY_MODE') && defined('IMAGETYPE_PNG') ){
+			//we already have an image so let's resize it
 			
+			try{
+			
+				$image = KlinkImageResize::createFromString($data);
+				$image->resizeToWidth(300);
+				return $image->get(IMAGETYPE_PNG);
+
+			}
+			catch(Exception $ie){
+
+				if( $debug ) {
+					error_log( ' --> Thumbnail from image cannot be generated ' . $ie->getMessage() );
+				}
+
+
+				throw new KlinkException('The thumbnail cannot be generated: ' . $ie->getMessage());
+			}
+
+			return false;
 		}
 
 		$data = array(
