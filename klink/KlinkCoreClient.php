@@ -56,9 +56,7 @@ final class KlinkCoreClient
 	/**
 	 * The URL of the standalone Thumbnail generator API.
 	 */
-	const THUMBNAIL_GENERATOR_URL = 'http://klink-thumb2.azurewebsites.net/api/thumb/';
-
-	const THUMBAIL_GENERATOR_AUTHENTICATION = 'klink:#8e44ad';
+	const THUMBNAIL_GENERATOR_URL = 'thumbnails/'; //https://klink-test1.cloudapp.net/kcore/
 
 
 
@@ -388,31 +386,20 @@ final class KlinkCoreClient
 
 	// ----- Suggestions
 
-	/**
-	 * Give suggestion and autocomplete of the specified terms
-	 * @param mixed $terms could be a string or a plain array. If an array is given each element is considered separately and completion for each terms are provided
-	 * @param string $type KlinkSearchType::KLINK_PUBLIC or KlinkSearchType::KLINK_PRIVATE
-	 * @return string[] the possible suggestions
-	 * @throws KlinkException if something wrong happened during the communication with the core
-	 * @internal Reserved for future uses
-	 */
-	function autocomplete( $terms, $type = null ){
+	// function autocomplete( $terms, $type = null ){
 
-		if(is_null($type)){
-			$type = KlinkSearchType::KLINK_PUBLIC;
-		}
+	// 	if(is_null($type)){
+	// 		$type = KlinkSearchType::KLINK_PUBLIC;
+	// 	}
 
-		$conn = self::_get_connection();
+	// 	$conn = self::_get_connection();
 
-		return $conn->getCollection(self::AUTOCOMPLETE_ENDPOINT, 
-			array(
-				'query' => $terms,
-				'visibility' => $type
-			), 'string');
-		/**
-			TODO: verificare che il return su array di stringhe possa funzionare
-		*/
-	}
+	// 	return $conn->getCollection(self::AUTOCOMPLETE_ENDPOINT, 
+	// 		array(
+	// 			'query' => $terms,
+	// 			'visibility' => $type
+	// 		), 'string');
+	// }
 
 	/**
 	 * Delete an institution from the K-Link Core
@@ -772,7 +759,7 @@ final class KlinkCoreClient
 	 * 
 	 * @throws KlinkException if the service cannot generate the thumbnail or the file is in the wrong format
 	 */
-	public static function generateThumbnail( $fullFilePath, $fullImagePath, $resolution = 'default', $debug = false )
+	public function generateThumbnail( $fullFilePath, $fullImagePath, $resolution = 'default', $debug = false )
 	{
 
 		KlinkHelpers::is_string_and_not_empty( $fullFilePath, 'file path' );
@@ -827,9 +814,6 @@ final class KlinkCoreClient
 		}
 
 
-
-		$http = new KlinkHttp('http://localhost/');
-
 		if( $debug ) {
 
 			error_log( ' --> Generating thumbnail for ' . $fullFilePath );
@@ -837,46 +821,35 @@ final class KlinkCoreClient
 		}
 
 		$data = array(
-			'filename' => basename( $fullFilePath ),
-			'filemime' => KlinkDocumentUtils::get_mime($fullFilePath) ,
-			'filedata' => base64_encode( file_get_contents( $fullFilePath ) )
+			'fileName' => basename( $fullFilePath ),
+			'fileMime' => KlinkDocumentUtils::get_mime($fullFilePath) ,
+			'fileData' => base64_encode( file_get_contents( $fullFilePath ) )
 			);
 
-		$headers = array(
-				'body' => json_encode($data),
-				'timeout' => 120,
-				'httpversion' => '1.1',
-				'timeout_retry' => 3,
-				'compress' => 'true', //we compress the data that is sended for bandwith management
-				'headers' => array(
-					'Content-Type' => 'application/json',
-					'Authorization' => 'Basic ' . base64_encode( self::THUMBAIL_GENERATOR_AUTHENTICATION ) )
-			);
+		$conn = self::_get_connection();
 
-		$result = $http->post( self::THUMBNAIL_GENERATOR_URL, $headers );
+		$rem = $conn->post( self::THUMBNAIL_GENERATOR_URL, $data, new KlinkThumbnail() );
 
-		if(KlinkHelpers::is_error($result)){
+		if(KlinkHelpers::is_error($rem)){
 
 			if( $debug ){
 
 				echo 'Error ' . PHP_EOL;
-				error_log( print_r( $result, true ) );
+				error_log( print_r( $rem, true ) );
 				error_log( ' ERROR <--' );
 
 			}
 
-			throw new KlinkException("The thumbnail cannot be generated.");
+			throw new KlinkException((string)$rem, $rem->get_error_data_code());
 		}
 		else {
 
-			$decoded = json_decode( $result['body'] );
-
-			if( empty( $decoded->DataUri ) ){
+			if( empty( $rem->dataURI ) ){
 
 				if( $debug ){
 
 					echo 'Error ' . PHP_EOL;
-					error_log( print_r( $decoded, true ) );
+					error_log( print_r( $rem, true ) );
 					error_log( ' ERROR <--' );
 
 				}
@@ -884,7 +857,7 @@ final class KlinkCoreClient
 				throw new KlinkException("The thumbnail cannot be generated. Empty image response.");
 			}
 
-			file_put_contents( $fullImagePath, file_get_contents( $decoded->DataUri ) );
+			file_put_contents( $fullImagePath, file_get_contents( $rem->dataURI ) );
 
 		}
 
@@ -902,7 +875,7 @@ final class KlinkCoreClient
 	 * @throws InvalidArgumentException If the document data is empty or null
 	 * @throws KlinkException If the mimetype is not compatible with the thumbnail generator or something bad happened
 	 */
-	public static function generateThumbnailFromDocument( KlinkDocument $document)
+	public function generateThumbnailFromDocument( KlinkDocument $document)
 	{
 		return self::generateThumbnailFromContent( $document->getDescriptor()->getMimeType(), base64_decode($document->getDocumentData()) );
 	}
@@ -911,14 +884,14 @@ final class KlinkCoreClient
 	/**
 	 * Generate a document thumbnail from the content of a file.
 	 *
-	 * This method does not supports Image documents, please use @see generateThumbnail
+	 * The file content MUST NOT be encoded in base64 format
 	 * 
 	 * @param  string  $mimeType      The mime type of the data that needs the thumbnail
 	 * @param  string  $data          The document data used for the thumbnail generation
-	 * @return string|boolean                 The image content in PNG format or false in case of error
+	 * @return string|boolean         The image content in PNG format or false in case of error
 	 * @internal
 	 */
-	public static function generateThumbnailFromContent( $mimeType, $data, $resolution = 'small', $debug = false )
+	public function generateThumbnailFromContent( $mimeType, $data, $resolution = 'small', $debug = false )
 	{
 
 		KlinkHelpers::is_string_and_not_empty( $mimeType, 'mime type' );
@@ -936,71 +909,98 @@ final class KlinkCoreClient
 
 		$doc_type = KlinkDocumentUtils::documentTypeFromMimeType( $mimeType );
 
-		if( $doc_type === 'image' ){
+		if( $doc_type === 'image' && !defined('KLINK_COMPATIBILITY_MODE') && defined('IMAGETYPE_PNG') ){
+			//we already have an image so let's resize it
 			
-			throw new KlinkException("Image format currently not supported.");
+			try{
 			
+				$image = KlinkImageResize::createFromString($data);
+				$image->resizeToWidth(300);
+				return $image->get(IMAGETYPE_PNG);
+
+			}
+			catch(Exception $ie){
+
+				if( $debug ) {
+					error_log( ' --> Thumbnail from image cannot be generated ' . $ie->getMessage() );
+				}
+
+
+				throw new KlinkException('The thumbnail cannot be generated: ' . $ie->getMessage());
+			}
+
+			return false;
 		}
 
-
-		$http = new KlinkHttp('http://localhost/');
-
 		$data = array(
-			'filename' => md5( KlinkHelpers::now() ) . '.' . $fileExtension,
-			'filemime' => $mimeType ,
-			'filedata' => base64_encode( $data )
+			'fileName' => md5( KlinkHelpers::now() ) . '.' . $fileExtension,
+			'fileMime' => $mimeType ,
+			'fileData' => base64_encode( $data )
 			);
 
-		$headers = array(
-				'body' => json_encode($data),
-				'timeout' => 120,
-				'httpversion' => '1.1',
-				'timeout_retry' => 3,
-				'compress' => 'true', //we compress the data that is sended for bandwith management
-				'headers' => array(
-					'Content-Type' => 'application/json',
-					'Authorization' => 'Basic ' . base64_encode( self::THUMBAIL_GENERATOR_AUTHENTICATION ) )
-			);
+		$conn = self::_get_connection();
 
-		$result = $http->post( self::THUMBNAIL_GENERATOR_URL, $headers );
+		$rem = $conn->post( self::THUMBNAIL_GENERATOR_URL, $data, new KlinkThumbnail() );
 
-		if(KlinkHelpers::is_error($result)){
+		if(KlinkHelpers::is_error($rem)){
+			throw new KlinkException((string)$rem, $rem->get_error_data_code());
+		}
+
+		if( empty( $rem->dataURI ) ){
 
 			if( $debug ){
 
-				echo 'Error ' . PHP_EOL;
-				error_log( print_r( $result, true ) );
+				error_log( 'Error ' . PHP_EOL);
+				error_log( print_r( $rem, true ) );
 				error_log( ' ERROR <--' );
 
 			}
 
-			throw new KlinkException("The thumbnail cannot be generated.");
+			throw new KlinkException("The thumbnail has not been generated. Empty image response.");
 		}
-		else {
 
-			$decoded = json_decode( $result['body'] );
+		return file_get_contents( $rem->dataURI );
 
-			if( empty( $decoded->DataUri ) ){
-
-				if( $debug ){
-
-					echo 'Error ' . PHP_EOL;
-					error_log( print_r( $decoded, true ) );
-					error_log( ' ERROR <--' );
-
-				}
-
-				throw new KlinkException("The thumbnail cannot be generated. Empty image response.");
-			}
-
-			// file_put_contents( $fullImagePath, file_get_contents( $decoded->DataUri ) );
-
-			return file_get_contents( $decoded->DataUri );
-
-		}
 
 		throw new KlinkException("The thumbnail cannot be generated. Unexpected end of function.");
 
+	}
+
+	/**
+	 * Generate a thumbnail of the given URL. Only web pages are supported.
+	 *
+	 * @param string $url the url of the page for the screenshot
+	 * @param string $image_file If specified is the path in which the file will be saved. Put null if you want the data back as the function return (default: null)
+	 * @return string|int|boolean The image content in PNG format if $image_file is null, the return of file_put_contents if a file path is specified
+	 * @throws InvalidArgumentException If the specified URL is not well formed
+	 * @throws KlinkException If the mimetype is not compatible with the thumbnail generator or the thumbnail cannot be generated
+	 */
+	public function generateThumbnailOfWebSite($url, $image_file = null)
+	{
+
+		KlinkHelpers::is_valid_url( $url, 'url' );
+
+		if(!is_null($image_file)){
+			KlinkHelpers::is_string_and_not_empty( $image_file, 'thumbnail image path cannot be empty' );
+		}
+
+		$url_length = strlen($url);
+
+		// remember to remove the last slash from the url otherwise the Core will get mad
+		if($url[$url_length-1] == '/'){
+
+			$url[$url_length-1] = ' ';
+
+			$url = trim($url);
+		}
+
+		$data = self::generateThumbnailFromContent( 'text/uri-list', $url);
+
+		if(!is_null($image_file)){
+			return file_put_contents( $fullImagePath, file_get_contents( $decoded->dataURI ) );
+		}
+
+		return $data;
 	}
 
 
