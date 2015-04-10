@@ -599,6 +599,10 @@ final class KlinkDocumentDescriptor
 
         KlinkHelpers::is_string_and_not_empty( $mimetype, 'mime type' );
 
+        KlinkHelpers::is_string_and_not_empty( $userUploader, 'User Uploader' );
+
+        KlinkHelpers::is_string_and_not_empty( $userOwner, 'user owner' );
+
         if( !is_null( $creationDate ) ){
             KlinkHelpers::is_valid_date_string( $creationDate, 'creation date' );
         }
