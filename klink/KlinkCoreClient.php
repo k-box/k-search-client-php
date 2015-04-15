@@ -673,7 +673,7 @@ final class KlinkCoreClient
 		  		}
 
 
-		  		if( $kei->getMessage() != 'Method Not Allowed' ){
+		  		if( $kei->getCode() == 401 ){
 
 			  		if( $config->isDebugEnabled() ){
 
@@ -682,7 +682,31 @@ final class KlinkCoreClient
 					
 					}
 
-				 	throw new KlinkException("Server not found or network problem.", 9, $kei);
+				 	throw new KlinkException("Wrong username or password.", $kei->getCode(), $kei);
+				}
+
+				else if( $kei->getCode() == 403 ){
+
+			  		if( $config->isDebugEnabled() ){
+
+						error_log( '###### TEST EXCEPTION ###### ');
+						error_log( print_r($res, true ) );
+					
+					}
+
+				 	throw new KlinkException("Unauthorized to read the Institution details.", $kei->getCode(), $kei);
+				}
+
+				else {
+
+			  		if( $config->isDebugEnabled() ){
+
+						error_log( '###### TEST EXCEPTION ###### ');
+						error_log( print_r($res, true ) );
+					
+					}
+
+				 	throw new KlinkException("Server not found or network problem.", $kei->getCode(), $kei);
 				}
 
 				//throw $keid;
@@ -695,7 +719,7 @@ final class KlinkCoreClient
 
 			} catch( KlinkException $keid ){
 
-				if( $keid->getMessage() == 'Not Found' ){
+				if( $keid->getCode() == 404 ){
 
 			  		if( $config->isDebugEnabled() ){
 
@@ -704,11 +728,11 @@ final class KlinkCoreClient
 					
 					}
 
-				 	throw new KlinkException("Institution details not found.", 10, $keid);
+				 	throw new KlinkException("Wrong Institution Identifier or Institution Details not available on the selected K-Link Core.", 404, $keid);
 
 				}
 
-				throw new KlinkException("Server not found or network problem.", 11, $keid);
+				throw new KlinkException("Server not found or network problem.", $keid->getCode(), $keid);
 
 			}
 

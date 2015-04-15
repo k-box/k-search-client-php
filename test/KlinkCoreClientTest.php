@@ -376,4 +376,88 @@ class KlinkCoreClientTest extends PHPUnit_Framework_TestCase
 
 	    return $method->invokeArgs($object, $parameters);
 	}
+
+
+	public function testTestMethod(){
+
+		// Correct configuration
+
+		$config = new KlinkConfiguration( INSTITUION_ID, 'KA', array(
+	  			new KlinkAuthentication( CORE_URL, CORE_USER, CORE_PASS )
+	  		) );
+
+	  	if(in_array('--debug', $_SERVER['argv'])){
+	  		$config->enableDebug();	
+	  	}
+
+	  	$error = null;
+
+	    $test_result = KlinkCoreClient::test($config, $error);
+
+	    $this->assertTrue($test_result);
+
+
+	    // Wrong username
+	     
+	    $config = new KlinkConfiguration( INSTITUION_ID, 'KA', array(
+	  			new KlinkAuthentication( CORE_URL, CORE_USER.'ciccio', CORE_PASS )
+	  		) );
+
+	  	if(in_array('--debug', $_SERVER['argv'])){
+	  		$config->enableDebug();	
+	  	}
+
+	  	$error = null;
+
+	    $test_result = KlinkCoreClient::test($config, $error);
+
+	    $this->assertFalse($test_result);
+
+	    $this->assertEquals(401, $error->getCode());
+
+	    $this->assertEquals('Wrong username or password.', $error->getMessage());
+
+	    // Wrong Institution Identifier
+	     
+	    $config = new KlinkConfiguration( INSTITUION_ID.'2', 'KA', array(
+	  			new KlinkAuthentication( CORE_URL, CORE_USER, CORE_PASS )
+	  		) );
+
+	  	if(in_array('--debug', $_SERVER['argv'])){
+	  		$config->enableDebug();	
+	  	}
+
+	  	$error = null;
+
+	    $test_result = KlinkCoreClient::test($config, $error);
+
+	    $this->assertFalse($test_result);
+
+	    $this->assertEquals(404, $error->getCode());
+
+	    $this->assertEquals('Wrong Institution Identifier or Institution Details not available on the selected K-Link Core.', $error->getMessage());
+	    
+	    // Wrong Core URL
+	    
+	    $config = new KlinkConfiguration( INSTITUION_ID, 'KA', array(
+	  			new KlinkAuthentication( CORE_URL.'2', CORE_USER, CORE_PASS )
+	  		) );
+
+	  	if(in_array('--debug', $_SERVER['argv'])){
+	  		$config->enableDebug();	
+	  	}
+
+	  	$error = null;
+
+	    $test_result = KlinkCoreClient::test($config, $error);
+
+	    $this->assertFalse($test_result);
+
+	    $this->assertEquals(404, $error->getCode());
+
+	    $this->assertEquals('Server not found or network problem.', $error->getMessage());
+
+	    
+
+	}
 }

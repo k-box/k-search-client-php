@@ -132,8 +132,8 @@ The test method returns `true` if all the test passed and `false` otherwise. In 
 
 The test method will perform the following steps:
 
-- test the http connection to the specified core url.
-- test if the given institutionID is a valid identifier on the K-Link Core
+- test the http connection to the specified core url (by retrieving the institutions list).
+- test if the given institutionID is a valid identifier on the K-Link Core.
 
 
 ```php
@@ -149,14 +149,19 @@ if( !$testResult ){
 }
 ```
 
-Here is the list of the error codes reported by the exception in the `$error` out parameter:
+If an error occur during the test, the `$error` (out) parameter will contain an exception whose code is the HTTP Status code of the response.
 
-| code | description |
-|------|-------------|
-| 9    | If the basic HTTP connection test fails |
-| 10   | If the given intitutionID is not valid |
-| 11   | If an exception occurs when testing for the institutionID |
+In some cases the Exception message will report a specific error:
 
+| code | message  | description |
+|------|----------|-------------|
+| 401  | Wrong username or password.   | If the specified credentials are not valid |
+| 403  | Unauthorized to read the Institution details.   | If the user cannot access institution details |
+| 404  | Wrong Institution Identifier or Institution Details not available on the selected K-Link Core   | If the given intitutionID is not valid |
+
+In all the other case a general error message, "Server not found or network problem.", is reported along with the HTTP Error code that was the cause of the test failure.
+
+The reported exception will have information about the [previous exception](http://php.net/manual/en/exception.getprevious.php) that has caused the failure and the code of the exception will always be the HTTP error code.
 
 ### perform a search
 
