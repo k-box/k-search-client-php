@@ -37,6 +37,11 @@ final class KlinkFacet
 	 * Define the facet name for the @see KlinkDocumentDescriptor::getKlinkId() field
 	 */
 	const DOCUMENT_ID = 'documentId';
+	
+	/**
+	 * Define the facet name for the @see KlinkDocumentDescriptor::$locationsString field
+	 */
+	const LOCATIONS_STRING = 'locationsString';
 
 
 	public static $ONLY_FILTER = array(KlinkFacet::LOCAL_DOCUMENT_ID, KlinkFacet::DOCUMENT_ID);

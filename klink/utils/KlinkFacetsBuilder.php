@@ -379,6 +379,78 @@ final class KlinkFacetsBuilder
 
 		return call_user_func_array(array($instance, 'institution'), func_get_args());
 	}
+	
+	/**
+	 * Facet for the locations city/country names
+	 * 
+	 * variable number of parameters
+	 * 
+	 * if NONE   => enable the facet will 
+	 * if one string => the filter (check if is a valid institution id)
+	 * if one int => number of items to return for the facet (count)
+	 * if two ints => 1: count, 2: mincount
+	 * if 3 => 1: filter, 2: count, 3: mincount
+	 * 
+	 * @throws BadMethodCallException if called two or more times on the same builder
+	 */
+	public function locations()
+	{
+		$isStatic = !(isset($this) && get_class($this) == __CLASS__); //This check is caused by the non-sense of PHP 5.6 that call the same method not considering the static modifier
+
+		if(!$isStatic){
+			$instance = $this;
+		}
+		else {
+			$instance = new KlinkFacetsBuilder;
+		}
+
+		if(in_array(KlinkFacet::LOCATIONS_STRING, $instance->already_builded)){
+			throw new BadMethodCallException("The locations facet has been already added", 1);
+		}
+
+		$builded_params = call_user_func_array(array($instance, '_handle_facet_parameters'), func_get_args());
+
+		$facet = null;
+
+		if(is_null($builded_params)){
+			$facet = KlinkFacet::create(KlinkFacet::LOCATIONS_STRING, 1);
+		}
+		else {
+
+			if(!is_null($builded_params['filter'])){
+				KlinkHelpers::is_valid_id($builded_params['filter'], 'filter');
+			}
+
+			$facet = KlinkFacet::create(KlinkFacet::LOCATIONS_STRING, 
+						$builded_params['mincount'], 
+						$builded_params['prefix'], 
+						$builded_params['count'], 
+						$builded_params['filter']);
+		}
+
+		$instance->facets[] = $facet;
+		$instance->already_builded[] = KlinkFacet::LOCATIONS_STRING;
+
+		return $instance;
+	}
+	
+	/**
+	 * Facet for the locations string
+	 * @throws BadMethodCallException if called two or more times on the same builder
+	 */
+	public function locationsString()
+	{
+		$isStatic = !(isset($this) && get_class($this) == __CLASS__); //This check is caused by the non-sense of PHP 5.6 that call the same method not considering the static modifier
+
+		if(!$isStatic){
+			$instance = $this;
+		}
+		else {
+			$instance = new KlinkFacetsBuilder;
+		}
+
+		return call_user_func_array(array($instance, 'locations'), func_get_args());
+	}
 
 
 	// public function __call($name, $arguments)
@@ -482,7 +554,7 @@ final class KlinkFacetsBuilder
 
 	protected function _allNames()
 	{
-		return array_filter( array_values( $this->known_constants ), array($this, '_filterConstantValues'));
+		return array_values(array_filter( array_values( $this->known_constants ), array($this, '_filterConstantValues')));
 	}
 
 

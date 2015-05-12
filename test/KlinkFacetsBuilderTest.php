@@ -20,7 +20,7 @@ class KlinkFacetsBuilderTest extends PHPUnit_Framework_TestCase
 
 	  	$oClass = new ReflectionClass('KlinkFacet');
 
-        $this->currently_supported = array(KlinkFacet::DOCUMENT_TYPE,KlinkFacet::LANGUAGE,KlinkFacet::INSTITUTION_ID,KlinkFacet::DOCUMENT_GROUPS);
+        $this->currently_supported = array_values(array(KlinkFacet::DOCUMENT_TYPE,KlinkFacet::LANGUAGE,KlinkFacet::INSTITUTION_ID,KlinkFacet::DOCUMENT_GROUPS,KlinkFacet::LOCATIONS_STRING));
 
 	}
 
@@ -103,6 +103,7 @@ class KlinkFacetsBuilderTest extends PHPUnit_Framework_TestCase
 			array(KlinkFacet::DOCUMENT_GROUPS, KlinkFacet::DOCUMENT_GROUPS),
 			array(KlinkFacet::INSTITUTION_ID, KlinkFacet::INSTITUTION_ID),
 			array(KlinkFacet::LANGUAGE, KlinkFacet::LANGUAGE),
+			array(KlinkFacet::LOCATIONS_STRING, KlinkFacet::LOCATIONS_STRING),
 			// array(KlinkFacet::LOCAL_DOCUMENT_ID, KlinkFacet::LOCAL_DOCUMENT_ID),
 			// array(KlinkFacet::DOCUMENT_ID, KlinkFacet::DOCUMENT_ID),
 		);
