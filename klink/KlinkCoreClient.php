@@ -1073,9 +1073,11 @@ final class KlinkCoreClient
 		foreach ($facet_array as $facet) {
 			$arr = $facet->toKlinkParameter();
 
-			$fs[] = $arr['facets'];
-			unset($arr['facets']);
-			$return = array_merge($return, $arr);
+			if(isset($arr['facets'])){
+				$fs[] = $arr['facets'];
+				unset($arr['facets']);
+				$return = array_merge($return, $arr);
+			}
 		}
 
 		$return['facets'] = implode(',', $fs);
