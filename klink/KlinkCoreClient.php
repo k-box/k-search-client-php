@@ -5,7 +5,7 @@ if( !defined( 'KLINKADAPTER_DEBUG' ) ){
 }
 
 if( !defined( 'KLINK_BOILERPLATE_VERSION' ) ){
-	define( 'KLINK_BOILERPLATE_VERSION', '0.3.18' );
+	define( 'KLINK_BOILERPLATE_VERSION', '0.3.21' );
 }
 
 /**
@@ -59,6 +59,9 @@ final class KlinkCoreClient
 	const THUMBNAIL_GENERATOR_URL = 'thumbnails/'; //https://klink-test1.cloudapp.net/kcore/
 
 
+	const HEALTH_FAST_CHECK_ENDPOINT = 'monitor/health/http_status_checks';
+	
+	const HEALTH_CHECK_ENDPOINT = 'monitor/health/run';
 
 	// ---- constructor and private fields
 
@@ -650,16 +653,25 @@ final class KlinkCoreClient
 	 * 
 	 * @param KlinkConfiguration $config the configuration to test
 	 * @param Exception $error (in) the variable the will contain the detailed exception object
-	 * @return  boolean true if the test passes, false otherwise
+	 * @param boolean $return_health_info tell to perform and return a deep health check if the Core support that feature
+	 * @return  boolean|KlinkHealthResults true if the test passes, false otherwise. In case of $return_health_info is true and no connection problem a deep health response is returned 
 	 * */
-	public static function test(KlinkConfiguration $config, &$error){
+	public static function test(KlinkConfiguration $config, &$error, $return_health_info = false){
 
 		try{
 
 		  	$client = new KlinkCoreClient( $config );
 
 		  	$res = null;
-
+			  
+			
+			if( !$client->health(true) === true ){
+				
+				throw new KlinkException("The K-Link Core has some configuration problems, make sure to perform a deep health check.", 502);
+				
+			}
+			  
+		
 		  	try{
 
 		  		$res = $client->getInstitutions();
@@ -712,7 +724,7 @@ final class KlinkCoreClient
 				//throw $keid;
 
 		  	}
-
+			  
 		  	try{
 
 				$res = $client->getInstitution( $config->getInstitutionId() );
@@ -744,6 +756,10 @@ final class KlinkCoreClient
 			}
 
 			$error = null;
+			
+			if($return_health_info){
+				return $client->health();
+			}
 
 		 	return true;
 
@@ -757,6 +773,10 @@ final class KlinkCoreClient
 			}
 
 		 	$error = $ke;
+			 
+			if($return_health_info){
+				return $client->health();
+			}
 
 			return false;
 
@@ -769,10 +789,77 @@ final class KlinkCoreClient
 			}
 
 		 	$error = $e;
+			 
+			if($return_health_info){
+				return $client->health();
+			}
 
 			return false;
 		}
 
+	}
+	
+	
+	/**
+		Get the health information of the currently connected/configured K-Link Core
+	
+		@param boolean $fast if true perform a rapid OK or Failure test
+		
+		@return boolean|KlinkHealthResults return true or false when the fast health check is performed, otherwise an instance of KlinkHealthResults 
+	*/
+	public function health($fast = false){
+		// fast => 200 OK or 502 Bad Gateway response
+		// in case of 404 nor found during fast check return true (maybe is an old core)
+		
+		if($fast){
+		
+			try{
+		
+				$conn = self::_get_connection();
+		
+		
+				$rem = $conn->get( self::HEALTH_FAST_CHECK_ENDPOINT, new KlinkHealthResults() );
+		
+				if( KlinkHelpers::is_error( $rem ) ){
+					throw new KlinkException( (string)$rem, $rem->get_error_data_code() );
+				}		        
+		
+				return true;
+			
+			}catch(KlinkException $ex){
+				
+				if($ex->getCode()===404){
+					return true;
+				}
+				
+				return false;
+			}
+		
+		}
+		
+		
+		try{
+		
+			$conn = self::_get_connection();
+	
+	
+			$rem = $conn->get( self::HEALTH_CHECK_ENDPOINT, new KlinkHealthResults() );
+	
+			if( KlinkHelpers::is_error( $rem ) ){
+				throw new KlinkException( (string)$rem, $rem->get_error_data_code() );
+			}		        
+	
+			return $res;
+		
+		}catch(KlinkException $ex){
+			
+			if($ex->getCode()===404){
+				return true;
+			}
+			
+			return false;
+		}
+		
 	}
 
 	/**
