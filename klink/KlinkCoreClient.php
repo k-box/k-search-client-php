@@ -653,10 +653,10 @@ final class KlinkCoreClient
 	 * 
 	 * @param KlinkConfiguration $config the configuration to test
 	 * @param Exception $error (in) the variable the will contain the detailed exception object
-	 * @param boolean $return_health_info tell to perform and return a deep health check if the Core support that feature
-	 * @return  boolean|KlinkHealthResults true if the test passes, false otherwise. In case of $return_health_info is true and no connection problem a deep health response is returned 
+	 * @param boolean $health_info (in) pass a variable here to gather health details
+	 * @return  boolean true if the test passes, false otherwise. 
 	 * */
-	public static function test(KlinkConfiguration $config, &$error, $return_health_info = false){
+	public static function test(KlinkConfiguration $config, &$error, &$health_info){
 
 		try{
 
@@ -757,9 +757,7 @@ final class KlinkCoreClient
 
 			$error = null;
 			
-			if($return_health_info){
-				return $client->health();
-			}
+			$health_info = $client->health();
 
 		 	return true;
 
@@ -774,9 +772,7 @@ final class KlinkCoreClient
 
 		 	$error = $ke;
 			 
-			if($return_health_info){
-				return $client->health();
-			}
+			$health_info = $client->health();
 
 			return false;
 
@@ -789,10 +785,8 @@ final class KlinkCoreClient
 			}
 
 		 	$error = $e;
-			 
-			if($return_health_info){
-				return $client->health();
-			}
+			
+			$health_info = $client->health();
 
 			return false;
 		}
@@ -842,22 +836,24 @@ final class KlinkCoreClient
 		
 			$conn = self::_get_connection();
 	
-	
 			$rem = $conn->get( self::HEALTH_CHECK_ENDPOINT, new KlinkHealthResults() );
 	
 			if( KlinkHelpers::is_error( $rem ) ){
 				throw new KlinkException( (string)$rem, $rem->get_error_data_code() );
 			}		        
 	
-			return $res;
+			return $rem;
 		
 		}catch(KlinkException $ex){
 			
 			if($ex->getCode()===404){
-				return true;
+				return null;
 			}
 			
-			return false;
+			return null;
+		}catch(Exception $ex){
+			
+			return null;
 		}
 		
 	}
