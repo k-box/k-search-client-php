@@ -656,7 +656,9 @@ final class KlinkCoreClient
 	 * @param boolean $health_info (in) pass a variable here to gather health details
 	 * @return  boolean true if the test passes, false otherwise. 
 	 * */
-	public static function test(KlinkConfiguration $config, &$error, &$health_info){
+	public static function test(KlinkConfiguration $config, &$error, $perform_health_check = false, &$health_info){
+
+		$client = null;
 
 		try{
 
@@ -665,11 +667,11 @@ final class KlinkCoreClient
 		  	$res = null;
 			  
 			
-			if( !$client->health(true) === true ){
-				
-				throw new KlinkException("The K-Link Core has some configuration problems, make sure to perform a deep health check.", 502);
-				
-			}
+//			if( !$client->health(true) === true ){
+//				
+//				throw new KlinkException("The K-Link Core has some configuration problems, make sure to perform a deep health check.", 502);
+//				
+//			}
 			  
 		
 		  	try{
@@ -757,7 +759,9 @@ final class KlinkCoreClient
 
 			$error = null;
 			
-			$health_info = $client->health();
+			if($perform_health_check){
+				$health_info = $client->health();
+			}
 
 		 	return true;
 
@@ -772,7 +776,9 @@ final class KlinkCoreClient
 
 		 	$error = $ke;
 			 
-			$health_info = $client->health();
+			if(!is_null($client) && $perform_health_check){
+				$health_info = $client->health();
+			}
 
 			return false;
 
@@ -786,7 +792,9 @@ final class KlinkCoreClient
 
 		 	$error = $e;
 			
-			$health_info = $client->health();
+			if(!is_null($client) && $perform_health_check){
+				$health_info = $client->health();
+			}
 
 			return false;
 		}
