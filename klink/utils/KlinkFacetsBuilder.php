@@ -347,7 +347,10 @@ final class KlinkFacetsBuilder
 		else {
 
 			if(!is_null($builded_params['filter'])){
-				KlinkHelpers::is_valid_id($builded_params['filter'], 'filter');
+				$exploded = explode(',', $builded_params['filter']);
+				foreach($exploded as $expl){
+					KlinkHelpers::is_valid_id($expl, 'filter');
+				}
 			}
 
 			$facet = KlinkFacet::create(KlinkFacet::INSTITUTION_ID, 
@@ -508,6 +511,11 @@ final class KlinkFacetsBuilder
 	    if (func_num_args() == 1 && is_string(func_get_arg(0))) {
 
 	    	return array_merge( $default, array('filter' => func_get_arg(0)) );
+
+	    }
+		else if (func_num_args() == 1 && is_array(func_get_arg(0))) {
+
+	    	return array_merge( $default, array('filter' => implode(',', func_get_arg(0)) ));
 
 	    }
 	    else if (func_num_args() == 1 && is_integer(func_get_arg(0))) {

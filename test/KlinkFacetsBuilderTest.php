@@ -180,6 +180,26 @@ class KlinkFacetsBuilderTest extends PHPUnit_Framework_TestCase
 		$first = $ft[0];
 
 		$this->assertEquals('10,12', $first->getFilter());
+		
+		$ft = KlinkFacetsBuilder::create()->institution(array('10', '12'))->build();
+
+		$this->assertNotEmpty($ft);
+
+		$this->assertCount(1, $ft);
+
+		$first = $ft[0];
+
+		$this->assertEquals('10,12', $first->getFilter());
+		
+		$ft = KlinkFacetsBuilder::create()->institution('10,12')->build();
+
+		$this->assertNotEmpty($ft);
+
+		$this->assertCount(1, $ft);
+
+		$first = $ft[0];
+
+		$this->assertEquals('10,12', $first->getFilter());
 
 	}
 

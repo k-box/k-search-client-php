@@ -5,7 +5,7 @@ if( !defined( 'KLINKADAPTER_DEBUG' ) ){
 }
 
 if( !defined( 'KLINK_BOILERPLATE_VERSION' ) ){
-	define( 'KLINK_BOILERPLATE_VERSION', '0.3.21' );
+	define( 'KLINK_BOILERPLATE_VERSION', '0.3.24' );
 }
 
 /**
@@ -656,7 +656,7 @@ final class KlinkCoreClient
 	 * @param boolean $health_info (in) pass a variable here to gather health details
 	 * @return  boolean true if the test passes, false otherwise. 
 	 * */
-	public static function test(KlinkConfiguration $config, &$error, $perform_health_check = false, &$health_info){
+	public static function test(KlinkConfiguration $config, &$error, $perform_health_check = false, &$health_info=null){
 
 		$client = null;
 
