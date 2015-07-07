@@ -543,6 +543,11 @@ final class KlinkHttp implements INetworkTransport {
 		static $transports = array();
 
 		$class = $this->_get_first_available_transport( $args, $url );
+		
+		if(defined('KLINKADAPTER_DEBUG_INTERNAL') && KLINKADAPTER_DEBUG_INTERNAL){
+			error_log('KlinkHttp selected transport: ' . $class);	
+		}
+		
 		if ( !$class )
 			return new KlinkError( KlinkError::ERROR_HTTP_FAILURE, KlinkHelpers::localize( 'There are no HTTP transports available which can complete the requested request.' ) );
 
