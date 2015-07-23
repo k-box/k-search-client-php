@@ -197,6 +197,8 @@ class KlinkHelpersTest extends PHPUnit_Framework_TestCase
 		  array('http://1337.net'),
 		  array('http://a.b-c.de'),
 		  array('http://223.255.255.254'),
+		  array('http://172.17.42.1'),
+		  array('https://172.17.42.1'),
 		);
 	}
 
