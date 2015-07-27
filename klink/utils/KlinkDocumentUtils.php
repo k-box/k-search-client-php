@@ -267,12 +267,14 @@ class KlinkDocumentUtils
 		$file_exists = @file_exists($file);
 		$not_is_url  = !$is_url;
 
-		if (function_exists("finfo_file") && $file_exists && $not_is_url) {
-			$finfo = finfo_open(FILEINFO_MIME_TYPE); // return mime type ala mimetype extension
-			$mime = finfo_file($finfo, $file);
-			finfo_close($finfo);
-			return $mime;
-		} else {
+		// we don't rely anymore to finfo_file function because for some docx created from LibreOffice the
+		// mime type reported is Composite Document File V2 Document, which has totally no-sense
+		// if (function_exists("finfo_file") && $file_exists && $not_is_url) {
+		// 	$finfo = finfo_open(FILEINFO_MIME_TYPE); // return mime type ala mimetype extension
+		// 	$mime = finfo_file($finfo, $file);
+		// 	finfo_close($finfo);
+		// 	return $mime;
+		// } else {
 
 			$extension = pathinfo( $file, PATHINFO_EXTENSION );
 
@@ -286,7 +288,7 @@ class KlinkDocumentUtils
 				' [is file: ' . var_export($file_exists, true) . 
 				 ', is url: ' . var_export($is_url, true) .
 				 ', extension: ' . var_export($extension, true). ']' , 2);
-		}
+		//}
 	}
 
 	
