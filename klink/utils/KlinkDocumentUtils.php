@@ -212,6 +212,12 @@ class KlinkDocumentUtils
 		KlinkHelpers::is_string_and_not_empty( $mimeType, 'mime type' );
 
 		$inverted = array_flip( self::$fileExtensionToMimeType );
+		
+		$comma = strpos($mimeType, ';');
+
+		if($comma){
+			$mimeType = substr($mimeType, 0, $comma);
+		}
 
 		$key = array_key_exists($mimeType, $inverted);
 

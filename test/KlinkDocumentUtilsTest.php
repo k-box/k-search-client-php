@@ -71,6 +71,7 @@ class KlinkDocumentUtilsTest extends PHPUnit_Framework_TestCase
 		array('rtx', 'text/richtext'),
 		array('css', 'text/css'),
 		array('html', 'text/html'),
+		array('html', 'text/html; charset=CP1251'),
 		array('vtt', 'text/vtt'),
 		array('dfxp', 'application/ttaf+xml'),
 		array('mp3', 'audio/mpeg'),
