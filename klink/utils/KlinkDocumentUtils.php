@@ -26,6 +26,9 @@ class KlinkDocumentUtils
 		'image/gif' => 'image',
 		'image/png' => 'image',
 		'image/tiff' => 'image',
+		'text/plain' => 'text-document',
+		'application/rtf' => 'text-document',
+		'text/x-markdown' => 'text-document',
 
 		);
 
@@ -75,6 +78,7 @@ class KlinkDocumentUtils
 		'mka' => 'audio/x-matroska',
 		// Misc application formats.
 		'rtf' => 'application/rtf',
+		'md' => 'text/x-markdown',
 		'js' => 'application/javascript',
 		'pdf' => 'application/pdf',
 		'swf' => 'application/x-shockwave-flash',

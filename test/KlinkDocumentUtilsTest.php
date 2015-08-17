@@ -132,6 +132,7 @@ class KlinkDocumentUtilsTest extends PHPUnit_Framework_TestCase
 		array('key', 'application/vnd.apple.keynote'),
 		array('numbers', 'application/vnd.apple.numbers'),
 		array('pages', 'application/vnd.apple.pages'),
+		array('md', 'text/x-markdown'),
 
 		);
 	}
