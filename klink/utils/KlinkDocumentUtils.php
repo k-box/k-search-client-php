@@ -147,6 +147,10 @@ class KlinkDocumentUtils
 	public static function generateDocumentHash( $filePath )
 	{
 
+		if(function_exists('mb_detect_encoding') && mb_detect_encoding($filePath) !== 'UTF-8'){
+			$filePath = utf8_encode($filePath);
+		}
+
 		return hash_file( 'sha512', $filePath );
 
 	}
