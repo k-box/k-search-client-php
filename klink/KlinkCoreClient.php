@@ -1169,6 +1169,9 @@ final class KlinkCoreClient
 				unset($arr['facets']);
 				$return = array_merge($return, $arr);
 			}
+			else {
+				$return = array_merge($return, $arr);	
+			}
 		}
 
 		$return['facets'] = implode(',', $fs);

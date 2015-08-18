@@ -184,6 +184,28 @@ class KlinkCoreClientTest extends PHPUnit_Framework_TestCase
 		$this->assertContainsOnlyInstancesOf('KlinkFacet', $facets);		
 	}
 
+	public function testSearchWithFilters(){
+		
+		$term_to_search = '*';
+
+		$f = KlinkFacetsBuilder::create()->localDocumentId('aaaa')->build();
+
+		$result = $this->core->search($term_to_search, 'public', 10, 0, $f);
+
+		$this->assertEquals($term_to_search, $result->getTerms());
+
+		$this->assertInstanceOf('KlinkSearchResult', $result);
+
+		$filters = $result->filters;
+
+		$this->assertNotNull($filters, 'Null Filters');
+
+		$this->assertTrue(!empty($filters));
+
+		$this->assertEquals(count($f), count($filters));
+
+	}
+
 
 	public function testIndexAndRemoveDocument()
 	{
