@@ -46,6 +46,10 @@ class KlinkThumbnailGenerationTest extends PHPUnit_Framework_TestCase
 	public function testGenerateThumbnailOfWebSites()
 	{
 
+		$this->markTestIncomplete(
+          'The KCore has a bug in the thumbnail generation service preventing this test to execute correctly.'
+        );
+
 		$result = $this->core->generateThumbnailOfWebSite('http://www.google.it/');
 
 		$this->assertNotNull($result);
