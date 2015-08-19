@@ -403,6 +403,16 @@ class KlinkCoreClientTest extends PHPUnit_Framework_TestCase
 	public function testTestMethod(){
 
 		// Correct configuration
+		
+		$inst = KlinkInstitutionDetails::create(INSTITUION_ID, INSTITUION_ID);
+
+		$inst->setMail('mail@mail.com');
+		$inst->setPhoneNumber('+55555555');
+		$inst->setThumbnail('http://thumbnail.org');
+		$inst->setUrl('http://institution.org');
+
+		$save_response = $this->core->saveInstitution($inst);
+		
 
 		$config = new KlinkConfiguration( INSTITUION_ID, 'KA', array(
 	  			new KlinkAuthentication( CORE_URL, CORE_USER, CORE_PASS )
@@ -417,6 +427,8 @@ class KlinkCoreClientTest extends PHPUnit_Framework_TestCase
 	    $test_result = KlinkCoreClient::test($config, $error);
 
 	    $this->assertTrue($test_result);
+
+	    $this->core->deleteInstitution(INSTITUION_ID);
 
 
 	    // Wrong username
