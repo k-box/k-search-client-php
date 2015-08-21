@@ -5,7 +5,7 @@ if( !defined( 'KLINKADAPTER_DEBUG' ) ){
 }
 
 if( !defined( 'KLINK_BOILERPLATE_VERSION' ) ){
-	define( 'KLINK_BOILERPLATE_VERSION', '0.3.30' );
+	define( 'KLINK_BOILERPLATE_VERSION', '0.3.31' );
 }
 
 /**
@@ -143,9 +143,9 @@ final class KlinkCoreClient
 	 */
 	function removeDocument( KlinkDocumentDescriptor $document ){
 
-		if( !KlinkDocumentUtils::isLocalDocument( $document, $this->configuration->getInstitutionId(), $this->configuration->getAdapterId() ) ){
-			throw new KlinkException("You cannot remove document you don't own");
-		}
+		// if( !KlinkDocumentUtils::isLocalDocument( $document, $this->configuration->getInstitutionId(), $this->configuration->getAdapterId() ) ){
+		// 	throw new KlinkException("You cannot remove document you don't own");
+		// }
 
 
 		$conn = self::_get_connection();
@@ -186,9 +186,9 @@ final class KlinkCoreClient
 	 */
 	function removeDocumentById( $institution, $document, $visibility = null ){
 
-		if( $institution !== $this->configuration->getInstitutionId() ){
-			throw new KlinkException("You cannot remove document you don't own");
-		}
+		// if( $institution !== $this->configuration->getInstitutionId() ){
+		// 	throw new KlinkException("You cannot remove document you don't own");
+		// }
 
 		if(is_null($visibility)){
 			$visibility = KlinkVisibilityType::KLINK_PUBLIC;
