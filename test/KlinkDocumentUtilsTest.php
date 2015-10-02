@@ -137,6 +137,12 @@ class KlinkDocumentUtilsTest extends PHPUnit_Framework_TestCase
 		array('numbers', 'application/vnd.apple.numbers'),
 		array('pages', 'application/vnd.apple.pages'),
 		array('md', 'text/x-markdown'),
+		array('gdoc', 'application/vnd.google-apps.document'),
+		array('gdraw', 'application/vnd.google-apps.drawing'),
+		array('gform', 'application/vnd.google-apps.form'),
+		array('gtable', 'application/vnd.google-apps.fusiontable'),   
+		array('gslides', 'application/vnd.google-apps.presentation'),
+		array('gsheet', 'application/vnd.google-apps.spreadsheet'),
 
 		);
 	}

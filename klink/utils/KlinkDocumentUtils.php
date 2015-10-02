@@ -29,6 +29,12 @@ class KlinkDocumentUtils
 		'text/plain' => 'text-document',
 		'application/rtf' => 'text-document',
 		'text/x-markdown' => 'text-document',
+		'application/vnd.google-apps.document' => 'document',
+		'application/vnd.google-apps.drawing' => 'image',
+		'application/vnd.google-apps.form' => 'form',
+		'application/vnd.google-apps.fusiontable' => 'spreadsheet',
+		'application/vnd.google-apps.presentation' => 'presentation',
+		'application/vnd.google-apps.spreadsheet' => 'spreadsheet',
 
 		);
 
@@ -132,7 +138,15 @@ class KlinkDocumentUtils
 		'key' => 'application/vnd.apple.keynote',
 		'numbers' => 'application/vnd.apple.numbers',
 		'pages' => 'application/vnd.apple.pages',
-		'uri' => 'text/uri-list'
+		'uri' => 'text/uri-list',
+		// Google Docs formats.   
+		'gdoc' => 'application/vnd.google-apps.document',
+		'gdraw' => 'application/vnd.google-apps.drawing',
+		'gform' => 'application/vnd.google-apps.form',
+		'gtable' => 'application/vnd.google-apps.fusiontable',
+		'gslides' => 'application/vnd.google-apps.presentation',
+		'gsheet' => 'application/vnd.google-apps.spreadsheet',
+		
 		) ;
 
 
