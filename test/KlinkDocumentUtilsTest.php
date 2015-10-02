@@ -143,6 +143,8 @@ class KlinkDocumentUtilsTest extends PHPUnit_Framework_TestCase
 		array('gtable', 'application/vnd.google-apps.fusiontable'),   
 		array('gslides', 'application/vnd.google-apps.presentation'),
 		array('gsheet', 'application/vnd.google-apps.spreadsheet'),
+		array('kml', 'application/vnd.google-earth.kml+xml'),
+		array('kmz', 'application/vnd.google-earth.kmz'),
 
 		);
 	}

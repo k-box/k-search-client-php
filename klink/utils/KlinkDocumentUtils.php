@@ -35,6 +35,8 @@ class KlinkDocumentUtils
 		'application/vnd.google-apps.fusiontable' => 'spreadsheet',
 		'application/vnd.google-apps.presentation' => 'presentation',
 		'application/vnd.google-apps.spreadsheet' => 'spreadsheet',
+		'application/vnd.google-earth.kml+xml' => 'geodata',
+		'application/vnd.google-earth.kmz' => 'geodata',
 
 		);
 
@@ -146,6 +148,9 @@ class KlinkDocumentUtils
 		'gtable' => 'application/vnd.google-apps.fusiontable',
 		'gslides' => 'application/vnd.google-apps.presentation',
 		'gsheet' => 'application/vnd.google-apps.spreadsheet',
+		// Google Earth files (aka Keyhole Markup Language)
+		'kml' => 'application/vnd.google-earth.kml+xml',
+		'kmz' => 'application/vnd.google-earth.kmz',
 		
 		) ;
 
