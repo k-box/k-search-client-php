@@ -152,6 +152,7 @@ class KlinkDocumentUtilsTest extends PHPUnit_Framework_TestCase
 			array('application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'http://www.ecco.un/bel.docx'),
 			array('application/pdf', 'http://temp.klink.dyndns.ws//dumps/CampAlatoo/for_klink/2010_oblojki_catalog_kg_ru.pdf'),
 			array('application/pdf', 'temporary://temp.klink.dyndns.ws//dumps/CampAlatoo/for_klink/2010_oblojki_catalog_kg_ru.pdf'),
+			array('text/x-markdown', 'temporary://temp.klink.dyndns.ws//dumps/test.md'),
 
 		);
 

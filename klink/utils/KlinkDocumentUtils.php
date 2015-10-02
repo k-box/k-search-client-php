@@ -78,7 +78,7 @@ class KlinkDocumentUtils
 		'mka' => 'audio/x-matroska',
 		// Misc application formats.
 		'rtf' => 'application/rtf',
-		'md' => 'text/x-markdown',
+		'md|markdown' => 'text/x-markdown',
 		'js' => 'application/javascript',
 		'pdf' => 'application/pdf',
 		'swf' => 'application/x-shockwave-flash',
