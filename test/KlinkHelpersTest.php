@@ -241,14 +241,14 @@ class KlinkHelpersTest extends PHPUnit_Framework_TestCase
 	
 	public function valid_strings(){
 		return array(
-			// array('ciao'),
-			// array('c'),
+			array('ciao'),
+			array('c'),
 			array('0'),
 			array('01'),
-			// array('true'),
-			// array('false'),
-			// array('null'),
-			// array('undefined'),
+			array('true'),
+			array('false'),
+			array('null'),
+			array('undefined'),
 		);
 	}
 	
