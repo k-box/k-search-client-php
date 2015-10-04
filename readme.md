@@ -15,6 +15,10 @@ the Adapter boilerplate offers a common way to interact with the Klink Core API.
 - Connectivity test
 - Document thumbnail creator service
 
+## Changes
+
+Consult the section [KlinkDocumentUtils](#KlinkDocumentUtils) for important changes in the mime type handling functions
+
 
 ## Requirements
 
@@ -418,7 +422,14 @@ The KlinkDocumentUtils class has the following utility methods that you need to 
 - `generateDocumentHash( $filePath )` generates the hash of the content of a document
 - `generateHash( $text )` generates the hash of the given text
 - `get_mime( $filePath )` return the mime type of a file
-- `isMimeTypeSupported( $mime )` test if the specified mime type is supported by the K-Link Core
+- `isMimeTypeSupported( $mime )` **test if the specified mime type is known and can be handled. This not guarantee that the the K-Link Core can index the file without prior elaboration**
+- `isMimeTypeIndexable( $mime )` **test if the specified mime type is supported by the K-Link Core and requires no elaboration before can be sent to the K-Link Core**
+
+**Important notice**
+
+In the course of the following month we will add the ability to recognize more document types than what the search engine can handle directly. So we decided to separate the mime type support check in two different functions.
+The `isMimeTypeSupported` function will tell if we can recognize that file from the mime type, but will not guarantee that you can send the file directly to the K-Link Core. 
+To check if you need to extract the content of the file before sending the document to the K-Link Core you have to use the `isMimeTypeIndexable` function, if this function return false you have to extract the textual content of the file by yourselve before sending a document add request to the K-Link Core. 
 
 
 ## Facets

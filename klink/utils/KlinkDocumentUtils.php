@@ -39,6 +39,29 @@ class KlinkDocumentUtils
 		'application/vnd.google-earth.kmz' => 'geodata',
 
 		);
+		
+	/**
+	 * Array of mime types that are fully understood by the K-Link Core
+	 */
+	private static $indexableMimeTypes = array(
+
+		'text/html',
+		'application/msword',
+		'application/vnd.ms-excel',
+		'application/vnd.ms-powerpoint',
+		'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+		'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+		'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+		'application/pdf',
+		'image/jpg',
+		'image/jpeg',
+		'image/gif',
+		'image/png',
+		'image/tiff',
+		'text/plain',
+		'application/rtf',
+
+		);
 
 
 	private static $fileExtensionToMimeType = array(
@@ -214,14 +237,29 @@ class KlinkDocumentUtils
 	}
 
 	/**
-	 * Check if the specified mime type is one of the supported mimetypes for indexing
+	 * Check if the specified mime type is one of the known mimetypes
 	 * 
 	 * @param string $mimeType the mime type to check for
-	 * @return boolean true if supported, false otherwise
+	 * @return boolean true if known, false otherwise
 	 */
 	public static function isMimeTypeSupported( $mimeType ){
 
 		return @array_key_exists($mimeType, self::$mimeTypesToDocType);
+
+	}
+	
+	
+	/**
+	 * Check if the specified mime type is one of the supported mimetypes for indexing by the Core.
+	 * 
+	 * @param string $mimeType the mime type to check for
+	 * @return boolean true if supported, false otherwise
+	 */
+	public static function isMimeTypeIndexable( $mimeType ){
+		
+		KlinkHelpers::is_string_and_not_empty( $mimeType, 'mime type', 'The specified %s cannot be checked if is indexable or not. Cause: empty or null. ' . var_export($mimeType, true) );
+
+		return @array_key_exists($mimeType, self::$mimeTypesToDocType) && in_array($mimeType, self::$indexableMimeTypes);
 
 	}
 

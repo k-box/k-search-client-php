@@ -177,6 +177,54 @@ class KlinkDocumentUtilsTest extends PHPUnit_Framework_TestCase
 
 		 return $inputs;
 	}
+	
+	public function inputForIndexableTest(){
+		$inputs = array(
+			// mime, supported, indexable
+			array('post', true, false),
+			array('page', true, false),
+			array('node', true, false),
+			array('text/html', true, true),
+			array('application/msword', true, true),
+			array('application/vnd.ms-excel', true, true),
+			array('application/vnd.ms-powerpoint', true, true),
+			array('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', true, true),
+			array('application/vnd.openxmlformats-officedocument.presentationml.presentation', true, true),
+			array('application/vnd.openxmlformats-officedocument.wordprocessingml.document', true, true),
+			array('application/pdf', true, true),
+			array('text/uri-list', true, false),
+			array('image/jpg', true, true),
+			array('image/jpeg', true, true),
+			array('image/gif', true, true),
+			array('image/png', true, true),
+			array('image/tiff', true, true),
+			array('text/plain', true, true),
+			array('application/rtf', true, true),
+			array('text/x-markdown', true, false),
+			array('application/vnd.google-apps.document', true, false),
+			array('application/vnd.google-apps.drawing', true, false),
+			array('application/vnd.google-apps.form', true, false),
+			array('application/vnd.google-apps.fusiontable', true, false),
+			array('application/vnd.google-apps.presentation', true, false),
+			array('application/vnd.google-apps.spreadsheet', true, false),
+			array('application/vnd.google-earth.kml+xml', true, false),
+			array('application/vnd.google-earth.kmz', true, false),
+
+		);
+		return $inputs;
+	}
+	
+	public function inputErrorsForIndexableTest(){
+		$inputs = array(
+			// mime, supported, indexable
+			array(true),
+			array(false),
+			array(''),
+			array(null),
+
+		);
+		return $inputs;
+	}
 
 	
 	/**
@@ -197,6 +245,56 @@ class KlinkDocumentUtilsTest extends PHPUnit_Framework_TestCase
 	    return $method->invokeArgs($object, $parameters);
 	}
 
+
+	/**
+	 * [isMimeTypeIndexable description]
+	 * @param  [type] $expected [description]
+	 * @param  [type] $mimeType [description]
+	 * @return [type]           [description]
+	 *
+	 * @dataProvider inputForIndexableTest
+	 */
+ 	public function testIsMimeTypeIndexable( $mimeType, $deprecated, $expected )
+ 	{
+
+ 		$actual = KlinkDocumentUtils::isMimeTypeIndexable( $mimeType );
+
+ 		$this->assertEquals( $expected, $actual);
+ 		
+ 	}
+	 
+	/**
+	 * [isMimeTypeIndexable description]
+	 * @param  [type] $expected [description]
+	 * @param  [type] $mimeType [description]
+	 * @return [type]           [description]
+	 *
+	 * @dataProvider inputErrorsForIndexableTest
+	 * @expectedException InvalidArgumentException
+	 */
+ 	public function testIsMimeTypeIndexableErrorExpected( $mimeType )
+ 	{
+
+ 		KlinkDocumentUtils::isMimeTypeIndexable( $mimeType );
+ 		
+ 	}
+	 
+	/**
+	 * [isMimeTypeSupported description]
+	 * @param  [type] $expected [description]
+	 * @param  [type] $mimeType [description]
+	 * @return [type]           [description]
+	 *
+	 * @dataProvider inputForIndexableTest
+	 */
+ 	public function testIsMimeTypeSupported( $mimeType, $expected, $deprecated )
+ 	{
+
+ 		$actual = KlinkDocumentUtils::isMimeTypeSupported( $mimeType );
+
+ 		$this->assertEquals( $expected, $actual);
+ 		
+ 	}
  
 	/**
 	 * [testGetExtensionFromMimeType description]
