@@ -353,21 +353,20 @@ class KlinkHelpers
 	 */
 	public static function is_string_and_not_empty( $value, $parameter_name, $error_message_format = 'The %s must be a non empty or null string' )
 	{
-		if( !empty($value) )
+		
+		if( is_string($value) && !(is_array($value) || is_object($value)) && strlen($value)>0 ){
 			$value = trim($value);
+		}
 
-
-		if( empty( $value ) ){
+		if( is_null($value) || (is_bool($value) || is_int($value) || is_float($value)  || is_double($value) || is_array($value) || is_object($value)) || (!is_string($value) && empty($value)) ){
 
 			$message = self::localize( sprintf( $error_message_format, $parameter_name ) );
 
 			throw new InvalidArgumentException( $message );
 
 		}
-
 		
-
-		if( !empty( $value ) && !is_string( $value ) ){
+		if( is_string( $value ) && mb_strlen($value) === 0  ){
 
 			$message = self::localize( sprintf( $error_message_format, $parameter_name ) );
 
