@@ -26,7 +26,6 @@ class KlinkAuthenticationTest extends PHPUnit_Framework_TestCase
 		  array('http://www.ciao.org', 'dcd', 0),
 		  array('http://www.ciao.org', '0', 0),
 		  array('http://www.ciao.org', 'username', 0),
-		  array('http://www.ciao.org', 'username', '0'),
 		  array(':/ciao.pinco', 'user', 'pass'),
 		  array('//www.example.com/path?googleguy=googley', 'user', 'pass'),
 		  array('ciao', 'user', 'pass'),
