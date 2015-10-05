@@ -58,8 +58,6 @@ class KlinkDocumentUtils
 		'image/gif',
 		'image/png',
 		'image/tiff',
-		'text/plain',
-		'application/rtf',
 
 		);
 
