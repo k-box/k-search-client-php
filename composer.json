@@ -1,10 +1,10 @@
 {
     "name": "klink/adapterboilerplate",
     "description": "The Library for interacting with the K-Link Core (version 2 of the API is supported)",
-    "version": "0.3.32",
+    "version": "0.3.33",
     "type": "library",
     "homepage": "http://klink.asia",
-    "time": "2015-10-04",
+    "time": "2015-10-05",
 
     "authors": [
         {

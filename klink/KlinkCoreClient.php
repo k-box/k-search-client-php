@@ -5,7 +5,7 @@ if( !defined( 'KLINKADAPTER_DEBUG' ) ){
 }
 
 if( !defined( 'KLINK_BOILERPLATE_VERSION' ) ){
-	define( 'KLINK_BOILERPLATE_VERSION', '0.3.32' );
+	define( 'KLINK_BOILERPLATE_VERSION', '0.3.33' );
 }
 
 /**
@@ -1124,7 +1124,7 @@ final class KlinkCoreClient
 	 * @return string The boilerplate version number.
 	 */
 	public static function version(){
-		return defined('KLINK_BOILERPLATE_VERSION') ? KLINK_BOILERPLATE_VERSION : '0.3.32';
+		return defined('KLINK_BOILERPLATE_VERSION') ? KLINK_BOILERPLATE_VERSION : '0.3.33';
 	}
 
 	// ----- Private Stuff
