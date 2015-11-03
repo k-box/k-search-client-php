@@ -1,0 +1,25 @@
+stages:
+  - build
+  - test
+  - deploy
+
+unit_test:
+  stage: test
+  script:
+    - composer install --prefer-dist
+    - phpunit
+  tags: 
+  only:
+    - master
+
+composer_repo_push:
+  stage: deploy
+  script:
+    - HOME=/var/www/klink/satis/comp_home
+    - COMPOSER_HOME=/var/www/klink/satis/comp_home/.composer
+    - GIT_SSL_NO_VERIFY=true
+    - cd /var/www/klink/satis
+    - php ./bin/satis build --verbose ./satis.json ./web
+  tags: 
+  only:
+    - tags
