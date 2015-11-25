@@ -5,12 +5,6 @@
 */
 class KlinkFacetTest extends PHPUnit_Framework_TestCase
 {
-	/**
-	 * The institution identifier to be used in the test
-	 *
-	 * @var string
-	 */
-	const INSTITUION_ID = 'KLINK';
 
 	public function setUp()
 	{

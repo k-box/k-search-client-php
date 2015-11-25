@@ -42,6 +42,7 @@ class KlinkThumbnailGenerationTest extends PHPUnit_Framework_TestCase
 
 	/**
      * @requires function finfo_open
+	 * @group integration
      */
 	public function testGenerateThumbnailOfWebSites()
 	{
@@ -66,6 +67,7 @@ class KlinkThumbnailGenerationTest extends PHPUnit_Framework_TestCase
      * @requires function imagecreatefrompng
      * @requires function finfo_open
      * @requires function imagegif
+	 * @group integration
      */
 	public function testGenerateThumbnailFromImageContent()
 	{
@@ -84,6 +86,7 @@ class KlinkThumbnailGenerationTest extends PHPUnit_Framework_TestCase
 
 	/**
      * @requires function finfo_open
+	 * @group integration
      */
 	public function testGenerateThumbnailFromContent()
 	{

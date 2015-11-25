@@ -15,12 +15,12 @@ class HttpClassTest extends PHPUnit_Framework_TestCase
 	    $this->testendpoint = "http://httpbin.org/";
 	}
 
+	/**
+     * @group http
+     */
 	public function testHttpGet()
 	{
 		$result = $this->http->get( $this->testendpoint . 'ip');
-
-
-		// print_r($result);
 
 		$this->assertFalse(KlinkHelpers::is_error($result), 'What the hell');
 
@@ -28,10 +28,13 @@ class HttpClassTest extends PHPUnit_Framework_TestCase
 		$this->assertTrue(!empty($result['body']), 'The response body is empty');
 	}
 
+	/**
+     * @group http
+     */
 	public function testHttpPost()
 	{
 
-		$data = array('key' => 'test', );
+		$data = array('key' => 'test');
 
 
 		$result = $this->http->post( $this->testendpoint . 'post', 
@@ -47,12 +50,13 @@ class HttpClassTest extends PHPUnit_Framework_TestCase
 
 		$decoded = json_decode($result['body']);
 
-		// print_r($result);
-
 		$this->assertObjectHasAttribute('key', $decoded->json, 'returned json not have the key property');
 
 	}
 
+	/**
+     * @group http
+     */
 	public function testHttpError_NotFound()
 	{
 
@@ -62,7 +66,10 @@ class HttpClassTest extends PHPUnit_Framework_TestCase
 		$this->assertEmpty($result['body'], 'Body not empty');
 
 	}
-
+	
+	/**
+     * @group http
+     */
 	public function testHandleRedirect(){
 
 		$result = $this->http->get( $this->testendpoint . 'redirect/2');
@@ -75,7 +82,10 @@ class HttpClassTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals('http://httpbin.org/get', $decoded->url, 'Expected url of get response');
 
 	}
-
+	
+	/**
+     * @group http
+     */
 	public function testConnectionRefused(){
 
 		$result = $this->http->get( 'http://repo.klink.dyndns.ws:81' );
@@ -85,7 +95,10 @@ class HttpClassTest extends PHPUnit_Framework_TestCase
 		$this->assertNotEmpty($result->get_error_message( KlinkError::ERROR_CONNECTION_REFUSED), 'Expected timeout error');
 
 	}
-
+	
+	/**
+     * @group http
+     */
 	public function testTimeoutRetry(){
 
 		$result = $this->http->get( 'http://192.10.0.2', array( 'timeout' => 1, 'timeout_retry' => 1) );

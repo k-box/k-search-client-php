@@ -1,30 +1,22 @@
 {
     "name": "klink/adapterboilerplate",
-    "description": "The Library for interacting with the K-Link Core (version 2 of the API is supported)",
-    "version": "0.3.33",
+    "description": "The Library for interacting with the K-Link Core",
+    "version": "1.0.0",
     "type": "library",
-    "homepage": "http://klink.asia",
+    "homepage": "http://dev.klink.asia",
     "time": "2015-10-05",
 
     "authors": [
         {
             "name": "Alessio Vertemati",
-            "email": "a.vertemati@sirisacademic.com"
-        },
-        {
-            "name": "Diego Bernini",
-            "email": "d.bernini@sirisacademic.com"
-        },
-        {
-            "name": "Emanuele Panzeri",
-            "email": "e.panzeri@sirisacademic.com"
+            "email": "postmaster@klink.asia"
         }
     ],
 
     "support": {
-        "issues": "https://gitlab.klink.dyndns.ws:3000/kadapters/adapterboilerplate/issues",
-        "wiki": "https://gitlab.klink.dyndns.ws:3000/kadapters/adapterboilerplate/wikis/home",
-        "source": "https://gitlab.klink.dyndns.ws:3000/kadapters/adapterboilerplate"
+        "issues": "https://git.klink.asia/kadapters/adapterboilerplate/issues",
+        "wiki": "https://git.klink.asia/kadapters/adapterboilerplate/wikis/home",
+        "source": "https://git.klink.asia/kadapters/adapterboilerplate"
     },
 
     "autoload": {
@@ -38,20 +30,17 @@
             "test"
         ]
     },
-
-    "repositories": [
-        {
-            "type": "composer",
-            "url": "http://repo.klink.dyndns.ws/"
-        }
-    ],
     
     "require": {
-        "php":">5.3.3",
-        "avvertix/jsonmapper" : "0.4.x"
+        "php": ">=5.5.9",
+        "ext-curl": "*",
+        "netresearch/jsonmapper" : "~0.10.0",
+        "guzzlehttp/guzzle" : "~6.0.0",
+        "nesbot/carbon": "~1.19",
+        "psr/log": "~1.0"
     },
 
     "require-dev": {
-        "phpunit/phpunit": "4.5.*"
+        "phpunit/phpunit": "4.8.*"
     }
 }

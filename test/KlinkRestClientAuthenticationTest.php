@@ -19,6 +19,9 @@ class KlinkRestClientAuthenticationTest extends PHPUnit_Framework_TestCase
 
 	}
 	
+	/**
+     * @group integration
+     */
 	public function testGet()
 	{
 		$result = $this->rest->getCollection( 'institutions', null, new KlinkInstitutionDetails() );
@@ -29,6 +32,9 @@ class KlinkRestClientAuthenticationTest extends PHPUnit_Framework_TestCase
 
 	}
 
+	/**
+     * @group integration
+     */
 	public function testGetOnWrongAuth()
 	{
 		$result = $this->rest2->get( 'institutions/' . INSTITUION_ID, new KlinkInstitutionDetails() );

@@ -5,12 +5,6 @@
 */
 class KlinkCoreClientTest extends PHPUnit_Framework_TestCase
 {
-	/**
-	 * The institution identifier to be used in the test
-	 *
-	 * @var string
-	 */
-	// const INSTITUION_ID = 'KLINK';
 
 	public function setUp()
 	{
@@ -50,7 +44,9 @@ class KlinkCoreClientTest extends PHPUnit_Framework_TestCase
 
 
 
-
+	/**
+	 * @group integration
+	 */
 	public function testGetInstitutions()
 	{
 
@@ -61,7 +57,10 @@ class KlinkCoreClientTest extends PHPUnit_Framework_TestCase
 		$this->assertContainsOnlyInstancesOf('KlinkInstitutionDetails', $result);
 
 	}
-
+	
+	/**
+	 * @group integration
+	 */
 	public function testSearch(){
 		
 		$term_to_search = '*';
@@ -99,6 +98,9 @@ class KlinkCoreClientTest extends PHPUnit_Framework_TestCase
 
 	}
 
+	/**
+	 * @group integration
+	 */
 	public function testPrivateSearch(){
 
 		$term_to_search = '*';
@@ -136,6 +138,7 @@ class KlinkCoreClientTest extends PHPUnit_Framework_TestCase
 	/**
 	 * @expectedException InvalidArgumentException
 	 * @dataProvider invalid_facet_param
+	 * @group integration
 	 */
 	public function testSearchFacetParameterValidation($facets){
 
@@ -143,7 +146,9 @@ class KlinkCoreClientTest extends PHPUnit_Framework_TestCase
 
 	}
 
-
+	/**
+	 * @group integration
+	 */
 	public function testSearchWithFacets(){
 		
 		$term_to_search = '*';
@@ -184,6 +189,9 @@ class KlinkCoreClientTest extends PHPUnit_Framework_TestCase
 		$this->assertContainsOnlyInstancesOf('KlinkFacet', $facets);		
 	}
 
+	/**
+	 * @group integration
+	 */
 	public function testSearchWithFilters(){
 		
 		$term_to_search = '*';
@@ -206,7 +214,9 @@ class KlinkCoreClientTest extends PHPUnit_Framework_TestCase
 
 	}
 
-
+	/**
+	 * @group integration
+	 */
 	public function testIndexAndRemoveDocument()
 	{
 
@@ -252,6 +262,9 @@ class KlinkCoreClientTest extends PHPUnit_Framework_TestCase
 		
 	}
 
+	/**
+	 * @group integration
+	 */
 	public function testCreateAndRemoveInstitution()
 	{
 		$inst = KlinkInstitutionDetails::create('testInst', 'testInst');
@@ -274,12 +287,16 @@ class KlinkCoreClientTest extends PHPUnit_Framework_TestCase
 	/**
 	 * @expectedException InvalidArgumentException
 	 * @dataProvider invalid_facet_param
+	 * @group integration
 	 */
 	public function testFacetsWithWrongParameter($param)
 	{
 		$answer = $this->core->facets($param);
 	}
 
+	/**
+	 * @group integration
+	 */
 	public function testFacets()
 	{
 
@@ -309,7 +326,6 @@ class KlinkCoreClientTest extends PHPUnit_Framework_TestCase
 	}
 
 
-
 	public function testFacetArrayCollapse()
 	{
 		$f = KlinkFacetsBuilder::all();
@@ -331,7 +347,9 @@ class KlinkCoreClientTest extends PHPUnit_Framework_TestCase
 	}
 
 
-
+	/**
+	 * @group integration
+	 */
 	public function testPublicDocumentsCount()
 	{
 		
@@ -358,7 +376,9 @@ class KlinkCoreClientTest extends PHPUnit_Framework_TestCase
 	}
 
 
-
+	/**
+	 * @group integration
+	 */
 	public function testPrivateDocumentsCount($value='')
 	{
 
@@ -399,7 +419,9 @@ class KlinkCoreClientTest extends PHPUnit_Framework_TestCase
 	    return $method->invokeArgs($object, $parameters);
 	}
 
-
+	/**
+	 * @group integration
+	 */
 	public function testTestMethod(){
 
 		// Correct configuration

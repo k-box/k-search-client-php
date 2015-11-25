@@ -9,17 +9,25 @@
          syntaxCheck="false"
 >
     <testsuites>
-        <testsuite name="App Tests">
+        <testsuite name="All Tests">
             <directory>test</directory>
         </testsuite>
     </testsuites>
+    <groups>
+        <include>
+            <group>default</group>
+            <group>deserialization</group>
+            <group>http</group>
+        </include>
+        <exclude>
+            <group>integration</group>
+        </exclude>
+    </groups>
     <php>
         <const name="INSTITUION_ID" value="KLINK"/>
         <const name="CORE_URL_DOCKER" value="https://192.168.59.103/kcore/"/>
         <const name="CORE_URL" value="https://192.168.0.29/kcore/"/>
         <const name="CORE_USER" value="admin@klink.org"/>
         <const name="CORE_PASS" value="f50345078ddaa64"/>
- 
-
     </php>
 </phpunit>

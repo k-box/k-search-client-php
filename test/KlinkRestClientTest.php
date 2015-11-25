@@ -62,27 +62,13 @@ class KlinkRestClientTest extends PHPUnit_Framework_TestCase
 	    return $method->invokeArgs($object, $parameters);
 	}
 
- //  /**
- //   * @dataProvider inputNumbers
- //   */
- //  public function testCanAddNumbers($x, $y, $sum)
- //  {
- //    $this->assertEquals($sum, $this->calculator->add($x, $y));
- //  }
-
- //  /**
- //    * @expectedException InvalidArgumentException
- //    */
- //  public function testThrowsExceptionIfNonNumberIsPassed()
- //  {
- //    $calc = new Calculator;
- //    $calc->add('a', 'b');
- //  }
+	/**
+	 * @group deserialization
+	 * @group http
+     */
 	public function testGet()
 	{
 		$result = $this->rest->get( 'ip', new TestResponse() );
-
-		// print_r($result);
 
 		$this->assertFalse(KlinkHelpers::is_error($result), 'What the hell');
 
@@ -92,6 +78,8 @@ class KlinkRestClientTest extends PHPUnit_Framework_TestCase
 
 	/**
 	 * @dataProvider statusResponseCheckErrors
+	 * @group http
+	 * @group deserialization
 	 */
 	public function testGetErrorStatusCodes($url, $expectedCode)
 	{
@@ -103,6 +91,10 @@ class KlinkRestClientTest extends PHPUnit_Framework_TestCase
 
 	}
 
+	/**
+     * @group http
+	 * @group deserialization
+     */
 	public function testGetDeserializationError()
 	{
 		$result = $this->rest->get( 'get', new TestResponse() );
@@ -113,19 +105,10 @@ class KlinkRestClientTest extends PHPUnit_Framework_TestCase
 
 	}
 
-	// public function testGetCollection()
-	// {
-	// 	// $result = $this->rest->getCollection( 'ip', 'TestResponse' );
-
-
-	// 	// // print_r($result);
-
-	// 	// $this->assertEquals(200, $result['response']['code'], 'Something wront happened');
-	// 	// $this->assertTrue(!empty($result['body']), 'The response body is empty');
-
-	// 	$this->assertTrue(true, 'GetCollection need a test');
-	// }
-
+	/**
+     * @group http
+	 * @group deserialization
+     */
 	public function testPost()
 	{
 
@@ -145,6 +128,8 @@ class KlinkRestClientTest extends PHPUnit_Framework_TestCase
 
 	/**
 	 * @dataProvider inputNoCorrectClass
+	 * @group http
+	 * @group deserialization
 	 */
 	public function testClassExpectedError($testValue)
 	{

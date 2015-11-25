@@ -1,106 +1,56 @@
-# AdapterBoilerplate
+# Adapter Boilerplate
 
-> This version will work only on K-Link Cores that supports the API version 2.1
+Is the starting point for creating a K-Link Adapter and/or using the K-Link Core services, in general. 
+It offers some basic functionality for interacting with the K-Link Core and exposes the main interfaces that represents the data needed for every operation. The use of interfaces has been preferred over classes given the fact that the implementation can be different if an ORM is used or the CMS has some particular requirements.
 
-Is the starting point for creating a **K**-Link Adapter. Offers some basic functionality for interacting with the KLink Core API and exposes the main interfaces that represents the data needed for every operation. The use of interfaces has been preferred over classes given the fact that the implementation can be different if an ORM is used or the CMS has some particular requirements.
+**requires the latest K-Link Core version**
+
+**This readme refers to the version 1.0 of the Adapter Boilerplate, the old version (0.3.x) is in the `legacy` branch only for bugfixes and compatibility reasons.**
 
 ## Feature offered
 
-the Adapter boilerplate offers a common way to interact with the Klink Core API. The more advanced features will be offered by platform dependant Adapters. You can see the boilerplate as the common part of all adapters.
+The Adapter Boilerplate is a library that enable developers to interact with the K-Link Core.
 
 - Adding and removing documents from the Core
-- Updating institutions data
+- Adding/Updatting/Removing institutions data
+- Search with facets and filters
 - Full HTTP/Rest stack OOP oriented
 - K-Link Core Authentication
 - Connectivity test
 - Document thumbnail creator service
 
-## Changes
-
-Consult the section [KlinkDocumentUtils](#KlinkDocumentUtils) for important changes in the mime type handling functions
-
 
 ## Requirements
 
-- PHP 5.2.6 or above
-- PHP GD library for image support on PHP >= 5.3
+- PHP 5.5.9 or above
+- PHP GD library for image support (some PHP installation might not have the library bundled)
 - Network connectivity
 
-Tested on PHP 5.2.17, 5.3.14, 5.4.4, 5.5, 5.6.5 on Windows, Mac OS (Yosemite) and Ubuntu 14.04.
-
-Composer dependency management and unit tests are available only on PHP 5.3 or above.
+Tested on PHP 5.5, 5.6.5 on Windows, Mac OS (Yosemite) and Ubuntu 14.04.
 
 
 ## Usage
 
-**Composer is used for autoload and bootstrap, so only one file in your project must be included** (please take note that the composer magic works only on php 5.3 or above).
+The K-Link Adapter Boilerplate utilizes [Composer](http://getcomposer.org/) to manage its dependencies. So, before using the Boilerplate, make sure you have Composer installed on your machine.
 
+The K-Link Adapter Boilerplate is available in the K-Link composer private repository. In order to require it in your project add the following repository configuration to your `composer.json` file.
 
-before doing anything please launch
-
-	composer install --prefer-dist
-
-to resolve all the dependencies. The `--prefer-dist` is used to force to resolve the dependencies on the private composer repository and not to donwload from git.
-
-if you don't need to run php unit test with phpunit please use the composer `--no-dev` flag.
-
-Than in your project insert the line
-
-```php
-	require_once dirname(__DIR__).'/vendor/autoload.php';
+```json
+"repositories": [
+    {
+        "type": "composer",
+        "url": "http://repo.klink.dyndns.ws/"
+    }
+]
 ```
 
-### PHP 5.2
+Now you could require the Adapter Boilerplate 
 
-If you need to use the Boilerplate on PHP version below the 5.3 you can follow two paths:
-
-1. Building the Boilerplate as a standalone library.
-2. Create a composer project, on a machine that have PHP >= 5.3, that requires the Boilerplate and then distribute the build.
-
-**Please note that both strategies requires a system with PHP >=5.3 and composer to be used for building the Boilerplate dependencies.**
+    composer require --prefer-dist klink/adapterboilerplate
 
 
-#### Solution 1
 
-For the **solution 1** you can download the Boilerplate (v0.3.11 or above) from http://repo.klink.dyndns.ws/#!/boilerplate
-
-Next you have to uncompress the file, for example in a folder named `adapter`. You can now launch a Terminal/Shell in that directory and launch the composer install
-
-	composer install --prefer-dist --no-dev
-
-Now you can use the fallback autoloader that replaces the autoload steps not supported by PHP 5.2 using a class Map approach.
-
-In your project please include the `bootstrap.php` file that you will find in the Adapter Boilerplate directory
-
-```php
-	require_once KLINK_BOILERPLATE_FOLDER.'/bootstrap.php';
-```
-
-where `KLINK_BOILERPLATE_FOLDER` is the folder that contains the Adapter Boilerplate build.
-
-
-A loading and connection test for PHP 5.2 is available in the `php52-test.php` file situated in the `test` directory of the Adapter Boilerplate itself. To run the test simply use the command line as follows (considering your working directory is the root of the Adapter Boilerplate and thet in the same folder you have the `bootsrap.php` file):
-
-	php test/php52-test.php
-
-Make sure to invoke the test using a PHP version lower than the 5.3 otherwise the composer based autoloading will be executed.
-
-If everything is ok you will see an output like this:
-
-```
--------------------
-Testing K-Link Core connection to test1
-   SUCCESS
--------------------
-```
-
-Otherwise the detailed error log will be printed.
-
-#### Solution 2
-
-To Be Documented.
-
-## Examples
+## Usage Examples of the Boilerplate features
 
 To use the K-Link Core services all you need is to interact with the `KlinkCoreClient` class.
 
@@ -634,33 +584,54 @@ To solve this problem you can do
 
 ## Constants and values
 
+### Public and Private visibility types
+
+The Boilerplate makes available the following constants for specifying the visibility of the search and the document.
+
+- `KlinkVisibilityType::KLINK_PRIVATE`: represents the document (and search) private visibility
+- `KlinkVisibilityType::KLINK_PUBLIC`: represents the document (and search) public visibility, which means that the requests will be made to the K-Link Public service
+
+
 ### Document Type values
 
 Here is the list of possible document types:
 
 - `web-page` : A website page or an html document,
 - `document` : A generic document (PDF, Word),
+- `text-document` : A generic textual document (TXT files, RTF files, Markdown files),
 - `spreadsheet` : A spreadshett (Excel),
 - `presentation` : A presentation (PowerPoint),
 - `image` : An image (jpg, gif or png).
+- `geodata` : Google Earth Files (KMZ, KML).
+
+### Deprecated
+
+- The class `KlinkSearchType` and its constants are deprecated. Use the `KlinkVisibilityType` class instead. 
 
 
 ---------------------------
 
 ## Unit Test
 
-**Unit tests can only be executed on PHP 5.3 or above**
+The Adapter Boilerplate has unit test that covers the main
 
-to run Unit Tests you must have phpunit version 4.3 or above and the php configuration must have the following extension enabled:
+to run Unit Tests you must have phpunit version 4.8 or above and the php configuration must have the following extension enabled:
 
+- `php_curl`
 - `php_gd2` for imaging functions with full png support (if you are on Mac OS Yosemite you might have GD bundled, but with no png support)
 
 Some tests maybe skipped depending on your environment configuration (for example specific tests for linux environment will be skipped when executed on Windows).
 
+The unit test collection is categorized in the following groups:
+
+- default: normal unit tests that can be executed without network or backend availability
+- deserialization: unit tests that performs JSON deserialization check
+- http: unit tests that performs HTTP calls to http://httpbin.org/ (and therefore requires network connectivity)
+- integration: test that requires an active K-Link Core instance (this tests are not executed by the default configuration)
+
+
 All tests have been executed on the following versions of PHP
 
-- 5.3.14
-- 5.4.4
 - 5.5
 - 5.6.5 with curl enabled
 
@@ -678,4 +649,4 @@ and let composer download also the required-dev dependencies. After that you can
 
 	php vendor/bin/phpunit
 
-to execute the tests with your version of php (of any version of PHP).
+to execute the tests with your version of PHP.

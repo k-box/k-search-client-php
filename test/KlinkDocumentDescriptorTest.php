@@ -77,6 +77,9 @@ class KlinkDocumentDescriptorTest extends PHPUnit_Framework_TestCase
 
 	}
 
+	/**
+	 * @group deserialization
+	 */
 	public function testDeserialization()
 	{
 
@@ -92,6 +95,9 @@ class KlinkDocumentDescriptorTest extends PHPUnit_Framework_TestCase
 		$this->assertInstanceOf('KlinkDocumentDescriptor', $deserialized);
 	}
 
+	/**
+	 * @group deserialization
+	 */
 	public function testGeoJsonDeserialization()
 	{
 
