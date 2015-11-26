@@ -66,7 +66,7 @@ class KlinkRestClientTest extends PHPUnit_Framework_TestCase
 	 * @group deserialization
 	 * @group http
      */
-	public function testGet()
+	public function testGetOnRestClient()
 	{
 		$result = $this->rest->get( 'ip', new TestResponse() );
 

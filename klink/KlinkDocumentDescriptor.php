@@ -8,24 +8,6 @@
 */
 final class KlinkDocumentDescriptor
 {
-
-	/**
-	 * id
-	 * @var string
-	 * @internal this property might be forever null
-	 */
-
-	// public $id;
-
-	/**
-	 * getId
-	 * @return string
-	 * @internal this parameter might be forever null
-	 */
-	// public function getId() {
-	// 	return $this->id;
-	// }
-	
 	
 	/**
 	 *
@@ -103,7 +85,7 @@ final class KlinkDocumentDescriptor
 
 	/**
 	 * setTitle
-	 * @param $value
+	 * @param string $value
 	 * @return void
 	 */
 	public function setTitle($value) {
@@ -141,7 +123,7 @@ final class KlinkDocumentDescriptor
 
 	/**
 	 * setAbstract
-	 * @param $value
+	 * @param string $value
 	 * @return void
 	 */
 	public function setAbstract($value) {
@@ -171,7 +153,7 @@ final class KlinkDocumentDescriptor
 	 * @param string[] $value
 	 * @return void
 	 */
-	public function setAuthors(array $value) {
+	public function setAuthors($value) {
 		$this->authors = $value;
 
 		return $this;
@@ -226,7 +208,7 @@ final class KlinkDocumentDescriptor
 
 	/**
 	 * setLanguage
-	 * @param $value
+	 * @param string $value
 	 * @return void
 	 */
 	public function setLanguage($value) {
@@ -251,7 +233,7 @@ final class KlinkDocumentDescriptor
 
 	/**
 	 * setThumbnailURI
-	 * @param $value
+	 * @param string $value
 	 * @return void
 	 * @throws InvalidArgumentException If the given url is not syntactically valid
 	 */
@@ -523,7 +505,7 @@ final class KlinkDocumentDescriptor
 
 	/**
 	 * [getLocationsString description]
-	 * @return [type] [description]
+	 * @return string[] [description]
 	 */
 	public function getLocationsString(){
 		return $this->locationsString;
@@ -531,7 +513,7 @@ final class KlinkDocumentDescriptor
 
 	/**
 	 * [setLocationsString description]
-	 * @param [type] $locationStrings [description]
+	 * @param string[] $locationStrings [description]
 	 */
 	public function setLocationsString($locationStrings){
 		$this->locationsString = $locationStrings;

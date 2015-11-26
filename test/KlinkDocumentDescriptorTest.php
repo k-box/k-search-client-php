@@ -88,11 +88,19 @@ class KlinkDocumentDescriptorTest extends PHPUnit_Framework_TestCase
 		$this->jm = new JsonMapper();
 		$this->jm->bExceptionOnUndefinedProperty = true;
 
-		$decoded = json_decode($json, true);
-
+		$decoded = json_decode($json, false);
+		
 		$deserialized = $this->jm->map($decoded, new KlinkDocumentDescriptor());
 
 		$this->assertInstanceOf('KlinkDocumentDescriptor', $deserialized);
+		
+		$this->assertEquals('48f6f2', $deserialized->getLocalDocumentID());
+		$this->assertEquals('public', $deserialized->getVisibility());
+		$this->assertEquals('48f6f26b4aa5b2c6c0ce54082ab4366dd6e6eb6af4d2a6ff85659e2afb96120aa9b9ba28ed32b5103f62136474a4d6a5c4546bad4560294aa924dedb754bc7b1', $deserialized->getHash());
+		$this->assertEquals('SeedInfo_48.pdf', $deserialized->getTitle());
+		$this->assertEquals('http://somesite.com/document/SeedInfo_48.pdf', $deserialized->getDocumentURI());
+		$this->assertEquals(array("Dushanbe","Kyrgyzstan","Europe","Yuzhniy Ferganskiy Kanal Imeni Andreyeva"), $deserialized->getLocationsString());
+		
 	}
 
 	/**
@@ -106,7 +114,7 @@ class KlinkDocumentDescriptorTest extends PHPUnit_Framework_TestCase
 		$this->jm = new JsonMapper();
 		$this->jm->bExceptionOnUndefinedProperty = true;
 
-		$decoded = json_decode($json, true);
+		$decoded = json_decode($json, false);
 
 		$deserialized = $this->jm->map($decoded, new KlinkDocumentDescriptor());
 

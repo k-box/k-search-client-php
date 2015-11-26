@@ -56,7 +56,8 @@ final class KlinkGeoJsonFeature
 	 */
 	public function getProperties()
 	{
-		return $this->properties;
+		
+		return is_array($this->properties) ? $this->properties : (array) $this->properties;
 	}
 
 

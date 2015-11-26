@@ -511,7 +511,7 @@ final class KlinkRestClient implements INetworkTransport
 
 		try{
 
-			$decoded = json_decode($json, true);
+			$decoded = json_decode($json, false);
 
 			if(is_null($decoded)){
 
@@ -537,7 +537,7 @@ final class KlinkRestClient implements INetworkTransport
 
 		try{
 
-			$decoded = json_decode($json, true);
+			$decoded = json_decode($json, false);
 
 			if(is_null($decoded)){
 
