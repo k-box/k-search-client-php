@@ -127,7 +127,7 @@ class KlinkDocumentDescriptorTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals(4, count($location_strings), 'Unexpected number of location strings');
 
 		$this->assertEquals(array(
-			"Zimov’ye Dushanbe",
+			"Dushanbe",
 		    "Kyrgyzstan",
 		    "Europe",
       		"Yuzhniy Ferganskiy Kanal Imeni Andreyeva"), $location_strings);
@@ -151,7 +151,7 @@ class KlinkDocumentDescriptorTest extends PHPUnit_Framework_TestCase
 		}		
 
 		$this->assertEquals(array(
-		    'name' => 'Zimov’ye Dushanbe',
+		    'name' => 'Dushanbe',
 		    'geonameID' => '8406256',
 		    'countryCode' => 'KG'), $first->getProperties());
 
