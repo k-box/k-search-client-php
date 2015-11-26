@@ -27,7 +27,5 @@
         <const name="INSTITUION_ID" value="KLINK"/>
         <const name="CORE_URL_DOCKER" value="https://192.168.59.103/kcore/"/>
         <const name="CORE_URL" value="https://192.168.0.29/kcore/"/>
-        <const name="CORE_USER" value="admin@klink.org"/>
-        <const name="CORE_PASS" value="f50345078ddaa64"/>
     </php>
 </phpunit>
