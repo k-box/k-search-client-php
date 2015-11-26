@@ -11,18 +11,18 @@ class KlinkCoreClientTest extends PHPUnit_Framework_TestCase
 	  	date_default_timezone_set('Europe/Rome');
 
 	  	error_reporting(E_ALL & E_STRICT);
+		  
+		$config = new KlinkConfiguration( INSTITUION_ID, 'KA', array(
+				new KlinkAuthentication( CORE_URL, CORE_USER, CORE_PASS )
+			) );
 
-	  	$config = new KlinkConfiguration( INSTITUION_ID, 'KA', array(
-	  			new KlinkAuthentication( CORE_URL, CORE_USER, CORE_PASS )
-	  		) );
+		if(in_array('--debug', $_SERVER['argv'])){
+			$config->enableDebug();	
+		}
 
-	  	if(in_array('--debug', $_SERVER['argv'])){
-	  		$config->enableDebug();	
-	  	}
+		
 
-	  	
-
-	    $this->core = new KlinkCoreClient($config);
+		$this->core = new KlinkCoreClient($config);
 
 	}
 
@@ -325,7 +325,9 @@ class KlinkCoreClientTest extends PHPUnit_Framework_TestCase
 		
 	}
 
-
+	/**
+	 * @group integration
+	 */
 	public function testFacetArrayCollapse()
 	{
 		$f = KlinkFacetsBuilder::all();

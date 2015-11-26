@@ -650,3 +650,15 @@ and let composer download also the required-dev dependencies. After that you can
 	php vendor/bin/phpunit
 
 to execute the tests with your version of PHP.
+
+#### Integration tests
+
+**Integration tests with a real K-Link Core instance are not automatically executed**. In order to be able to execute the integration tests the following environment variables must be setup:
+
+- `CORE_URL`: the address of the K-Link Core 
+- `CORE_USER`: the username to be used for authentication 
+- `CORE_PASS`: the password used for authentication
+
+to execute the integration tests
+
+	php vendor/bin/phpunit --group integration
