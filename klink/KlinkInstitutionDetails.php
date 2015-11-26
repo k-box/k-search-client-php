@@ -123,6 +123,9 @@ final class KlinkInstitutionDetails
         return $this->type;
     }
 
+    /**
+     * @param string $type
+     */
     public function setType( $type )
     {
         $this->type = $type;
@@ -138,6 +141,9 @@ final class KlinkInstitutionDetails
         return $this->name;
     }
 
+    /**
+     * @param string $name
+     */
     public function setName($name)
     {
         $this->name = $name;
@@ -153,6 +159,9 @@ final class KlinkInstitutionDetails
         return $this->phone;
     }
 
+    /**
+     * @param string $number
+     */
     public function setPhoneNumber($number)
     {
         KlinkHelpers::is_valid_phonenumber( $number, 'phone number' );
@@ -169,6 +178,9 @@ final class KlinkInstitutionDetails
         return $this->email;
     }
 
+    /**
+     * @param string $mail
+     */
     public function setMail( $mail )
     {
         KlinkHelpers::is_valid_mail( $mail, 'mail' );
@@ -196,6 +208,9 @@ final class KlinkInstitutionDetails
         return $this->thumbnailURI;
     }
 
+    /**
+     * @param string $thumbnailURI
+     */
     public function setThumbnail($thumbnailURI)
     {
         $this->thumbnailURI = $thumbnailURI;
@@ -217,6 +232,9 @@ final class KlinkInstitutionDetails
         return $this->url;
     }
 
+    /**
+     * @param string $url
+     */
     public function setUrl($url)
     {
         KlinkHelpers::is_valid_url( $url, 'url' );

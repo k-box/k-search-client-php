@@ -1,13 +1,14 @@
 {
-"id": "K",
-"name": "Test institution",
-"mail": "info@tk.com",
-"telephone": "+9987634878237",
-"type": "NGO",
-"addressStreet": "Avenue Tchuy, 193",
-"addressCountry": "Kyrgyzstan",
-"addressLocality": "Bishkek",
-"addressPostalCode": "720001",
-"creationDate": "1975-12-25T14:15:16+05:00",
-"thumbnail": "http://api.randomuser.me/portraits/med/women/48.jpg"
+	"id": "CA",
+	"name": "Camp Alatoo",
+	"type": "Organization",
+	"email": "secretary@camp.elcat.kg",
+	"url": "http:\/\/camp.kg",
+	"phone": "+996 312 909 703",
+	"addressCountry": "Kyrgyzstan",
+	"addressZip": "",
+	"addressStreet": "3, Ufimskiy pereulok,",
+	"addressLocality": "Bishkek",
+	"creationDate": "2015-08-09T19:35:47+00:00",
+	"thumbnailURI": "http:\/\/camp.kg\/wp-content\/uploads\/2014\/02\/logo_2.png"
 }
