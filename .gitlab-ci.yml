@@ -7,7 +7,7 @@ unit_test:
   stage: test
   script:
     - composer install --prefer-dist
-    - phpunit
+    - ./vendor/bin/phpunit
   tags: 
   only:
     - master
