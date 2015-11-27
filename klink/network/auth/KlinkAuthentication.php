@@ -26,22 +26,25 @@ final class KlinkAuthentication
 	 * core url
 	 * @var string
 	 */
-
 	private $core;
 
 	/**
 	 * username
 	 * @var string
 	 */
-
 	private $username;
 
 	/**
 	 * password
 	 * @var string
 	 */
-
 	private $password;
+	
+	/**
+	 * Tag info to be used when selecting the core for the communication
+	 * @var string
+	 */
+	private $tag;
 
 
 	/**
@@ -49,10 +52,12 @@ final class KlinkAuthentication
 	 * @param string $core_url the URL of the Core instance
 	 * @param string $username the username that must be used for authentication
 	 * @param string $password the password
+	 * @param string $tag the visibility tag to attach to this core instance. Default \KlinkVisibilityType::KLINK_PRIVATE. Will be used in core selection based on the request to be executed. 
+	 *
 	 * @return KlinkAuthentication
 	 * @throws IllegalArgumentException if any of the parameters is wrong
 	 */
-	function __construct($core_url, $username, $password)
+	function __construct($core_url, $username, $password, $tag = \KlinkVisibilityType::KLINK_PRIVATE)
 	{
 
 		KlinkHelpers::is_valid_url( $core_url, 'core url');
@@ -60,11 +65,14 @@ final class KlinkAuthentication
 		KlinkHelpers::is_string_and_not_empty( $username, 'username');
 
 		KlinkHelpers::is_string_and_not_empty( $password, 'password');
+		
+		KlinkHelpers::is_string_and_not_empty( $tag, 'tag');
 
 
 		$this->core = $core_url;
 		$this->username = $username;
 		$this->password = $password;
+		$this->tag = $tag;
 	}
 
 
@@ -92,6 +100,14 @@ final class KlinkAuthentication
 	 */
 	public function getPassword() {
 		return $this->password;
+	}
+	
+	/**
+	 * Return the tag assigned to this Core authentication.
+	 * @return string the tag, if no tag was specified the default value is \KlinkVisibilityType::KLINK_PUBLIC
+	 */
+	public function getTag(){
+		return $this->tag;
 	}
 
 }

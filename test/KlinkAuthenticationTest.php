@@ -58,6 +58,7 @@ class KlinkAuthenticationTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals($url, $result->getCore());
 		$this->assertEquals($user, $result->getUsername());
 		$this->assertEquals($pass, $result->getPassword());
+		$this->assertEquals(\KlinkVisibilityType::KLINK_PRIVATE, $result->getTag());
 
 	}
 }

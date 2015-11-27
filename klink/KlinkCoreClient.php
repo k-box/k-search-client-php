@@ -56,7 +56,7 @@ final class KlinkCoreClient
 	/**
 	 * The URL of the standalone Thumbnail generator API.
 	 */
-	const THUMBNAIL_GENERATOR_URL = 'thumbnails/'; //https://klink-test1.cloudapp.net/kcore/
+	const THUMBNAIL_GENERATOR_URL = 'thumbnails/';
 
 
 	const HEALTH_FAST_CHECK_ENDPOINT = 'monitor/health/http_status_checks';
@@ -86,15 +86,13 @@ final class KlinkCoreClient
 	function __construct( KlinkConfiguration $config, IKlinkCoreTelemeter $telemeter=null )
 	{
 
-		//KlinkCoreClient::test($config); //test the configuration for errors
-
 		$this->telemeter= $telemeter;
 
         $this->configuration = $config;
 
 		foreach ($this->configuration->getCores() as $core) {
 
-			$this->rest[] = new KlinkRestClient($core->getCore(), $core, array('debug' => $this->configuration->isDebugEnabled()));
+			$this->rest[$core->getTag()] = new KlinkRestClient($core->getCore(), $core, array('debug' => $this->configuration->isDebugEnabled()));
 
 		}
 
@@ -143,11 +141,6 @@ final class KlinkCoreClient
 	 */
 	function removeDocument( KlinkDocumentDescriptor $document ){
 
-		// if( !KlinkDocumentUtils::isLocalDocument( $document, $this->configuration->getInstitutionId(), $this->configuration->getAdapterId() ) ){
-		// 	throw new KlinkException("You cannot remove document you don't own");
-		// }
-
-
 		$conn = self::_get_connection();
 
         if($this->telemeter!=null) $this->telemeter->beforeOperation($conn->getUrl(),__FUNCTION__);
@@ -186,10 +179,6 @@ final class KlinkCoreClient
 	 */
 	function removeDocumentById( $institution, $document, $visibility = null ){
 
-		// if( $institution !== $this->configuration->getInstitutionId() ){
-		// 	throw new KlinkException("You cannot remove document you don't own");
-		// }
-
 		if(is_null($visibility)){
 			$visibility = KlinkVisibilityType::KLINK_PUBLIC;
 		}
@@ -197,7 +186,7 @@ final class KlinkCoreClient
 			$visibility = KlinkVisibilityType::fromString($visibility);
 		}
 
-		$conn = self::_get_connection();
+		$conn = self::_get_connection($visibility);
 
         if($this->telemeter!=null) $this->telemeter->beforeOperation($conn->getUrl(),__FUNCTION__);
 
@@ -252,14 +241,14 @@ final class KlinkCoreClient
 	 */
 	function getDocument( $institutionId, $documentId, $visibility = null ){
 
-		$conn = self::_get_connection();
-
 		if(is_null($visibility)){
 			$visibility = KlinkVisibilityType::KLINK_PUBLIC;
 		}
 		else {
 			$visibility = KlinkVisibilityType::fromString($visibility);
 		}
+		
+		$conn = self::_get_connection($visibility);
 
         if($this->telemeter!=null) $this->telemeter->beforeOperation($conn->getUrl(),__FUNCTION__);
 
@@ -303,17 +292,15 @@ final class KlinkCoreClient
 	function search( $terms, $type = null, $resultsPerPage = 10, $offset = 0, $facets = null ){
 
 		if(is_null($type)){
-			$type = KlinkSearchType::KLINK_PUBLIC;
+			$type = \KlinkVisibilityType::KLINK_PUBLIC;
 		}
-
-
 
 		if(!empty($facets)){
 			KlinkHelpers::is_array_of_type($facets, 'KlinkFacet', 'facets');
 		}
 
 
-		$conn = self::_get_connection();
+		$conn = self::_get_connection($type);
 
         if($this->telemeter!=null) $this->telemeter->beforeOperation($conn->getUrl(),__FUNCTION__);
 
@@ -358,7 +345,7 @@ final class KlinkCoreClient
 			throw new IllegalArgumentException("You have to specify at least one facet", 2);
 		}
 
-		$conn = self::_get_connection();
+		$conn = self::_get_connection($visibility);
 
 		$params = array_merge(array(
 				'VISIBILITY' => $visibility,
@@ -377,15 +364,6 @@ final class KlinkCoreClient
 		return $rem->getFacets();
 	}
 
-	/**
-	 * Tutte le facets possibili per public o private
-	 * @return [type] [description]
-	 */
-	public function getInstitutionSummary( $id, $visibility = 'public')
-	{
-		# code...
-		# visibility could be array with both public and private
-	}
 
 	// ----- Suggestions
 
@@ -414,7 +392,7 @@ final class KlinkCoreClient
 	public function deleteInstitution( $id )
 	{
 
-		$conn = self::_get_connection();
+		$conn = self::_get_connection(\KlinkVisibilityType::KLINK_PUBLIC);
 
 		$rem = $conn->delete( self::SINGLE_INSTITUTION_ENDPOINT, 
 			array(
@@ -461,7 +439,7 @@ final class KlinkCoreClient
 	 */
 	function saveInstitution( KlinkInstitutionDetails $info ){
 		
-		$conn = self::_get_connection();
+		$conn = self::_get_connection(\KlinkVisibilityType::KLINK_PUBLIC);
 
 		$rem = $conn->post( self::ALL_INSTITUTIONS_ENDPOINT, $info, 'KlinkInstitutionDetails' );
 
@@ -482,7 +460,7 @@ final class KlinkCoreClient
 	 */
 	function getInstitutions( $nameOrId = null ){
 
-		$conn = self::_get_connection();
+		$conn = self::_get_connection(\KlinkVisibilityType::KLINK_PUBLIC);
 
 		$insts = $conn->getCollection( self::ALL_INSTITUTIONS_ENDPOINT, array(), 'KlinkInstitutionDetails' );
 
@@ -519,7 +497,7 @@ final class KlinkCoreClient
 	 */
 	function getInstitution( $id ){
 
-		$conn = self::_get_connection();
+		$conn = self::_get_connection(\KlinkVisibilityType::KLINK_PUBLIC);
 
         if($this->telemeter!=null) $this->telemeter->beforeOperation($conn->getUrl(),__FUNCTION__);
 
@@ -1131,28 +1109,26 @@ final class KlinkCoreClient
 
 
 	/**
-	 * Selects the Klink Core for the communication
-	 * @return type
-	 */
-	private function _select_klink_core(){
-		return 'id|url|something';
-	}
-
-	/**
 	 * Get the connection to the Klink Core for performing the request.
-	 * The connection is selected considering last execution time if more than one Cores are configured.
+	 * The connection is selected considering the tag name. Current tag names are based on the public/private visibility.
+	 * For compatibility reason if only one Core connection is configured and the required tag cannot be found, the only configured connection will be returned
 	 * 
 	 * @return KlinkRestClient the KlinkRestClient to use
+	 * @throws KlinkCoreSelectionException if a core with the specified tag is not found 
 	 */
-	private function _get_connection(){
+	private function _get_connection($tag = \KlinkVisibilityType::KLINK_PRIVATE){
 
-		$core_id = self::_select_klink_core();
-
-		if(count($this->rest) == 1){
-			return $this->rest[0];
+		if(array_key_exists($tag, $this->rest)){
+			return $this->rest[$tag];
 		}
+		
+		if(count($this->rest) === 1){
+			$vals = array_values($this->rest);
+			return $vals[0];
+		}
+		
+		throw new \KlinkCoreSelectionException($tag, array_keys($this->rest));
 
-		return $this->rest[0];
 	}
 
 
