@@ -5,7 +5,7 @@ if( !defined( 'KLINKADAPTER_DEBUG' ) ){
 }
 
 if( !defined( 'KLINK_BOILERPLATE_VERSION' ) ){
-	define( 'KLINK_BOILERPLATE_VERSION', '0.3.33' );
+	define( 'KLINK_BOILERPLATE_VERSION', '1.0.0' );
 }
 
 /**
