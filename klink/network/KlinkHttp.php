@@ -28,7 +28,7 @@
  * @since 0.1.0
  * @internal
  */
-final class KlinkHttp implements INetworkTransport {
+final class KlinkHttp {
 
 	private $localhost_url = 'http://localhost/';
 

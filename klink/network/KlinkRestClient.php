@@ -33,7 +33,7 @@ use Psr\Log\LoggerAwareTrait;
  * @since 0.1.0
  * @internal
  */
-final class KlinkRestClient implements INetworkTransport
+final class KlinkRestClient implements IKlinkRestClient
 {
 	
 	use LoggerAwareTrait;

@@ -104,7 +104,7 @@ final class KlinkCoreClient
 			$this->rest[$core->getTag()] = new KlinkRestClient($core->getCore(), $core, array('debug' => $this->configuration->isDebugEnabled()), $logger);
 
 		}
-
+		
 	}
 
 
