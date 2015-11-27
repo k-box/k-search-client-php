@@ -1,5 +1,8 @@
 <?php
 
+use Psr\Log\LoggerInterface;
+use Psr\Log\LoggerAwareTrait;
+
 /**
  * RestClient adapter to mask the underlying library used. 
  *
@@ -32,6 +35,9 @@
  */
 final class KlinkRestClient implements INetworkTransport
 {
+	
+	use LoggerAwareTrait;
+	
 	/**
 	 * The constant defining the json mime-type
 	 */
@@ -66,10 +72,6 @@ final class KlinkRestClient implements INetworkTransport
 	private $all_request_options = array();
 
 	/**
-	 TODO: aggiungere informazioni sul tempo di trasferimento per capire se la connessione diventa lenta o l'host non è più raggiungibile
-	 * */
-
-	/**
 	 * Description
 	 * @param string $baseApiUrl (required) the starting part of the API url, must me not null or empty and a valid url
 	 * @param KlinkAuthentication (optional) $authentication the authentication information for this instance, use null if no authentication is required
@@ -77,7 +79,7 @@ final class KlinkRestClient implements INetworkTransport
 	 * @return KlinkRestClient
 	 * @throws IllegalArgumentException if the $baseApiUrl is given in the wrong format
 	 */
-	function __construct($baseApiUrl, KlinkAuthentication $authentication = null, array $options = array())
+	function __construct($baseApiUrl, KlinkAuthentication $authentication = null, array $options = array(), LoggerInterface $logger = null)
 	{
 		$defaults = array(
 			/**
@@ -144,6 +146,8 @@ final class KlinkRestClient implements INetworkTransport
  		$this->all_request_options['user-agent'] = $this->config['user-agent'];
  		$this->all_request_options['httpversion'] = $this->config['httpversion'];
  		$this->all_request_options['debug'] = $this->config['debug'];
+
+		$this->logger = $logger;
 
 		$this->rest = new KlinkHttp($this->baseApiUrl);
 	}
@@ -589,7 +593,3 @@ final class KlinkRestClient implements INetworkTransport
 		return $error_string;
 	}
 }
-
-
-
-?>

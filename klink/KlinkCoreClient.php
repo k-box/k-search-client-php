@@ -1,8 +1,7 @@
 <?php
 
-if( !defined( 'KLINKADAPTER_DEBUG' ) ){
-	define( 'KLINKADAPTER_DEBUG', false );
-}
+use Psr\Log\LoggerInterface;
+use Psr\Log\LoggerAwareTrait;
 
 if( !defined( 'KLINK_BOILERPLATE_VERSION' ) ){
 	define( 'KLINK_BOILERPLATE_VERSION', '1.0.0' );
@@ -14,6 +13,8 @@ if( !defined( 'KLINK_BOILERPLATE_VERSION' ) ){
 */
 final class KlinkCoreClient
 {
+	
+	use LoggerAwareTrait;
 
 	// ---- API endpoint constants
 
@@ -81,18 +82,26 @@ final class KlinkCoreClient
      * Stores the (optional) Telemetry object
      */
     private $telemeter=null;
+	
+	
 
-
-	function __construct( KlinkConfiguration $config, IKlinkCoreTelemeter $telemeter=null )
+	/**
+	 * Creates a KlinkCoreClient
+	 *
+	 * @return KlinkCoreClient
+	 */
+	function __construct( KlinkConfiguration $config, LoggerInterface $logger = null, IKlinkCoreTelemeter $telemeter=null )
 	{
 
 		$this->telemeter= $telemeter;
 
         $this->configuration = $config;
+		
+		$this->logger = $logger;
 
 		foreach ($this->configuration->getCores() as $core) {
 
-			$this->rest[$core->getTag()] = new KlinkRestClient($core->getCore(), $core, array('debug' => $this->configuration->isDebugEnabled()));
+			$this->rest[$core->getTag()] = new KlinkRestClient($core->getCore(), $core, array('debug' => $this->configuration->isDebugEnabled()), $logger);
 
 		}
 
