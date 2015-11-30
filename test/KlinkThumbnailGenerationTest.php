@@ -22,7 +22,7 @@ class KlinkThumbnailGenerationTest extends PHPUnit_Framework_TestCase
 		error_reporting(E_ALL);
 
 	  	$config = new KlinkConfiguration( INSTITUION_ID, 'KA', array(
-	  			new KlinkAuthentication( CORE_URL, CORE_USER, CORE_PASS )
+	  			new KlinkAuthentication($_SERVER['PUBLIC_CORE_URL'], $_SERVER['CORE_USER'], $_SERVER['CORE_PASS'])
 	  		) );
 
 	  	if(in_array('--debug', $_SERVER['argv'])){

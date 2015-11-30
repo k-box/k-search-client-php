@@ -657,7 +657,8 @@ to execute the tests with your version of PHP.
 
 **Integration tests with a real K-Link Core instance are not automatically executed**. In order to be able to execute the integration tests the following environment variables must be setup:
 
-- `CORE_URL`: the address of the K-Link Core 
+- `CORE_URL`: the address of the K-Link private Core
+- `PUBLIC_CORE_URL`: the address of the K-Link Public 
 - `CORE_USER`: the username to be used for authentication 
 - `CORE_PASS`: the password used for authentication
 

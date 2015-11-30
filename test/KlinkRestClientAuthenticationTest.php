@@ -10,12 +10,12 @@ class KlinkRestClientAuthenticationTest extends PHPUnit_Framework_TestCase
 	  	date_default_timezone_set('America/Los_Angeles');
 
 	    $this->rest = new KlinkRestClient(
-	    	CORE_URL,
-	    	new KlinkAuthentication(CORE_URL, CORE_USER, CORE_PASS));
+	    	$_SERVER['PUBLIC_CORE_URL'],
+	    	new KlinkAuthentication($_SERVER['PUBLIC_CORE_URL'], $_SERVER['CORE_USER'], $_SERVER['CORE_PASS']));
 
 	    $this->rest2 = new KlinkRestClient(
-	    	CORE_URL,
-	    	new KlinkAuthentication(CORE_URL, CORE_USER, '.klink'));
+	    	$_SERVER['PUBLIC_CORE_URL'],
+	    	new KlinkAuthentication($_SERVER['PUBLIC_CORE_URL'], $_SERVER['CORE_USER'], '.klink'));
 
 	}
 	

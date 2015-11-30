@@ -8,13 +8,14 @@ class KlinkCoreClientIntegrationTest extends PHPUnit_Framework_TestCase
 {
 
 	public function setUp()
-	{
-	  	date_default_timezone_set('Europe/Rome');
+	{	  
+		date_default_timezone_set('Europe/Rome');
 
 	  	error_reporting(E_ALL & E_STRICT);
 		  
 		$config = new KlinkConfiguration( INSTITUION_ID, 'KA', array(
-				new KlinkAuthentication( CORE_URL, CORE_USER, CORE_PASS )
+				new KlinkAuthentication( $_SERVER['PUBLIC_CORE_URL'], $_SERVER['CORE_USER'], $_SERVER['CORE_PASS'] ),
+				new KlinkAuthentication( $_SERVER['CORE_URL'], $_SERVER['CORE_USER'], $_SERVER['CORE_PASS'], \KlinkVisibilityType::KLINK_PRIVATE )
 			) );
 
 		if(in_array('--debug', $_SERVER['argv'])){
@@ -440,7 +441,7 @@ class KlinkCoreClientIntegrationTest extends PHPUnit_Framework_TestCase
 		
 
 		$config = new KlinkConfiguration( INSTITUION_ID, 'KA', array(
-	  			new KlinkAuthentication( CORE_URL, CORE_USER, CORE_PASS )
+				new KlinkAuthentication( $_SERVER['PUBLIC_CORE_URL'], $_SERVER['CORE_USER'], $_SERVER['CORE_PASS'] )
 	  		) );
 
 	  	if(in_array('--debug', $_SERVER['argv'])){
@@ -459,7 +460,7 @@ class KlinkCoreClientIntegrationTest extends PHPUnit_Framework_TestCase
 	    // Wrong username
 	     
 	    $config = new KlinkConfiguration( INSTITUION_ID, 'KA', array(
-	  			new KlinkAuthentication( CORE_URL, CORE_USER.'ciccio', CORE_PASS )
+				new KlinkAuthentication( $_SERVER['PUBLIC_CORE_URL'], $_SERVER['CORE_USER'].'ciccio', $_SERVER['CORE_PASS'] )
 	  		) );
 
 	  	if(in_array('--debug', $_SERVER['argv'])){
@@ -479,7 +480,7 @@ class KlinkCoreClientIntegrationTest extends PHPUnit_Framework_TestCase
 	    // Wrong Institution Identifier
 	     
 	    $config = new KlinkConfiguration( INSTITUION_ID.'2', 'KA', array(
-	  			new KlinkAuthentication( CORE_URL, CORE_USER, CORE_PASS )
+	  			new KlinkAuthentication( $_SERVER['PUBLIC_CORE_URL'], $_SERVER['CORE_USER'], $_SERVER['CORE_PASS'] )
 	  		) );
 
 	  	if(in_array('--debug', $_SERVER['argv'])){
@@ -499,7 +500,7 @@ class KlinkCoreClientIntegrationTest extends PHPUnit_Framework_TestCase
 	    // Wrong Core URL
 	    
 	    $config = new KlinkConfiguration( INSTITUION_ID, 'KA', array(
-	  			new KlinkAuthentication( CORE_URL.'2', CORE_USER, CORE_PASS )
+				new KlinkAuthentication( $_SERVER['PUBLIC_CORE_URL'].'2', $_SERVER['CORE_USER'], $_SERVER['CORE_PASS'] )
 	  		) );
 
 	  	if(in_array('--debug', $_SERVER['argv'])){
