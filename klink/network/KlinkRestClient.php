@@ -175,9 +175,18 @@ final class KlinkRestClient implements IKlinkRestClient
 			error_log( $url );
 			error_log(print_r($result, true));
 			error_log('######');
+			
+			if ($this->logger) {
+				$this->logger->debug('GET {url}', array('url' => $url, 'response' => $result));
+			}
 		}
 
 		if(KlinkHelpers::is_error($result)){
+			
+			if ($this->logger) {
+				$this->logger->warning('GET {url} raised an error', array('url' => $url, 'error' => $result));
+			}
+			
 			return $result;
 		}
 
@@ -221,6 +230,11 @@ final class KlinkRestClient implements IKlinkRestClient
 		}
 
 		if(KlinkHelpers::is_error($result)){
+			
+			if ($this->logger) {
+				$this->logger->warning('GET (collection) {url} raised an error', array('url' => $url, 'error' => $result));
+			}
+			
 			return $result;
 		}
 
@@ -286,6 +300,11 @@ final class KlinkRestClient implements IKlinkRestClient
 		}
 
 		if(KlinkHelpers::is_error($result)){
+			
+			if ($this->logger) {
+				$this->logger->warning('POST {url} raised an error', array('url' => $url, 'error' => $result));
+			}
+			
 			return $result;
 		}
 
@@ -345,6 +364,11 @@ final class KlinkRestClient implements IKlinkRestClient
 		}
 
 		if(KlinkHelpers::is_error($result)){
+			
+			if ($this->logger) {
+				$this->logger->warning('PUT {url} raised an error', array('url' => $url, 'error' => $result));
+			}
+			
 			return $result;
 		}
 
@@ -400,6 +424,11 @@ final class KlinkRestClient implements IKlinkRestClient
 		}
 
 		if(KlinkHelpers::is_error($result)){
+			
+			if ($this->logger) {
+				$this->logger->warning('DELETE {url} raised an error', array('url' => $url, 'error' => $result));
+			}
+			
 			return $result;
 		}
 
@@ -520,6 +549,10 @@ final class KlinkRestClient implements IKlinkRestClient
 			if(is_null($decoded)){
 
 				$error_string = $this->get_last_json_error();
+				
+				if ($this->logger) {
+					$this->logger->error('JSON decode error: {error}', array('error' => $error_string, 'json' => $json));
+				}
 
 				return new KlinkError(KlinkError::ERROR_DESERIALIZATION_ERROR, $error_string, KlinkError::ERRORCODE_DESERIALIZATION_ERROR);
 			}
@@ -529,6 +562,10 @@ final class KlinkRestClient implements IKlinkRestClient
 
 		}
 		catch(Exception $je){
+			
+			if ($this->logger) {
+				$this->logger->warning('JSON -> Class mapping error: {message}', array('message' => $je->getMessage(), 'exception' => $je));
+			}
 
 			return new KlinkError(KlinkError::ERROR_DESERIALIZATION_ERROR, $je->getMessage(), KlinkError::ERRORCODE_DESERIALIZATION_ERROR);
 
@@ -546,6 +583,10 @@ final class KlinkRestClient implements IKlinkRestClient
 			if(is_null($decoded)){
 
 				$error_string = $this->get_last_json_error();
+				
+				if ($this->logger) {
+					$this->logger->error('JSON decode error: {error}', array('error' => $error_string, 'json' => $json));
+				}
 
 				return new KlinkError(KlinkError::ERROR_DESERIALIZATION_ERROR, $error_string, KlinkError::ERRORCODE_DESERIALIZATION_ERROR);
 			}
@@ -556,6 +597,10 @@ final class KlinkRestClient implements IKlinkRestClient
 
 		}
 		catch(Exception $je){
+			
+			if ($this->logger) {
+				$this->logger->warning('JSON -> Class mapping error: {message}', array('message' => $je->getMessage(), 'exception' => $je));
+			}
 
 			return new KlinkError(KlinkError::ERROR_DESERIALIZATION_ERROR, $je->getMessage(), KlinkError::ERRORCODE_DESERIALIZATION_ERROR);
 
