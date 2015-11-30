@@ -8,7 +8,7 @@
 * @subpackage Exception
 * @author   Alessio Vertemati <a.vertemati@sirisacademic.com>
 */
-class KlinkCoreSelectionException extends Exception
+class KlinkCoreSelectionException extends \KlinkException
 {
 
 	function __construct($tag, $available_tags){
