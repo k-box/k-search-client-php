@@ -85,6 +85,7 @@ class HttpClassTest extends PHPUnit_Framework_TestCase
 	
 	/**
      * @group http
+	 * @requires PHP 5.6.0
      */
 	public function testConnectionRefused(){
 
@@ -98,6 +99,7 @@ class HttpClassTest extends PHPUnit_Framework_TestCase
 	
 	/**
      * @group http
+	 * @requires PHP 5.6.0
      */
 	public function testTimeoutRetry(){
 
