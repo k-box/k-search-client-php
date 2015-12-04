@@ -508,7 +508,7 @@ final class KlinkHttp {
 	 */
 	public function _get_first_available_transport( $args, $url = null ) {
 		
-		$request_order = array( 'Curl', 'Streams' );
+		$request_order = array( 'Streams', 'Curl' );
 
 		// Loop over each transport on each HTTP request looking for one which will serve this request's needs.
 		foreach ( $request_order as $transport ) {
