@@ -1140,10 +1140,10 @@ class KlinkHttp_Streams {
 			if ( $secure_transport && 0 === $connection_error && '' === $connection_error_str )
 				return new KlinkError( KlinkError::ERROR_HTTP_REQUEST_SSL_FAILED, KlinkHelpers::localize( 'The SSL certificate for the host could not be verified.' ) );
 
-			if ( 60 === $connection_error )
+			if ( 60 === $connection_error || 10060 === $connection_error )
 				return new KlinkError( KlinkError::ERROR_HTTP_REQUEST_TIMEOUT, $connection_error_str, KlinkError::ERRORCODE_HTTP_REQUEST_TIMEOUT );
 
-			if ( 61 === $connection_error )
+			if ( 61 === $connection_error || 10061 === $connection_error )
 				return new KlinkError( KlinkError::ERROR_CONNECTION_REFUSED, $connection_error_str, KlinkError::ERRORCODE_CONNECTION_REFUSED );
 
 			return new KlinkError(KlinkError::ERROR_HTTP_REQUEST_SSL_FAILED, $connection_error . ': ' . $connection_error_str );
