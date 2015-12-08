@@ -120,7 +120,7 @@ final class KlinkCoreClient
 	 */
 	function addDocument( KlinkDocument $document ){
 
-		$conn = self::_get_connection();
+		$conn = self::_get_connection($document->getDescriptor()->getVisibility());
 
         if($this->telemeter!=null) $this->telemeter->beforeOperation($conn->getUrl(),__FUNCTION__);
 
@@ -150,7 +150,7 @@ final class KlinkCoreClient
 	 */
 	function removeDocument( KlinkDocumentDescriptor $document ){
 
-		$conn = self::_get_connection();
+		$conn = self::_get_connection($document->getVisibility());
 
         if($this->telemeter!=null) $this->telemeter->beforeOperation($conn->getUrl(),__FUNCTION__);
 
