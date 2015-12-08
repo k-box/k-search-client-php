@@ -297,6 +297,10 @@ final class KlinkRestClient implements IKlinkRestClient
 			error_log( print_r( $headers, true) );
 			error_log( print_r($result, true) );
 			error_log('######');
+			
+			if ($this->logger) {
+				$this->logger->debug('POST {url}', array('url' => $url, 'response' => $result));
+			}
 		}
 
 		if(KlinkHelpers::is_error($result)){
@@ -361,6 +365,10 @@ final class KlinkRestClient implements IKlinkRestClient
 			error_log( print_r($header, true) );
 			error_log( print_r($result, true) );
 			error_log('######');
+			
+			if ($this->logger) {
+				$this->logger->debug('PUT {url}', array('url' => $url, 'response' => $result));
+			}
 		}
 
 		if(KlinkHelpers::is_error($result)){
@@ -421,6 +429,10 @@ final class KlinkRestClient implements IKlinkRestClient
 			error_log( $url );
 			error_log(print_r($result, true));
 			error_log('######');
+			
+			if ($this->logger) {
+				$this->logger->debug('DELETE {url}', array('url' => $url, 'response' => $result));
+			}
 		}
 
 		if(KlinkHelpers::is_error($result)){
