@@ -14,7 +14,7 @@ class KlinkCoreClientIntegrationTest extends PHPUnit_Framework_TestCase
 	  	error_reporting(E_ALL & E_STRICT);
 		  
 		$config = new KlinkConfiguration( INSTITUION_ID, 'KA', array(
-				new KlinkAuthentication( $_SERVER['PUBLIC_CORE_URL'], $_SERVER['CORE_USER'], $_SERVER['CORE_PASS'] ),
+				new KlinkAuthentication( $_SERVER['PUBLIC_CORE_URL'], $_SERVER['CORE_USER'], $_SERVER['CORE_PASS'], \KlinkVisibilityType::KLINK_PUBLIC ),
 				new KlinkAuthentication( $_SERVER['CORE_URL'], $_SERVER['CORE_USER'], $_SERVER['CORE_PASS'], \KlinkVisibilityType::KLINK_PRIVATE )
 			) );
 

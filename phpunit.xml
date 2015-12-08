@@ -24,6 +24,6 @@
         </exclude>
     </groups>
     <php>
-        <const name="INSTITUION_ID" value="KLINK"/>
+        <const name="INSTITUION_ID" value="BOIL"/>
     </php>
 </phpunit>
