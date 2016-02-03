@@ -643,32 +643,37 @@ final class KlinkCoreClient
 	 * @param boolean $health_info (in) pass a variable here to gather health details
 	 * @return  boolean true if the test passes, false otherwise. 
 	 * */
-	public static function test(KlinkConfiguration $config, &$error, $perform_health_check = false, &$health_info=null){
+	public static function test(KlinkConfiguration $config, &$error, $perform_health_check = false, &$health_info=null, LoggerInterface $logger = null){
 
 		$client = null;
+        
+        if ($logger) {
+            $logger->warning('Starting configuration test', array('config' => $config));
+        }
 
 		try{
 
 		  	$client = new KlinkCoreClient( $config );
+            
+            $cores = $config->getCores();
+            $cores_count = count($cores);
+            
+            if($cores_count == 0 || $cores_count > 1){
+                throw new Exception('The configuration test can only be performed on a configuration with only one Core', 10000);
+            }
+            
+            $is_private = $cores[0]->getTag() === KlinkVisibilityType::KLINK_PRIVATE;
 
 		  	$res = null;
-			  
-			
-//			if( !$client->health(true) === true ){
-//				
-//				throw new KlinkException("The K-Link Core has some configuration problems, make sure to perform a deep health check.", 502);
-//				
-//			}
-			  
 		
 		  	try{
+                  
+                 $search = $client->search("*", $is_private ? KlinkVisibilityType::KLINK_PRIVATE : KlinkVisibilityType::KLINK_PUBLIC, 0, 0);
 
-		  		$res = $client->getInstitutions();
+			     $res = $search->getTotalResults();
 
 		  	} catch(KlinkException $kei){
-
-		  		// Expected
-		  		// Method Not Allowed if invoking the version 1 of the K-Link Core api
+                  
 		  		if( $config->isDebugEnabled() ){
 		  			error_log( 'Exception message ' . $kei->getMessage() . PHP_EOL );
 		  		}
@@ -695,7 +700,7 @@ final class KlinkCoreClient
 					
 					}
 
-				 	throw new KlinkException("Unauthorized to read the Institution details.", $kei->getCode(), $kei);
+				 	throw new KlinkException("Unauthorized to perform search in Private document set. Please review your username and password.", $kei->getCode(), $kei);
 				}
 
 				else {
@@ -710,39 +715,7 @@ final class KlinkCoreClient
 				 	throw new KlinkException("Server not found or network problem.", $kei->getCode(), $kei);
 				}
 
-				//throw $keid;
-
 		  	}
-			  
-		  	try{
-
-				$res = $client->getInstitution( $config->getInstitutionId() );
-
-			} catch( KlinkException $keid ){
-
-				if( $keid->getCode() == 404 ){
-
-			  		if( $config->isDebugEnabled() ){
-
-						error_log( '###### TEST EXCEPTION ###### ');
-						error_log( print_r($res, true ) );
-					
-					}
-
-				 	throw new KlinkException("Wrong Institution Identifier or Institution Details not available on the selected K-Link Core.", 404, $keid);
-
-				}
-
-				throw new KlinkException("Server not found or network problem.", $keid->getCode(), $keid);
-
-			}
-
-			if( $config->isDebugEnabled() ){
-
-				error_log( '###### TEST RESPONSE ###### ');
-				error_log( print_r($res, true ) );
-
-			}
 
 			$error = null;
 			
@@ -760,6 +733,10 @@ final class KlinkCoreClient
 				error_log( print_r($res, true ) );
 				
 			}
+            
+            if ($logger) {
+                $logger->error('Configuration test KlinkException', array('error' => $ke));
+            }
 
 		 	$error = $ke;
 			 
@@ -776,6 +753,10 @@ final class KlinkCoreClient
 				error_log( print_r($res, true ) );
 				
 			}
+            
+            if ($logger) {
+                $logger->error('Configuration test Exception', array('error' => $e));
+            }
 
 		 	$error = $e;
 			

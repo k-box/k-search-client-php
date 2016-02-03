@@ -429,19 +429,24 @@ class KlinkCoreClientIntegrationTest extends PHPUnit_Framework_TestCase
 	public function testTestMethod(){
 
 		// Correct configuration
+        
 		
-		$inst = KlinkInstitutionDetails::create(INSTITUION_ID, INSTITUION_ID);
-
-		$inst->setMail('mail@mail.com');
-		$inst->setPhoneNumber('+55555555');
-		$inst->setThumbnail('http://thumbnail.org');
-		$inst->setUrl('http://institution.org');
-
-		$save_response = $this->core->saveInstitution($inst);
-		
-
 		$config = new KlinkConfiguration( INSTITUION_ID, 'KA', array(
-				new KlinkAuthentication( $_SERVER['PUBLIC_CORE_URL'], $_SERVER['CORE_USER'], $_SERVER['CORE_PASS'] )
+				new KlinkAuthentication( $_SERVER['CORE_URL'], $_SERVER['CORE_USER'], $_SERVER['CORE_PASS'] )
+	  		) );
+
+	  	if(in_array('--debug', $_SERVER['argv'])){
+	  		$config->enableDebug();	
+	  	}
+
+	  	$error = null;
+
+	    $test_result = KlinkCoreClient::test($config, $error);
+
+	    $this->assertTrue($test_result);
+        
+        $config = new KlinkConfiguration( INSTITUION_ID, 'KA', array(
+				new KlinkAuthentication( $_SERVER['PUBLIC_CORE_URL'], $_SERVER['CORE_USER'], $_SERVER['CORE_PASS'], \KlinkVisibilityType::KLINK_PUBLIC )
 	  		) );
 
 	  	if(in_array('--debug', $_SERVER['argv'])){
@@ -454,13 +459,11 @@ class KlinkCoreClientIntegrationTest extends PHPUnit_Framework_TestCase
 
 	    $this->assertTrue($test_result);
 
-	    $this->core->deleteInstitution(INSTITUION_ID);
-
 
 	    // Wrong username
 	     
 	    $config = new KlinkConfiguration( INSTITUION_ID, 'KA', array(
-				new KlinkAuthentication( $_SERVER['PUBLIC_CORE_URL'], $_SERVER['CORE_USER'].'ciccio', $_SERVER['CORE_PASS'] )
+				new KlinkAuthentication( $_SERVER['CORE_URL'], $_SERVER['CORE_USER'].'ciccio', $_SERVER['CORE_PASS'] )
 	  		) );
 
 	  	if(in_array('--debug', $_SERVER['argv'])){
@@ -476,31 +479,11 @@ class KlinkCoreClientIntegrationTest extends PHPUnit_Framework_TestCase
 	    $this->assertEquals(401, $error->getCode());
 
 	    $this->assertEquals('Wrong username or password.', $error->getMessage());
-
-	    // Wrong Institution Identifier
-	     
-	    $config = new KlinkConfiguration( INSTITUION_ID.'2', 'KA', array(
-	  			new KlinkAuthentication( $_SERVER['PUBLIC_CORE_URL'], $_SERVER['CORE_USER'], $_SERVER['CORE_PASS'] )
-	  		) );
-
-	  	if(in_array('--debug', $_SERVER['argv'])){
-	  		$config->enableDebug();	
-	  	}
-
-	  	$error = null;
-
-	    $test_result = KlinkCoreClient::test($config, $error);
-
-	    $this->assertFalse($test_result);
-
-	    $this->assertEquals(404, $error->getCode());
-
-	    $this->assertEquals('Wrong Institution Identifier or Institution Details not available on the selected K-Link Core.', $error->getMessage());
 	    
 	    // Wrong Core URL
 	    
 	    $config = new KlinkConfiguration( INSTITUION_ID, 'KA', array(
-				new KlinkAuthentication( $_SERVER['PUBLIC_CORE_URL'].'2', $_SERVER['CORE_USER'], $_SERVER['CORE_PASS'] )
+				new KlinkAuthentication( $_SERVER['PUBLIC_CORE_URL'].'2', $_SERVER['CORE_USER'], $_SERVER['CORE_PASS'], \KlinkVisibilityType::KLINK_PUBLIC )
 	  		) );
 
 	  	if(in_array('--debug', $_SERVER['argv'])){

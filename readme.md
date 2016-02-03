@@ -640,8 +640,7 @@ All tests have been executed on the following versions of PHP
 
 Unit tests are peformed on repository push and build with the following configuration (see `phpunit.xml` file):
 
-K-Link Core used: klink-test1.cloudapp.net
-Institution ID: KLINK
+INSTITUION_ID: BOIL
 
 to run the unit tests by yourself you have to perform
 
@@ -649,7 +648,7 @@ to run the unit tests by yourself you have to perform
 
 and let composer download also the required-dev dependencies. After that you can invoke
 
-	php vendor/bin/phpunit
+	vendor/bin/phpunit
 
 to execute the tests with your version of PHP.
 
@@ -664,4 +663,4 @@ to execute the tests with your version of PHP.
 
 to execute the integration tests
 
-	php vendor/bin/phpunit --group integration
+	vendor/bin/phpunit --group integration
