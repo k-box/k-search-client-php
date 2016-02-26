@@ -62,6 +62,16 @@ class KlinkFacetsBuilderTest extends PHPUnit_Framework_TestCase
 			array('uri-list'),
 		);
 	}
+    
+    public function valid_locations()
+	{
+		return array(
+			array('Word'),
+			array('Word,Word'),
+			array('121,121645,12651621'),
+			array(array('Word', 'Word')),
+		);
+	}
 
 	public function invalid_documentTypes()
 	{
@@ -295,6 +305,21 @@ class KlinkFacetsBuilderTest extends PHPUnit_Framework_TestCase
 		$facets = KlinkFacetsBuilder::i()->documentType($documentType)->build();
 
 		$this->assertContainsOnlyInstancesOf('KlinkFacet', $facets);
+
+		$this->assertCount(1, $facets, 'message');
+
+	}
+    
+    
+    /**
+	 * @dataProvider valid_locations
+	 */
+	public function testLocationFacetWithValidValues($value)
+	{
+		
+		$facets = KlinkFacetsBuilder::i()->locations($value)->build();
+        
+        $this->assertContainsOnlyInstancesOf('KlinkFacet', $facets);
 
 		$this->assertCount(1, $facets, 'message');
 

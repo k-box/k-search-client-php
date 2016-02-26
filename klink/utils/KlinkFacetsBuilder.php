@@ -420,10 +420,6 @@ final class KlinkFacetsBuilder
 		}
 		else {
 
-			if(!is_null($builded_params['filter'])){
-				KlinkHelpers::is_valid_id($builded_params['filter'], 'filter');
-			}
-
 			$facet = KlinkFacet::create(KlinkFacet::LOCATIONS_STRING, 
 						$builded_params['mincount'], 
 						$builded_params['prefix'], 
