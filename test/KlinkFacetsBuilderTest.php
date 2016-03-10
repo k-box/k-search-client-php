@@ -66,10 +66,12 @@ class KlinkFacetsBuilderTest extends PHPUnit_Framework_TestCase
     public function valid_locations()
 	{
 		return array(
-			array('Word'),
-			array('Word,Word'),
-			array('121,121645,12651621'),
-			array(array('Word', 'Word')),
+			array('Word', 'Word'),
+			array('Word with some spaces', 'Word with some spaces'),
+			array('Word with some spaces,and a comma', 'Word with some spaces,and a comma'),
+			array('Word,Word', 'Word,Word'),
+			array('121,121645,12651621', '121,121645,12651621'),
+			array(array('Word', 'Word'), 'Word,Word'),
 		);
 	}
 
@@ -314,7 +316,7 @@ class KlinkFacetsBuilderTest extends PHPUnit_Framework_TestCase
     /**
 	 * @dataProvider valid_locations
 	 */
-	public function testLocationFacetWithValidValues($value)
+	public function testLocationFacetWithValidValues($value, $expected_filter_value)
 	{
 		
 		$facets = KlinkFacetsBuilder::i()->locations($value)->build();
@@ -322,6 +324,14 @@ class KlinkFacetsBuilderTest extends PHPUnit_Framework_TestCase
         $this->assertContainsOnlyInstancesOf('KlinkFacet', $facets);
 
 		$this->assertCount(1, $facets, 'message');
+        
+        $f = $facets[0];
+        
+		$this->assertEquals('locationsString', $f->getName(), 'facet name wrong value');
+        
+        var_dump($f->getFilter());
+        
+		$this->assertEquals($expected_filter_value, $f->getFilter(), 'facet filter wrong value');
 
 	}
 
