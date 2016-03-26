@@ -145,6 +145,12 @@ class KlinkDocumentUtilsTest extends PHPUnit_Framework_TestCase
 		array('gsheet', 'application/vnd.google-apps.spreadsheet'),
 		array('kml', 'application/vnd.google-earth.kml+xml'),
 		array('kmz', 'application/vnd.google-earth.kmz'),
+        
+		array('eml', 'message/rfc822'),
+		array('msg', 'application/vnd.ms-outlook'),
+        array('vob', 'video/x-ms-vob'),
+		array('ifo', 'content/DVD'),
+		array('mhtml', 'application/x-mimearchive'),
 
 		);
 	}
@@ -161,6 +167,12 @@ class KlinkDocumentUtilsTest extends PHPUnit_Framework_TestCase
 			array('application/pdf', 'http://temp.klink.dyndns.ws//dumps/CampAlatoo/for_klink/2010_oblojki_catalog_kg_ru.pdf'),
 			array('application/pdf', 'temporary://temp.klink.dyndns.ws//dumps/CampAlatoo/for_klink/2010_oblojki_catalog_kg_ru.pdf'),
 			array('text/x-markdown', 'temporary://temp.klink.dyndns.ws//dumps/test.md'),
+			array('message/rfc822', 'temporary://temp.klink.dyndns.ws//dumps/test.eml'),
+			array('application/vnd.ms-outlook', 'temporary://temp.klink.dyndns.ws//dumps/test.msg'),
+			array('application/rar', 'temporary://temp.klink.dyndns.ws//dumps/test.rar'),
+			array('application/zip', 'temporary://temp.klink.dyndns.ws//dumps/test.zip'),
+            array('application/x-mimearchive', 'temporary:://temp.klink.asia/file.mhtml'),
+		    array('application/x-mimearchive', 'temporary:://temp.klink.asia/file.mht'),
 
 		);
 
@@ -209,6 +221,12 @@ class KlinkDocumentUtilsTest extends PHPUnit_Framework_TestCase
 			array('application/vnd.google-apps.spreadsheet', true, false),
 			array('application/vnd.google-earth.kml+xml', true, false),
 			array('application/vnd.google-earth.kmz', true, false),
+            
+            array('message/rfc822', true, false),
+            array('application/vnd.ms-outlook', true, false),
+            array('video/x-ms-vob', true, false),
+            array('content/DVD', true, false),
+            array('application/x-mimearchive', true, false),
 
 		);
 		return $inputs;
@@ -309,7 +327,7 @@ class KlinkDocumentUtilsTest extends PHPUnit_Framework_TestCase
 
  		$actual = KlinkDocumentUtils::getExtensionFromMimeType( $mimeType );
 
- 		$this->assertEquals( $expected, $actual);
+        $this->assertEquals( $expected, $actual);
  		
  	}
 

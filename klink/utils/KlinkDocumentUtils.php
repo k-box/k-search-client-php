@@ -37,6 +37,28 @@ class KlinkDocumentUtils
 		'application/vnd.google-apps.spreadsheet' => 'spreadsheet',
 		'application/vnd.google-earth.kml+xml' => 'geodata',
 		'application/vnd.google-earth.kmz' => 'geodata',
+        'application/rar' => 'archive',
+        'application/zip' => 'archive',
+        'application/x-mimearchive' => 'web-page',
+        'video/x-ms-vob' => 'dvd',
+        'content/DVD' => 'dvd',
+        'video/x-ms-wmv' => 'video',
+        'video/x-ms-wmx' => 'video',
+        'video/x-ms-wm' => 'video',
+        'video/avi' => 'video',
+        'video/divx' => 'video',
+        'video/x-flv' => 'video',
+        'video/quicktime' => 'video',
+        'video/mpeg' => 'video',
+        'video/mp4' => 'video',
+        'video/ogg' => 'video',
+        'video/webm' => 'video',
+        'video/x-matroska' => 'video',
+        'video/3gpp' => 'video',
+        'video/3gpp2' => 'video',
+        'text/csv' => 'spreadsheet',
+        'message/rfc822' => 'email',
+        'application/vnd.ms-outlook' => 'email',
 
 		);
 		
@@ -76,6 +98,8 @@ class KlinkDocumentUtils
 		'wmx' => 'video/x-ms-wmx',
 		'wm' => 'video/x-ms-wm',
 		'avi' => 'video/avi',
+		'vob' => 'video/x-ms-vob',
+		'ifo|bup' => 'content/DVD', // DVD video information file
 		'divx' => 'video/divx',
 		'flv' => 'video/x-flv',
 		'mov|qt' => 'video/quicktime',
@@ -94,6 +118,7 @@ class KlinkDocumentUtils
 		'rtx' => 'text/richtext',
 		'css' => 'text/css',
 		'html|htm' => 'text/html',
+		'mhtml|mht' => 'application/x-mimearchive',
 		'vtt' => 'text/vtt',
 		'dfxp' => 'application/ttaf+xml',
 		// Audio formats.
@@ -172,7 +197,9 @@ class KlinkDocumentUtils
 		// Google Earth files (aka Keyhole Markup Language)
 		'kml' => 'application/vnd.google-earth.kml+xml',
 		'kmz' => 'application/vnd.google-earth.kmz',
-		
+		// Mail messages
+        'eml' => 'message/rfc822', // textual email message
+        'msg' => 'application/vnd.ms-outlook', // Outlook Email Message
 		) ;
 
 
@@ -304,7 +331,7 @@ class KlinkDocumentUtils
 	 * Gets the inferred mime type using the file extension
 	 * @param  string $extension The file extension
 	 * @return string            The mime type
-	 * @throws InvalidArgumentException if $extnesion is null or is unknown.
+	 * @throws InvalidArgumentException if $extension is null or is unknown.
 	 */
 	public static function getMimeTypeFromExtension( $extension ){
 		
@@ -316,7 +343,7 @@ class KlinkDocumentUtils
                 }
         }
 
-		throw new InvalidArgumentException("Unknown mime type.");
+        throw new InvalidArgumentException('Unknown mime type for extension ' . $extension , 3);
 
 	}
 
@@ -326,6 +353,7 @@ class KlinkDocumentUtils
 	 * @param string $file the path of the file to get the mime type
 	 * 
 	 * @return string|boolean the mime type or false in case of error
+	 * @throws InvalidArgumentException if extension is empty or if getMimeTypeFromExtension cannot find a mime-type for the given extension
 	 */
 	public static function get_mime($file) {
 
@@ -338,26 +366,20 @@ class KlinkDocumentUtils
 
 		// we don't rely anymore to finfo_file function because for some docx created from LibreOffice the
 		// mime type reported is Composite Document File V2 Document, which has totally no-sense
-		// if (function_exists("finfo_file") && $file_exists && $not_is_url) {
-		// 	$finfo = finfo_open(FILEINFO_MIME_TYPE); // return mime type ala mimetype extension
-		// 	$mime = finfo_file($finfo, $file);
-		// 	finfo_close($finfo);
-		// 	return $mime;
-		// } else {
 
-			$extension = pathinfo( $file, PATHINFO_EXTENSION );
+        $extension = pathinfo( $file, PATHINFO_EXTENSION );
 
-			if ( !empty( $extension ) ) {
+        if ( !empty( $extension ) ) {
 
-				return self::getMimeTypeFromExtension( $extension );
+            return self::getMimeTypeFromExtension( $extension );
 
-        	}
+        }
 
-			throw new InvalidArgumentException('Cannot get mime type from file ' . $file . ': Empty extension.' . 
-				' [is file: ' . var_export($file_exists, true) . 
-				 ', is url: ' . var_export($is_url, true) .
-				 ', extension: ' . var_export($extension, true). ']' , 2);
-		//}
+        throw new InvalidArgumentException('Cannot get mime type from file ' . $file . ': Empty extension.' . 
+            ' [is file: ' . var_export($file_exists, true) . 
+                ', is url: ' . var_export($is_url, true) .
+                ', extension: ' . var_export($extension, true). ']' , 2);
+
 	}
 
 	
