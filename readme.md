@@ -67,6 +67,7 @@ $config = new KlinkConfiguration(
 			'http://klink-core0.cloudapp.net/kcore/', // The url of the core
 			'username', // Username of the core
 			'password'  // The password used for authentication
+            KlinkVisibilityType::KLINK_PRIVATE // the document visibility the core can serve, if omitted KlinkVisibilityType::KLINK_PRIVATE will be used
 		)
 	) );
 
@@ -114,6 +115,8 @@ In some cases the Exception message will report a specific error:
 | 401  | Wrong username or password.   | If the specified credentials are not valid |
 | 403  | Unauthorized to read the Institution details.   | If the user cannot access institution details |
 | 404  | Wrong Institution Identifier or Institution Details not available on the selected K-Link Core   | If the given intitutionID is not valid |
+| 10000  | The configuration test can only be performed on a configuration with only one Core   | The test method only supports one Core configuration in the KlinkConfiguration object |
+| 403  | Unauthorized to perform search in Private document set. Please review your username and password.   | If the username and password configured cannot access the specified document visibility |
 
 In all the other case a general error message, "Server not found or network problem.", is reported along with the HTTP Error code that was the cause of the test failure.
 
@@ -605,6 +608,7 @@ Here is the list of possible document types:
 - `presentation` : A presentation (PowerPoint),
 - `image` : An image (jpg, gif or png).
 - `geodata` : Google Earth Files (KMZ, KML).
+- ...
 
 ### Deprecated
 
