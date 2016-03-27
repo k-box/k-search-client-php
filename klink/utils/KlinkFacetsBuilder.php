@@ -532,10 +532,13 @@ final class KlinkFacetsBuilder
 	    	if(is_string(func_get_arg(0)) && $splice === array_filter($splice, 'is_int')) {
 		    	return array_merge( $default, array('filter' => func_get_arg(0), 'count' => func_get_arg(1), 'mincount' => func_get_arg(2)) );	
 		    }
+            else if(is_array(func_get_arg(0)) && $splice === array_filter($splice, 'is_int')) {
+		    	return array_merge( $default, array('filter' => implode(',', func_get_arg(0)), 'count' => func_get_arg(1), 'mincount' => func_get_arg(2)) );	
+		    }
 
 	    }
 
-	    throw new BadMethodCallException("Bad parameters", -42);
+	    throw new BadMethodCallException("Bad parameters " . var_export(func_get_args(), true), -42);
 	}
 
 

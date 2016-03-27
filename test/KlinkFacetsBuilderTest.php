@@ -93,6 +93,7 @@ class KlinkFacetsBuilderTest extends PHPUnit_Framework_TestCase
 			array(array(1), array('filter' => null, 'mincount' => 1, 'count' => KlinkFacetsBuilder::DEFAULT_COUNT, 'prefix' => null)),
 			array(array(1,2), array('filter' => null, 'mincount' => 2, 'count' => 1, 'prefix' => null)),
 			array(array('string', 1, 2), array('filter' => 'string', 'mincount' => 2, 'count' => 1, 'prefix' => null)),
+			array(array(array('string'), 10, 1), array('filter' => 'string', 'mincount' => 1, 'count' => 10, 'prefix' => null)),
 		);
 	}
 
