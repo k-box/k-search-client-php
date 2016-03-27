@@ -94,9 +94,14 @@ The test method will perform the following steps:
 
 
 ```php
-$testResult = KlinkCoreClient::test( new KlinkConfiguration( $institutionID, $adapterID, array(
+$testResult = KlinkCoreClient::test( 
+        new KlinkConfiguration( $institutionID, $adapterID, array(
                     new KlinkAuthentication( $core_url, $core_username, $core_password )
-                ) ), $error );
+                ) ),
+        $error,
+        false,
+        null,
+        Psr\Log\LoggerInterface $logger );
 
 
 if( !$testResult ){
@@ -121,6 +126,8 @@ In some cases the Exception message will report a specific error:
 In all the other case a general error message, "Server not found or network problem.", is reported along with the HTTP Error code that was the cause of the test failure.
 
 The reported exception will have information about the [previous exception](http://php.net/manual/en/exception.getprevious.php) that has caused the failure and the code of the exception will always be the HTTP error code.
+
+If you want to have some more information about the error and the underlying response set the debug mode on the KlinkConfiguration instance and pass a logger in the last parameter. Debug log messages uses the _debug log level_.
 
 ### perform a search
 

@@ -2,6 +2,7 @@
 
 use Psr\Log\LoggerInterface;
 use Psr\Log\LoggerAwareTrait;
+use Psr\Log\NullLogger;
 
 if( !defined( 'KLINK_BOILERPLATE_VERSION' ) ){
 	define( 'KLINK_BOILERPLATE_VERSION', '1.0.0' );
@@ -647,9 +648,11 @@ final class KlinkCoreClient
 
 		$client = null;
         
-        if ($logger) {
-            $logger->warning('Starting configuration test', array('config' => $config));
+        if(is_null($logger)){
+            $logger = new NullLogger();
         }
+        
+        $logger->warning('Starting configuration test', array('config' => $config));
 
 		try{
 
@@ -673,18 +676,12 @@ final class KlinkCoreClient
 			     $res = $search->getTotalResults();
 
 		  	} catch(KlinkException $kei){
-                  
-		  		if( $config->isDebugEnabled() ){
-		  			error_log( 'Exception message ' . $kei->getMessage() . PHP_EOL );
-		  		}
-
 
 		  		if( $kei->getCode() == 401 ){
 
 			  		if( $config->isDebugEnabled() ){
 
-						error_log( '###### TEST EXCEPTION ###### ');
-						error_log( print_r($res, true ) );
+						$logger->debug( 'Test - search capability - 401 error ' . $kei->getMessage(), compact('is_private', 'kei', 'res') );
 					
 					}
 
@@ -695,8 +692,7 @@ final class KlinkCoreClient
 
 			  		if( $config->isDebugEnabled() ){
 
-						error_log( '###### TEST EXCEPTION ###### ');
-						error_log( print_r($res, true ) );
+						$logger->debug( 'Test - search capability - 403 error ' . $kei->getMessage(), compact('is_private', 'kei', 'res') );
 					
 					}
 
@@ -706,9 +702,8 @@ final class KlinkCoreClient
 				else {
 
 			  		if( $config->isDebugEnabled() ){
-
-						error_log( '###### TEST EXCEPTION ###### ');
-						error_log( print_r($res, true ) );
+  
+		  			    $logger->debug( 'Test - search capability ' . $kei->getMessage(), compact('is_private', 'kei', 'res') );
 					
 					}
 
@@ -729,8 +724,7 @@ final class KlinkCoreClient
 
 			if( $config->isDebugEnabled() ){
 
-				error_log( '###### TEST EXCEPTION ###### ');
-				error_log( print_r($res, true ) );
+				$logger->debug( 'Test - CoreClient instance construction caused KlinkException ' . $ke->getMessage(), compact('ke') );
 				
 			}
             
@@ -749,8 +743,7 @@ final class KlinkCoreClient
 		} catch( Exception $e ){
 			if( $config->isDebugEnabled() ){
 
-				error_log( '###### TEST EXCEPTION ###### ');
-				error_log( print_r($res, true ) );
+				$logger->debug( 'Test - CoreClient instance construction caused Exception ' . $ke->getMessage(), ['error' => $e, 'res' => isset($res) ? $res : null] );
 				
 			}
             

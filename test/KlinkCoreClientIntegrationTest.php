@@ -429,8 +429,9 @@ class KlinkCoreClientIntegrationTest extends PHPUnit_Framework_TestCase
 	public function testTestMethod(){
 
 		// Correct configuration
-        
+        $logger = new \LoggerMock();
 		
+        
 		$config = new KlinkConfiguration( INSTITUION_ID, 'KA', array(
 				new KlinkAuthentication( $_SERVER['CORE_URL'], $_SERVER['CORE_USER'], $_SERVER['CORE_PASS'] )
 	  		) );
@@ -441,7 +442,7 @@ class KlinkCoreClientIntegrationTest extends PHPUnit_Framework_TestCase
 
 	  	$error = null;
 
-	    $test_result = KlinkCoreClient::test($config, $error);
+	    $test_result = KlinkCoreClient::test($config, $error, false, $health_info, $logger);
 
 	    $this->assertTrue($test_result);
         
@@ -455,10 +456,12 @@ class KlinkCoreClientIntegrationTest extends PHPUnit_Framework_TestCase
 
 	  	$error = null;
 
-	    $test_result = KlinkCoreClient::test($config, $error);
+	    $test_result = KlinkCoreClient::test($config, $error, false, $health_info, $logger);
 
 	    $this->assertTrue($test_result);
-
+	    $this->assertTrue($logger->times() >= 1);
+        
+        $logger->reset();
 
 	    // Wrong username
 	     
@@ -472,13 +475,17 @@ class KlinkCoreClientIntegrationTest extends PHPUnit_Framework_TestCase
 
 	  	$error = null;
 
-	    $test_result = KlinkCoreClient::test($config, $error);
+	    $test_result = KlinkCoreClient::test($config, $error, false, $health_info, $logger);
 
 	    $this->assertFalse($test_result);
 
 	    $this->assertEquals(401, $error->getCode());
 
 	    $this->assertEquals('Wrong username or password.', $error->getMessage());
+        
+        $this->assertTrue($logger->times() >= 2, 'Logger has been called more than 1 time');
+        
+        $logger->reset();
 	    
 	    // Wrong Core URL
 	    
@@ -492,13 +499,17 @@ class KlinkCoreClientIntegrationTest extends PHPUnit_Framework_TestCase
 
 	  	$error = null;
 
-	    $test_result = KlinkCoreClient::test($config, $error);
+	    $test_result = KlinkCoreClient::test($config, $error, false, $health_info, $logger);
 
 	    $this->assertFalse($test_result);
 
 	    $this->assertEquals(404, $error->getCode());
 
 	    $this->assertEquals('Server not found or network problem.', $error->getMessage());
+        
+        $this->assertTrue($logger->times() >= 2, 'Logger has been called more than 1 time');
+        
+        $logger->reset();
 
 	    
 

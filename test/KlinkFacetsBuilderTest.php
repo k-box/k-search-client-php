@@ -329,7 +329,7 @@ class KlinkFacetsBuilderTest extends PHPUnit_Framework_TestCase
         
 		$this->assertEquals('locationsString', $f->getName(), 'facet name wrong value');
         
-        var_dump($f->getFilter());
+        // var_dump($f->getFilter());
         
 		$this->assertEquals($expected_filter_value, $f->getFilter(), 'facet filter wrong value');
 
