@@ -7,6 +7,7 @@ unit_test:
   stage: test
   script:
     - composer install --prefer-dist
+    - ./vendor/bin/parallel-lint --exclude vendor .
     - ./vendor/bin/phpunit
   tags: 
   only:
