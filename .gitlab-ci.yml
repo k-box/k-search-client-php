@@ -8,6 +8,7 @@ unit_test:
   script:
     - composer install --prefer-dist
     - ./vendor/bin/parallel-lint --exclude vendor .
+    - ./vendor/bin/phpcpd ./klink && ./vendor/bin/phpcpd ./test
     - ./vendor/bin/phpunit
   tags: 
   only:
