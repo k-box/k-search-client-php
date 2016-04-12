@@ -12,12 +12,14 @@ class JsonStreamEncoderTest extends PHPUnit_Framework_TestCase
 	}
 
 	
-
+    /**
+     * test the current data construction encodes with JsonStreamEncoder 
+     */
 	public function testEncodeWithInMemoryBase64()
 	{
         $start = memory_get_usage();
         $arr = [
-            'document' => base64_encode(file_get_contents('C:\Users\Alessio\Downloads\Brochure.pdf'))
+            'document' => base64_encode(file_get_contents( __DIR__ . '/Brochure.pdf'))
         ];
 		
         $temp = tmpfile();
@@ -41,12 +43,15 @@ class JsonStreamEncoderTest extends PHPUnit_Framework_TestCase
 
 	}
     
+    /**
+     * test using stream for base64 encode and encode using JsonStreamEncoder
+     */
     public function testEncodeFullStream()
 	{
         $start = memory_get_usage();
         
         $filter = 'convert.base64-encode';
-        $file = 'C:\Users\Alessio\Downloads\Brochure.pdf';
+        $file = __DIR__ . '/Brochure.pdf';
         $h = fopen('php://filter/read=' . $filter . '/resource=' . $file,'r'); 
         
         
