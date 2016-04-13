@@ -67,10 +67,9 @@ final class JsonStreamEncoder
             return;
         }
         else if( @get_resource_type($value) === 'Unknown' ){
-            var_dump('---> WAS A resource');
-            // I have a stream
-            $this->_writeValue('"WAS A RESOURCE, BUT NOW IS CLOSED"');
-            // throw some exception
+            
+            // I had a stream
+            throw new UnexpectedValueException('Input Stream was closed'); 
             return;
         }
 		// array of values
