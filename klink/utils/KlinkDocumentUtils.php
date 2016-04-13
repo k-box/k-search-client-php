@@ -330,8 +330,8 @@ class KlinkDocumentUtils
 	/**
 	 * Gets the inferred mime type using the file extension
 	 * @param  string $extension The file extension
-	 * @return string            The mime type
-	 * @throws InvalidArgumentException if $extension is null or is unknown.
+	 * @return string            The mime type. returns `application/octet-stream` if the mime type is not known 
+	 * @throws InvalidArgumentException if $extension is null or empty.
 	 */
 	public static function getMimeTypeFromExtension( $extension ){
 		
@@ -343,7 +343,7 @@ class KlinkDocumentUtils
                 }
         }
 
-        throw new InvalidArgumentException('Unknown mime type for extension ' . $extension , 3);
+        return 'application/octet-stream';
 
 	}
 
