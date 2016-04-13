@@ -1,17 +1,22 @@
 <?php
 
-
-
+/**
+ * Json Encoder that writes to a stream the json.
+ */
 final class JsonStreamEncoder
 {
 	private $_stream;
 
 	/**
-	 * @param resource $stream A stream resource.
+	 * @param resource $stream A stream resource. If null a new temporary stream will be created. Default null.
 	 * @throws \InvalidArgumentException If $stream is not a stream resource.
 	 */
-	public function __construct($stream)
+	public function __construct( $stream = null )
 	{
+        if(is_null($stream)){
+            $stream = tmpfile();
+        }
+        
 		if (!is_resource($stream) || get_resource_type($stream) != 'stream') {
 			throw new \InvalidArgumentException("Resource is not a stream");
 		}
@@ -83,6 +88,21 @@ final class JsonStreamEncoder
 			return;
 		}
 	}
+    
+    
+    /**
+     * Rewinds the stream that contains the json and return it (as a stream)
+     */
+    public function getJsonStream(){
+        fseek($this->_stream, 0);
+        return $this->_stream;
+    }
+    
+    public function closeJsonStream(){
+        fclose($this->_stream);
+        unset($this->_stream);
+    }
+    
 
 	/**
 	 * Writes a value to the stream.

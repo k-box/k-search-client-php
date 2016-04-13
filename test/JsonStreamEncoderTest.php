@@ -19,6 +19,44 @@ class JsonStreamEncoderTest extends PHPUnit_Framework_TestCase
             $client->request('GET', 'https://build.klink.asia/Brochure.pdf', ['sink' => $brochure_file_path]);
         }
 	}
+    
+    /**
+     * Some data to be encoded for testing if JsonStreamEncoder creates a correct JSON
+     */
+    public function input_for_encoding(){
+
+		$inputs = array(
+			[true],
+			[false],
+			[null],
+			[120],
+			["0"],
+			[1],
+			['a lonely string'],
+			[[]],
+			[[
+                'document' => 'an array element'
+            ]],
+            [new TestBodyResponse('name')],
+            [new TestBodyResponse('name', 'surname')],
+            [new TestBodyResponse('name', 'surname', 'address')],
+            [KlinkGeoJsonGeometry::createPoint(40.24934, 74.33804)],
+            [new KlinkDocumentDescriptor()],
+            [KlinkDocumentDescriptor::create(
+                'inst', 
+                'ainsma', 
+                'iabdubddubdusbdusbdusbdsu', 
+                'document title', 
+                'application/pdf',
+                'https://something.com/doc',
+                'https://something.com/thumb',
+                'owner <owner@something.com>',
+                'uploaded <uploader@something.com>',
+                'private')],
+		);
+
+		 return $inputs;
+	}
 
 	
     /**
@@ -127,6 +165,36 @@ class JsonStreamEncoderTest extends PHPUnit_Framework_TestCase
         $encoder = new JsonStreamEncoder($temp);
         
         $encoder->encode($arr);
+
+	}
+    
+    /**
+     * Test if the JsonStreamEncoder encodes arrays, primitive types and objects in 
+     * a valid json string and in the same format as json_encode
+     *
+     * @dataProvider input_for_encoding
+     */
+    public function testEncodePrimitiveTypes( $arr )
+	{
+
+        $encoder = new JsonStreamEncoder();
+        
+        $encoder->encode($arr);
+        
+        $parser = new JsonParser();
+        
+        $encoded_json = stream_get_contents($encoder->getJsonStream());
+        
+        $encoder->closeJsonStream();
+        
+        // var_dump(json_encode($arr)); 
+        // var_dump($encoded_json);
+        
+        $res = $parser->lint( $encoded_json );
+        
+        $this->assertNull($res); // no syntax error in the JSON
+        
+        $this->assertEquals(json_encode($arr), $encoded_json);
 
 	}
 
