@@ -111,7 +111,7 @@ class KlinkDocumentUtils
 		'3gp|3gpp' => 'video/3gpp', // Can also be audio
 		'3g2|3gp2' => 'video/3gpp2', // Can also be audio
 		// Text formats.
-		'txt|asc|c|cc|h|srt' => 'text/plain',
+		'txt|asc|c|cc|h|srt|wkt' => 'text/plain', // WKT stands for Well-Known-Text
 		'csv' => 'text/csv',
 		'tsv' => 'text/tab-separated-values',
 		'ics' => 'text/calendar',
@@ -200,6 +200,20 @@ class KlinkDocumentUtils
 		// Mail messages
         'eml' => 'message/rfc822', // textual email message
         'msg' => 'application/vnd.ms-outlook', // Outlook Email Message
+        // Adobe
+        'psd' => 'image/vnd.adobe.photoshop',
+        'ai' => 'application/postscript',
+        'indd' => 'application/x-indesign',
+        // Access related
+        'mdb|ldb' => 'application/x-msaccess',
+        // Other image formats
+        'pjpg' => 'image/pjpeg',
+        'svg' => 'image/svg+xml',
+        // Other
+        'mxf' => 'application/mxf',
+        'json' => 'application/json', 
+        'xml|gml|gpx' => 'text/xml', // Plain XML, gml: Geographic Markup Language - v2 (GML2), gpx: GPS Exchange Format (GPX)
+        'shp|shx|sbn|dbf|aib|e02|e01|ovr|mxd|prt|jgw|tfw' => 'application/octet-stream', // Esri ArcGIS files
 		) ;
 
 
@@ -342,7 +356,7 @@ class KlinkDocumentUtils
                         return $mime;
                 }
         }
-
+        
         throw new InvalidArgumentException('Unknown mime type for extension ' . $extension , 3);
 
 	}
