@@ -48,11 +48,19 @@ final class JsonStreamEncoder
         if( is_resource($value) && @get_resource_type($value) === 'stream' ){
             // if it is a PHP stream
             
-            // $fstat = fstat($value);
-            // var_dump(array_slice($fstat, 13));
+            $fstat = fstat($value);
+            $size = $fstat['size'];
+            $chunk_size = 128*1024;
+            $remaining = $size;
             
             // I have a stream
-            $this->_writeValue('"'. stream_get_contents($value) .'"');
+            $this->_writeValue('"');
+            
+            while($remaining > 0){
+               $this->_writeValue(fread($value, $chunk_size));
+               $remaining = $remaining - $chunk_size;  
+            }
+            $this->_writeValue('"');
             
             fclose($value); // Let's close the original stream when we have done so PHP can garbage collect some garbage
             
