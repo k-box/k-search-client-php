@@ -18,35 +18,13 @@ class KlinkDocumentTest extends PHPUnit_Framework_TestCase
 	public function setUp()
 	{
 		date_default_timezone_set('Europe/Rome');
-		  
-		// KlinkDocumentDescriptor::create(
-        //         'inst', 
-        //         'ainsma', 
-        //         'iabdubddubdusbdusbdusbdsu', 
-        //         'document title', 
-        //         'application/pdf',
-        //         'https://something.com/doc',
-        //         'https://something.com/thumb',
-        //         'owner <owner@something.com>',
-        //         'uploaded <uploader@something.com>',
-        //         'private')
 
 	  	ini_set("display_errors", 1);
 		ini_set("track_errors", 1);
-		// ini_set("html_errors", 1);
+
 		error_reporting(E_ALL);
 
-		
-
 	}
-
-	// public static function getFilePath(){
-	// 	return __DIR__ . '/test.pdf';
-	// }
-
-	// public static function getRussianFilePath(){
-	// 	return __DIR__ . '/идетельсто.pdf';
-	// }
 
 	public function tearDown(){
 		
@@ -54,21 +32,15 @@ class KlinkDocumentTest extends PHPUnit_Framework_TestCase
 			fclose($this->stream);
 		}
 		
+		$path = __DIR__ . '/temporary_document.txt';
+		if(is_file($path)){
+			unlink($path);
+		}
+		
 		// unlink(self::getFilePath());
 
 	}
 
- 	/**
- 	 * @dataProvider fileInput
- 	 */
- 	public function testGetMimeType( $expected, $file )
- 	{
-
- 		$actual = KlinkDocumentUtils::get_mime( $file );
-
- 		$this->assertEquals( $expected, $actual);
- 		
- 	}
 
 
  	public function testDocumentMethods(){
@@ -188,8 +160,157 @@ class KlinkDocumentTest extends PHPUnit_Framework_TestCase
 		 
 	 }
 	 
+	 public function testGetFileContent(){
+		 
+		 $descriptor = KlinkDocumentDescriptor::create(
+                'inst', 
+                'ainsma', 
+                'iabdubddubdusbdusbdusbdsu', 
+                'document title', 
+                'application/pdf',
+                'https://something.com/doc',
+                'https://something.com/thumb',
+                'owner <owner@something.com>',
+                'uploaded <uploader@something.com>',
+                'private');
+		 
+		 $file_path = __DIR__ . '/temporary_document.txt';
+		 $data = 'hello data';
+		 file_put_contents($file_path, $data);
+		 
+		 
+		 $document = new KlinkDocument($descriptor, $file_path);
+		 
+		 $this->assertEquals($file_path, $document->getOriginalDocumentData());
+		 
+		 $this->assertTrue( $document->isFile() );
+		 
+		 $doc_data = $document->getDocumentData();
+		 
+		 $this->assertTrue( is_string($doc_data) );
+		 $this->assertEquals( base64_encode($data), $doc_data, 'getData as string base64');
+		 
+		 $this->stream = $document->getDocumentStream();
+		 
+		 $this->assertTrue( is_resource($this->stream) );
+		 $this->assertEquals( 'stream', @get_resource_type($this->stream) );
+		 $this->assertEquals( $data, stream_get_contents($this->stream), 'Content as stream');
+		 
+		 
+		 $this->stream = $document->getDocumentBase64Stream();
+		 
+		 $this->assertTrue( is_resource($this->stream) );
+		 $this->assertEquals( 'stream', @get_resource_type($this->stream) );
+		 $this->assertEquals( base64_encode($data), stream_get_contents($this->stream), 'Content as base64 stream');
+		 
+		 fclose($this->stream);
+		 
+	 }
+
+
+	 public function testGetFileContentFromStream(){
+		 
+		 $descriptor = KlinkDocumentDescriptor::create(
+                'inst', 
+                'ainsma', 
+                'iabdubddubdusbdusbdusbdsu', 
+                'document title', 
+                'application/pdf',
+                'https://something.com/doc',
+                'https://something.com/thumb',
+                'owner <owner@something.com>',
+                'uploaded <uploader@something.com>',
+                'private');
+		 
+		 $file_path = __DIR__ . '/temporary_document.txt';
+		 $data = 'hello data';
+		 file_put_contents($file_path, $data);
+		 
+		 $file_stream = fopen($file_path, 'r');
+		 
+		 $document = new KlinkDocument($descriptor, $file_stream);
+		 
+		 $this->assertTrue( is_resource($document->getOriginalDocumentData()) );
+		 $this->assertEquals( 'stream', @get_resource_type($document->getOriginalDocumentData()) );
+		 
+		 $this->assertFalse( $document->isFile() );
+		 
+		 $doc_data = $document->getDocumentData();
+		 
+		 $this->assertTrue( is_string($doc_data) );
+		 $this->assertEquals( base64_encode($data), $doc_data, 'getData as string base64');
+		 
+		 $this->stream = $document->getDocumentStream();
+		 
+		 $this->assertTrue( is_resource($this->stream) );
+		 $this->assertEquals( 'stream', @get_resource_type($this->stream) );
+		 $this->assertEquals( $data, stream_get_contents($this->stream), 'Content as stream');
+		 
+		 
+		 $this->stream = $document->getDocumentBase64Stream();
+		 
+		 $this->assertTrue( is_resource($this->stream) );
+		 $this->assertEquals( 'stream', @get_resource_type($this->stream) );
+		 $this->assertEquals( base64_encode($data), stream_get_contents($this->stream), 'Content as base64 stream');
+		 
+		 fclose($this->stream);
+		 
+	 }
 	 
-	 // TODO: add a check for file path content that is correctly (full content) returned as base64
-
-
+	 /**
+	  * @expectedException UnexpectedValueException
+	  */
+	 public function testStreamClosedExceptionOnGetDocumentStream(){
+		 
+		 $descriptor = KlinkDocumentDescriptor::create(
+                'inst', 
+                'ainsma', 
+                'iabdubddubdusbdusbdusbdsu', 
+                'document title', 
+                'application/pdf',
+                'https://something.com/doc',
+                'https://something.com/thumb',
+                'owner <owner@something.com>',
+                'uploaded <uploader@something.com>',
+                'private');
+		 
+		 $this->stream = fopen('data://text/plain,hello', 'r');
+		 
+		 
+		 $document = new KlinkDocument($descriptor, $this->stream);
+		 
+		 fclose($this->stream);
+		 
+		 $data = $document->getDocumentStream();
+		 
+	 }
+	 
+	 /**
+	  * @expectedException UnexpectedValueException
+	  */
+	 public function testStreamClosedExceptionOnGetDocumentBase64Stream(){
+		 
+		 $descriptor = KlinkDocumentDescriptor::create(
+                'inst', 
+                'ainsma', 
+                'iabdubddubdusbdusbdusbdsu', 
+                'document title', 
+                'application/pdf',
+                'https://something.com/doc',
+                'https://something.com/thumb',
+                'owner <owner@something.com>',
+                'uploaded <uploader@something.com>',
+                'private');
+		 
+		 $this->stream = fopen('data://text/plain,hello', 'r');
+		 
+		 
+		 $document = new KlinkDocument($descriptor, $this->stream);
+		 
+		 fclose($this->stream);
+		 
+		 $data = $document->getDocumentBase64Stream();
+		 
+	 }
+	 
 }

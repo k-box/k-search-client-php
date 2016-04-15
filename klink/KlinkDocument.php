@@ -50,11 +50,11 @@ class KlinkDocument {
 	 */
 	function isFile(){
 		
-		if(!empty($this->documentData)){
+		if(empty($this->documentData)){
 			return false;
 		}
 		
-		if(is_resource($this->documentData)){
+		if(is_resource($this->documentData) && @get_resource_type($this->documentData) === 'stream'){
 			return false;
 		}
 		
@@ -98,12 +98,24 @@ class KlinkDocument {
 	 *
 	 * This method returns a stream, so be sure to close it when you are done.
 	 *
+	 * please be aware that this method returns a new stream unless the KlinkDocument was created using a stream. In this last case the original stream is returned
+	 *
 	 * @return stream the document content as a raw readonly stream
+	 * @throws UnexpectedValueException if the internal document data was already a stream and has been closed
 	 */
 	public function getDocumentStream() {
 		
+		// var_dump($this->documentData); 
+		// var_dump(is_resource($this->documentData)); 
+		// var_dump(@stream_get_meta_data($this->documentData)); 
+		// var_dump(@get_resource_type($this->documentData)); 
+		
 		if( is_resource($this->documentData) && @get_resource_type($this->documentData) === 'stream' ){
+			rewind($this->documentData);
 			return $this->documentData;
+		}
+		else if( @get_resource_type($this->documentData) === 'Unknown' ){
+			throw new UnexpectedValueException('The original document stream is closed');
 		}
 		
 		if($this->isFile()){
@@ -119,13 +131,26 @@ class KlinkDocument {
 	 *
 	 * This method returns a stream, so be sure to close it when you are done.
 	 *
+	 * PLEASE BE AWARE THAT THIS METHOD ALWAYS RETURNS A NEW STREAM WHEN INVOKED
+	 *
 	 * @return stream the document content as a raw stream
+	 * @throws UnexpectedValueException if the internal document data was a stream and has been closed
 	 */
     public function getDocumentBase64Stream(){
 		
 		if( is_resource($this->documentData) && @get_resource_type($this->documentData) === 'stream' ){
-			// TODO: apply base64 encode
-			return $this->documentData;
+			rewind($this->documentData);
+			
+			$fp = fopen('php://temp', 'w');
+			stream_filter_append($fp, 'convert.base64-encode', STREAM_FILTER_WRITE);
+			stream_copy_to_stream($this->documentData, $fp);
+			
+			rewind($fp);
+			
+			return $fp;
+		}
+		else if( @get_resource_type($this->documentData) === 'Unknown' ){
+			throw new UnexpectedValueException('The original document stream is closed');
 		}
 		
 		if($this->isFile()){

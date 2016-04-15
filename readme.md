@@ -9,6 +9,11 @@ It offers some basic functionality for interacting with the K-Link Core and expo
 
 **This readme refers to the version 1.0 of the Adapter Boilerplate, the old version (0.3.x) is in the `legacy` branch only for bugfixes and compatibility reasons.**
 
+
+# contains breaking changes to the KlinkDocument class
+
+
+
 ## Feature offered
 
 The Adapter Boilerplate is a library that enable developers to interact with the K-Link Core.
@@ -675,3 +680,9 @@ to execute the tests with your version of PHP.
 to execute the integration tests
 
 	vendor/bin/phpunit --group integration
+
+
+## Temporary files and stream
+
+**the new KlinkDocument exposes methods to work with stream. Please make sure to close the streams returned by KlinkDocument methods when you have finished.**
+
