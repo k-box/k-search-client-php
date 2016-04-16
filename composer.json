@@ -9,7 +9,7 @@
     "authors": [
         {
             "name": "Alessio Vertemati",
-            "email": "postmaster@klink.asia"
+            "email": "alessio@oneofftech.xyz"
         }
     ],
 
@@ -35,7 +35,7 @@
         "php": ">=5.5.9",
         "ext-curl": "*",
         "netresearch/jsonmapper" : "~0.10.0",
-        "guzzlehttp/guzzle" : "~6.0.0",
+        "guzzlehttp/guzzle" : "~6.2.0",
         "psr/log": "~1.0"
     },
 
