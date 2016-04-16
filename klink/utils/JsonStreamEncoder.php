@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Json Encoder that writes to a stream the json.
+ * Json Encoder that writes the json to a stream.
  */
 final class JsonStreamEncoder
 {
@@ -91,13 +91,22 @@ final class JsonStreamEncoder
     
     
     /**
-     * Rewinds the stream that contains the json and return it (as a stream)
+     * Return the JSON stream.
+	 *
+	 * Rewinds the stream that contains the json and return it.
+	 *
+	 * @return resource The JSON stream
      */
     public function getJsonStream(){
         fseek($this->_stream, 0);
         return $this->_stream;
     }
     
+	/**
+     * Close the JSON stream and free the internal resource used
+	 *
+	 * @return void
+     */
     public function closeJsonStream(){
         fclose($this->_stream);
         unset($this->_stream);
