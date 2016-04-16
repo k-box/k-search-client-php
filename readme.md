@@ -38,7 +38,7 @@ Tested on PHP 5.5, 5.6.5 on Windows, Mac OS (Yosemite) and Ubuntu 14.04.
 
 ## Usage
 
-The K-Link Adapter Boilerplate utilizes [Composer](http://getcomposer.org/) to manage its dependencies. So, before using the Boilerplate, make sure you have Composer installed on your machine.
+The K-Link Adapter Boilerplate uses [Composer](http://getcomposer.org/) to manage its dependencies. So, before using the Boilerplate, make sure you have Composer installed on your machine.
 
 The K-Link Adapter Boilerplate is available in the K-Link composer private repository. In order to require it in your project add the following repository configuration to your `composer.json` file.
 
@@ -46,7 +46,7 @@ The K-Link Adapter Boilerplate is available in the K-Link composer private repos
 "repositories": [
     {
         "type": "composer",
-        "url": "http://repo.klink.dyndns.ws/"
+        "url": "https://build.klink.asia/composer/"
     }
 ]
 ```
