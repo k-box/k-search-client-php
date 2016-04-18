@@ -173,6 +173,7 @@ class KlinkDocumentUtilsTest extends PHPUnit_Framework_TestCase
 			array('application/zip', 'temporary://temp.klink.dyndns.ws//dumps/test.zip'),
             array('application/x-mimearchive', 'temporary:://temp.klink.asia/file.mhtml'),
 		    array('application/x-mimearchive', 'temporary:://temp.klink.asia/file.mht'),
+            array('application/octet-stream', 'temporary:://temp.klink.asia/file.super-extension'),
 
 		);
 

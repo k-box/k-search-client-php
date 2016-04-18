@@ -344,8 +344,8 @@ class KlinkDocumentUtils
 	/**
 	 * Gets the inferred mime type using the file extension
 	 * @param  string $extension The file extension
-	 * @return string            The mime type
-	 * @throws InvalidArgumentException if $extension is null or is unknown.
+	 * @return string            The mime type. returns `application/octet-stream` if the mime type is not known 
+	 * @throws InvalidArgumentException if $extension is null or empty.
 	 */
 	public static function getMimeTypeFromExtension( $extension ){
 		
@@ -356,8 +356,8 @@ class KlinkDocumentUtils
                         return $mime;
                 }
         }
-        
-        throw new InvalidArgumentException('Unknown mime type for extension ' . $extension , 3);
+
+        return 'application/octet-stream';
 
 	}
 
@@ -365,18 +365,12 @@ class KlinkDocumentUtils
 	 * Get the mime type of the specified file
 	 * 
 	 * @param string $file the path of the file to get the mime type
-	 * 
 	 * @return string|boolean the mime type or false in case of error
-	 * @throws InvalidArgumentException if extension is empty or if getMimeTypeFromExtension cannot find a mime-type for the given extension
+	 * @throws InvalidArgumentException if $file is empty or null
 	 */
 	public static function get_mime($file) {
 
 		KlinkHelpers::is_string_and_not_empty( $file, 'file' );
-
-		$is_url = !!preg_match('%^https?:\/\/.*$%iu', $file);
-
-		$file_exists = @file_exists($file);
-		$not_is_url  = !$is_url;
 
 		// we don't rely anymore to finfo_file function because for some docx created from LibreOffice the
 		// mime type reported is Composite Document File V2 Document, which has totally no-sense
@@ -388,11 +382,8 @@ class KlinkDocumentUtils
             return self::getMimeTypeFromExtension( $extension );
 
         }
-
-        throw new InvalidArgumentException('Cannot get mime type from file ' . $file . ': Empty extension.' . 
-            ' [is file: ' . var_export($file_exists, true) . 
-                ', is url: ' . var_export($is_url, true) .
-                ', extension: ' . var_export($extension, true). ']' , 2);
+        
+        return 'application/octet-stream';
 
 	}
 

@@ -7,7 +7,21 @@ It offers some basic functionality for interacting with the K-Link Core and expo
 
 **requires the latest K-Link Core version**
 
-**This readme refers to the version 1.0 of the Adapter Boilerplate, the old version (0.3.x) is in the `legacy` branch only for bugfixes and compatibility reasons.**
+
+
+# Breaking changes
+
+the current `master` is on the 2.x release.
+
+Currently the following breaking changes has been introduced:
+
+class `KlinkDocumentUtils`
+
+- `get_mime`: the method will no longer raise `InvalidArgumentException` if the file do not have an extension, instead will return `application/octet-stream`
+- `getMimeTypeFromExtension`:  the method will no longer raise `InvalidArgumentException` if the extension has no corresponding mime type, instead will return `application/octet-stream`
+
+please be aware that `getMimeTypeFromExtension` is used by `get_mime` when the file path specified has the extension. 
+
 
 ## Feature offered
 
