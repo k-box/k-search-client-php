@@ -108,8 +108,12 @@ final class JsonStreamEncoder
 	 * @return void
      */
     public function closeJsonStream(){
-        fclose($this->_stream);
-        unset($this->_stream);
+		
+		if(@get_resource_type($this->_stream) !== 'Unknown'){
+			fclose($this->_stream);
+        	unset($this->_stream);
+		}
+
     }
     
 

@@ -10,7 +10,13 @@ It offers some basic functionality for interacting with the K-Link Core and expo
 **This readme refers to the version 1.0 of the Adapter Boilerplate, the old version (0.3.x) is in the `legacy` branch only for bugfixes and compatibility reasons.**
 
 
-# contains breaking changes to the KlinkDocument class
+# contains breaking changes 
+
+- to the KlinkDocument class
+- to KlinkRestClient and IKlinkRestClient
+ - getCollection parameter order changed to `$url, $expected_return_type, array $params = null`
+ - removed `fileSend` empty method
+ - ...
 
 
 

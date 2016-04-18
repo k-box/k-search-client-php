@@ -197,5 +197,42 @@ class JsonStreamEncoderTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(json_encode($arr), $encoded_json);
 
 	}
+    
+    /**
+     * Check if when using a tmpfile for the json stream, the temporary file is deleted after stream close 
+    */
+    public function testEncoderTempFiles(){
+        
+        $s = tmpfile();
+        
+        $metadata = stream_get_meta_data($s);
+        
+        $uri = $metadata['uri'];
+        
+		$encoder = new JsonStreamEncoder($s);
+        
+        $encoder->encode('hello');
+        
+        $encoder->closeJsonStream();
+        
+        $this->assertFalse(is_file($uri));
+        
+	}
+    
+    public function testEncoderSelfGeneratedTempFiles(){
+		
+		$encoder = new JsonStreamEncoder();
+        
+        $metadata = stream_get_meta_data($encoder->getJsonStream());
+        
+        $uri = $metadata['uri'];
+        
+        $encoder->encode('hello');
+        
+        $encoder->closeJsonStream();
+        
+        $this->assertFalse(is_file($uri));
+        
+	}
 
 }
