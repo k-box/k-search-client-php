@@ -10,9 +10,12 @@ class JsonStreamEncoderTest extends PHPUnit_Framework_TestCase
 	{
 	  	date_default_timezone_set('Europe/Rome');
         ini_set('memory_limit', '-1'); // big file, heavy strings, 128M of RAM are not enough
+        ini_set('error_reporting', E_ALL); // or error_reporting(E_ALL);
+ini_set('display_errors', '1');
+ini_set('display_startup_errors', '1');
         
         $brochure_file_path = __DIR__ . '/Brochure.pdf';
-        
+// var_dump('setup');        
         $client = new GuzzleHttp\Client();
         
         if(!is_file($brochure_file_path)){
@@ -64,7 +67,9 @@ class JsonStreamEncoderTest extends PHPUnit_Framework_TestCase
      */
 	public function testEncodeWithInMemoryBase64()
 	{
-        $start = memory_get_usage();
+        ini_set('memory_limit', '-1');
+        
+        // $start = memory_get_usage();
         $arr = [
             'document' => base64_encode(file_get_contents( __DIR__ . '/Brochure.pdf'))
         ];
@@ -75,22 +80,13 @@ class JsonStreamEncoderTest extends PHPUnit_Framework_TestCase
         
         $encoder->encode($arr);
         
-        fseek($temp, 0);
-        var_dump(fread($temp, 1024));
+        $encoded_json = stream_get_contents($encoder->getJsonStream());
         
-        
-        $end = memory_get_usage();
-        // to effectively use this values execute the test in its own PHP process, otherwise other processes will affect the results
-        // var_dump('start ' . ($start/1024) . ' KB');
-        // var_dump('end ' . ($end/1024) . ' KB');
-        // var_dump('diff ' . (($end - $start)/1024) . ' KB');
-        // var_dump('Peak memory usage ' . (memory_get_peak_usage(true)/1024) . ' KB');
-        
+        $encoder->closeJsonStream();
         
         $parser = new JsonParser();
-        fseek($temp, 0);
-        $res = $parser->lint(stream_get_contents($temp));
-        fclose($temp);
+        
+        $res = $parser->lint($encoded_json);
         
         $this->assertNull($res);
 
