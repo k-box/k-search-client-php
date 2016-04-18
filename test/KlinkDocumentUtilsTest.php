@@ -180,16 +180,16 @@ class KlinkDocumentUtilsTest extends PHPUnit_Framework_TestCase
 		 return $inputs;
 	}
 
-	public function fileInputForException(){
+	// public function fileInputForException(){
 
-		$inputs = array(
-			array('application/pdf', str_replace('.pdf', '', self::getFilePath())),
-			array('application/pdf', 'http://ciao/'),
-			array('application/pdf', 'temporary::/2137863'),
-		);
+	// 	$inputs = array(
+	// 		array('application/pdf', str_replace('.pdf', '', self::getFilePath())),
+	// 		array('application/pdf', 'http://ciao/'),
+	// 		array('application/pdf', 'temporary::/2137863'),
+	// 	);
 
-		 return $inputs;
-	}
+	// 	 return $inputs;
+	// }
 	
 	public function inputForIndexableTest(){
 		$inputs = array(
@@ -349,23 +349,6 @@ class KlinkDocumentUtilsTest extends PHPUnit_Framework_TestCase
  		
  	}
 
- 	/**
- 	 * [testGetMimeType description]
- 	 * @param  [type] $expected [description]
- 	 * @param  [type] $file     [description]
- 	 * @return [type]           [description]
- 	 *
- 	 * @dataProvider fileInputForException
- 	 * @expectedException InvalidArgumentException
- 	 */
- 	public function testGetMimeTypeException( $expected, $file )
- 	{
-
- 		$actual = KlinkDocumentUtils::get_mime( $file );
-
- 		$this->assertEquals( $expected, $actual);
- 		
- 	}
 
  	/**
  	 * [testRussianFileHash description]
