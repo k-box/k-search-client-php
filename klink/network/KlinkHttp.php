@@ -28,7 +28,7 @@
  * @subpackage Network
  * @since 0.1.0
  * @internal
- * @deprecated
+ * @deprecated This class will be removed in a future version
  */
 final class KlinkHttp {
 
