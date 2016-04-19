@@ -451,10 +451,9 @@ final class KlinkRestClient implements IKlinkRestClient
 	{
 
 		try{
-			// TODO: test if already string
-			// TODO: maybe the json decode can be done directly on the stream?
-			$json = $body->getContents();
-var_dump($json);
+			
+			$json = $body instanceof GuzzleHttp\Psr7\Stream ? $body->getContents() : (string) $body;
+
 			$decoded = json_decode($json, false);
 
 			if(is_null($decoded)){
@@ -489,9 +488,7 @@ var_dump($json);
 
 		try{
 			
-			// TODO: test if already string
-			// TODO: maybe the json decode can be done directly on the stream?
-			$json = $body->getContents();
+			$json = $body instanceof GuzzleHttp\Psr7\Stream ? $body->getContents() : (string) $body;
 
 			$decoded = json_decode($json, false);
 
