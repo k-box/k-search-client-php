@@ -11,6 +11,7 @@
  * @subpackage Network
  * @since 0.1.0
  * @internal
+ * @deprecated
  */
 
 /**
@@ -27,6 +28,7 @@
  * @subpackage Network
  * @since 0.1.0
  * @internal
+ * @deprecated
  */
 final class KlinkHttp {
 
