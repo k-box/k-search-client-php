@@ -26,4 +26,13 @@
     <php>
         <const name="INSTITUION_ID" value="BOIL"/>
     </php>
+    <filter>
+        <blacklist>
+            <directory>vendor</directory>
+            <directory>test</directory>
+        </blacklist>
+        <whitelist>
+            <directory>klink</directory>
+        </whitelist>
+    </filter>
 </phpunit>
