@@ -123,19 +123,7 @@ final class KlinkRestClient implements IKlinkRestClient
 
 		$this->baseApiUrl = $baseApiUrl;
 
- 		// if(!is_null($authentication)){
-	 	// 	$this->all_request_options['headers'] = array( 'Authorization' => 'Basic ' . base64_encode( $authentication->getUsername() . ':' . $authentication->getPassword() ) );
-	 	// }
-
-	 	// $this->all_request_options['timeout'] = $this->config['timeout'];
- 		// $this->all_request_options['redirection'] = $this->config['redirection'];
- 		// $this->all_request_options['user-agent'] = $this->config['user-agent'];
- 		// $this->all_request_options['httpversion'] = $this->config['httpversion'];
- 		// $this->all_request_options['debug'] = $this->config['debug'];
-
 		$this->logger = $logger;
-
-		// $this->rest = new KlinkHttp($this->baseApiUrl);
 		
 		$guzzle_config = [
 			'base_uri' => $this->baseApiUrl,
@@ -162,7 +150,8 @@ final class KlinkRestClient implements IKlinkRestClient
 
 
 	/**
-	 * Description
+	 * Make a GET request, expected return is an instance of $expected_return_type 
+	 *
 	 * @param string $url 
 	 * @param array $params 
 	 * @param null|boolean|string $expected_return_type what class should the response return, null use a plain array, false expects nothing, otherwise the class name with full namespace
@@ -198,6 +187,14 @@ final class KlinkRestClient implements IKlinkRestClient
 		
 	}
 
+	/**
+	 * Make a GET request, expected return is an array of instances of $expected_return_type 
+	 *
+	 * @param string $url 
+	 * @param array $params 
+	 * @param null|boolean|string $expected_return_type what class should the response return, null use a plain array, false expects nothing, otherwise the class name with full namespace
+	 * @return mixed An instance of $expected_return_type, KlinkError in case of error
+	 */
 	public function getCollection( $url, $expected_return_type, array $params = [] )
 	{
 		
