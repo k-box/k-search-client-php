@@ -133,8 +133,10 @@ final class KlinkRestClient implements IKlinkRestClient
 			'http_errors' => false, // disable throwing exceptions on an HTTP protocol errors (i.e., 4xx and 5xx responses)
 			'headers' => [
 				'User-Agent' => $this->config['user-agent'],
-				'Accept'     => self::JSON_ENCODING
-			]
+				'Accept'     => self::JSON_ENCODING,
+				'Content-Type' => self::JSON_ENCODING,
+			],
+			'verify' => false
 		];
 		
 		if(!is_null($authentication)){

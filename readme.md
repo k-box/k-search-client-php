@@ -16,7 +16,11 @@ It offers some basic functionality for interacting with the K-Link Core and expo
 - to KlinkRestClient and IKlinkRestClient
  - getCollection parameter order changed to `$url, $expected_return_type, array $params = null`
  - removed `fileSend` empty method
- - ...
+- to `KlinkCoreClient`
+ - `generateThumbnailFromContent` can take also a stream for the `$data` parameter
+- to `KlinkDocumentUtils`
+ - added `getBase64Stream` to get a base64 stream from a string, a file or an existing stream
+ 
 
 
 
@@ -687,6 +691,11 @@ to execute the integration tests
 
 	vendor/bin/phpunit --group integration
 
+#### All Tests
+
+To execute all available unit tests run
+
+	vendor/bin/phpunit --group=default,deserialization,http,integration
 
 ## Temporary files and stream
 

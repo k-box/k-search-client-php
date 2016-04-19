@@ -141,7 +141,7 @@ class KlinkDocument {
 		if( is_resource($this->documentData) && @get_resource_type($this->documentData) === 'stream' ){
 			rewind($this->documentData);
 			
-			$fp = fopen('php://temp', 'w');
+			$fp = tmpfile();
 			stream_filter_append($fp, 'convert.base64-encode', STREAM_FILTER_WRITE);
 			stream_copy_to_stream($this->documentData, $fp);
 			

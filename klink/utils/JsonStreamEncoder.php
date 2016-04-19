@@ -50,7 +50,7 @@ final class JsonStreamEncoder
 		}
 
         
-        if( is_resource($value) && @get_resource_type($value) === 'stream' ){
+        if( @is_resource($value) && @get_resource_type($value) === 'stream' ){
             // if it is a PHP stream
             
             $fstat = fstat($value);

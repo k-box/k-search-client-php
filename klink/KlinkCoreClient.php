@@ -128,7 +128,7 @@ final class KlinkCoreClient
 
 		$array = array(
 			'descriptor' => $document->getDescriptor(),
-			'documentData' => $document->getDocumentData(),
+			'documentData' => $document->getDocumentBase64Stream(),
 		);
 
 		$rem = $conn->post( self::ALL_DOCUMENTS_ENDPOINT, $array, new KlinkDocumentDescriptor() );
@@ -154,14 +154,15 @@ final class KlinkCoreClient
 		$conn = self::_get_connection($document->getVisibility());
 
         if($this->telemeter!=null) $this->telemeter->beforeOperation($conn->getUrl(),__FUNCTION__);
+		
+		
 
-		$rem = $conn->delete( self::SINGLE_DOCUMENT_ENDPOINT, 
+		$rem = $conn->delete( $this->_parameter_substitution(self::SINGLE_DOCUMENT_ENDPOINT, 
 			array(
 				'VISIBILITY' => $document->getVisibility(),
 				'INSTITUTION_ID' => $document->getInstitutionID(),
 				'LOCAL_DOC_ID' => $document->getLocalDocumentID(),
-				) 
-			);
+				)));
 
 		if( KlinkHelpers::is_error( $rem ) ){
 			throw new KlinkException( (string)$rem, $rem->get_error_data_code() );
@@ -201,13 +202,13 @@ final class KlinkCoreClient
         if($this->telemeter!=null) $this->telemeter->beforeOperation($conn->getUrl(),__FUNCTION__);
 
 
-		$rem = $conn->delete( self::SINGLE_DOCUMENT_ENDPOINT, 
+		$rem = $conn->delete( $this->_parameter_substitution(self::SINGLE_DOCUMENT_ENDPOINT, 
 			array(
 				'VISIBILITY' => $visibility,
 				'INSTITUTION_ID' => $institution,
 				'LOCAL_DOC_ID' => $document,
 				) 
-			);
+		));
 
 		if( KlinkHelpers::is_error( $rem ) ){
 			throw new KlinkException( (string)$rem, $rem->get_error_data_code() );
@@ -265,10 +266,14 @@ final class KlinkCoreClient
 		KlinkHelpers::is_valid_id( $institutionId, 'institution id' );
 		KlinkHelpers::is_valid_id( $documentId, 'local document id' );
 
-		$rem = $conn->get( self::SINGLE_DOCUMENT_ENDPOINT, new KlinkDocumentDescriptor(), array(
+
+
+
+		$rem = $conn->get( $this->_parameter_substitution(self::SINGLE_DOCUMENT_ENDPOINT, 
+			array(
 			'VISIBILITY' => $visibility,
 			'INSTITUTION_ID' => $institutionId,
-			'LOCAL_DOC_ID' => $documentId) );
+			'LOCAL_DOC_ID' => $documentId)), new KlinkDocumentDescriptor());
 
 		if( KlinkHelpers::is_error( $rem ) ){
 			throw new KlinkException( (string)$rem, $rem->get_error_data_code() );
@@ -316,13 +321,14 @@ final class KlinkCoreClient
 
 
         $search_params = array_merge(array(
-				'VISIBILITY' => $type,
 				'query' => $terms,
 				'numResults' => $resultsPerPage,
 				'startResult' => $offset
 			), $this->_collapse_facets($facets));
+			
+		// so, the name `query` is a Guzzle reserved term, so we need to wrap things otherwise the request will fail
 
-		$rem = $conn->get( self::SEARCH_ENDPOINT, new KlinkSearchResult(), $search_params );
+		$rem = $conn->get( $this->_parameter_substitution(self::SEARCH_ENDPOINT, ['VISIBILITY' => $type]), new KlinkSearchResult(), ['query' => $search_params] );
 
 		if(KlinkHelpers::is_error($rem)){
 			throw new KlinkException((string)$rem, $rem->get_error_data_code());
@@ -358,13 +364,14 @@ final class KlinkCoreClient
 		$conn = self::_get_connection($visibility);
 
 		$params = array_merge(array(
-				'VISIBILITY' => $visibility,
 				'query' => $term,
 				'numResults' => 0,
 				'startResult' => 0
 			), $this->_collapse_facets($facets));
+			
+		// so, the name `query` is a Guzzle reserved term, so we need to wrap things otherwise the request will fail
 
-		$rem = $conn->get( self::SEARCH_ENDPOINT, new KlinkSearchResult(), $params );
+		$rem = $conn->get( $this->_parameter_substitution(self::SEARCH_ENDPOINT, ['VISIBILITY' => $visibility]), new KlinkSearchResult(), ['query' => $params] );
 
 
 		if(KlinkHelpers::is_error($rem)){
@@ -404,11 +411,11 @@ final class KlinkCoreClient
 
 		$conn = self::_get_connection(\KlinkVisibilityType::KLINK_PUBLIC);
 
-		$rem = $conn->delete( self::SINGLE_INSTITUTION_ENDPOINT, 
+		$rem = $conn->delete( $this->_parameter_substitution(self::SINGLE_INSTITUTION_ENDPOINT, 
 			array(
 				'ID' => $id,
 				) 
-			);
+		));
 
 		if( KlinkHelpers::is_error( $rem ) ){
 			throw new KlinkException( (string)$rem, $rem->get_error_data_code() );
@@ -513,7 +520,7 @@ final class KlinkCoreClient
 
 		KlinkHelpers::is_valid_id( $id, 'id' );
 
-		$rem = $conn->get( self::SINGLE_INSTITUTION_ENDPOINT, new KlinkInstitutionDetails(), array('ID' => $id) );
+		$rem = $conn->get( $this->_parameter_substitution(self::SINGLE_INSTITUTION_ENDPOINT, array('ID' => $id)), new KlinkInstitutionDetails() );
 
 		if( KlinkHelpers::is_error( $rem ) ){
 			throw new KlinkException( (string)$rem, $rem->get_error_data_code() );
@@ -953,7 +960,15 @@ final class KlinkCoreClient
 	 */
 	public function generateThumbnailFromDocument( KlinkDocument $document)
 	{
-		return self::generateThumbnailFromContent( $document->getDescriptor()->getMimeType(), base64_decode($document->getDocumentData()) );
+		$doc_stream = $document->getDocumentStream();
+		
+		$thumb_return = self::generateThumbnailFromContent( $document->getDescriptor()->getMimeType(), $doc_stream );
+		
+		if( @get_resource_type($doc_stream) !== 'Unknown' ){
+			fclose($doc_stream);
+		}
+		
+		return $thumb_return;
 	}
 
 
@@ -963,7 +978,7 @@ final class KlinkCoreClient
 	 * The file content MUST NOT be encoded in base64 format
 	 * 
 	 * @param  string  $mimeType      The mime type of the data that needs the thumbnail
-	 * @param  string  $data          The document data used for the thumbnail generation
+	 * @param  string|resource  $data The document data used for the thumbnail generation
 	 * @return string|boolean         The image content in PNG format or false in case of error
 	 * @internal
 	 */
@@ -971,8 +986,6 @@ final class KlinkCoreClient
 	{
 
 		KlinkHelpers::is_string_and_not_empty( $mimeType, 'mime type' );
-
-		KlinkHelpers::is_string_and_not_empty( $data, 'data' );
 
 		$fileExtension = KlinkDocumentUtils::getExtensionFromMimeType( $mimeType );
 
@@ -990,7 +1003,23 @@ final class KlinkCoreClient
 			
 			try{
 			
-				$image = KlinkImageResize::createFromString($data);
+				$image = new KlinkImageResize();
+				
+				if(is_string($data) && @is_file($data)){
+					$image->load($data);
+				}
+				else if(is_string($data)){
+					$image->loadFromString($data);
+				}
+				else if( @is_resource($value) && @get_resource_type($value) === 'stream' ){
+					// TODO: this can potentially use a big chunk of RAM
+					$image->loadFromString(stream_get_contents($data));
+				}
+				else if( @get_resource_type($value) === 'Unknown' ){
+					throw new UnexpectedValueException('The original data stream is closed');
+				}
+				
+				
 				$image->resizeToWidth(300);
 				return $image->get(IMAGETYPE_PNG);
 
@@ -1011,7 +1040,7 @@ final class KlinkCoreClient
 		$data = array(
 			'fileName' => md5( KlinkHelpers::now() ) . '.' . $fileExtension,
 			'fileMime' => $mimeType ,
-			'fileData' => base64_encode( $data )
+			'fileData' => \KlinkDocumentUtils::getBase64Stream( $data )
 			);
 
 		$conn = self::_get_connection();
@@ -1144,5 +1173,29 @@ final class KlinkCoreClient
 		$return['facets'] = implode(',', $fs);
 
 		return $return;
+	}
+	
+	
+	private function _parameter_substitution($string, array $params = null){
+		
+		KlinkHelpers::is_string_and_not_empty( $string, 'string' );
+
+
+		if( !is_null( $params ) && !empty( $params ) ){
+
+			foreach ( $params as $key => $value ) {
+				
+				if( strpos( $string, "{$key}" ) !== false ){
+
+					$string = str_replace('{' . $key . '}', $value, $string);
+
+				}
+
+			}
+			
+		}
+
+		return $string;
+	
 	}
 }

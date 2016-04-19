@@ -13,6 +13,8 @@ class KlinkDocumentUtilsTest extends PHPUnit_Framework_TestCase
  //        KlinkDocumentUtilsTest::$test_pdf_file_path = __DIR__ . '/test.pdf';
  //    }
 
+	private $stream = null;
+
 	public function setUp()
 	{
 		date_default_timezone_set('Europe/Rome');
@@ -37,6 +39,10 @@ class KlinkDocumentUtilsTest extends PHPUnit_Framework_TestCase
 	}
 
 	public function tearDown(){
+		if(!is_null($this->stream) && @get_resource_type($this->stream) === 'stream'){
+			fclose($this->stream);
+		}
+		
 		unlink(self::getFilePath());
 
 	}
@@ -384,6 +390,49 @@ class KlinkDocumentUtilsTest extends PHPUnit_Framework_TestCase
  		$this->assertNotNull($actual);
  		
  	}
+	 
+	 public function testGetStringAsBase64Stream(){
+		 
+		 $this->stream = \KlinkDocumentUtils::getBase64Stream('hello');
+		 
+		 $this->assertTrue( is_resource($this->stream) );
+		 $this->assertEquals( 'stream', @get_resource_type($this->stream) );
+		 
+		 $this->assertEquals( base64_encode('hello'), stream_get_contents($this->stream), 'base64 check');
+		 
+		 fclose($this->stream);
+		 
+	 }
+	 
+	 public function testGetFileAsBase64Stream(){
+		 
+		 $this->stream = \KlinkDocumentUtils::getBase64Stream(self::getFilePath());
+		 
+		 $this->assertTrue( is_resource($this->stream) );
+		 $this->assertEquals( 'stream', @get_resource_type($this->stream) );
+		 
+		 $this->assertEquals( base64_encode(file_get_contents(self::getFilePath())), stream_get_contents($this->stream), 'base64 check');
+		 
+		 fclose($this->stream);
+		 
+	 }
+	 
+	 public function testGetStreamAsBase64Stream(){
+		 
+		 $data = fopen(self::getFilePath(), 'r');
+		 
+		 $this->stream = \KlinkDocumentUtils::getBase64Stream($data);
+		 fclose($data);
+		 
+		 $this->assertTrue( is_resource($this->stream) );
+		 $this->assertEquals( 'stream', @get_resource_type($this->stream) );
+		 
+		 $this->assertEquals( base64_encode(file_get_contents(self::getFilePath())), stream_get_contents($this->stream), 'base64 check');
+		 
+		 fclose($this->stream);
+		 
+		 
+	 }
 
 
 }
