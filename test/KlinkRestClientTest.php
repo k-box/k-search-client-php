@@ -9,7 +9,7 @@ class KlinkRestClientTest extends PHPUnit_Framework_TestCase
 	{
 	  	date_default_timezone_set('America/Los_Angeles');
 
-	    $this->rest = new KlinkRestClient("http://httpbin.org/", null, array('debug' => in_array('--debug', $_SERVER['argv'])));
+	    $this->rest = new KlinkRestClient("http://httpbin.org/", null, array(/*'debug' => in_array('--debug', $_SERVER['argv'])*/));
 
 	}
 
@@ -75,7 +75,7 @@ class KlinkRestClientTest extends PHPUnit_Framework_TestCase
 		$this->assertInstanceOf('TestResponse', $result);
 
 	}
-
+	
 	/**
 	 * @dataProvider statusResponseCheckErrors
 	 * @group http
@@ -125,6 +125,27 @@ class KlinkRestClientTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals($jsoned, $result->data, 'Expected data needs to be equal to the sended data');
 
 	}
+	
+	/**
+     * @group http
+	 * @group deserialization
+     */
+	public function testPut()
+	{
+
+		$data = new TestBodyResponse('nome', 'cognome', 'indirizzo');
+
+		$jsoned = json_encode($data);
+
+		$result = $this->rest->put( 'put', $data, new TestBodyResponse() );
+
+		$this->assertFalse(KlinkHelpers::is_error($result), 'Everything should work');
+
+		$this->assertInstanceOf('TestBodyResponse', $result);
+
+		$this->assertEquals($jsoned, $result->data, 'Expected data needs to be equal to the sended data');
+
+	}
 
 	/**
 	 * @dataProvider inputNoCorrectClass
@@ -140,6 +161,37 @@ class KlinkRestClientTest extends PHPUnit_Framework_TestCase
 
 		$this->assertContains(KlinkError::ERROR_CLASS_EXPECTED, $result->get_error_codes(), 'Expected "class_expected" error');
 
+	}
+	
+	
+	/**
+     * @group http
+     */
+	public function testDelete()
+	{
+		$result = $this->rest->delete( 'delete' );
+		
+		$this->assertTrue($result, 'Expecting correct delete');
+		
+		$this->assertFalse(KlinkHelpers::is_error($result), 'Not expecting an error');
+
+		// $this->assertContains(KlinkError::ERROR_DESERIALIZATION_ERROR, $result->get_error_codes(), 'Expected "deserialization_error" error');
+
+	}
+	
+	/**
+	 * This test aims at finding possible leaks in the temporary folder used for storing temporary streams needed for completing a request
+	 */
+	public function testTempDirWhilePostRequest(){
+		
+		$glob_before = glob(sys_get_temp_dir() .'/*.tmp');
+		
+		$this->testPost();
+		
+		$glob_after = glob(sys_get_temp_dir() .'/*.tmp');
+		
+		$this->assertEmpty(array_diff($glob_after, $glob_before), 'Temporary DIR is not empty after making a request');
+		
 	}
 
 	/**

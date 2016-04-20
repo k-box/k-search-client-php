@@ -387,6 +387,36 @@ class KlinkDocumentUtils
 
 	}
 
-	
+	/**
+	 * Encode a file, a string or a stream to base64
+	 *
+	 * @parameter string|resource $value the string to convert, the absolute file path or a stream (like the one coming from `fopen`)
+	 * @return resource The stream containing the base64 encode of $value. Remember to close the stream once you have done.
+	 * @throws UnexpectedValueException if $value is a closed stream 
+	 */
+	public static function getBase64Stream( $value ){
+		
+		if( is_resource($value) && @get_resource_type($value) === 'stream' ){
+			rewind($value);
+			
+			$fp = tmpfile();
+			stream_filter_append($fp, 'convert.base64-encode', STREAM_FILTER_WRITE);
+			stream_copy_to_stream($value, $fp);
+			
+			rewind($fp);
+			
+			return $fp;
+		}
+		else if( @get_resource_type($value) === 'Unknown' ){
+			throw new UnexpectedValueException('The original document stream is closed');
+		}
+		
+		if(@is_file($value)){
+			return fopen('php://filter/read=convert.base64-encode/resource=' . $value,'r');
+		}
+        
+        return fopen('data://text/plain,' . base64_encode($value), 'r');
+		
+	}
 
 }

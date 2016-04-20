@@ -63,7 +63,7 @@ class KlinkCoreClientIntegrationTest extends PHPUnit_Framework_TestCase
 	/**
 	 * @group integration
 	 */
-	public function testSearch(){
+	public function testPublicSearch(){
 		
 		$term_to_search = '*';
 
@@ -255,7 +255,55 @@ class KlinkCoreClientIntegrationTest extends PHPUnit_Framework_TestCase
 			
 			$get_response = $this->core->getDocument( INSTITUION_ID, $document_id );
 
-			$this->assertFalse(true, 'The confirmation should repond with a Not found exception');
+			$this->assertFalse(true, 'The confirmation should respond with a Not found exception');
+
+		}catch(KlinkException $kex){
+
+			$this->assertEquals(404, $kex->getCode(), 'Expecting not found');
+		}
+		
+	}
+	
+	/**
+	 * @group integration
+	 */
+	public function testIndexAndRemoveDocumentFromFile()
+	{
+
+		$content = __DIR__ . '/json/searchresult.json';
+
+		$hash = KlinkDocumentUtils::generateHash($content);
+
+		$document_id = 'test';
+
+		$descriptor = KlinkDocumentDescriptor::create(
+			INSTITUION_ID, $document_id, $hash, 'Title', 
+			'text/html', 'http://localhost/test/document', 
+			'http://localhost/test/thumbnail', 'user <user@user.com>', 'user <user@user.com>');
+
+		$document = new KlinkDocument($descriptor, $content);
+
+		// Add test
+		$add_response = $this->core->addDocument( $document );
+
+		$this->assertInstanceOf('KlinkDocumentDescriptor', $add_response);
+
+		// Get test
+		$get_response = $this->core->getDocument( INSTITUION_ID, $document_id );
+
+		$this->assertInstanceOf('KlinkDocumentDescriptor', $get_response);
+
+		$this->assertEquals($hash, $get_response->getHash(), 'different hash');
+
+		// Remove test
+		$remove_response = $this->core->removeDocument( $descriptor );
+
+		// Get confirms
+		try{
+			
+			$get_response = $this->core->getDocument( INSTITUION_ID, $document_id );
+
+			$this->assertFalse(true, 'The confirmation should respond with a Not found exception');
 
 		}catch(KlinkException $kex){
 
@@ -490,7 +538,7 @@ class KlinkCoreClientIntegrationTest extends PHPUnit_Framework_TestCase
 	    // Wrong Core URL
 	    
 	    $config = new KlinkConfiguration( INSTITUION_ID, 'KA', array(
-				new KlinkAuthentication( $_SERVER['PUBLIC_CORE_URL'].'2', $_SERVER['CORE_USER'], $_SERVER['CORE_PASS'], \KlinkVisibilityType::KLINK_PUBLIC )
+				new KlinkAuthentication( str_replace('kcore', 'somecore', $_SERVER['PUBLIC_CORE_URL'] ), $_SERVER['CORE_USER'], $_SERVER['CORE_PASS'], \KlinkVisibilityType::KLINK_PUBLIC )
 	  		) );
 
 	  	if(in_array('--debug', $_SERVER['argv'])){

@@ -47,12 +47,12 @@ final class KlinkRestClient implements IKlinkRestClient
 	* The common part of the API URL to call
 	*/
 	private $baseApiUrl = null;
-
+	
 	/**
 	* the real transport layer used
-	* @var KlinkHttp
+	* @var GuzzleHttp\Client
 	*/
-	private $rest = null;
+	private $transport = null;
 
 	/**
 	 * Holds the configuration for this instance
@@ -65,11 +65,6 @@ final class KlinkRestClient implements IKlinkRestClient
 	 * @var JsonMapper
 	 */
 	private $jm = null;
-
-	/**
-	 * The headers that are sent for all the requests. This includes the basic authentication header if authentication parameters are provided during class instantiation.
-	 */
-	private $all_request_options = array();
 
 	/**
 	 * Description
@@ -104,9 +99,9 @@ final class KlinkRestClient implements IKlinkRestClient
 			 *
 			 * @since 0.1.0
 			 *
-			 * @param string $user_agent WordPress user agent string.
+			 * @param string $user_agent Boilerplate user agent string.
 			 */
-			'user-agent' => (defined('KLINK_BOILERPLATE_VERSION') && is_string(KLINK_BOILERPLATE_VERSION)) ? 'Klink/' . KLINK_BOILERPLATE_VERSION . ';' : 'Klink/any;',
+			'user-agent' => (defined('KLINK_BOILERPLATE_VERSION') && is_string(KLINK_BOILERPLATE_VERSION)) ? 'Klink/' . KLINK_BOILERPLATE_VERSION : 'Klink/boilerplate',
 			/**
 			 * Enable debug messaging.
 			 *
@@ -116,20 +111,11 @@ final class KlinkRestClient implements IKlinkRestClient
 			 *                       Default false.
 			 */
 			'debug' => false,
-			/**
-			 * Filter the version of the HTTP protocol used in a request.
-			 *
-			 * @since 0.1.0
-			 *
-			 * @param string $version Version of HTTP used. Accepts '1.0' and '1.1'.
-			 *                        Default '1.0'.
-			 */
-			'httpversion' => '1.0',
 		);
 
 		KlinkHelpers::is_valid_url( $baseApiUrl, 'baseApiUrl' );
 
-		$this->config = array_merge($defaults, $options);
+		$this->config = array_merge( $defaults, $options );
 
 		$this->jm = new JsonMapper();
 		$this->jm->bExceptionOnUndefinedProperty = true;
@@ -137,125 +123,108 @@ final class KlinkRestClient implements IKlinkRestClient
 
 		$this->baseApiUrl = $baseApiUrl;
 
- 		if(!is_null($authentication)){
-	 		$this->all_request_options['headers'] = array( 'Authorization' => 'Basic ' . base64_encode( $authentication->getUsername() . ':' . $authentication->getPassword() ) );
-	 	}
-
-	 	$this->all_request_options['timeout'] = $this->config['timeout'];
- 		$this->all_request_options['redirection'] = $this->config['redirection'];
- 		$this->all_request_options['user-agent'] = $this->config['user-agent'];
- 		$this->all_request_options['httpversion'] = $this->config['httpversion'];
- 		$this->all_request_options['debug'] = $this->config['debug'];
-
 		$this->logger = $logger;
-
-		$this->rest = new KlinkHttp($this->baseApiUrl);
+		
+		$guzzle_config = [
+			'base_uri' => $this->baseApiUrl,
+			'allow_redirects' => true,
+			'max' => $this->config['redirection'],
+			'debug' => $this->config['debug'],
+			'http_errors' => false, // disable throwing exceptions on an HTTP protocol errors (i.e., 4xx and 5xx responses)
+			'headers' => [
+				'User-Agent' => $this->config['user-agent'],
+				'Accept'     => self::JSON_ENCODING,
+				'Content-Type' => self::JSON_ENCODING,
+			],
+			'verify' => false
+		];
+		
+		if(!is_null($authentication)){
+	 		$guzzle_config['auth'] = [ 
+				 $authentication->getUsername(), 
+				 $authentication->getPassword()
+			];
+	 	}
+		
+		
+		$this->transport = new GuzzleHttp\Client($guzzle_config);
 	}
 
 
 	/**
-	 * Description
+	 * Make a GET request, expected return is an instance of $expected_return_type 
+	 *
 	 * @param string $url 
 	 * @param array $params 
-	 * @param null|boolean|string expectedClass what class should the response return, null use a plain array, false expects nothing, otherwise the class name with full namespace
-	 * @return type
+	 * @param null|boolean|string $expected_return_type what class should the response return, null use a plain array, false expects nothing, otherwise the class name with full namespace
+	 * @return mixed An instance of $expected_return_type, KlinkError in case of error
 	 */
-	function get( $url, $expected_return_type, array $params = null ){
+	function get( $url, $expected_return_type, array $params = [] ){
 
 		if(!self::_check_expected_return_type($expected_return_type)){
 			return new KlinkError(KlinkError::ERROR_CLASS_EXPECTED, KlinkHelpers::localize('The specified return type is not a class.'), KlinkError::ERRORCODE_CLASS_EXPECTED);
 		}
-
-		$url = self::_construct_url($this->baseApiUrl, $url, $params );
-
-		$result = $this->rest->get( $url, $this->all_request_options );
-
+		
+		$response = $this->transport->request('GET', $url, $params);
+		
 		if($this->config['debug']){
-			error_log('###### REST GET RESPONSE ######');
-			error_log( $url );
-			error_log(print_r($result, true));
-			error_log('######');
 			
 			if ($this->logger) {
-				$this->logger->debug('GET {url}', array('url' => $url, 'response' => $result));
-			}
-		}
-
-		if(KlinkHelpers::is_error($result)){
-			
-			if ($this->logger) {
-				$this->logger->warning('GET {url} raised an error', array('url' => $url, 'error' => $result));
+				$this->logger->debug('GET {url}', array('url' => $url, 'status_code' => $response->getStatusCode(), 'response' => _get_headers_from($response)));
 			}
 			
-			return $result;
 		}
 
-
-		//204 no content
-		//201 created
-		//202 accepted
-
-		if( (int)($result['response']['code']) !== 200 ){
-			return new KlinkError(KlinkError::ERROR_HTTP_REQUEST_FAILED, KlinkHelpers::localize($result['response']['message']), (int)($result['response']['code']));
+		if( $response->getStatusCode() !== 200 ){
+			return new KlinkError(KlinkError::ERROR_HTTP_REQUEST_FAILED, KlinkHelpers::localize($response->getReasonPhrase()), $response->getStatusCode());
 		}
 
-		if($result['headers']['content-type'] !== self::JSON_ENCODING){
+		if(!$this->_is_json_response($response)){
 			return new KlinkError(KlinkError::ERROR_HTTP_RESPONSE_FORMAT, KlinkHelpers::localize('Unsupported content encoding from the server.'), KlinkError::ERRORCODE_HTTP_RESPONSE_FORMAT);
 		}
 
-		// $this->assertEquals('application/json', $result['headers']['content-type'], 'Expected JSON response');
-
 		$class = is_object($expected_return_type) ? $expected_return_type : new $expected_return_type;
 
-		return self::_deserialize_single($result['body'], $class);
+		return self::_deserialize_single($response->getBody(), $class);
 		
 	}
 
-	public function getCollection( $url, array $params = null, $expected_return_type )
+	/**
+	 * Make a GET request, expected return is an array of instances of $expected_return_type 
+	 *
+	 * @param string $url 
+	 * @param array $params 
+	 * @param null|boolean|string $expected_return_type what class should the response return, null use a plain array, false expects nothing, otherwise the class name with full namespace
+	 * @return mixed An instance of $expected_return_type, KlinkError in case of error
+	 */
+	public function getCollection( $url, $expected_return_type, array $params = [] )
 	{
 		
 		if(!self::_check_expected_return_type($expected_return_type)){
 			return new KlinkError(KlinkError::ERROR_CLASS_EXPECTED, KlinkHelpers::localize('The specified return type is not a class.'), KlinkError::ERRORCODE_CLASS_EXPECTED);
 		}
 
-		$url = self::_construct_url( $this->baseApiUrl, $url, $params );
-
-		$result = $this->rest->get( $url, $this->all_request_options );
-
+		$response = $this->transport->request('GET', $url, $params);
+		
 		if($this->config['debug']){
-			error_log('###### REST GET_COLLECTION RESPONSE ######');
-			error_log( $url );
-			error_log(print_r($result, true));
-			error_log('######');
-		}
-
-		if(KlinkHelpers::is_error($result)){
 			
 			if ($this->logger) {
-				$this->logger->warning('GET (collection) {url} raised an error', array('url' => $url, 'error' => $result));
+				$this->logger->debug('GET {url}', array('url' => $url, 'status_code' => $response->getStatusCode(), 'response' => _get_headers_from($response)));
 			}
 			
-			return $result;
 		}
 
-
-		//204 no content
-		//201 created
-		//202 accepted
-
-		if( (int)($result['response']['code']) !== 200 ){
-			return new KlinkError(KlinkError::ERROR_HTTP_REQUEST_FAILED, KlinkHelpers::localize($result['response']['message']), (int)($result['response']['code']));
+		if( $response->getStatusCode() !== 200 ){
+			return new KlinkError(KlinkError::ERROR_HTTP_REQUEST_FAILED, KlinkHelpers::localize($response->getReasonPhrase()), $response->getStatusCode());
 		}
 
-		if($result['headers']['content-type'] !== self::JSON_ENCODING){
+		if(!$this->_is_json_response($response)){
 			return new KlinkError(KlinkError::ERROR_HTTP_RESPONSE_FORMAT, KlinkHelpers::localize('Unsupported content encoding from the server.'), KlinkError::ERRORCODE_HTTP_RESPONSE_FORMAT);
 		}
 
-		// $this->assertEquals('application/json', $result['headers']['content-type'], 'Expected JSON response');
-
 		$class = is_object($expected_return_type) ? get_class($expected_return_type) : $expected_return_type;
 
-		return self::_deserialize_array($result['body'], $class);
+		return self::_deserialize_array($response->getBody(), $class);
 
 	}
 
@@ -279,62 +248,46 @@ final class KlinkRestClient implements IKlinkRestClient
 		}
 
 		$url = self::_construct_url( $this->baseApiUrl, $url, $params );
-
-		$headers = array_merge_recursive(
-			$this->all_request_options, 
-			array(
-				'body' => json_encode($data),
-				'timeout_retry' => 3,
-				'headers' => array('Content-Type' => self::JSON_ENCODING)
-			));
-
-		$result = $this->rest->post( $url, $headers );
+		
+		$encoder = new JsonStreamEncoder();
+        
+        $encoder->encode($data);
+		
+		$response = $this->transport->request('POST', $url, [
+			'body' => $encoder->getJsonStream()
+		]);
+			
+		$encoder->closeJsonStream();
 
 		if($this->config['debug']){
-			error_log('###### REST POST RESPONSE ######');
-			error_log( $url );
-			$headers['body'] = substr($headers['body'], 0, 840);
-			error_log( print_r( $headers, true) );
-			error_log( print_r($result, true) );
-			error_log('######');
 			
 			if ($this->logger) {
-				$this->logger->debug('POST {url}', array('url' => $url, 'response' => $result));
-			}
-		}
-
-		if(KlinkHelpers::is_error($result)){
-			
-			if ($this->logger) {
-				$this->logger->warning('POST {url} raised an error', array('url' => $url, 'error' => $result));
+				$this->logger->debug('POST {url}', array('url' => $url, 'status_code' => $response->getStatusCode(), 'response' => _get_headers_from($response)));
 			}
 			
-			return $result;
 		}
-
-
+		
 		//204 no content
 		//201 created
 		//202 accepted
 
-		if((int)($result['response']['code']) !== 200 && (int)($result['response']['code']) !== 201){
-			return new KlinkError(KlinkError::ERROR_HTTP_REQUEST_FAILED, KlinkHelpers::localize($result['response']['message']), (int)($result['response']['code']));
+		if( $response->getStatusCode() !== 200 && $response->getStatusCode() !== 201 ){
+			return new KlinkError(KlinkError::ERROR_HTTP_REQUEST_FAILED, KlinkHelpers::localize($response->getReasonPhrase()), $response->getStatusCode());
 		}
 
-		if($result['headers']['content-type'] !== self::JSON_ENCODING){
+		if(!$this->_is_json_response($response)){
 			return new KlinkError(KlinkError::ERROR_HTTP_RESPONSE_FORMAT, KlinkHelpers::localize('Unsupported content encoding from the server.'), KlinkError::ERRORCODE_HTTP_RESPONSE_FORMAT);
 		}
 
-		// $this->assertEquals('application/json', $result['headers']['content-type'], 'Expected JSON response');
-
 		$class = is_object($expected_return_type) ? $expected_return_type : new $expected_return_type;
 
-		return self::_deserialize_single($result['body'], $class);
+		return self::_deserialize_single($response->getBody(), $class);
 
 	}
 
 	/**
-	 * Description
+	 * Makes a PUT request
+	 *
 	 * @param string $url 
 	 * @param array|object $data the data that will be sent in the body of the request (json encoded)
 	 * @param null|string|class $expected_return_type the class that represents the returned information from the server. If a class is provided must be an instance. If a string is provided the correspondent class must have a constructor with no arguments. If null is provided the response must return an empty body or an HTTP status 204 no-content otherwise an error is returned.
@@ -349,57 +302,39 @@ final class KlinkRestClient implements IKlinkRestClient
 
 		$url = self::_construct_url($this->baseApiUrl, $url, $params);
 
-		$headers = array_merge_recursive(
-			$this->all_request_options, 
-			array(
-				'body' => json_encode($data), 
-				'headers' => array('Content-Type' => self::JSON_ENCODING)
-			));
-
-		$result = $this->rest->post( $url, $headers );
+		$encoder = new JsonStreamEncoder();
+        
+        $encoder->encode($data);
+		
+		$response = $this->transport->request('PUT', $url, [
+			'body' => $encoder->getJsonStream()
+		]);
+			
+		$encoder->closeJsonStream();
 
 		if($this->config['debug']){
-			error_log('###### REST PUT RESPONSE ######');
-			error_log( $url );
-			$headers['body'] = substr($headers['body'], 0, 840);
-			error_log( print_r($header, true) );
-			error_log( print_r($result, true) );
-			error_log('######');
 			
 			if ($this->logger) {
-				$this->logger->debug('PUT {url}', array('url' => $url, 'response' => $result));
-			}
-		}
-
-		if(KlinkHelpers::is_error($result)){
-			
-			if ($this->logger) {
-				$this->logger->warning('PUT {url} raised an error', array('url' => $url, 'error' => $result));
+				$this->logger->debug('PUT {url}', array('url' => $url, 'status_code' => $response->getStatusCode(), 'response' => _get_headers_from($response)));
 			}
 			
-			return $result;
 		}
 
-
-		//204 no content
-		//201 created
-		//202 accepted
-
-		if((int)($result['response']['code']) !== 200 && (int)($result['response']['code']) !== 204){
-			return new KlinkError(KlinkError::ERROR_HTTP_REQUEST_FAILED, KlinkHelpers::localize($result['response']['message']), (int)($result['response']['code']));
+		if( $response->getStatusCode() !== 200 && $response->getStatusCode() !== 201 ){
+			return new KlinkError(KlinkError::ERROR_HTTP_REQUEST_FAILED, KlinkHelpers::localize($response->getReasonPhrase()), $response->getStatusCode());
 		}
+
+		
 
 		if(!is_null($expected_return_type)){
 
-			if($result['headers']['content-type'] !== self::JSON_ENCODING){
+			if(!$this->_is_json_response($response)){
 				return new KlinkError(KlinkError::ERROR_HTTP_RESPONSE_FORMAT, KlinkHelpers::localize('Unsupported content encoding from the server.'), KlinkError::ERRORCODE_HTTP_RESPONSE_FORMAT);
 			}
-
-			// $this->assertEquals('application/json', $result['headers']['content-type'], 'Expected JSON response');
-
+			
 			$class = is_object($expected_return_type) ? $expected_return_type : new $expected_return_type;
 
-			return self::_deserialize_single($result['body'], $class);
+			return self::_deserialize_single($response->getBody(), $class);
 
 		}
 		else {
@@ -409,70 +344,30 @@ final class KlinkRestClient implements IKlinkRestClient
 	}
 
 	/**
-	 * Description
+	 * Execute a Delete request
+	 *
 	 * @param string $url 
 	 * @param array $params (reserved for future version)
-	 * @return type
+	 * @return boolean true if the response has been positive (response codes 200 or 204)
 	 */
-	function delete( $url, array $params = null ){
+	function delete( $url, array $params = [] ){
 
-		// if(!self::_check_expected_return_type($expected_return_type)){
-		// 	return new KlinkError(KlinkError::ERROR_CLASS_EXPECTED, KlinkHelpers::localize('The specified return type is not a class.'));
-		// }
-
-		$url = self::_construct_url($this->baseApiUrl, $url, $params );
-
-		$result = $this->rest->delete( $url, $this->all_request_options );
-
+		$response = $this->transport->request('DELETE', $url, $params);
+		
 		if($this->config['debug']){
-			error_log('###### REST DELETE RESPONSE ######');
-			error_log( $url );
-			error_log(print_r($result, true));
-			error_log('######');
 			
 			if ($this->logger) {
-				$this->logger->debug('DELETE {url}', array('url' => $url, 'response' => $result));
-			}
-		}
-
-		if(KlinkHelpers::is_error($result)){
-			
-			if ($this->logger) {
-				$this->logger->warning('DELETE {url} raised an error', array('url' => $url, 'error' => $result));
+				$this->logger->debug('DELETE {url}', array('url' => $url, 'status_code' => $response->getStatusCode(), 'response' => _get_headers_from($response)));
 			}
 			
-			return $result;
 		}
 
-		//204 no content
-		//201 created
-		//202 accepted
-
-
-
-		if( (int)($result['response']['code']) !== 200 && (int)($result['response']['code']) !== 204 ){
-			return new KlinkError(KlinkError::ERROR_HTTP_REQUEST_FAILED, KlinkHelpers::localize($result['response']['message']), (int)($result['response']['code']));
-		}
-
-		if( (int)($result['response']['code']) !== 204 && $result['headers']['content-type'] !== self::JSON_ENCODING){
-			return new KlinkError(KlinkError::ERROR_HTTP_RESPONSE_FORMAT, KlinkHelpers::localize('Unsupported content encoding from the server.'), KlinkError::ERRORCODE_HTTP_RESPONSE_FORMAT);
+		if( $response->getStatusCode() !== 200 && $response->getStatusCode() !== 204 ){
+			return new KlinkError(KlinkError::ERROR_HTTP_REQUEST_FAILED, KlinkHelpers::localize($response->getReasonPhrase()), $response->getStatusCode());
 		}
 
 		return true;
 
-	}
-
-	/**
-	 * reserved for future use
-	 * @param type $url 
-	 * @return type
-	 * @internal
-	 */
-	function fileSend( $url ){
-		//A specific file post to the server
-		/**
-			TODO: fileSend specific post
-		*/	
 	}
 
 	/**
@@ -551,10 +446,12 @@ final class KlinkRestClient implements IKlinkRestClient
 	}
 
 
-	private function _deserialize_single($json, $class)
+	private function _deserialize_single($body, $class)
 	{
 
 		try{
+			
+			$json = $body instanceof GuzzleHttp\Psr7\Stream ? $body->getContents() : (string) $body;
 
 			$decoded = json_decode($json, false);
 
@@ -585,10 +482,12 @@ final class KlinkRestClient implements IKlinkRestClient
 
 	}
 
-	private function _deserialize_array($json, $class)
+	private function _deserialize_array($body, $class)
 	{
 
 		try{
+			
+			$json = $body instanceof GuzzleHttp\Psr7\Stream ? $body->getContents() : (string) $body;
 
 			$decoded = json_decode($json, false);
 
@@ -619,6 +518,32 @@ final class KlinkRestClient implements IKlinkRestClient
 		}
 		
 	}
+	
+	
+	private function _get_headers_from($response){
+		
+		$h = [];
+		
+		foreach ($response->getHeaders() as $name => $values) {
+			$h[] = $name . ': ' . implode(', ', $values);
+		}
+		
+		return implode(PHP_EOL, $h);
+	}
+	
+	
+	private function _is_json_response($response){
+		
+		$header = $response->getHeader('Content-Type');
+		
+		if(is_array($header)){
+			return in_array(self::JSON_ENCODING, $header);
+		}
+		
+		return $header === self::JSON_ENCODING;
+		
+	} 
+	
 
 	private function get_last_json_error()
 	{

@@ -23,6 +23,21 @@ class `KlinkDocumentUtils`
 please be aware that `getMimeTypeFromExtension` is used by `get_mime` when the file path specified has the extension. 
 
 
+
+# contains breaking changes 
+
+- to the KlinkDocument class
+- to KlinkRestClient and IKlinkRestClient
+ - getCollection parameter order changed to `$url, $expected_return_type, array $params = null`
+ - removed `fileSend` empty method
+- to `KlinkCoreClient`
+ - `generateThumbnailFromContent` can take also a stream for the `$data` parameter
+- to `KlinkDocumentUtils`
+ - added `getBase64Stream` to get a base64 stream from a string, a file or an existing stream
+ 
+
+
+
 ## Feature offered
 
 The Adapter Boilerplate is a library that enable developers to interact with the K-Link Core.
@@ -47,7 +62,7 @@ Tested on PHP 5.5, 5.6.5 on Windows, Mac OS (Yosemite) and Ubuntu 14.04.
 
 ## Usage
 
-The K-Link Adapter Boilerplate utilizes [Composer](http://getcomposer.org/) to manage its dependencies. So, before using the Boilerplate, make sure you have Composer installed on your machine.
+The K-Link Adapter Boilerplate uses [Composer](http://getcomposer.org/) to manage its dependencies. So, before using the Boilerplate, make sure you have Composer installed on your machine.
 
 The K-Link Adapter Boilerplate is available in the K-Link composer private repository. In order to require it in your project add the following repository configuration to your `composer.json` file.
 
@@ -55,7 +70,7 @@ The K-Link Adapter Boilerplate is available in the K-Link composer private repos
 "repositories": [
     {
         "type": "composer",
-        "url": "http://repo.klink.dyndns.ws/"
+        "url": "https://build.klink.asia/composer/"
     }
 ]
 ```
@@ -689,3 +704,14 @@ to execute the tests with your version of PHP.
 to execute the integration tests
 
 	vendor/bin/phpunit --group integration
+
+#### All Tests
+
+To execute all available unit tests run
+
+	vendor/bin/phpunit --group=default,deserialization,http,integration
+
+## Temporary files and stream
+
+**the new KlinkDocument exposes methods to work with stream. Please make sure to close the streams returned by KlinkDocument methods when you have finished.**
+

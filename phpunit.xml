@@ -4,12 +4,12 @@
          convertErrorsToExceptions="true"
          convertNoticesToExceptions="true"
          convertWarningsToExceptions="true"
-         processIsolation="false"
+         processIsolation="true"
          stopOnFailure="false"
          syntaxCheck="false"
 >
     <testsuites>
-        <testsuite name="All Tests">
+        <testsuite name="all">
             <directory>test</directory>
         </testsuite>
     </testsuites>
@@ -26,4 +26,13 @@
     <php>
         <const name="INSTITUION_ID" value="BOIL"/>
     </php>
+    <filter>
+        <blacklist>
+            <directory>vendor</directory>
+            <directory>test</directory>
+        </blacklist>
+        <whitelist>
+            <directory>klink</directory>
+        </whitelist>
+    </filter>
 </phpunit>

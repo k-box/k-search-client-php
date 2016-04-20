@@ -16,7 +16,7 @@ interface IKlinkRestClient extends LoggerAwareInterface {
 	/**
 	 * HTTP GET with expected array as response
 	 */
-	public function getCollection( $url, array $params = null, $expected_return_type );
+	public function getCollection( $url, $expected_return_type, array $params = null );
 	
 	/**
 	 * HTTP POST
