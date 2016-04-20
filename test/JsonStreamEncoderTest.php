@@ -64,6 +64,7 @@ ini_set('display_startup_errors', '1');
 	
     /**
      * test the current data construction encodes with JsonStreamEncoder 
+     * @requires PHP 5.6.0
      */
 	public function testEncodeWithInMemoryBase64()
 	{
