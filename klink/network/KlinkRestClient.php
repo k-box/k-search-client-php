@@ -165,22 +165,10 @@ final class KlinkRestClient implements IKlinkRestClient
 			return new KlinkError(KlinkError::ERROR_CLASS_EXPECTED, KlinkHelpers::localize('The specified return type is not a class.'), KlinkError::ERRORCODE_CLASS_EXPECTED);
 		}
 		
-		$response = $this->transport->request('GET', $url, $params);
+		$response = $this->_doGet($url, $params);
 		
-		if($this->config['debug']){
-			
-			if ($this->logger) {
-				$this->logger->debug('GET {url}', array('url' => $url, 'status_code' => $response->getStatusCode(), 'response' => _get_headers_from($response)));
-			}
-			
-		}
-
-		if( $response->getStatusCode() !== 200 ){
-			return new KlinkError(KlinkError::ERROR_HTTP_REQUEST_FAILED, KlinkHelpers::localize($response->getReasonPhrase()), $response->getStatusCode());
-		}
-
-		if(!$this->_is_json_response($response)){
-			return new KlinkError(KlinkError::ERROR_HTTP_RESPONSE_FORMAT, KlinkHelpers::localize('Unsupported content encoding from the server.'), KlinkError::ERRORCODE_HTTP_RESPONSE_FORMAT);
+		if(KlinkHelpers::is_error($response)){
+			return $response;
 		}
 
 		$class = is_object($expected_return_type) ? $expected_return_type : new $expected_return_type;
@@ -204,22 +192,10 @@ final class KlinkRestClient implements IKlinkRestClient
 			return new KlinkError(KlinkError::ERROR_CLASS_EXPECTED, KlinkHelpers::localize('The specified return type is not a class.'), KlinkError::ERRORCODE_CLASS_EXPECTED);
 		}
 
-		$response = $this->transport->request('GET', $url, $params);
+		$response = $this->_doGet($url, $params);
 		
-		if($this->config['debug']){
-			
-			if ($this->logger) {
-				$this->logger->debug('GET {url}', array('url' => $url, 'status_code' => $response->getStatusCode(), 'response' => _get_headers_from($response)));
-			}
-			
-		}
-
-		if( $response->getStatusCode() !== 200 ){
-			return new KlinkError(KlinkError::ERROR_HTTP_REQUEST_FAILED, KlinkHelpers::localize($response->getReasonPhrase()), $response->getStatusCode());
-		}
-
-		if(!$this->_is_json_response($response)){
-			return new KlinkError(KlinkError::ERROR_HTTP_RESPONSE_FORMAT, KlinkHelpers::localize('Unsupported content encoding from the server.'), KlinkError::ERRORCODE_HTTP_RESPONSE_FORMAT);
+		if(KlinkHelpers::is_error($response)){
+			return $response;
 		}
 
 		$class = is_object($expected_return_type) ? get_class($expected_return_type) : $expected_return_type;
@@ -543,6 +519,30 @@ final class KlinkRestClient implements IKlinkRestClient
 		return $header === self::JSON_ENCODING;
 		
 	} 
+	
+	
+	private function _doGet($url, $params){
+		
+		$response = $this->transport->request('GET', $url, $params);
+		
+		if($this->config['debug']){
+			
+			if ($this->logger) {
+				$this->logger->debug('GET {url}', array('url' => $url, 'status_code' => $response->getStatusCode(), 'response' => _get_headers_from($response)));
+			}
+			
+		}
+
+		if( $response->getStatusCode() !== 200 ){
+			return new KlinkError(KlinkError::ERROR_HTTP_REQUEST_FAILED, KlinkHelpers::localize($response->getReasonPhrase()), $response->getStatusCode());
+		}
+
+		if(!$this->_is_json_response($response)){
+			return new KlinkError(KlinkError::ERROR_HTTP_RESPONSE_FORMAT, KlinkHelpers::localize('Unsupported content encoding from the server.'), KlinkError::ERRORCODE_HTTP_RESPONSE_FORMAT);
+		}
+		
+		return $response;
+	}
 	
 
 	private function get_last_json_error()
