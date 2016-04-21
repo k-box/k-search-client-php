@@ -13,16 +13,11 @@ composer:
   stage: build
   script:
     - composer install --prefer-dist
-  only:
-    - linting-and-checks
     
 phpunit:
   stage: test
   script:
     - ./vendor/bin/phpunit
-  only:
-    - linting-and-checks
-
 
 linting:
   stage: test
@@ -30,19 +25,6 @@ linting:
     - ./vendor/bin/parallel-lint --exclude vendor .
     - ./vendor/bin/phpcpd ./klink
     - ./vendor/bin/phpcpd ./test
-  only:
-    - linting-and-checks
-
-unit_test:
-  stage: test
-  script:
-    - composer install --prefer-dist
-    - ./vendor/bin/parallel-lint --exclude vendor .
-    - ./vendor/bin/phpcpd ./klink && ./vendor/bin/phpcpd ./test
-    - ./vendor/bin/phpunit
-  tags: 
-  only:
-    - master
 
 composer_repo_push:
   stage: deploy
