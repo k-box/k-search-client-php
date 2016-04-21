@@ -28,7 +28,8 @@ linting:
   stage: test
   script:
     - ./vendor/bin/parallel-lint --exclude vendor .
-    - ./vendor/bin/phpcpd ./klink && ./vendor/bin/phpcpd ./test
+    - ./vendor/bin/phpcpd ./klink
+    - ./vendor/bin/phpcpd ./test
   only:
     - linting-and-checks
 
