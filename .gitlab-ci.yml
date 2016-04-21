@@ -3,6 +3,34 @@ stages:
   - test
   - deploy
 
+cache:
+  key: "$CI_BUILD_REF_NAME"
+  paths:
+  - vendor/
+
+composer:
+  stage: build
+  script:
+    - composer install --prefer-dist
+  only:
+    - linting-and-checks
+    
+phpunit:
+  stage: test
+  script:
+    - ./vendor/bin/phpunit
+  only:
+    - linting-and-checks
+
+
+linting:
+  stage: test
+  script:
+    - ./vendor/bin/parallel-lint --exclude vendor .
+    - ./vendor/bin/phpcpd ./klink && ./vendor/bin/phpcpd ./test
+  only:
+    - linting-and-checks
+
 unit_test:
   stage: test
   script:
@@ -17,10 +45,10 @@ unit_test:
 composer_repo_push:
   stage: deploy
   script:
-    - HOME=/var/www/klink/satis/comp_home
-    - COMPOSER_HOME=/var/www/klink/satis/comp_home/.composer
+    - HOME=${SATIS_FOLDER}/comp_home
+    - COMPOSER_HOME=${SATIS_FOLDER}/comp_home/.composer
     - GIT_SSL_NO_VERIFY=true
-    - cd /var/www/klink/satis
+    - cd $SATIS_FOLDER
     - php ./bin/satis build --verbose ./satis.json ./web
   tags: 
   only:
