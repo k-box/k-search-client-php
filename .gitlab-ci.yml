@@ -24,7 +24,7 @@ linting:
   script:
     - ./vendor/bin/parallel-lint --exclude vendor .
     - ./vendor/bin/phpcpd ./klink
-    - ./vendor/bin/phpcpd ./test
+    - ./vendor/bin/phpcpd --min-lines=25 ./test
 
 composer_repo_push:
   stage: deploy

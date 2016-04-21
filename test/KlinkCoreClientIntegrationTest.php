@@ -42,6 +42,15 @@ class KlinkCoreClientIntegrationTest extends PHPUnit_Framework_TestCase
 			array(array('string', 1,2,3)),
 		);
 	}
+	
+	public function data_params_for_file_indexing()
+	{
+		return array(
+			array('This is the <strong>content</strong>'),
+			array(__DIR__ . '/json/searchresult.json'),
+			
+		);
+	}
 
 
 
@@ -218,59 +227,10 @@ class KlinkCoreClientIntegrationTest extends PHPUnit_Framework_TestCase
 
 	/**
 	 * @group integration
+	 * @dataProvider data_params_for_file_indexing
 	 */
-	public function testIndexAndRemoveDocument()
+	public function testIndexAndRemoveDocument($content)
 	{
-
-		$content = 'This is the <strong>content</strong>';
-
-		$hash = KlinkDocumentUtils::generateHash($content);
-
-		$document_id = 'test';
-
-		$descriptor = KlinkDocumentDescriptor::create(
-			INSTITUION_ID, $document_id, $hash, 'Title', 
-			'text/html', 'http://localhost/test/document', 
-			'http://localhost/test/thumbnail', 'user <user@user.com>', 'user <user@user.com>');
-
-		$document = new KlinkDocument($descriptor, $content);
-
-		// Add test
-		$add_response = $this->core->addDocument( $document );
-
-		$this->assertInstanceOf('KlinkDocumentDescriptor', $add_response);
-
-		// Get test
-		$get_response = $this->core->getDocument( INSTITUION_ID, $document_id );
-
-		$this->assertInstanceOf('KlinkDocumentDescriptor', $get_response);
-
-		$this->assertEquals($hash, $get_response->getHash(), 'different hash');
-
-		// Remove test
-		$remove_response = $this->core->removeDocument( $descriptor );
-
-		// Get confirms
-		try{
-			
-			$get_response = $this->core->getDocument( INSTITUION_ID, $document_id );
-
-			$this->assertFalse(true, 'The confirmation should respond with a Not found exception');
-
-		}catch(KlinkException $kex){
-
-			$this->assertEquals(404, $kex->getCode(), 'Expecting not found');
-		}
-		
-	}
-	
-	/**
-	 * @group integration
-	 */
-	public function testIndexAndRemoveDocumentFromFile()
-	{
-
-		$content = __DIR__ . '/json/searchresult.json';
 
 		$hash = KlinkDocumentUtils::generateHash($content);
 
