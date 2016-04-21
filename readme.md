@@ -7,35 +7,38 @@ It offers some basic functionality for interacting with the K-Link Core and expo
 
 **requires the latest K-Link Core version**
 
+**This is version 2.x**. For the old 1.3.0 version refer to the `1.x branch`
 
 
-# Breaking changes
+## Breaking changes introduced in version 2.0.0
 
 the current `master` is on the 2.x release.
 
 Currently the following breaking changes has been introduced:
 
-class `KlinkDocumentUtils`
-
-- `get_mime`: the method will no longer raise `InvalidArgumentException` if the file do not have an extension, instead will return `application/octet-stream`
-- `getMimeTypeFromExtension`:  the method will no longer raise `InvalidArgumentException` if the extension has no corresponding mime type, instead will return `application/octet-stream`
-
-please be aware that `getMimeTypeFromExtension` is used by `get_mime` when the file path specified has the extension. 
-
-
-
-# contains breaking changes 
-
-- to the KlinkDocument class
-- to KlinkRestClient and IKlinkRestClient
- - getCollection parameter order changed to `$url, $expected_return_type, array $params = null`
+- to the `KlinkDocument` class
+ - Added the ability to use a resource for the constructor `$data` parameter
+ - added `getDocumentStream` 
+ - added `getDocumentBase64Stream` 
+ - added `isFile` 
+- to `KlinkRestClient` and `IKlinkRestClient`
+ - `getCollection` parameter order changed to `$url, $expected_return_type, array $params = null`
  - removed `fileSend` empty method
 - to `KlinkCoreClient`
  - `generateThumbnailFromContent` can take also a stream for the `$data` parameter
 - to `KlinkDocumentUtils`
  - added `getBase64Stream` to get a base64 stream from a string, a file or an existing stream
- 
+ - `get_mime`: the method will no longer raise `InvalidArgumentException` if the file do not have an extension, instead will return `application/octet-stream`
+ - `getMimeTypeFromExtension`:  the method will no longer raise `InvalidArgumentException` if the extension has no corresponding mime type, instead will return `application/octet-stream`
+- to `KlinkCoreClient`
+ - `generateThumbnailFromContent` can handle stream for the `$data` parameter
 
+please be aware that `getMimeTypeFromExtension` is used by `get_mime` when the file path specified has the extension. 
+
+## Deprecated
+
+- The class `KlinkHttp` has been deprecated and will be removed in a future version.
+- The class `KlinkSearchType` and its constants are deprecated. Use the `KlinkVisibilityType` class instead.
 
 
 ## Feature offered
@@ -413,8 +416,9 @@ The KlinkDocumentUtils class has the following utility methods that you need to 
 - `generateDocumentHash( $filePath )` generates the hash of the content of a document
 - `generateHash( $text )` generates the hash of the given text
 - `get_mime( $filePath )` return the mime type of a file
-- `isMimeTypeSupported( $mime )` **test if the specified mime type is known and can be handled. This not guarantee that the the K-Link Core can index the file without prior elaboration**
-- `isMimeTypeIndexable( $mime )` **test if the specified mime type is supported by the K-Link Core and requires no elaboration before can be sent to the K-Link Core**
+- `isMimeTypeSupported( $mime )` test if the specified mime type is known and can be handled. This not guarantee that the the K-Link Core can index the file without prior elaboration
+- `isMimeTypeIndexable( $mime )` test if the specified mime type is supported by the K-Link Core and requires no elaboration before can be sent to the K-Link Core
+- `getBase64Stream( $value )` return a base64 version of a string (or a resource) in using a resource
 
 **Important notice**
 
@@ -644,11 +648,8 @@ Here is the list of possible document types:
 - `presentation` : A presentation (PowerPoint),
 - `image` : An image (jpg, gif or png).
 - `geodata` : Google Earth Files (KMZ, KML).
+- `email` : An Email File (EML, MSG).
 - ...
-
-### Deprecated
-
-- The class `KlinkSearchType` and its constants are deprecated. Use the `KlinkVisibilityType` class instead. 
 
 
 ---------------------------

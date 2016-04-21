@@ -5,7 +5,7 @@ use Psr\Log\LoggerAwareTrait;
 use Psr\Log\NullLogger;
 
 if( !defined( 'KLINK_BOILERPLATE_VERSION' ) ){
-	define( 'KLINK_BOILERPLATE_VERSION', '2.0.0' );
+	define( 'KLINK_BOILERPLATE_VERSION', '2.1.0' );
 }
 
 /**
