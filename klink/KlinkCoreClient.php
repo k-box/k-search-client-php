@@ -479,7 +479,7 @@ final class KlinkCoreClient
 
 		$conn = self::_get_connection(\KlinkVisibilityType::KLINK_PUBLIC);
 
-		$insts = $conn->getCollection( self::ALL_INSTITUTIONS_ENDPOINT, array(), 'KlinkInstitutionDetails' );
+		$insts = $conn->getCollection( self::ALL_INSTITUTIONS_ENDPOINT, 'KlinkInstitutionDetails', array() );
 
 		if( KlinkHelpers::is_error( $insts ) ){
 			throw new KlinkException( (string)$insts, $insts->get_error_data_code() );
