@@ -62,7 +62,7 @@ class KlinkCoreClientIntegrationTest extends PHPUnit_Framework_TestCase
 	{
 
 		$result = $this->core->getInstitutions();
-
+		
 		$this->assertTrue(is_array($result), 'result must be an array');
 
 		$this->assertContainsOnlyInstancesOf('KlinkInstitutionDetails', $result);
