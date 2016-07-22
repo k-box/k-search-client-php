@@ -382,6 +382,52 @@ final class KlinkFacetsBuilder
 
 		return call_user_func_array(array($instance, 'institution'), func_get_args());
 	}
+
+    /**
+     * Filter for the documentHash.
+     *
+     * This is not a facet and so you cannot use mincount, prefix, count.
+     *
+     * If no value is passed for $filter parameter the filter will not be applied on the request to the Core.
+     *
+     * @param string $filter the value to use for filtering
+     * @return KlinkFacetsBuilder
+     * @throws BadMethodCallException if called two or more times on the same builder
+     */
+    public function documentHash($filter){
+        $isStatic = !(isset($this) && get_class($this) == __CLASS__); //This check is caused by the non-sense of PHP 5.6 that call the same method not considering the static modifier
+
+        if(!$isStatic){
+            $instance = $this;
+        }
+        else {
+            $instance = new KlinkFacetsBuilder;
+        }
+
+        if(in_array(KlinkFacet::DOCUMENT_HASH, $instance->already_builded)){
+            throw new BadMethodCallException("The documentHash filter has been already added", 1);
+        }
+
+        if(empty($filter)){
+            throw new InvalidArgumentException("The filter value cannot be empty", 2);
+        }
+
+        if (is_array($filter)) {
+            throw new InvalidArgumentException("The documentHash value cannot be an array", 2);
+        }
+
+        $facet = KlinkFacet::create(KlinkFacet::DOCUMENT_HASH,
+            KlinkFacetsBuilder::DEFAULT_MINCOUNT,
+            null,
+            KlinkFacetsBuilder::DEFAULT_COUNT,
+            $filter);
+
+        $instance->facets[] = $facet;
+        $instance->already_builded[] = KlinkFacet::DOCUMENT_HASH;
+
+        return $instance;
+    }
+
 	
 	/**
 	 * Facet for the locations city/country names
