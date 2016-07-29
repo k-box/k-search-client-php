@@ -58,6 +58,8 @@ final class KlinkInstitutionDetails
      * The institution address
      * @var string
      */
+    public $address;
+
     public $addressStreet;
 
     public $addressCountry;
@@ -98,6 +100,7 @@ final class KlinkInstitutionDetails
     public function getAddress(){
 
         return new Klink_Address(
+            $this->address,
             $this->addressStreet, 
             $this->addressCountry, 
             $this->addressLocality, 
@@ -105,11 +108,14 @@ final class KlinkInstitutionDetails
 
     }
 
-    public function setAddress(Klink_Address $address){
-        $this->addressStreet = $address->getStreet();
-        $this->addressCountry = $address->getCountry();
-        $this->addressLocality = $address->getLocality();
-        $this->addressZip = $address->getPostalCode();
+    public function setAddress($address){
+        if ($address && $address instanceof Klink_Address) {
+            $this->address = $address->getAddress();
+            $this->addressStreet = $address->getStreet();
+            $this->addressCountry = $address->getCountry();
+            $this->addressLocality = $address->getLocality();
+            $this->addressZip = $address->getPostalCode();
+        }
 
         return $this;
     }
@@ -125,6 +131,7 @@ final class KlinkInstitutionDetails
 
     /**
      * @param string $type
+     * @return $this
      */
     public function setType( $type )
     {
@@ -143,6 +150,7 @@ final class KlinkInstitutionDetails
 
     /**
      * @param string $name
+     * @return $this
      */
     public function setName($name)
     {
@@ -312,16 +320,24 @@ final class KlinkInstitutionDetails
  */
 final class Klink_Address
 {
+    private $address;
     private $street;
     private $country;
     private $locality;
     private $postalCode;
 
     /**
-     * 
+     * Klink_Address constructor.
+     *
+     * @param $address string     The complete address of the institution
+     * @param $street string      The street part of the address
+     * @param $country string     The city part of the address
+     * @param $locality string    The locality part of the address
+     * @param $postalCode string  The postal code of the address
      */
-    public function __construct( $street, $country, $locality, $postalCode ){
+    public function __construct($address, $street, $country, $locality, $postalCode ){
 
+        $this->address = $address;
         $this->street = $street;
         $this->country = $country;
         $this->locality = $locality;
@@ -330,8 +346,19 @@ final class Klink_Address
     }
 
     /**
+     * Returns a full address.
+     *
+     * Example: "1600 Amphitheatre Pkwy 34 Building 34A room 2. Mountain View, 10092 - California"
+     *
+     * @return string
+     */
+    public function getAddress(){
+        return $this->address;
+    }
+
+    /**
      * The street address. For example, 1600 Amphitheatre Pkwy.
-     * @return type
+     * @return string
      */
     public function getStreet(){
         return $this->street;
@@ -339,7 +366,7 @@ final class Klink_Address
 
     /**
      * The country. For example, USA. You can also provide the two-letter ISO 3166-1 alpha-2 country code.
-     * @return type
+     * @return string
      */
     public function getCountry(){
         return $this->country;
@@ -347,7 +374,7 @@ final class Klink_Address
 
     /**
      * The locality. For example, Mountain View.
-     * @return type
+     * @return string
      */
     public function getLocality(){
         return $this->locality;
@@ -355,7 +382,7 @@ final class Klink_Address
 
     /**
      * The postal code. For example, 94043.
-     * @return type
+     * @return string
      */
     public function getPostalCode(){
         return $this->postalCode;
