@@ -3,7 +3,7 @@
 /**
 * Test the KlinkRestClient support for the authentication
 */
-class KlinkRestClientAuthenticationTest extends PHPUnit_Framework_TestCase 
+class KlinkRestClientAuthenticationTest extends BaseKlinkCoreClientTest
 {
     /** @var KlinkRestClient */
     private $rest;
@@ -13,16 +13,15 @@ class KlinkRestClientAuthenticationTest extends PHPUnit_Framework_TestCase
 
 	public function setUp()
 	{
-	  	date_default_timezone_set('America/Los_Angeles');
+	  	$this->initSettings();
 
 	    $this->rest = new KlinkRestClient(
-	    	$_SERVER['PUBLIC_CORE_URL'],
-	    	new KlinkAuthentication($_SERVER['PUBLIC_CORE_URL'], $_SERVER['CORE_USER'], $_SERVER['CORE_PASS']));
+	    	$this->corePublicUrl,
+	    	new KlinkAuthentication($this->corePublicUrl, $this->coreUser, $this->corePass));
 
 	    $this->rest2 = new KlinkRestClient(
-	    	$_SERVER['PUBLIC_CORE_URL'],
-	    	new KlinkAuthentication($_SERVER['PUBLIC_CORE_URL'], $_SERVER['CORE_USER'], '.klink'));
-
+	    	$this->corePublicUrl,
+	    	new KlinkAuthentication($this->corePublicUrl, $this->coreUser, '.klink'));
 	}
 	
 	/**
@@ -31,11 +30,8 @@ class KlinkRestClientAuthenticationTest extends PHPUnit_Framework_TestCase
 	public function testGet()
 	{
 		$result = $this->rest->getCollection( 'institutions', new KlinkInstitutionDetails() );
-
 		$this->assertFalse(KlinkHelpers::is_error($result), 'What the hell');
-
 		$this->assertNotNull( $result, 'Null');
-
 	}
 
 	/**
@@ -43,13 +39,8 @@ class KlinkRestClientAuthenticationTest extends PHPUnit_Framework_TestCase
      */
 	public function testGetOnWrongAuth()
 	{
-		$result = $this->rest2->get( 'institutions/' . INSTITUION_ID, new KlinkInstitutionDetails() );
-
+		$result = $this->rest2->get( 'institutions/' . $this->institutionId, new KlinkInstitutionDetails() );
 		$this->assertTrue(KlinkHelpers::is_error($result), 'What the hell');
-
 		$this->assertEquals(401, $result->get_error_data_code(), 'message');
-
 	}
-
-	
 }

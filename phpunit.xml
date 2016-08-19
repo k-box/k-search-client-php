@@ -24,7 +24,12 @@
         </exclude>
     </groups>
     <php>
-        <const name="INSTITUION_ID" value="BOIL"/>
+        <env name="KLINK_CORE_PRIVATE_URL" value="http://kcore.dev/"/>
+        <env name="KLINK_CORE_PUBLIC_URL" value="http://kcore.dev/"/>
+        <env name="KLINK_USER" value="admin@klink.org"/>
+        <env name="KLINK_PASS" value="admin.klink"/>
+        <env name="KLINK_ADAPTER_ID" value="XX"/>
+        <env name="KLINK_INSTITUTION_ID" value="BOIL"/>
     </php>
     <filter>
         <blacklist>

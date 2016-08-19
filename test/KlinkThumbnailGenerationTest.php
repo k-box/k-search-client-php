@@ -4,37 +4,9 @@
 * Test the Thumbnail generation invocation functionality. Make sure to run agains a core with
 * versione 2.2 of the API
 */
-class KlinkThumbnailGenerationTest extends PHPUnit_Framework_TestCase
+class KlinkThumbnailGenerationTest extends BaseKlinkCoreClientTest
 {
 	
-
-	public function setUp()
-	{
-	  	date_default_timezone_set('Europe/Rome');
-
-	  	// error_reporting(E_ALL & E_STRICT);
-
-	  	// set_error_handler("var_dump");
-
-	  	// ini_set("display_errors", 1);
-		// ini_set("track_errors", 1);
-		// ini_set("html_errors", 1);
-		// error_reporting(E_ALL);
-
-	  	$config = new KlinkConfiguration( INSTITUION_ID, 'KA', array(
-	  			new KlinkAuthentication($_SERVER['PUBLIC_CORE_URL'], $_SERVER['CORE_USER'], $_SERVER['CORE_PASS'])
-	  		) );
-
-	  	if(in_array('--debug', $_SERVER['argv'])){
-	  		$config->enableDebug();	
-	  	}
-
-	  	
-
-	    $this->core = new KlinkCoreClient($config);
-
-	}
-
 	private $image_string = 'R0lGODlhDwAPAKECAAAAzMzM/////wAAACwAAAAADwAPAAACIISPeQHsrZ5ModrLlN48CXF8m2iQ3YmmKqVlRtW4MLwWACH+H09wdGltaXplZCBieSBVbGVhZCBTbWFydFNhdmVyIQAAOw==';
 
 
@@ -51,7 +23,7 @@ class KlinkThumbnailGenerationTest extends PHPUnit_Framework_TestCase
           'The KCore has a bug in the thumbnail generation service preventing this test to execute correctly.'
         );
 
-		$result = $this->core->generateThumbnailOfWebSite('http://www.google.it/');
+		$result = $this->getCoreClient()->generateThumbnailOfWebSite('http://www.google.it/');
 
 		$this->assertNotNull($result);
 
@@ -72,7 +44,7 @@ class KlinkThumbnailGenerationTest extends PHPUnit_Framework_TestCase
 	public function testGenerateThumbnailFromImageContent()
 	{
 
-		$result = $this->core->generateThumbnailFromContent('image/gif', base64_decode($this->image_string));
+		$result = $this->getCoreClient()->generateThumbnailFromContent('image/gif', base64_decode($this->image_string));
 
 		$this->assertNotNull($result);
 
@@ -94,7 +66,7 @@ class KlinkThumbnailGenerationTest extends PHPUnit_Framework_TestCase
           'The KCore has a bug in the thumbnail generation service preventing this test to execute correctly.'
         );
 
-		$result = $this->core->generateThumbnailFromContent('application/pdf', base64_decode($this->pdf_string));
+		$result = $this->getCoreClient()->generateThumbnailFromContent('application/pdf', base64_decode($this->pdf_string));
 
 		$this->assertNotNull($result);
 
