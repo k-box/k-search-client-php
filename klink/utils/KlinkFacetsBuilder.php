@@ -478,6 +478,55 @@ final class KlinkFacetsBuilder
 
 		return $instance;
 	}
+	/**
+	 * Facet for the projectId names
+	 * 
+	 * variable number of parameters
+	 * 
+	 * if NONE   => enable the facet will 
+	 * if one string => the filter (check if is a valid project_id )
+	 * if one int => number of items to return for the facet (count)
+	 * if two ints => 1: count, 2: mincount
+	 * if 3 => 1: filter, 2: count, 3: mincount
+	 * 
+	 * @throws BadMethodCallException if called two or more times on the same builder
+	 */
+	public function projectId()
+	{
+		$isStatic = !(isset($this) && get_class($this) == __CLASS__); //This check is caused by the non-sense of PHP 5.6 that call the same method not considering the static modifier
+
+		if(!$isStatic){
+			$instance = $this;
+		}
+		else {
+			$instance = new KlinkFacetsBuilder;
+		}
+
+		if(in_array(KlinkFacet::PROJECT_ID, $instance->already_builded)){
+			throw new BadMethodCallException("The project_id facet has been already added", 1);
+		}
+
+		$builded_params = call_user_func_array(array($instance, '_handle_facet_parameters'), func_get_args());
+
+		$facet = null;
+
+		if(is_null($builded_params)){
+			$facet = KlinkFacet::create(KlinkFacet::PROJECT_ID, 1);
+		}
+		else {
+
+			$facet = KlinkFacet::create(KlinkFacet::PROJECT_ID,
+						$builded_params['mincount'], 
+						$builded_params['prefix'], 
+						$builded_params['count'], 
+						$builded_params['filter']);
+		}
+
+		$instance->facets[] = $facet;
+		$instance->already_builded[] = KlinkFacet::PROJECT_ID;
+
+		return $instance;
+	}
 	
 	/**
 	 * Facet for the locations string

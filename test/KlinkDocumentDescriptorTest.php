@@ -12,7 +12,25 @@ class KlinkDocumentDescriptorTest extends PHPUnit_Framework_TestCase
 	  	date_default_timezone_set('Europe/Rome');
 	}
 
-	
+    public function testDocumentProjectIDAddAndRemove()
+    {
+        $doc = new KlinkDocumentDescriptor();
+
+        $this->assertEmpty($doc->getProjectIds());
+
+        $doc->addProjectId(10);
+        $doc->addProjectId(20);
+
+        $this->assertCount(2, $doc->getProjectIds());
+        $this->assertEquals(array(10, 20), $doc->getProjectIds());
+
+        $this->assertFalse($doc->removeProjectId(2));
+        $this->assertTrue($doc->removeProjectId(20));
+
+        $this->assertCount(1, $doc->getProjectIds());
+        $this->assertEquals(array(10), $doc->getProjectIds());
+    }
+
 
 	public function testDocumentGroupsAddAndRemove()
 	{
