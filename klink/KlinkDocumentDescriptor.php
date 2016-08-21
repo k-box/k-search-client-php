@@ -382,6 +382,14 @@ final class KlinkDocumentDescriptor
 	public $titleAliases;
 
 
+    /**
+     * The list of ProjectsIDs of the document, as defined by users when inserting the document in a project
+     *
+     * @var array
+     */
+    public $projectIds;
+
+
 	/**
 	 * setDocumentGroups
 	 * @param string[] $value the new values for the document groups, each element in the array must be formatted as user_id:group_id, where user_id adn group_id are integers and user_id could be 0
@@ -541,9 +549,58 @@ final class KlinkDocumentDescriptor
 
 	}
 
+    /**
+     * @return array
+     */
+    public function getProjectIds()
+    {
+        return $this->projectIds;
+    }
+
+    /**
+     * @param array $projectIds
+     *
+     * @return KlinkDocumentDescriptor
+     */
+    public function setProjectIds(array $projectIds)
+    {
+        $this->projectIds = $projectIds;
+
+        return $this;
+    }
 
 
+    /**
+     * @param int $projectId The ProjectID to add for this document.
+     *
+     * @return KlinkDocumentDescriptor
+     */
+    public function addProjectId($projectId)
+    {
+        if (!in_array($projectId, $this->projectIds)) {
+            $this->projectIds[] = $projectId;
+        }
 
+        return $this;
+    }
+
+    /**
+     * Removes the given ProjectID from the Document.
+     *
+     * @param int $projectId The ProjectID to remove
+     *
+     * @return bool
+     */
+    public function removeProjectId($projectId)
+    {
+        if (!in_array($projectId, $this->projectIds)) {
+            return false;
+        }
+
+        $pos = array_search($projectId, $this->projectIds);
+        unset($this->projectIds[$pos]);
+        return true;
+    }
 	
 
 	/**
@@ -552,7 +609,7 @@ final class KlinkDocumentDescriptor
 	 * @internal
 	 */
 	function __construct(){
-
+        $this->projectIds = array();
 	}
 
 	/**
