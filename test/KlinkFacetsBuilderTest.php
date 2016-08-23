@@ -9,7 +9,9 @@
 */
 class KlinkFacetsBuilderTest extends PHPUnit_Framework_TestCase
 {
-	
+
+    /** @var array */
+    private  $currently_supported;
 
 	public function setUp()
 	{
@@ -17,11 +19,14 @@ class KlinkFacetsBuilderTest extends PHPUnit_Framework_TestCase
 
 	  	error_reporting(E_ALL & E_STRICT);
 
-
-	  	$oClass = new ReflectionClass('KlinkFacet');
-
-        $this->currently_supported = array_values(array(KlinkFacet::DOCUMENT_TYPE,KlinkFacet::LANGUAGE,KlinkFacet::INSTITUTION_ID,KlinkFacet::DOCUMENT_GROUPS,KlinkFacet::LOCATIONS_STRING));
-
+        $this->currently_supported = array_values(array(
+            KlinkFacet::DOCUMENT_TYPE,
+            KlinkFacet::LANGUAGE,
+            KlinkFacet::INSTITUTION_ID,
+            KlinkFacet::DOCUMENT_GROUPS,
+            KlinkFacet::LOCATIONS_STRING,
+            KlinkFacet::PROJECT_ID,
+        ));
 	}
 
 
