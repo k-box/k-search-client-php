@@ -149,7 +149,7 @@ class KlinkDocument {
 			
 			return $fp;
 		}
-		else if( @get_resource_type($this->documentData) === 'Unknown' ){
+		else if( !is_string($this->documentData) && @get_resource_type($this->documentData) === 'Unknown' ){
 			throw new UnexpectedValueException('The original document stream is closed');
 		}
 		
