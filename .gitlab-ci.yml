@@ -5,7 +5,6 @@ stages:
 
 cache:
   key: "$CI_BUILD_REF_NAME"
-  group: sharedcache
   paths:
   - vendor/
 
