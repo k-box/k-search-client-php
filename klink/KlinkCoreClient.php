@@ -297,7 +297,7 @@ final class KlinkCoreClient
 	 * Execute a KLink search on the reference KLink Core. The performed search reflects the specified parameters.
 	 * 
 	 * @param string $terms the phrase or terms to search for
-	 * @param KlinkSearchType $type the type of the search to be perfomed, if null is specified the default behaviour is KlinkSearchType::KLINK_PUBLIC
+	 * @param KlinkVisibilityType $type the type of the search to be perfomed, if null is specified the default behaviour is KlinkVisibilityType::KLINK_PUBLIC
 	 * @param int $resultsPerPage the number of results per page
 	 * @param int $offset the page to display
 	 * @param KlinkFacet[] $facets The facets that needs to be retrieved or what will be retrieved. Default null, no facets will be calculated or filtered.
@@ -387,7 +387,7 @@ final class KlinkCoreClient
 	// function autocomplete( $terms, $type = null ){
 
 	// 	if(is_null($type)){
-	// 		$type = KlinkSearchType::KLINK_PUBLIC;
+	// 		$type = KlinkVisibilityType::KLINK_PUBLIC;
 	// 	}
 
 	// 	$conn = self::_get_connection();
@@ -597,7 +597,7 @@ final class KlinkCoreClient
 
 		try{
 
-			$search = $this->search("*", KlinkSearchType::KLINK_PUBLIC, 0, 0, KlinkFacetsBuilder::create()->institution($institution)->build());
+			$search = $this->search("*", KlinkVisibilityType::KLINK_PUBLIC, 0, 0, KlinkFacetsBuilder::create()->institution($institution)->build());
 
 			return $search->getTotalResults();
 
@@ -629,7 +629,7 @@ final class KlinkCoreClient
 
 		try{
 
-			$search = $this->search("*", KlinkSearchType::KLINK_PRIVATE, 0, 0, KlinkFacetsBuilder::create()->institution($institution)->build());
+			$search = $this->search("*", KlinkVisibilityType::KLINK_PRIVATE, 0, 0, KlinkFacetsBuilder::create()->institution($institution)->build());
 
 			return $search->getTotalResults();
 

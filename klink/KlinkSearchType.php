@@ -4,6 +4,8 @@
  * Define the available types of search.
  *
  * @package Klink
+ * @deprecated 2.2.0 No longer used by internal code and not recommended, will be removed from the next major release. Use KlinkVisibilityType instead
+ * @see KlinkVisibilityType for a replacement  
  */
 final class KlinkSearchType
 {

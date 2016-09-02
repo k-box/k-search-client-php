@@ -200,7 +200,7 @@ $start = $searchResult->getOffset();
 Considering that the results could be more than what fits in a result page, you have the ability to select which page of the result set need to be displayed:
 
 ```php
-$searchResultSecondPage = $klinkCore->search($searched_term, KlinkSearchType::KLINK_PUBLIC, $resultsPerPage, $start + $resultsPerPage );
+$searchResultSecondPage = $klinkCore->search($searched_term, KlinkVisibilityType::KLINK_PUBLIC, $resultsPerPage, $start + $resultsPerPage );
 ```
 
 The first `$resultsPerPage` is the number of results per page and the `$start` is the offset of the first new result.
