@@ -127,38 +127,43 @@ class KlinkDocument {
 	}
     
     /**
-	 * Get the content of the document, encoded as base64, as a stream
-	 *
-	 * This method returns a stream, so be sure to close it when you are done.
-	 *
-	 * PLEASE BE AWARE THAT THIS METHOD ALWAYS RETURNS A NEW STREAM WHEN INVOKED
-	 *
-	 * @return stream the document content as a raw stream
-	 * @throws UnexpectedValueException if the internal document data was a stream and has been closed
-	 */
-    public function getDocumentBase64Stream(){
-		
-		if( is_resource($this->documentData) && @get_resource_type($this->documentData) === 'stream' ){
-			rewind($this->documentData);
-			
-			$fp = tmpfile();
-			stream_filter_append($fp, 'convert.base64-encode', STREAM_FILTER_WRITE);
-			stream_copy_to_stream($this->documentData, $fp);
-			
-			rewind($fp);
-			
-			return $fp;
-		}
-		else if( @get_resource_type($this->documentData) === 'Unknown' ){
-			throw new UnexpectedValueException('The original document stream is closed');
-		}
-		
-		if($this->isFile()){
-			return fopen('php://filter/read=convert.base64-encode/resource=' . $this->documentData,'r');
-		}
-        
-        return fopen('data://text/plain,' . base64_encode($this->documentData), 'r');
-		
-    }
+     * Get the content of the document, encoded as base64, as a stream
+     *
+     * This method returns a stream, so be sure to close it when you are done.
+     *
+     * PLEASE BE AWARE THAT THIS METHOD ALWAYS RETURNS A NEW STREAM WHEN INVOKED
+     *
+     * @return resource the document content as a raw stream
+     * @throws UnexpectedValueException if the internal document data was a stream and has been closed
+     */
+    public function getDocumentBase64Stream()
+    {
+        if (!is_string($this->documentData) && !is_resource($this->documentData)) {
+            throw new UnexpectedValueException('The original document should be a string or a resource');
+        }
 
+        if (is_resource($this->documentData)) {
+            $resourceType = get_resource_type($this->documentData);
+
+            if ('stream' === $resourceType) {
+                rewind($this->documentData);
+
+                $fp = tmpfile();
+                stream_filter_append($fp, 'convert.base64-encode', STREAM_FILTER_WRITE);
+                stream_copy_to_stream($this->documentData, $fp);
+                rewind($fp);
+
+                return $fp;
+            }
+
+            // If the resource is not a stream, something is wrong here.
+            throw new UnexpectedValueException('The original document resource is not a stream');
+        }
+
+        if($this->isFile()){
+            return fopen('php://filter/read=convert.base64-encode/resource=' . $this->documentData,'r');
+        }
+
+        return fopen('data://text/plain,' . base64_encode($this->documentData), 'r');
+    }
 }
