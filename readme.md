@@ -5,9 +5,7 @@
 Is the starting point for creating a K-Link Adapter and/or using the K-Link Core services, in general. 
 It offers some basic functionality for interacting with the K-Link Core and exposes the main interfaces that represents the data needed for every operation. The use of interfaces has been preferred over classes given the fact that the implementation can be different if an ORM is used or the CMS has some particular requirements.
 
-**requires the latest K-Link Core version**
-
-**This is version 2.x**. For the old 1.3.0 version refer to the `1.x branch`
+**requires the K-Link Core version 2.1**
 
 
 ## Breaking changes introduced in version 2.0.0
@@ -37,8 +35,9 @@ please be aware that `getMimeTypeFromExtension` is used by `get_mime` when the f
 
 ## Deprecated
 
-- The class `KlinkHttp` has been deprecated and will be removed in a future version.
+- The class `KlinkHttp` has been deprecated and will be removed in a version 3.0.0.
 - The class `KlinkSearchType` and its constants are deprecated. Use the `KlinkVisibilityType` class instead.
+- The class `KlinkDocumentAuthor` has been deprecated. No one was using it and the code was a ghost.
 
 
 ## Feature offered
@@ -648,8 +647,9 @@ Here is the list of possible document types:
 - `presentation` : A presentation (PowerPoint),
 - `image` : An image (jpg, gif or png).
 - `geodata` : Google Earth Files (KMZ, KML).
-- `email` : An Email File (EML, MSG).
-- ...
+- `email` : An Email File (EML, MSG),
+- `video` : A video file (mp4, webm, avi, ...), except for dvd videos in VOB format that are categorized `dvd`,
+- `archive`: A compressed file (zip, rar, tar).
 
 
 ---------------------------
