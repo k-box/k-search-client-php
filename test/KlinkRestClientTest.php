@@ -78,6 +78,21 @@ class KlinkRestClientTest extends PHPUnit_Framework_TestCase
 		$this->assertInstanceOf('TestResponse', $result);
 
 	}
+
+    /**
+     * @group deserialization
+     * @group http
+     */
+    public function testHeadersRestClient()
+    {
+        $result = $this->rest->get( 'headers', new TestHeaderResponse() );
+        $this->assertFalse(KlinkHelpers::is_error($result), 'What the hell');
+        $this->assertInstanceOf('TestHeaderResponse', $result);
+
+        /** @var TestHeaderResponse $result */
+        $this->assertArrayHasKey('Accept-Version', $result->headers);
+        $this->assertEquals(KlinkCoreClient::DEFAULT_KCORE_API_VERSION, $result->headers['Accept-Version']);
+    }
 	
 	/**
 	 * @dataProvider statusResponseCheckErrors

@@ -4,17 +4,14 @@ use Psr\Log\LoggerInterface;
 use Psr\Log\LoggerAwareTrait;
 use Psr\Log\NullLogger;
 
-if( !defined( 'KLINK_BOILERPLATE_VERSION' ) ){
-	define( 'KLINK_BOILERPLATE_VERSION', '2.1.1' );
-}
-
 /**
 *  KlinkCoreClient.
 *  offers a clean API to perform actions on the Klink Core
 */
 final class KlinkCoreClient
 {
-	
+    const DEFAULT_KCORE_API_VERSION = '2.2';
+
 	use LoggerAwareTrait;
 
 	// ---- API endpoint constants
@@ -83,26 +80,36 @@ final class KlinkCoreClient
      * Stores the (optional) Telemetry object
      */
     private $telemeter=null;
-	
-	
 
-	/**
-	 * Creates a KlinkCoreClient
-	 *
-	 * @return KlinkCoreClient
-	 */
-	function __construct( KlinkConfiguration $config, LoggerInterface $logger = null, IKlinkCoreTelemeter $telemeter=null )
+
+    /**
+     * Creates a KLinkCoreClient
+     *
+     * @param KlinkConfiguration  $config
+     * @param LoggerInterface     $logger
+     * @param IKlinkCoreTelemeter $telemeter
+     */
+	function __construct(
+        KlinkConfiguration $config,
+        LoggerInterface $logger = null,
+        IKlinkCoreTelemeter $telemeter = null
+    )
 	{
-
 		$this->telemeter= $telemeter;
-
         $this->configuration = $config;
-		
 		$this->logger = $logger;
 
 		foreach ($this->configuration->getCores() as $core) {
-
-			$this->rest[$core->getTag()] = new KlinkRestClient($core->getCore(), $core, array('debug' => $this->configuration->isDebugEnabled()), $logger);
+		    $version = $core->getApiVersion();
+			$this->rest[$core->getTag()] = new KlinkRestClient(
+			    $core->getCore(),
+                $core,
+                [
+                    'debug' => $this->configuration->isDebugEnabled(),
+                    'api-version' => $version ? $version : self::DEFAULT_KCORE_API_VERSION,
+                ],
+                $logger
+            );
 
 		}
 		
@@ -646,10 +653,11 @@ final class KlinkCoreClient
 	 * Test the specified KlinkConfiguration for errors. 
 	 * The test will verify also that the authentication parameter and the istitutionid are valid.
 	 * 
-	 * @param KlinkConfiguration $config the configuration to test
-	 * @param Exception $error (in) the variable the will contain the detailed exception object
-	 * @param boolean $health_info (in) pass a variable here to gather health details
-	 * @return  boolean true if the test passes, false otherwise. 
+	 * @param KlinkConfiguration $config      the configuration to test
+	 * @param Exception          $error       (in) the variable the will contain the detailed exception object
+	 * @param boolean            $health_info (in) pass a variable here to gather health details
+	 *
+*@return  boolean true if the test passes, false otherwise.
 	 * */
 	public static function test(KlinkConfiguration $config, &$error, $perform_health_check = false, &$health_info=null, LoggerInterface $logger = null){
 
@@ -750,7 +758,7 @@ final class KlinkCoreClient
 		} catch( Exception $e ){
 			if( $config->isDebugEnabled() ){
 
-				$logger->debug( 'Test - CoreClient instance construction caused Exception ' . $ke->getMessage(), ['error' => $e, 'res' => isset($res) ? $res : null] );
+				$logger->debug( 'Test - CoreClient instance construction caused Exception ' . $e->getMessage(), ['error' => $e, 'res' => isset($res) ? $res : null] );
 				
 			}
             
