@@ -159,25 +159,40 @@ class KlinkDocumentTest extends PHPUnit_Framework_TestCase
 		 fclose($this->stream);
 		 
 	 }
-	 
-	 public function testGetFileContent(){
-		 
-		 $descriptor = KlinkDocumentDescriptor::create(
-                'inst', 
-                'ainsma', 
-                'iabdubddubdusbdusbdusbdsu', 
-                'document title', 
-                'application/pdf',
-                'https://something.com/doc',
-                'https://something.com/thumb',
-                'owner <owner@something.com>',
-                'uploaded <uploader@something.com>',
-                'private');
-		 
-		 $file_path = __DIR__ . '/temporary_document.txt';
-		 $data = 'hello data';
-		 file_put_contents($file_path, $data);
-		 
+
+
+    function getFileContentDataprovider()
+    {
+        $descriptor = KlinkDocumentDescriptor::create(
+            'inst',
+            'ainsma',
+            'iabdubddubdusbdusbdusbdsu',
+            'document title',
+            'application/pdf',
+            'https://something.com/doc',
+            'https://something.com/thumb',
+            'owner <owner@something.com>',
+            'uploaded <uploader@something.com>',
+            'private'
+        );
+
+        return array(
+            'hello-data' => array($descriptor, 'hello data'),
+            'empty'      => array($descriptor, ''),
+            'null'       => array($descriptor, null),
+        );
+    }
+
+    /**
+     * @param KlinkDocumentDescriptor $descriptor
+     * @param string                  $data
+     *
+     * @dataProvider getFileContentDataprovider
+     */
+    public function testGetFileContent($descriptor, $data)
+    {
+        $file_path = __DIR__ . '/temporary_document.txt';
+        file_put_contents($file_path, $data);
 		 
 		 $document = new KlinkDocument($descriptor, $file_path);
 		 
