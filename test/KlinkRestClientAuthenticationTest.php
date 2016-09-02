@@ -8,6 +8,9 @@ class KlinkRestClientAuthenticationTest extends PHPUnit_Framework_TestCase
     /** @var KlinkRestClient */
     private $rest;
 
+    /** @var KlinkRestClient */
+    private $rest2;
+
 	public function setUp()
 	{
 	  	date_default_timezone_set('America/Los_Angeles');

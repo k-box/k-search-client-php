@@ -162,11 +162,15 @@ final class KlinkRestClient implements IKlinkRestClient
 	function get( $url, $expected_return_type, array $params = [] ){
 
 		if(!self::_check_expected_return_type($expected_return_type)){
-			return new KlinkError(KlinkError::ERROR_CLASS_EXPECTED, KlinkHelpers::localize('The specified return type is not a class.'), KlinkError::ERRORCODE_CLASS_EXPECTED);
+			return new KlinkError(
+			    KlinkError::ERROR_CLASS_EXPECTED,
+                KlinkHelpers::localize('The specified return type is not a class.'),
+                KlinkError::ERRORCODE_CLASS_EXPECTED
+            );
 		}
 		
 		$response = $this->_doGet($url, $params);
-		
+
 		if(KlinkHelpers::is_error($response)){
 			return $response;
 		}

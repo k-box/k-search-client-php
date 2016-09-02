@@ -7,6 +7,9 @@
 class KlinkCoreClientIntegrationTest extends PHPUnit_Framework_TestCase
 {
 
+    /** @var KlinkCoreClient */
+    private $core;
+
 	public function setUp()
 	{	  
 		date_default_timezone_set('Europe/Rome');
