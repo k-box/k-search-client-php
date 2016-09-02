@@ -5,6 +5,9 @@
 */
 class KlinkRestClientTest extends PHPUnit_Framework_TestCase 
 {
+    /** @var KlinkRestClient */
+    private $rest;
+
 	public function setUp()
 	{
 	  	date_default_timezone_set('America/Los_Angeles');
@@ -204,7 +207,5 @@ class KlinkRestClientTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals($expected, $url);
 
 	}
-
-
 
 }
