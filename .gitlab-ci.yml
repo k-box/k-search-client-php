@@ -33,7 +33,7 @@ linting:5.5:
     - ./vendor/bin/phpcpd --min-lines=25 ./test
 
 composer:7.0:
-  image: "docker.klink.asia:5043/alessio/phpunit:7.0"
+  image: "docker.klink.asia:5043/klink/php-7-test-cli"
   stage: build
   tags:
   - docker
@@ -41,7 +41,7 @@ composer:7.0:
   - composer install --prefer-dist
 
 phpunit:7.0:
-  image: "docker.klink.asia:5043/alessio/phpunit:7.0"
+  image: "docker.klink.asia:5043/klink/php-7-test-cli"
   stage: test
   allow_failure: true
   tags:
@@ -49,8 +49,8 @@ phpunit:7.0:
   script:
   - ./vendor/bin/phpunit
 
-linting:7.5:
-  image: "docker.klink.asia:5043/alessio/phpunit:7.0"
+linting:7.0:
+  image: "docker.klink.asia:5043/klink/php-7-test-cli"
   stage: linting
   script:
     - ./vendor/bin/parallel-lint --exclude vendor .
