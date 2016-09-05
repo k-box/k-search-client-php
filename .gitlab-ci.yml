@@ -56,6 +56,28 @@ linting:7.0:
     - ./vendor/bin/parallel-lint --exclude vendor .
 
 
+composer:5.6:
+  image: "docker.klink.asia:5043/klink/php-5.6-test-cli:master"
+  stage: build
+  tags:
+  - docker
+  script:
+  - composer install --prefer-dist
+
+linting:5.6:
+  image: "docker.klink.asia:5043/klink/php-5.6-test-cli:master"
+  stage: linting
+  script:
+    - ./vendor/bin/parallel-lint --exclude vendor .
+
+phpunit:5.6:
+  image: "docker.klink.asia:5043/klink/php-5.6-test-cli:master"
+  stage: test
+  tags:
+  - docker
+  script:
+  - ./vendor/bin/phpunit
+
 composer_repo_push:
   stage: deploy
   script:
