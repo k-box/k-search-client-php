@@ -69,7 +69,14 @@ ini_set('display_startup_errors', '1');
      */
 	public function testEncodeWithInMemoryBase64()
 	{
-        ini_set('memory_limit', '-1');
+
+        if(PHP_MAJOR_VERSION === 5 && ini_get('memory_limit') <= "512M" ){
+            $this->markTestSkipped('This test requires a very high memory limit on PHP 5.5 and 5.6. Your memory_limit do not allow this test to be runned');
+
+            return;
+        }
+
+        // ini_set('memory_limit', '-1');
         
         // $start = memory_get_usage();
         $arr = [
