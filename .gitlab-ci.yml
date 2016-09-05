@@ -1,5 +1,6 @@
 stages:
   - build
+  - linting
   - test
   - deploy
 
@@ -23,7 +24,7 @@ phpunit:5.5:
     - ./vendor/bin/phpunit
 
 linting:5.5:
-  stage: test
+  stage: linting
   tags:
   - shell
   script:
@@ -42,6 +43,7 @@ composer:7.0:
 phpunit:7.0:
   image: "docker.klink.asia:5043/alessio/phpunit:7.0"
   stage: test
+  allow_failure: true
   tags:
   - docker
   script:
@@ -49,7 +51,7 @@ phpunit:7.0:
 
 linting:7.5:
   image: "docker.klink.asia:5043/alessio/phpunit:7.0"
-  stage: test
+  stage: linting
   script:
     - ./vendor/bin/parallel-lint --exclude vendor .
 
