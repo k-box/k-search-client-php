@@ -76,7 +76,8 @@ phpunit:5.6:
   tags:
   - docker
   script:
-  - ./vendor/bin/phpunit
+  - ./vendor/bin/phpunit -d memory_limit=2048M 
+# please always use the memory limit parameter to cover JsonStreamEncoderTest::testEncodeWithInMemoryBase64 Segmentation fault
 
 composer_repo_push:
   stage: deploy
