@@ -1,5 +1,7 @@
 [![build status](https://git.klink.asia/ci/projects/7/status.png?ref=master)](https://git.klink.asia/ci/projects/7?ref=master)
 
+[![coverage report](https://git.klink.asia/alessio.vertemati/adapterboilerplate/badges/master/coverage.svg)](https://git.klink.asia/alessio.vertemati/adapterboilerplate/commits/master)
+
 # Adapter Boilerplate
 
 Is the starting point for creating a K-Link Adapter and/or using the K-Link Core services, in general. 
