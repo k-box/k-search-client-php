@@ -10,16 +10,22 @@ cache:
 
 composer:5.5:
   stage: build
+  tags:
+  - shell
   script:
     - composer install --prefer-dist
     
 phpunit:5.5:
   stage: test
+  tags:
+  - shell
   script:
     - ./vendor/bin/phpunit
 
 linting:5.5:
   stage: test
+  tags:
+  - shell
   script:
     - ./vendor/bin/parallel-lint --exclude vendor .
     - ./vendor/bin/phpcpd ./klink
