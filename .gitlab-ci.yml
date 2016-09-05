@@ -8,22 +8,32 @@ cache:
   paths:
   - vendor/
 
-composer:
-  stage: build
-  script:
-    - composer install --prefer-dist
+# composer:
+#   stage: build
+#   script:
+#     - composer install --prefer-dist
     
-phpunit:
-  stage: test
-  script:
-    - ./vendor/bin/phpunit
+# phpunit:
+#   stage: test
+#   script:
+#     - ./vendor/bin/phpunit
 
-linting:
-  stage: test
+# linting:
+#   stage: test
+#   script:
+#     - ./vendor/bin/parallel-lint --exclude vendor .
+#     - ./vendor/bin/phpcpd ./klink
+#     - ./vendor/bin/phpcpd --min-lines=25 ./test
+
+build:7.0:
+  image: "docker.klink.asia:5043/alessio/phpunit:7.0"
+  tags:
+  - docker
   script:
-    - ./vendor/bin/parallel-lint --exclude vendor .
-    - ./vendor/bin/phpcpd ./klink
-    - ./vendor/bin/phpcpd --min-lines=25 ./test
+  - ls -la
+  - composer install --prefer-dist
+  # - vendor/bin/phpunit
+
 
 composer_repo_push:
   stage: deploy
