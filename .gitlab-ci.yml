@@ -1,5 +1,6 @@
 stages:
   - build
+  - linting
   - test
   - deploy
 
@@ -8,22 +9,77 @@ cache:
   paths:
   - vendor/
 
-composer:
+composer:5.5:
   stage: build
+  tags:
+  - shell
   script:
     - composer install --prefer-dist
     
-phpunit:
+phpunit:5.5:
   stage: test
+  tags:
+  - shell
   script:
     - ./vendor/bin/phpunit
 
-linting:
-  stage: test
+linting:5.5:
+  stage: linting
+  tags:
+  - shell
   script:
     - ./vendor/bin/parallel-lint --exclude vendor .
     - ./vendor/bin/phpcpd ./klink
     - ./vendor/bin/phpcpd --min-lines=25 ./test
+
+composer:7.0:
+  image: "docker.klink.asia:5043/klink/php-7-test-cli:master"
+  stage: build
+  tags:
+  - docker
+  script:
+  - composer install --prefer-dist
+
+phpunit:7.0:
+  image: "docker.klink.asia:5043/klink/php-7-test-cli:master"
+  stage: test
+  allow_failure: true
+  tags:
+  - docker
+  script:
+  - ./vendor/bin/phpunit
+
+linting:7.0:
+  image: "docker.klink.asia:5043/klink/php-7-test-cli:master"
+  stage: linting
+  script:
+    - ./vendor/bin/parallel-lint --exclude vendor .
+
+
+composer:5.6:
+  image: "docker.klink.asia:5043/klink/php-5.6-test-cli:master"
+  stage: build
+  tags:
+  - docker
+  script:
+  - composer install --prefer-dist
+
+linting:5.6:
+  image: "docker.klink.asia:5043/klink/php-5.6-test-cli:master"
+  stage: linting
+  script:
+    - ./vendor/bin/parallel-lint --exclude vendor .
+
+phpunit:5.6:
+  image: "docker.klink.asia:5043/klink/php-5.6-test-cli:master"
+  stage: test
+  tags:
+  - docker
+  script:
+  - ./vendor/bin/phpunit --verbose --coverage-text --colors=never --coverage-html coverage
+  artifacts:
+    paths:
+    - coverage
 
 composer_repo_push:
   stage: deploy
