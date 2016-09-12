@@ -189,31 +189,31 @@ class KlinkDocumentTest extends PHPUnit_Framework_TestCase
         $file_path = __DIR__ . '/temporary_document.txt';
         file_put_contents($file_path, $data);
 		 
-		 $document = new KlinkDocument($descriptor, $file_path);
-		 
-		 $this->assertEquals($file_path, $document->getOriginalDocumentData());
-		 
-		 $this->assertTrue( $document->isFile() );
-		 
-		 $doc_data = $document->getDocumentData();
-		 
-		 $this->assertTrue( is_string($doc_data) );
-		 $this->assertEquals( base64_encode($data), $doc_data, 'getData as string base64');
-		 
-		 $this->stream = $document->getDocumentStream();
-		 
-		 $this->assertTrue( is_resource($this->stream) );
-		 $this->assertEquals( 'stream', @get_resource_type($this->stream) );
-		 $this->assertEquals( $data, stream_get_contents($this->stream), 'Content as stream');
-		 
-		 
-		 $this->stream = $document->getDocumentBase64Stream();
-		 
-		 $this->assertTrue( is_resource($this->stream) );
-		 $this->assertEquals( 'stream', @get_resource_type($this->stream) );
-		 $this->assertEquals( base64_encode($data), stream_get_contents($this->stream), 'Content as base64 stream');
-		 
-		 fclose($this->stream);
+		$document = new KlinkDocument($descriptor, $file_path);
+		
+		$this->assertEquals($file_path, $document->getOriginalDocumentData());
+		
+		$this->assertTrue( $document->isFile() );
+		
+		$doc_data = $document->getDocumentData();
+		
+		$this->assertTrue( is_string($doc_data) );
+		$this->assertEquals( base64_encode($data), $doc_data, 'getData as string base64');
+		
+		$this->stream = $document->getDocumentStream();
+		
+		$this->assertTrue( is_resource($this->stream) );
+		$this->assertEquals( 'stream', @get_resource_type($this->stream) );
+		$this->assertEquals( $data, stream_get_contents($this->stream), 'Content as stream');
+		
+		
+		$this->stream = $document->getDocumentBase64Stream();
+		
+		$this->assertTrue( is_resource($this->stream) );
+		$this->assertEquals( 'stream', @get_resource_type($this->stream) );
+		$this->assertEquals( base64_encode($data), stream_get_contents($this->stream), 'Content as base64 stream');
+		
+		fclose($this->stream);
 		 
 	 }
 
