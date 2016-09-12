@@ -53,6 +53,10 @@ class KlinkDocument {
 		if(empty($this->documentData)){
 			return false;
 		}
+
+		if(is_object($this->documentData)){
+			return false;
+		}
 		
 		if(is_resource($this->documentData) && @get_resource_type($this->documentData) === 'stream'){
 			return false;
