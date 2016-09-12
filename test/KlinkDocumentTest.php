@@ -169,6 +169,12 @@ class KlinkDocumentTest extends PHPUnit_Framework_TestCase
             'hello-data' => array($descriptor, 'hello data'),
             'empty'      => array($descriptor, ''),
             'null'       => array($descriptor, null),
+			'1b'   => array($descriptor, '1'),
+			'1K'   => array($descriptor, str_repeat('1', 1000) ),
+			'10K'  => array($descriptor, str_repeat('1', 1000 * 10)),
+			'100K' => array($descriptor, str_repeat('1', 1000 * 100)),
+			'1M'   => array($descriptor, str_repeat('1', 1000 * 1000)),
+			'10M'   => array($descriptor, str_repeat('1', 1000 * 10000)),
         );
     }
 
@@ -246,12 +252,6 @@ class KlinkDocumentTest extends PHPUnit_Framework_TestCase
 		 $this->assertTrue( is_resource($this->stream) );
 		 $this->assertEquals( 'stream', @get_resource_type($this->stream) );
 		 $this->assertEquals( base64_encode($data), stream_get_contents($this->stream), 'Content as base64 stream');
-
-		 // SU File >= 500 KB sembra non essere valido
-		 // todo: test calcolo hash di un file, leggo lo stream e lo button in una variabile e calcolo l'hash => i due hash sono uguali?
-		 // todo: test calcolo hash di un file, leggo lo stream, lo converto in base64, lo scrivo su file, lo rileggo, lo converto a stringa normale e calcolo l'hash => i due hash sono uguali?
-
-		 // test di integrazione, prendo un file con scritte note, lo indicizzo e cerco una di quelle scritte => deve essere ritornato come risultato
 		 
 		 fclose($this->stream);
 		 
