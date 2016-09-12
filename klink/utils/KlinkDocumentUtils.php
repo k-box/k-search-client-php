@@ -416,7 +416,19 @@ class KlinkDocumentUtils
 		}
 		
 		if(@is_file($value)){
-			return fopen('php://filter/read=convert.base64-encode/resource=' . $value,'r');
+
+			$fp = tmpfile();
+			
+			$src = fopen($value, 'r');
+
+			stream_filter_append($fp, 'convert.base64-encode', STREAM_FILTER_WRITE);
+			stream_copy_to_stream($src, $fp);
+			rewind($fp);
+
+			fclose($src);
+
+			return $fp;
+			
 		}
         
         return fopen('data://text/plain,' . base64_encode($value), 'r');
