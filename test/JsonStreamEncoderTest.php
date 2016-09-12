@@ -5,6 +5,7 @@ use Seld\JsonLint\JsonParser;
 class JsonStreamEncoderTest extends PHPUnit_Framework_TestCase
 {
 
+    private $stream = null;
 
 	public function setUp()
 	{
@@ -21,6 +22,20 @@ ini_set('display_startup_errors', '1');
         if(!is_file($brochure_file_path)){
             $client->request('GET', 'https://build.klink.asia/Brochure.pdf', ['sink' => $brochure_file_path]);
         }
+	}
+
+
+    public function tearDown(){
+
+        if(!is_null($this->stream) && @get_resource_type($this->stream) === 'stream'){
+			fclose($this->stream);
+		}
+		
+		$path = __DIR__ . '/temporary_document.txt';
+		if(is_file($path)){
+			unlink($path);
+		}
+
 	}
     
     /**
@@ -145,6 +160,80 @@ ini_set('display_startup_errors', '1');
         $this->assertNull($res);
 
 	}
+
+
+    function getFileContentDataprovider()
+    {
+        $descriptor = KlinkDocumentDescriptor::create(
+                'inst', 
+                'ainsma', 
+                'iabdubddubdusbdusbdusbdsu', 
+                'document title', 
+                'application/pdf',
+                'https://something.com/doc',
+                'https://something.com/thumb',
+                'owner <owner@something.com>',
+                'uploaded <uploader@something.com>',
+                'private');
+
+        return array(
+            'hello-data' => array($descriptor, 'hello data'),
+			'1b'   => array($descriptor, '1'),
+			'1K'   => array($descriptor, str_repeat('1', 1000) ),
+			'10K'  => array($descriptor, str_repeat('1', 1000 * 10)),
+			'100K' => array($descriptor, str_repeat('1', 1000 * 100)),
+			'1M'   => array($descriptor, str_repeat('1', 1000 * 1000)),
+			'10M'   => array($descriptor, str_repeat('1', 1000 * 10000)),
+        );
+    }
+
+    /**
+     * @param KlinkDocumentDescriptor $descriptor
+     * @param string                  $data
+     *
+     * @dataProvider getFileContentDataprovider
+     */
+    public function testEncodeFileContentOfVariousSizes($descriptor, $data)
+    {
+        $filter = 'convert.base64-encode';
+        $file_path = __DIR__ . '/temporary_document.txt';
+        file_put_contents($file_path, $data);
+
+        $hash = hash('sha512', $data);
+
+        $document = new KlinkDocument($descriptor, $file_path);
+		
+        $encoder = new JsonStreamEncoder();
+ 
+		$encoder->encode($array = array(
+			'descriptor' => $document->getDescriptor(),
+			'documentData' => $document->getDocumentBase64Stream(),
+		));
+
+        $this->stream = $encoder->getJsonStream();
+
+        $parser = new JsonParser();
+        fseek($this->stream, 0);
+        $res = $parser->lint(stream_get_contents($this->stream));
+
+        $this->assertNull($res);
+
+        fseek($this->stream, 0);
+
+        $decoded = json_decode(stream_get_contents($this->stream), false);
+
+        $this->assertTrue(property_exists($decoded, 'documentData'));
+
+        $base64_free = base64_decode($decoded->documentData);
+
+        $this->assertEquals(strlen($data), strlen($base64_free), 'Length of data and decoded version after JSON encoding is not equal' );
+
+        $this->assertEquals($hash, hash('sha512', $base64_free), 'Hash not equals' );
+
+		fclose($this->stream);
+		 
+	 }
+
     
     /**
      * Test if the exception UnexpectedValueException is thrown when I use a closed stream inside the object I want to encode 
