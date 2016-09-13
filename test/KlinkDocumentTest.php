@@ -51,6 +51,21 @@ class KlinkDocumentTest extends PHPUnit_Framework_TestCase
 		];
 	}
 
+	function stringContentDataprovider()
+    {
+        $descriptor = $this->createKlinkDocumentDescriptor();
+
+        return array(
+            'hello-data' => array($descriptor, 'hello data'),
+            'html-data' => array($descriptor, 'hello data. <strong>This is <a href="http://html.html">HTML</a></strong>'),
+			'1b'   => array($descriptor, '1'),
+			'1K'   => array($descriptor, str_repeat('1', 1000) ),
+			'10K'  => array($descriptor, str_repeat('1', 1000 * 10)),
+			'100K' => array($descriptor, str_repeat('1', 1000 * 100)),
+			'1M'   => array($descriptor, str_repeat('1', 1000 * 1000)),
+        );
+    }
+
 	private function createKlinkDocumentDescriptor(){
 		return KlinkDocumentDescriptor::create(
                 'inst', 
@@ -85,29 +100,29 @@ class KlinkDocumentTest extends PHPUnit_Framework_TestCase
 	 
 	 /**
 	  * Retrieve a stream from a KlinkDocument initialized with a string
+	  * @dataProvider stringContentDataprovider
 	  */ 
-	 public function testGetStringContentAsStream(){
+	 public function testGetStringContentAsStream( $descriptor, $data ){
 		 
-		 $descriptor = $this->createKlinkDocumentDescriptor();
-		 
-		 $document = new KlinkDocument($descriptor, 'hello');
+		 $document = new KlinkDocument($descriptor, $data);
 		 
 		 $this->stream = $document->getDocumentStream();
 		 
 		 $this->assertTrue( is_resource($this->stream) );
 		 $this->assertEquals( 'stream', @get_resource_type($this->stream) );
 		 
-		 $this->assertEquals( 'hello', stream_get_contents($this->stream), 'plain content check');
+		 $this->assertEquals( $data, stream_get_contents($this->stream), 'plain content check');
 		 
 		 fclose($this->stream);
 		 
 	 }
 
-	 public function testGetStringContentAsString(){
+	 /**
+	  * 
+	  * @dataProvider stringContentDataprovider
+	  */ 
+	 public function testGetStringContentAsString($descriptor, $original_data){
 		 
-		 $descriptor = $this->createKlinkDocumentDescriptor();
-		 
-		 $original_data = 'hello';
 		 $expected_data = base64_encode( $original_data );
 
 		 $document = new KlinkDocument($descriptor, $original_data);
@@ -122,19 +137,18 @@ class KlinkDocumentTest extends PHPUnit_Framework_TestCase
 	 
 	 /**
 	  * Retrieve a base64 stream from a KlinkDocument initialized with a string
+	  * @dataProvider stringContentDataprovider
 	  */ 
-	 public function testGetStringContentAsBase64Stream(){
-		 
-		 $descriptor = $this->createKlinkDocumentDescriptor();
-		 
-		 $document = new KlinkDocument($descriptor, 'hello');
+	 public function testGetStringContentAsBase64Stream($descriptor, $original_data){
+
+		 $document = new KlinkDocument($descriptor, $original_data);
 		 
 		 $this->stream = $document->getDocumentBase64Stream();
 		 
 		 $this->assertTrue( is_resource($this->stream) );
 		 $this->assertEquals( 'stream', @get_resource_type($this->stream) );
 		 
-		 $this->assertEquals( base64_encode('hello'), stream_get_contents($this->stream), 'base64 check');
+		 $this->assertEquals( base64_encode($original_data), stream_get_contents($this->stream), 'base64 check');
 		 
 		 fclose($this->stream);
 		 

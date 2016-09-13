@@ -431,7 +431,13 @@ class KlinkDocumentUtils
 			
 		}
         
-        return fopen('data://text/plain,' . base64_encode($value), 'r');
+        $fp = tmpfile();
+
+		stream_filter_append($fp, 'convert.base64-encode', STREAM_FILTER_WRITE);
+		fwrite($fp, $this->documentData);
+		rewind($fp);
+
+        return $fp;
 		
 	}
 
