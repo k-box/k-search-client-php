@@ -49,9 +49,9 @@ class KlinkCoreClientIntegrationTest extends PHPUnit_Framework_TestCase
 	public function data_params_for_file_indexing()
 	{
 		return array(
-			array('This is the <strong>content</strong>'),
-			array(__DIR__ . '/json/searchresult.json'),
-			
+			array('This is the <strong>unit test umpalumpa</strong> content', 'umpalumpa'),
+			array(__DIR__ . '/json/searchresult.json', 'presentation_example.pptx'),
+			array(__DIR__ . '/../readme.md', 'constants'),
 		);
 	}
 
@@ -232,15 +232,19 @@ class KlinkCoreClientIntegrationTest extends PHPUnit_Framework_TestCase
 	 * @group integration
 	 * @dataProvider data_params_for_file_indexing
 	 */
-	public function testIndexAndRemoveDocument($content)
+	public function testIndexAndRemoveDocument($content, $keyword)
 	{
 
 		$hash = KlinkDocumentUtils::generateHash($content);
 
+		if(is_file($content)){
+			$hash = KlinkDocumentUtils::generateDocumentHash($content);
+		}
+
 		$document_id = 'test';
 
 		$descriptor = KlinkDocumentDescriptor::create(
-			INSTITUION_ID, $document_id, $hash, 'Title', 
+			INSTITUION_ID, $document_id, $hash, 'Unit Test Document', 
 			'text/html', 'http://localhost/test/document', 
 			'http://localhost/test/thumbnail', 'user <user@user.com>', 'user <user@user.com>');
 
@@ -257,6 +261,31 @@ class KlinkCoreClientIntegrationTest extends PHPUnit_Framework_TestCase
 		$this->assertInstanceOf('KlinkDocumentDescriptor', $get_response);
 
 		$this->assertEquals($hash, $get_response->getHash(), 'different hash');
+
+		// Search for the same document with a know keyword
+		$facets = KlinkFacetsBuilder::create()->localDocumentId($document_id)->build();
+
+		$search_response = $this->core->search($keyword, $descriptor->getVisibility(), 1, 0, $facets);
+
+		$this->assertInstanceOf('KlinkSearchResult', $search_response);
+
+		$items = $search_response->getResults();
+
+		$this->assertNotEmpty($items, 'empty items list');
+
+		$this->assertContainsOnlyInstancesOf('KlinkSearchResultItem', $items);
+
+		$first = $items[0];
+
+		$this->assertInstanceOf('KlinkDocumentDescriptor', $first->getDescriptor());
+
+		$this->assertNotNull($first->getDescriptor(), 'Null descriptor');
+
+		$this->assertEquals($descriptor->title, $first->title, 'Title of retrieved document different from the uploaded one');
+
+		$this->assertNotNull($first->title, 'Null title, the magic __get is not working');
+
+		$this->assertNotNull($first->getInstitutionID(), 'Null instituionid, the magic __call is not working');
 
 		// Remove test
 		$remove_response = $this->core->removeDocument( $descriptor );
