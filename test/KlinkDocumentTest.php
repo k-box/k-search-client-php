@@ -41,11 +41,33 @@ class KlinkDocumentTest extends PHPUnit_Framework_TestCase
 
 	}
 
+	public function emptyValueDataprovider(){
+		return [
+			[''],
+			['    '],
+			[null],
+			[array()],
+			[new \stdClass],
+		];
+	}
 
+	function stringContentDataprovider()
+    {
+        $descriptor = $this->createKlinkDocumentDescriptor();
 
- 	public function testDocumentMethods(){
-		 
-		 $descriptor = KlinkDocumentDescriptor::create(
+        return array(
+            'hello-data' => array($descriptor, 'hello data'),
+            'html-data' => array($descriptor, 'hello data. <strong>This is <a href="http://html.html">HTML</a></strong>'),
+			'1b'   => array($descriptor, '1'),
+			'1K'   => array($descriptor, str_repeat('1', 1000) ),
+			'10K'  => array($descriptor, str_repeat('1', 1000 * 10)),
+			'100K' => array($descriptor, str_repeat('1', 1000 * 100)),
+			'1M'   => array($descriptor, str_repeat('1', 1000 * 1000)),
+        );
+    }
+
+	private function createKlinkDocumentDescriptor(){
+		return KlinkDocumentDescriptor::create(
                 'inst', 
                 'ainsma', 
                 'iabdubddubdusbdusbdusbdsu', 
@@ -56,6 +78,12 @@ class KlinkDocumentTest extends PHPUnit_Framework_TestCase
                 'owner <owner@something.com>',
                 'uploaded <uploader@something.com>',
                 'private');
+	}
+
+
+ 	public function testDocumentMethods(){
+		 
+		 $descriptor = $this->createKlinkDocumentDescriptor();
 		 
 		 $data = 'hello'; 
 		 		 
@@ -72,59 +100,55 @@ class KlinkDocumentTest extends PHPUnit_Framework_TestCase
 	 
 	 /**
 	  * Retrieve a stream from a KlinkDocument initialized with a string
+	  * @dataProvider stringContentDataprovider
 	  */ 
-	 public function testGetStringContentAsStream(){
+	 public function testGetStringContentAsStream( $descriptor, $data ){
 		 
-		 $descriptor = KlinkDocumentDescriptor::create(
-                'inst', 
-                'ainsma', 
-                'iabdubddubdusbdusbdusbdsu', 
-                'document title', 
-                'application/pdf',
-                'https://something.com/doc',
-                'https://something.com/thumb',
-                'owner <owner@something.com>',
-                'uploaded <uploader@something.com>',
-                'private');
-		 
-		 $document = new KlinkDocument($descriptor, 'hello');
+		 $document = new KlinkDocument($descriptor, $data);
 		 
 		 $this->stream = $document->getDocumentStream();
 		 
 		 $this->assertTrue( is_resource($this->stream) );
 		 $this->assertEquals( 'stream', @get_resource_type($this->stream) );
 		 
-		 $this->assertEquals( 'hello', stream_get_contents($this->stream), 'plain content check');
+		 $this->assertEquals( $data, stream_get_contents($this->stream), 'plain content check');
 		 
 		 fclose($this->stream);
+		 
+	 }
+
+	 /**
+	  * 
+	  * @dataProvider stringContentDataprovider
+	  */ 
+	 public function testGetStringContentAsString($descriptor, $original_data){
+		 
+		 $expected_data = base64_encode( $original_data );
+
+		 $document = new KlinkDocument($descriptor, $original_data);
+		 
+		 $data = $document->getDocumentData();
+		 
+		 $this->assertTrue( is_string($data) );
+		 
+		 $this->assertEquals( $expected_data, $data, 'base64 data check');
 		 
 	 }
 	 
 	 /**
 	  * Retrieve a base64 stream from a KlinkDocument initialized with a string
+	  * @dataProvider stringContentDataprovider
 	  */ 
-	 public function testGetStringContentAsBase64Stream(){
-		 
-		 $descriptor = KlinkDocumentDescriptor::create(
-                'inst', 
-                'ainsma', 
-                'iabdubddubdusbdusbdusbdsu', 
-                'document title', 
-                'application/pdf',
-                'https://something.com/doc',
-                'https://something.com/thumb',
-                'owner <owner@something.com>',
-                'uploaded <uploader@something.com>',
-                'private');
-		 
-		 $document = new KlinkDocument($descriptor, 'hello');
+	 public function testGetStringContentAsBase64Stream($descriptor, $original_data){
+
+		 $document = new KlinkDocument($descriptor, $original_data);
 		 
 		 $this->stream = $document->getDocumentBase64Stream();
 		 
 		 $this->assertTrue( is_resource($this->stream) );
 		 $this->assertEquals( 'stream', @get_resource_type($this->stream) );
 		 
-		 $this->assertEquals( base64_encode('hello'), stream_get_contents($this->stream), 'base64 check');
+		 $this->assertEquals( base64_encode($original_data), stream_get_contents($this->stream), 'base64 check');
 		 
 		 fclose($this->stream);
 		 
@@ -132,17 +156,7 @@ class KlinkDocumentTest extends PHPUnit_Framework_TestCase
 	 
 	 public function testGetStreamContentAsBase64String(){
 		 
-		 $descriptor = KlinkDocumentDescriptor::create(
-                'inst', 
-                'ainsma', 
-                'iabdubddubdusbdusbdusbdsu', 
-                'document title', 
-                'application/pdf',
-                'https://something.com/doc',
-                'https://something.com/thumb',
-                'owner <owner@something.com>',
-                'uploaded <uploader@something.com>',
-                'private');
+		 $descriptor = $this->createKlinkDocumentDescriptor();
 		 
 		 $this->stream = fopen('data://text/plain,hello', 'r');
 		 
@@ -163,23 +177,18 @@ class KlinkDocumentTest extends PHPUnit_Framework_TestCase
 
     function getFileContentDataprovider()
     {
-        $descriptor = KlinkDocumentDescriptor::create(
-            'inst',
-            'ainsma',
-            'iabdubddubdusbdusbdusbdsu',
-            'document title',
-            'application/pdf',
-            'https://something.com/doc',
-            'https://something.com/thumb',
-            'owner <owner@something.com>',
-            'uploaded <uploader@something.com>',
-            'private'
-        );
+        $descriptor = $this->createKlinkDocumentDescriptor();
 
         return array(
             'hello-data' => array($descriptor, 'hello data'),
             'empty'      => array($descriptor, ''),
             'null'       => array($descriptor, null),
+			'1b'   => array($descriptor, '1'),
+			'1K'   => array($descriptor, str_repeat('1', 1000) ),
+			'10K'  => array($descriptor, str_repeat('1', 1000 * 10)),
+			'100K' => array($descriptor, str_repeat('1', 1000 * 100)),
+			'1M'   => array($descriptor, str_repeat('1', 1000 * 1000)),
+			'10M'   => array($descriptor, str_repeat('1', 1000 * 10000)),
         );
     }
 
@@ -194,48 +203,38 @@ class KlinkDocumentTest extends PHPUnit_Framework_TestCase
         $file_path = __DIR__ . '/temporary_document.txt';
         file_put_contents($file_path, $data);
 		 
-		 $document = new KlinkDocument($descriptor, $file_path);
-		 
-		 $this->assertEquals($file_path, $document->getOriginalDocumentData());
-		 
-		 $this->assertTrue( $document->isFile() );
-		 
-		 $doc_data = $document->getDocumentData();
-		 
-		 $this->assertTrue( is_string($doc_data) );
-		 $this->assertEquals( base64_encode($data), $doc_data, 'getData as string base64');
-		 
-		 $this->stream = $document->getDocumentStream();
-		 
-		 $this->assertTrue( is_resource($this->stream) );
-		 $this->assertEquals( 'stream', @get_resource_type($this->stream) );
-		 $this->assertEquals( $data, stream_get_contents($this->stream), 'Content as stream');
-		 
-		 
-		 $this->stream = $document->getDocumentBase64Stream();
-		 
-		 $this->assertTrue( is_resource($this->stream) );
-		 $this->assertEquals( 'stream', @get_resource_type($this->stream) );
-		 $this->assertEquals( base64_encode($data), stream_get_contents($this->stream), 'Content as base64 stream');
-		 
-		 fclose($this->stream);
+		$document = new KlinkDocument($descriptor, $file_path);
+		
+		$this->assertEquals($file_path, $document->getOriginalDocumentData());
+		
+		$this->assertTrue( $document->isFile() );
+		
+		$doc_data = $document->getDocumentData();
+		
+		$this->assertTrue( is_string($doc_data) );
+		$this->assertEquals( base64_encode($data), $doc_data, 'getData as string base64');
+		
+		$this->stream = $document->getDocumentStream();
+		
+		$this->assertTrue( is_resource($this->stream) );
+		$this->assertEquals( 'stream', @get_resource_type($this->stream) );
+		$this->assertEquals( $data, stream_get_contents($this->stream), 'Content as stream');
+		
+		
+		$this->stream = $document->getDocumentBase64Stream();
+		
+		$this->assertTrue( is_resource($this->stream) );
+		$this->assertEquals( 'stream', @get_resource_type($this->stream) );
+		$this->assertEquals( base64_encode($data), stream_get_contents($this->stream), 'Content as base64 stream');
+		
+		fclose($this->stream);
 		 
 	 }
 
 
 	 public function testGetFileContentFromStream(){
 		 
-		 $descriptor = KlinkDocumentDescriptor::create(
-                'inst', 
-                'ainsma', 
-                'iabdubddubdusbdusbdusbdsu', 
-                'document title', 
-                'application/pdf',
-                'https://something.com/doc',
-                'https://something.com/thumb',
-                'owner <owner@something.com>',
-                'uploaded <uploader@something.com>',
-                'private');
+		 $descriptor = $this->createKlinkDocumentDescriptor();
 		 
 		 $file_path = __DIR__ . '/temporary_document.txt';
 		 $data = 'hello data';
@@ -277,17 +276,7 @@ class KlinkDocumentTest extends PHPUnit_Framework_TestCase
 	  */
 	 public function testStreamClosedExceptionOnGetDocumentStream(){
 		 
-		 $descriptor = KlinkDocumentDescriptor::create(
-                'inst', 
-                'ainsma', 
-                'iabdubddubdusbdusbdusbdsu', 
-                'document title', 
-                'application/pdf',
-                'https://something.com/doc',
-                'https://something.com/thumb',
-                'owner <owner@something.com>',
-                'uploaded <uploader@something.com>',
-                'private');
+		 $descriptor = $this->createKlinkDocumentDescriptor();
 		 
 		 $this->stream = fopen('data://text/plain,hello', 'r');
 		 
@@ -305,17 +294,7 @@ class KlinkDocumentTest extends PHPUnit_Framework_TestCase
 	  */
 	 public function testStreamClosedExceptionOnGetDocumentBase64Stream(){
 		 
-		 $descriptor = KlinkDocumentDescriptor::create(
-                'inst', 
-                'ainsma', 
-                'iabdubddubdusbdusbdusbdsu', 
-                'document title', 
-                'application/pdf',
-                'https://something.com/doc',
-                'https://something.com/thumb',
-                'owner <owner@something.com>',
-                'uploaded <uploader@something.com>',
-                'private');
+		 $descriptor = $this->createKlinkDocumentDescriptor();
 		 
 		 $this->stream = fopen('data://text/plain,hello', 'r');
 		 
@@ -326,6 +305,19 @@ class KlinkDocumentTest extends PHPUnit_Framework_TestCase
 		 
 		 $data = $document->getDocumentBase64Stream();
 		 
+	 }
+
+	 /**
+	  * @dataProvider emptyValueDataprovider
+	  */
+	 public function testIsFileWithEmptyData($data){
+
+		 $descriptor = $this->createKlinkDocumentDescriptor();
+
+		 $document = new KlinkDocument($descriptor, $data);
+
+		 $this->assertFalse( $document->isFile() );
+
 	 }
 	 
 }

@@ -43,7 +43,6 @@ composer:7.0:
 phpunit:7.0:
   image: "docker.klink.asia:5043/klink/php-7-test-cli:master"
   stage: test
-  allow_failure: true
   tags:
   - docker
   script:

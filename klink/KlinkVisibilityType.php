@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Define the available types of search.
+ * Define the available types of document visibility.
  *
  * @package Klink
  */
@@ -18,7 +18,7 @@ final class KlinkVisibilityType
 	/**
 	 * Public document.
 	 * 
-	 * The document will be visibile from all the institution in KLink
+	 * The document will be visibile to all the institution in KLink
 	 */
 	const KLINK_PUBLIC = 'public';
 
@@ -31,8 +31,6 @@ final class KlinkVisibilityType
 	 */
 	public static function fromString( $string ){
 
-		//if(!self::isValidValue())
-
 		if( $string === self::KLINK_PRIVATE ){
 			return KlinkVisibilityType::KLINK_PRIVATE;
 		}
@@ -44,38 +42,5 @@ final class KlinkVisibilityType
 		
 
 	}
-
-
-	// methods for recreating an Enumeration
-
-	// private static $constCacheArray = NULL;
-
- //    private static function getConstants() {
- //        if (self::$constCacheArray == NULL) {
- //            self::$constCacheArray = [];
- //        }
- //        $calledClass = get_called_class();
- //        if (!array_key_exists($calledClass, self::$constCacheArray)) {
- //            $reflect = new ReflectionClass($calledClass);
- //            self::$constCacheArray[$calledClass] = $reflect->getConstants();
- //        }
- //        return self::$constCacheArray[$calledClass];
- //    }
-
- //    public static function isValidName($name, $strict = false) {
- //        $constants = self::getConstants();
-
- //        if ($strict) {
- //            return array_key_exists($name, $constants);
- //        }
-
- //        $keys = array_map('strtolower', array_keys($constants));
- //        return in_array(strtolower($name), $keys);
- //    }
-
- //    public static function isValidValue($value) {
- //        $values = array_values(self::getConstants());
- //        return in_array($value, $values, $strict = true);
- //    }
 
 }
