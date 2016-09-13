@@ -6,17 +6,18 @@ class JsonStreamEncoderTest extends PHPUnit_Framework_TestCase
 {
 
     private $stream = null;
+    private $secondStream = null;
 
 	public function setUp()
 	{
 	  	date_default_timezone_set('Europe/Rome');
         ini_set('memory_limit', '-1'); // big file, heavy strings, 128M of RAM are not enough
         ini_set('error_reporting', E_ALL); // or error_reporting(E_ALL);
-ini_set('display_errors', '1');
-ini_set('display_startup_errors', '1');
+        ini_set('display_errors', '1');
+        ini_set('display_startup_errors', '1');
         
         $brochure_file_path = __DIR__ . '/Brochure.pdf';
-// var_dump('setup');        
+        
         $client = new GuzzleHttp\Client();
         
         if(!is_file($brochure_file_path)){
@@ -29,6 +30,10 @@ ini_set('display_startup_errors', '1');
 
         if(!is_null($this->stream) && @get_resource_type($this->stream) === 'stream'){
 			fclose($this->stream);
+		}
+
+        if(!is_null($this->secondStream) && @get_resource_type($this->secondStream) === 'stream'){
+			fclose($this->secondStream);
 		}
 		
 		$path = __DIR__ . '/temporary_document.txt';
@@ -75,89 +80,48 @@ ini_set('display_startup_errors', '1');
 
 		 return $inputs;
 	}
-
-	
-    /**
-     * test the current data construction encodes with JsonStreamEncoder 
-     * @requires PHP 5.6.0
-     * @runInSeparateProcess
-     */
-	public function testEncodeWithInMemoryBase64()
-	{
-
-        if(PHP_MAJOR_VERSION === 5 && ini_get('memory_limit') <= "512M" ){
-            $this->markTestSkipped('This test requires a very high memory limit on PHP 5.5 and 5.6. Your memory_limit do not allow this test to be runned');
-
-            return;
-        }
-
-        // ini_set('memory_limit', '-1');
-        
-        // $start = memory_get_usage();
-        $arr = [
-            'document' => base64_encode(file_get_contents( __DIR__ . '/Brochure.pdf'))
-        ];
-		
-        $temp = tmpfile();
-        
-        $encoder = new JsonStreamEncoder($temp);
-        
-        $encoder->encode($arr);
-        
-        $encoded_json = stream_get_contents($encoder->getJsonStream());
-        
-        $encoder->closeJsonStream();
-        
-        $parser = new JsonParser();
-        
-        $res = $parser->lint($encoded_json);
-        
-        $this->assertNull($res);
-
-	}
     
     /**
      * test using stream for base64 encode and encode using JsonStreamEncoder
      */
     public function testEncodeFullStream()
 	{
-        $start = memory_get_usage();
         
-        $filter = 'convert.base64-encode';
         $file = __DIR__ . '/Brochure.pdf';
-        $h = fopen('php://filter/read=' . $filter . '/resource=' . $file,'r'); 
         
+        $file_encoded = KlinkDocumentUtils::getBase64Stream( $file ); // read the file content as base64 stream
+
+        $file_hash = hash_file('sha512', $file);
+
+
         $arr = [
-            'document' => $h
+            'document' => $file_encoded
         ];
 		
-        $temp = tmpfile();
+        $this->stream = tmpfile();
         
-        $encoder = new JsonStreamEncoder($temp);
+        $encoder = new JsonStreamEncoder($this->stream);
         
         $encoder->encode($arr);
         
-        $end = memory_get_usage();
-        
-        // fseek($temp, 0);
-        // var_dump('Output truncated to 1024 bytes');
-        // var_dump(fread($temp, 1024));
-        // var_dump(stream_get_contents($temp)); // Use this on a green console if you want to experience the Matrix
-        
-        
-        
-        // to effectively use this values execute the test in its own PHP process, otherwise other processes will affect the results
-        // var_dump('start ' . ($start/1024) . ' KB');
-        // var_dump('end ' . ($end/1024) . ' KB');
-        // var_dump('diff ' . (($end - $start)/1024) . ' KB');
-        // var_dump('Peak memory usage ' . (memory_get_peak_usage(true)/1024) . ' KB');
-        
         $parser = new JsonParser();
-        fseek($temp, 0);
-        $res = $parser->lint(stream_get_contents($temp));
-        fclose($temp);
+        fseek($this->stream, 0);
+        $res = $parser->lint(stream_get_contents($this->stream));
+        
         
         $this->assertNull($res);
+
+        fseek($this->stream, 0);
+
+        $decoded = json_decode(stream_get_contents($this->stream), false);
+
+        $this->assertTrue(property_exists($decoded, 'document'));
+
+        $base64_free = base64_decode($decoded->document);
+
+        $this->assertEquals($file_hash, hash('sha512', $base64_free), 'Hash not equals' );
+
+		fclose($this->stream);
 
 	}
 
