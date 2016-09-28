@@ -2,9 +2,9 @@
 
 # Adapter Boilerplate
 
-The _AdapterBoilerplate_ is a *PHP library*. Is designed for speed-up the communication process 
-between the K-Core service (both private of an Institution, or the K-Link Public Network) with 
-any software component you want to build.  
+The _Adapter Boilerplate_ is a *PHP library*. Is designed for speed-up the communication process 
+between the K-Core service (both private of an Institution or the K-Link Public Network) with 
+the PHP software component you want to build.
 
 It offers:
 
@@ -13,9 +13,8 @@ It offers:
 - Search with filters
 - Facets support
 - Document Management
+- Institution Management
 - Thumbnail Generation
-
-**Requires the K-Link Core version 2.1**
 
 For release changelogs see the [Changelog document](./changelog.md)
 
@@ -27,6 +26,7 @@ For release changelogs see the [Changelog document](./changelog.md)
 
 Tested on PHP 5.5.9, 5.6 and 7.0. Runs on Windows, MacOS and Ubuntu 14.04+
 
+**Requires the K-Link Core version 2.1**
 
 ## Usage
 
@@ -97,29 +97,73 @@ function something(){
 
 ## Examples
 
-To use the K-Link Core services all you need is to interact with the `KlinkCoreClient` class.
+This section will give some concrete usage scenarios of the Adapter Boilerplate library.
 
-## basic initialization
+The examples will highlight the main API functionality available in the 
+
+- `KlinkConfiguration`
+- `KlinkAuthentication`
+- `KlinkCoreClient`
+
+classes. In addition datatatypes, like `KlinkDocumentDescriptor`, `KlinkDocument` will be 
+mentioned.
+
+## Remarks and introduction
+
+In the K-Link two types of services exists, the _public_ ones and the _private_ ones.
+
+With _private_ is always considered a service running on an Institution infrastructure.
+While the term _public_ always refers to the K-Link Public Network and the document 
+reachable from the network.
+
+The K-Link search do not store the content of the document, but only its metadata. The 
+metadata are represented by the Document Descriptor concept (represented by the 
+`KlinkDocumentDescriptor` class in this library). 
+
+## Configuration of a connection to one or more K-Cores
+
+To invoke services on a K-Link Core the class `KlinkCoreClient` must be used.
+This class exposes all the methods you need to invoke the respective endpoints
+on the K-Core Restful API.
+
+The Boilerplate can be used to communicate to two different K-Cores at the same time, 
+therefore the construction of the configuration to pass to the `KlinkCoreClient` is 
+verbose.
+
+Let's consider this code block:
 
 ```php
 $config = new KlinkConfiguration( 
-	'InstitutionID', // The institution identifier
-	'InstitutionAdapterID', // The adapter identifier
-	array( // The array of K-Link Cores to be used
-		new KlinkAuthentication(
-			'http://klink-core0.cloudapp.net/kcore/', // The url of the core
-			'username', // Username of the core
-			'password'  // The password used for authentication
-            KlinkVisibilityType::KLINK_PRIVATE // the document visibility the core can serve, if omitted KlinkVisibilityType::KLINK_PRIVATE will be used
-		)
-	) );
+  '{InstitutionID}',        // The institution identifier
+  '{InstitutionAdapterID}', // The adapter identifier
+  array(                    // The array of K-Link Cores to be used
+    new KlinkAuthentication(
+		'{core_url}',      // The url of the core, e.g https://test.klink.asia/kcore/
+		'{username}',      // Authentication Username
+		'{password}'       // Authentication Password
+        KlinkVisibilityType::KLINK_PRIVATE // the document visibility the core can serve, if omitted KlinkVisibilityType::KLINK_PRIVATE will be used
+  	  )
+  ) );
 
 $klinkCore = new KlinkCoreClient( $config );
 ```
 
-Every constructor can raise an `InvalidArgumentException` if the passed argument is not valid. In particular the `InstitutionID` and the `InstitutionAdapterID` must be a valid identifier, i.e. a non empty alphanumeric string with dashes.
+Two classes are used to hold the configuration: 
 
-The K-Link Core url inserted in the code block is for example purposes only.
+1. `KlinkConfiguration` contains the global configuration
+2. `KlinkAuthentication` define the authentication to be used for each core that can be used
+
+The parameters `{InstitutionID}`, `{core_url}`, `{username}` and `{password}` will be given 
+to you by the K-Link Team. While the `{InstitutionAdapterID}` is a progressive identifier that 
+the developer must assign to each developed adapter. the `{InstitutionAdapterID}` must be an 
+alphanumeric string, no dashes, spaces or special characters are allowed. 
+
+A specific consideration must be given to the fourth parameter of the `KlinkAuthentication` constructor. 
+That parameter specify if that K-Core is a K-Link Public Network entrypoint or an Institution private one.
+For connecting to a K-Link Public Network always specify `KlinkVisibilityType::KLINK_PUBLIC`.
+
+Furthermore every object constructor, showed in the previous code block, can raise an `InvalidArgumentException` 
+if the passed arguments are not valid. The message of the Exception will tell the wrong argument.
 
 
 ### test a configuration
