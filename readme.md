@@ -120,6 +120,14 @@ The K-Link search do not store the content of the document, but only its metadat
 metadata are represented by the Document Descriptor concept (represented by the 
 `KlinkDocumentDescriptor` class in this library). 
 
+**Code remarks**
+
+In the following the code blocks shows the Boilerplate classes usage and are not meant 
+for direct copy and paste.
+
+In addition, whenever the variable `$klinkCore` is used without declaration is assumed 
+to reference a valid instance of `KlinkCoreClient`.
+
 ## Configuration of a connection to one or more K-Cores
 
 To invoke services on a K-Link Core the class `KlinkCoreClient` must be used.
@@ -295,7 +303,7 @@ $details = $klinkCore->getInstitution( $id );
 In `$details` you will have an instance of `KlinkInstitutionDetails`.
 
 
-### add a document
+### Add a document
 
 To perform the add of a document you need to 
 - create an instance of `KlinkDocumentDescriptor` (using `KlinkDocumentDescriptor::create()`) with the required details;
@@ -341,6 +349,62 @@ $document = new KlinkDocument($documentDescriptor, $filePath);
 $newDocumentDescriptor = $klinkCore->addDocument( $document );
 ```
 
+Please note that if you want to add documents to the K-Link Public Network, the visibility must 
+be always set to `KlinkVisibilityType::KLINK_PUBLIC`.
+
+### Update a document descriptor
+
+To update an existing document descriptor in the K-Core you have to send again the whole `KlinkDocument` 
+(i.e. the `KlinkDocumentDescriptor` and the file content). This can be accomplished with the `updateDocument` 
+method
+
+```php
+$newDocumentDescriptor = $klinkCore->updateDocument( $document );
+```
+Where `$document` is an instance of `KlinkDocument`. To view the creation of a `KlinkDocument` refer 
+to the [Add a document](#add-a-document) example 
+
+### Delete a document descriptor
+
+The removal of a Document descriptor from a K-Core can be performed in two ways:
+
+1. passing to the `removeDocument` method the `KlinkDocumentDescriptor` of the document or
+2. invoke the `removeDocumentById` method.
+
+
+```php
+$klinkCore->removeDocument( $descriptor )
+// > return true or false, raise exception in case of error
+```
+
+where `$descriptor` is an instance of `KlinkDocumentDescriptor`.
+
+```php
+$klinkCore->removeDocumentById( '{$institution}', '{$document}', '{$visibility}' )
+// > return true or false, raise exception in case of error
+```
+
+where 
+
+- `{$institution}` is the identifier of the institution that added the document
+- `{$document}` is the local document identifer
+- `{$visibility}`is the visibility of the descriptor to remove. Possible 
+  values are `KlinkVisibilityType::KLINK_PUBLIC` or `KlinkVisibilityType::KLINK_PRIVATE`
+
+
+**Notes**
+
+Invoking `removeDocument( $descriptor )` is equivalent to 
+
+```php
+$klinkCore->removeDocumentById( 
+	$descriptor->getInstitutionID(),
+	$descriptor->getLocalDocumentID(),
+	$descriptor->getVisibility())
+```
+
+where `$descriptor` is an instance of `KlinkDocumentDescriptor`.
+
 ### Get Institution statistics
 
 The `KlinkCoreClient` class can also give some basic aggregated statistics for an institution given it's id
@@ -359,7 +423,7 @@ $count = $klinkCore->getPrivateDocumentsCount( $id );
 $count = $klinkCore->getPrivateDocumentsCount(); // the currently configured institution identifier is assumed
 ```
 
-### generate a thumbnail
+### Generate a document thumbnail
 
 In order to generate a **PNG** thumbnail of the document you can use the following methods:
 
