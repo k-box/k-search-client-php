@@ -168,9 +168,12 @@ if the passed arguments are not valid. The message of the Exception will tell th
 
 ### test a configuration
 
-The `KlinkCoreClient` class exposes a static method for performing a basic service test on the configuration.
+The `KlinkCoreClient` class exposes a static method, called `test` for performing a basic service test on 
+the configuration. This is particularly useful to test that all parameters are correct before start using 
+the configuration or to check if internet connection is available.
 
-Actually the test method supports only the usage of one core in the cores array of the `KlinkConfiguration` constructor.
+Actually the `test` method supports only the usage of one core in the cores array of the `KlinkConfiguration` 
+constructor.
 
 The test method returns `true` if all the test passed and `false` otherwise. 
 In the `$error` parameter the full detailed exception is stored.
@@ -183,23 +186,24 @@ The test method will perform the following steps:
 
 ```php
 $testResult = KlinkCoreClient::test( 
-        new KlinkConfiguration( $institutionID, $adapterID, array(
-                    new KlinkAuthentication( $core_url, $core_username, $core_password )
-                ) ),
-        $error,
-        false,
-        null,
-        Psr\Log\LoggerInterface $logger );
+    new KlinkConfiguration( '$institutionID', '$adapterID', array(
+		new KlinkAuthentication( '$core_url', '$core_username', '$core_password' )
+    ) ),
+    $error,
+    false,
+    null,
+    Psr\Log\LoggerInterface $logger );
 
 
 if( !$testResult ){
 
-	echo $error->getMessage();
+	var_dump( $error->getMessage() );
 
 }
 ```
 
-If an error occur during the test, the `$error` (out) parameter will contain an exception whose code is the HTTP Status code of the response.
+If an error occur during the test, the `$error` (out) parameter will contain an exception whose 
+code is the HTTP Status code of the response.
 
 In some cases the Exception message will report a specific error:
 
@@ -211,13 +215,19 @@ In some cases the Exception message will report a specific error:
 | 10000  | The configuration test can only be performed on a configuration with only one Core   | The test method only supports one Core configuration in the KlinkConfiguration object |
 | 403  | Unauthorized to perform search in Private document set. Please review your username and password.   | If the username and password configured cannot access the specified document visibility |
 
-In all the other case a general error message, "Server not found or network problem.", is reported along with the HTTP Error code that was the cause of the test failure.
+In all the other case a general error message, "Server not found or network problem.", is reported 
+along with the HTTP Error code that was the cause of the test failure.
 
-The reported exception will have information about the [previous exception](http://php.net/manual/en/exception.getprevious.php) that has caused the failure and the code of the exception will always be the HTTP error code.
+The reported exception will have information about the [previous exception](http://php.net/manual/en/exception.getprevious.php) 
+that has caused the failure and the code of the exception will always be the HTTP error code.
 
-If you want to have some more information about the error and the underlying response set the debug mode on the KlinkConfiguration instance and pass a logger in the last parameter. Debug log messages uses the _debug log level_.
+If you want to have some more information about the error and the underlying response set the debug 
+mode on the `KlinkConfiguration` instance and pass a [logger](http://www.php-fig.org/psr/psr-3/) in the 
+last parameter of the `test` method. Debug log messages uses the _debug log level_.
 
-### perform a search
+The debug configuration can be activated bby calling `enableDebug()` on the `KlinkConfiguration` object instance.
+
+### Perform a search
 
 Assuming that the `$klinkCore` variable is a valid instance of `KlinkCoreClient`, the search is performed using the `search` method.
 
