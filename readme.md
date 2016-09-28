@@ -2,71 +2,40 @@
 
 # Adapter Boilerplate
 
-Is the starting point for creating a K-Link Adapter and/or using the K-Link Core services, in general. 
-It offers some basic functionality for interacting with the K-Link Core and exposes the main interfaces that represents the data needed for every operation. The use of interfaces has been preferred over classes given the fact that the implementation can be different if an ORM is used or the CMS has some particular requirements.
+The _AdapterBoilerplate_ is a **PHP library*. Is designed for speed-up the communication process 
+between the K-Core service (both private of an Institution, or the K-Link Public Network) with 
+any software component you want to build.  
 
-**requires the K-Link Core version 2.1**
+It offers:
 
+- Communication with K-Core over secure channel
+- PHP Class to manage the K-Link Data types (`DocumentDescriptor`, `InstitutionDetails`)
+- Search with filters
+- Facets support
+- Document Management
+- Thumbnail Generation
 
-## Breaking changes introduced in version 2.0.0
+**Requires the K-Link Core version 2.1**
 
-the current `master` is on the 2.x release.
-
-Currently the following breaking changes has been introduced:
-
-- to the `KlinkDocument` class
- - Added the ability to use a resource for the constructor `$data` parameter
- - added `getDocumentStream` 
- - added `getDocumentBase64Stream` 
- - added `isFile` 
-- to `KlinkRestClient` and `IKlinkRestClient`
- - `getCollection` parameter order changed to `$url, $expected_return_type, array $params = null`
- - removed `fileSend` empty method
-- to `KlinkCoreClient`
- - `generateThumbnailFromContent` can take also a stream for the `$data` parameter
-- to `KlinkDocumentUtils`
- - added `getBase64Stream` to get a base64 stream from a string, a file or an existing stream
- - `get_mime`: the method will no longer raise `InvalidArgumentException` if the file do not have an extension, instead will return `application/octet-stream`
- - `getMimeTypeFromExtension`:  the method will no longer raise `InvalidArgumentException` if the extension has no corresponding mime type, instead will return `application/octet-stream`
-- to `KlinkCoreClient`
- - `generateThumbnailFromContent` can handle stream for the `$data` parameter
-
-please be aware that `getMimeTypeFromExtension` is used by `get_mime` when the file path specified has the extension. 
-
-## Deprecated
-
-- The class `KlinkHttp` has been deprecated and will be removed in a version 3.0.0.
-- The class `KlinkSearchType` and its constants are deprecated. Use the `KlinkVisibilityType` class instead.
-- The class `KlinkDocumentAuthor` has been deprecated. No one was using it and the code was a ghost.
-
-
-## Feature offered
-
-The Adapter Boilerplate is a library that enable developers to interact with the K-Link Core.
-
-- Adding and removing documents from the Core
-- Adding/Updatting/Removing institutions data
-- Search with facets and filters
-- Full HTTP/Rest stack OOP oriented
-- K-Link Core Authentication
-- Connectivity test
-- Document thumbnail creator service
-
+For release changelogs see the [Changelog document](./changelog.md)
 
 ## Requirements
 
 - PHP 5.5.9 or above
-- PHP GD library for image support (some PHP installation might not have the library bundled)
-- Network connectivity
+- PHP GD library for image support with PNG library (some PHP installation might not have the library bundled)
+- CURL
 
-Tested on PHP 5.5, 5.6.5 on Windows, Mac OS (Yosemite) and Ubuntu 14.04.
+Tested on PHP 5.5.9, 5.6 and 7.0. Runs on Windows, MacOS and Ubuntu 14.04+
 
 
 ## Usage
 
-The K-Link Adapter Boilerplate uses [Composer](http://getcomposer.org/) to manage its dependencies. So, before using the Boilerplate, make sure you have Composer installed on your machine.
+The K-Link Adapter Boilerplate uses [Composer](http://getcomposer.org/) to manage its dependencies. 
+So, before using the Boilerplate, make sure you have Composer installed on your machine.
 
-The K-Link Adapter Boilerplate is available in the K-Link composer private repository. In order to require it in your project add the following repository configuration to your `composer.json` file.
+The K-Link Adapter Boilerplate is available in the *K-Link Composer private repository*.
+
+In order to require it in your project add the following repository configuration to your `composer.json` file.
 
 ```json
 "repositories": [
@@ -79,11 +48,54 @@ The K-Link Adapter Boilerplate is available in the K-Link composer private repos
 
 Now you could require the Adapter Boilerplate 
 
-    composer require --prefer-dist klink/adapterboilerplate
+```bash
+composer require --prefer-dist klink/adapterboilerplate
+```
+
+After that you can use the available classes as shown in the [Examples](#examples) section.
+
+**Important: the connection to any K-Link Service is protected by credentials**
+
+The K-Link Team will give you the necessary credentials to use.
+
+The credentials include:
+
+- URLs of the K-Core to use
+- Username and Password
+- Institution Identifer
+
+### Notes fo developers
+
+#### I don't use Composer
+
+If your project do not use Composer to manage the dependencies is still possible for you to use 
+the Adapter Boilerplate by:
+
+- Generating a `composer.json` file by running 
+  [`composer init`](https://getcomposer.org/doc/03-cli.md#init) in your project root folder
+- Pulling the klink/adapterboilerplate library. As shown in the [Usage section](#usage)
+- Requiring the autoload file generate by Composer in your project with `require_once('vendor/autoload.php');`
+
+#### I'm on PHP 5.5 but classes are not found
+
+If you are using the `namespace` feature (available from PHP 5.4) you need to tell PHP to use the 
+classes that are available in the in the global namespace. Currently the Adapter Boilerplate 
+classes are not namespaced.
+
+```php
+use KlinkConfiguration;
+
+// ...
+
+function something(){
+
+    $config = new KlinkConfiguration();
+
+}
+```
 
 
-
-## Usage Examples of the Boilerplate features
+## Examples
 
 To use the K-Link Core services all you need is to interact with the `KlinkCoreClient` class.
 
@@ -112,11 +124,12 @@ The K-Link Core url inserted in the code block is for example purposes only.
 
 ### test a configuration
 
-The KlinkCoreClient class exposes a static method for performing a basic service test on the configuration. This test must be done prior to save the configuration.
+The `KlinkCoreClient` class exposes a static method for performing a basic service test on the configuration.
 
 Actually the test method supports only the usage of one core in the cores array of the `KlinkConfiguration` constructor.
 
-The test method returns `true` if all the test passed and `false` otherwise. In the `$error` parameter the full detailed exception is stored.
+The test method returns `true` if all the test passed and `false` otherwise. 
+In the `$error` parameter the full detailed exception is stored.
 
 The test method will perform the following steps:
 
@@ -168,12 +181,14 @@ Assuming that the `$klinkCore` variable is a valid instance of `KlinkCoreClient`
 $searchResult = $klinkCore->search( $searched_term );
 ```
 
-The `$searchResult` will contain an instance of `KlinkSearchResult` that contains the `KlinkDocumentDescriptors` found and the pagination details.
+The `$searchResult` will contain an instance of `KlinkSearchResult` that contains the `KlinkSearchResultItem`s found 
+and the pagination details. In each `KlinkSearchResultItem` is available the full `KlinkDocumentDescriptor` that describes 
+the matched document against the search query. 
 
 To get the result item of a search you need to call
 
 ```php
-/* KlinkDocumentDescriptors[] */ $results = $searchResult->getResults();
+/* KlinkSearchResultItem[] */ $results = $searchResult->getResults();
 ```
 
 To get the total numer of results and the pagination information you need to invoke these methods:
@@ -190,13 +205,15 @@ $totalFound = $searchResult->getTotalResults();
 $resultsPerPage = $searchResult->getResultsPerPage() 
 
 /*
-     specify the index of the first result of the total result set for the search. This value is used for retrieve the other pages. The value is 0-based; the default value is 0.
+     specify the index of the first result of the total result set for the search. 
+	 This value is used for retrieve the other pages. The value is 0-based; the default value is 0.
  */
 $start = $searchResult->getOffset();
 
 ```
 
-Considering that the results could be more than what fits in a result page, you have the ability to select which page of the result set need to be displayed:
+Considering that the results could be more than what fits in a result page, you have the 
+ability to select which page of the result set need to be displayed:
 
 ```php
 $searchResultSecondPage = $klinkCore->search($searched_term, KlinkVisibilityType::KLINK_PUBLIC, $resultsPerPage, $start + $resultsPerPage );
@@ -204,7 +221,13 @@ $searchResultSecondPage = $klinkCore->search($searched_term, KlinkVisibilityType
 
 The first `$resultsPerPage` is the number of results per page and the `$start` is the offset of the first new result.
 
-It highly suggested to use the results per page and offset value of the current `KlinkSearchResult` instance because the number of results per page and the offset could vary between different searches.
+It highly suggested to use the results per page and offset value of the current `KlinkSearchResult` instance because the 
+number of results per page and the offset could vary between different searches.
+
+**Note**
+
+On the `KlinkSearchResultItem` you can access the information contained in the `KlinkDocumentDescriptor` 
+by using the same methods and attributes available in the `KlinkDocumentDescriptor` class. 
 
 
 ### getting institution details
@@ -266,7 +289,7 @@ $newDocumentDescriptor = $klinkCore->addDocument( $document );
 
 ### Get Institution statistics
 
-The KlinkCoreClient class can also give some basic aggregated statistics for an institution given it's id
+The `KlinkCoreClient` class can also give some basic aggregated statistics for an institution given it's id
 
 #### Get the number of public documents
 
@@ -293,14 +316,21 @@ In order to generate a **PNG** thumbnail of the document you can use the followi
 
 Supported file formats:
 
-`generateThumbnail`, `generateThumbnailFromContent` and `generateThumbnailFromDocument` supports pdf, docx, xlsx, pptx and the following image formats: gif, png and jpg. Please note that the image formats are only supported on PHP 5.3 or above with the GD extension enabled (the GD library must be compiled for supporting gif, jpg and png formats and in particular **the PNG support is mandatory** given that the thumbnail output is in PNG format).
+`generateThumbnail`, `generateThumbnailFromContent` and `generateThumbnailFromDocument` supports pdf, docx, 
+xlsx, pptx and the following image formats: gif, png and jpg. Please note that the image formats are only 
+supported on PHP 5.3 or above with the GD extension enabled (the GD library must be compiled for supporting 
+gif, jpg and png formats and in particular **the PNG support is mandatory** given that the thumbnail output 
+is in PNG format).
 
-`generateThumbnailOfWebSite` only supports URL that have the output in HTML format (Don't feed with url that output PDFs or something else).
+`generateThumbnailOfWebSite` only supports URL that have the output in HTML format (Don't feed with url that 
+output PDFs or something else).
 
 
 #### `generateThumbnail`
 
-This method takes two absolute paths, the first is the path of the document that needs the thumbnail and the second is the path where the generated thumbnail will be saved. The image `$fullImagePath` must contain the file name and the `.png` extension.
+This method takes two absolute paths, the first is the path of the document that needs the thumbnail and the 
+second is the path where the generated thumbnail will be saved. The image `$fullImagePath` must contain the 
+file name and the `.png` extension.
 
 ```php
 $client = new KlinkCoreClient( /* ... */);
@@ -317,7 +347,8 @@ This method could raise:
 
 #### `generateThumbnailFromContent`
 
-This method requires two parameters: the first is the mime type of the content and the second is the data for which you would have the thumbnail.
+This method requires two parameters: the first is the mime type of the content and the second is the data for 
+which you would have the thumbnail.
 
 The method returns the generated image content.
 
@@ -358,7 +389,9 @@ $image_content = $client->generateThumbnailFromDocument(
 	);
 ```
 
-**Attenction** `generateThumbnailFromDocument` attemp to get the documentData from the `KlinkDocument`, if a valid file path was specified as the document data it will try to load the file content using php [file_get_contents](http://php.net/manual/en/function.file-get-contents.php).
+**Attenction** `generateThumbnailFromDocument` attemp to get the documentData from the `KlinkDocument`, if a 
+valid file path was specified as the document data it will try to load the file content using php 
+[file_get_contents](http://php.net/manual/en/function.file-get-contents.php).
 
 This method could raise:
 - `InvalidArgumentException` if at least one of the required parameter have a wrong value
@@ -367,9 +400,12 @@ This method could raise:
 
 #### `generateThumbnailOfWebSite`
 
-This method has 1 required paramter which is the `$url` of the page. The second parameter, `$image_file`, is optional and if specified must be a valid path where the thumbnail will be saved.
+This method has 1 required paramter which is the `$url` of the page. The second parameter, `$image_file`, 
+is optional and if specified must be a valid path where the thumbnail will be saved.
 
-This method returns the image content in PNG format if `$image_file` parameter is null or the [file_put_contents](http://php.net/manual/en/function.file-put-contents.php) return value if a file path is specified in the `$image_file` parameter.
+This method returns the image content in PNG format if `$image_file` parameter is null or the 
+[file_put_contents](http://php.net/manual/en/function.file-put-contents.php) return value if a file 
+path is specified in the `$image_file` parameter.
 
 ```php
 $client = new KlinkCoreClient( /* ... */);
@@ -415,20 +451,29 @@ The KlinkDocumentUtils class has the following utility methods that you need to 
 - `generateDocumentHash( $filePath )` generates the hash of the content of a document
 - `generateHash( $text )` generates the hash of the given text
 - `get_mime( $filePath )` return the mime type of a file
-- `isMimeTypeSupported( $mime )` test if the specified mime type is known and can be handled. This not guarantee that the the K-Link Core can index the file without prior elaboration
-- `isMimeTypeIndexable( $mime )` test if the specified mime type is supported by the K-Link Core and requires no elaboration before can be sent to the K-Link Core
+- `isMimeTypeSupported( $mime )` test if the specified mime type is known and can be handled. This 
+   not guarantee that the the K-Link Core can index the file without prior elaboration
+- `isMimeTypeIndexable( $mime )` test if the specified mime type is supported by the K-Link Core and 
+   requires no elaboration before can be sent to the K-Link Core
 - `getBase64Stream( $value )` return a base64 version of a string (or a resource) in using a resource
 
 **Important notice**
 
-In the course of the following month we will add the ability to recognize more document types than what the search engine can handle directly. So we decided to separate the mime type support check in two different functions.
-The `isMimeTypeSupported` function will tell if we can recognize that file from the mime type, but will not guarantee that you can send the file directly to the K-Link Core. 
-To check if you need to extract the content of the file before sending the document to the K-Link Core you have to use the `isMimeTypeIndexable` function, if this function return false you have to extract the textual content of the file by yourselve before sending a document add request to the K-Link Core. 
+In the course of the following month we will add the ability to recognize more document types than 
+what the search engine can handle directly. So we decided to separate the mime type support check 
+in two different functions.
+The `isMimeTypeSupported` function will tell if we can recognize that file from the mime type, but 
+will not guarantee that you can send the file directly to the K-Link Core. 
+To check if you need to extract the content of the file before sending the document to the K-Link 
+Core you have to use the `isMimeTypeIndexable` function, if this function return false you have to 
+extract the textual content of the file by yourselve before sending a document add request to the 
+K-Link Core. 
 
 
 ## Facets
 
-Facets are specified as instances of the class KlinkFacet. To create an instance of the KlinkFacet class use the create method
+Facets are specified as instances of the class KlinkFacet. To create an instance of the KlinkFacet 
+class use the create method
 
 ```php
 	/**
@@ -448,7 +493,8 @@ Facets are specified as instances of the class KlinkFacet. To create an instance
 
 ```
 
-To specify the facet name please make use of the constants defined in the class `KlinkFacet` (some are highlighted in the code block below) or use the `KlinkFacetsBuilder`
+To specify the facet name please make use of the constants defined in the class `KlinkFacet` (some are 
+highlighted in the code block below) or use the `KlinkFacetsBuilder`
 
 ```php
 
@@ -486,11 +532,14 @@ $facet_two = KlinkFacet::create(KlinkFacet::DOCUMENT_TYPE, 10, 'prefix', 12, 'fi
 
 ### Klink Facets builder
 
-The facets builder enable the fluent creation of the array of KlinkFacet needed for the search or for the direct facets extraction (`facets()`).
+The facets builder enable the fluent creation of the array of KlinkFacet needed for the search or for the 
+direct facets extraction (`facets()`).
 
-The facets builder also check for basic validation of the parameters, as an example the documentType facet must receive a valid document type for filtering and the institutionId facet requires a valid istitution identifier.
+The facets builder also check for basic validation of the parameters, as an example the documentType facet must 
+receive a valid document type for filtering and the institutionId facet requires a valid istitution identifier.
 
-As you might have seen in the previous section, creating an array of facets could be tedious and time consuming. The aim of the facets builder is to enable a faster approach to facets parameter creation.
+As you might have seen in the previous section, creating an array of facets could be tedious and time consuming. 
+The aim of the facets builder is to enable a faster approach to facets parameter creation.
 
 #### Get all the supported facets
 
@@ -509,7 +558,8 @@ The builder have a method for each supported facet:
 - `language()` for the language field in KlinkDocumentDescriptor;
 - `institution()` for the institutionId field in KlinkDocumentDescriptor;
 
-Each method is called a *facet buidling method* and return the instance of the KlinkFacetsBuilder to enable method chaining.
+Each method is called a *facet buidling method* and return the instance of the KlinkFacetsBuilder to enable 
+method chaining.
 
 To get the builded array of KlinkFacets call the `build()` method on an instance of KlinkFacetsBuilder.
 
@@ -540,12 +590,17 @@ Each facet building method could receive a variable number of parameters. Here i
 
 For commodity there are also some filters (that cannot be invoked as facets) that are supported:
 
-- localDocumentId (`KlinkFacet::LOCAL_DOCUMENT_ID`): enable to select a specific set of documents given the local document identifier (`KlinkDocumentDescriptor::getLocalDocumentID()`) before executing a search; The search will be executed over the specified collection.
-- documentId (`KlinkFacet::DOCUMENT_ID`): enable to select a specific set of documents identified by the K-Link Document Identifer ((`KlinkDocumentDescriptor::getKlinkId()`) before applying search parameters; The search will be executed over the specified collection.
+- localDocumentId (`KlinkFacet::LOCAL_DOCUMENT_ID`): enable to select a specific set of documents given the local 
+  document identifier (`KlinkDocumentDescriptor::getLocalDocumentID()`) before executing a search; The search 
+  will be executed over the specified collection.
+- documentId (`KlinkFacet::DOCUMENT_ID`): enable to select a specific set of documents identified by the 
+  K-Link Document Identifer ((`KlinkDocumentDescriptor::getKlinkId()`) before applying search parameters; 
+  The search will be executed over the specified collection.
 
 On filters you can only specify the filtering parameter and not the mincount and count parameter as for normal facets.
 
-The `KlinkFacetBuilder` class supports also adding filters. Filters can be mixed with facets. The filter parameter can be a single string value or an array of strings.
+The `KlinkFacetBuilder` class supports also adding filters. Filters can be mixed with facets. The filter 
+parameter can be a single string value or an array of strings.
 
 
 ```php
@@ -633,7 +688,8 @@ To solve this problem you can do
 The Boilerplate makes available the following constants for specifying the visibility of the search and the document.
 
 - `KlinkVisibilityType::KLINK_PRIVATE`: represents the document (and search) private visibility
-- `KlinkVisibilityType::KLINK_PUBLIC`: represents the document (and search) public visibility, which means that the requests will be made to the K-Link Public service
+- `KlinkVisibilityType::KLINK_PUBLIC`: represents the document (and search) public visibility, which means that the 
+  requests will be made to the K-Link Public Network
 
 
 ### Document Type values
@@ -661,9 +717,11 @@ The Adapter Boilerplate has unit test that covers the main
 to run Unit Tests you must have phpunit version 4.8 or above and the php configuration must have the following extension enabled:
 
 - `php_curl`
-- `php_gd2` for imaging functions with full png support (if you are on Mac OS Yosemite you might have GD bundled, but with no png support)
+- `php_gd2` for imaging functions with full png support (if you are on Mac OS Yosemite you might have GD bundled, but 
+   with no png support)
 
-Some tests maybe skipped depending on your environment configuration (for example specific tests for linux environment will be skipped when executed on Windows).
+Some tests maybe skipped depending on your environment configuration (for example specific tests for linux environment 
+will be skipped when executed on Windows).
 
 The unit test collection is categorized in the following groups:
 
@@ -676,12 +734,13 @@ The unit test collection is categorized in the following groups:
 All tests have been executed on the following versions of PHP
 
 - 5.5
-- 5.6.5 with curl enabled
+- 5.6
+- 7.0
 
 
 Unit tests are peformed on repository push and build with the following configuration (see `phpunit.xml` file):
 
-INSTITUION_ID: BOIL
+	INSTITUION_ID: BOIL
 
 to run the unit tests by yourself you have to perform
 
@@ -695,7 +754,8 @@ to execute the tests with your version of PHP.
 
 #### Integration tests
 
-**Integration tests with a real K-Link Core instance are not automatically executed**. In order to be able to execute the integration tests the following environment variables must be setup:
+**Integration tests with a real K-Link Core instance are not automatically executed**. In order to be able to execute 
+the integration tests the following environment variables must be setup:
 
 - `CORE_URL`: the address of the K-Link private Core
 - `PUBLIC_CORE_URL`: the address of the K-Link Public 
@@ -712,7 +772,8 @@ To execute all available unit tests run
 
 	vendor/bin/phpunit --group=default,deserialization,http,integration
 
-## Temporary files and stream
+## Remarks
 
-**the new KlinkDocument exposes methods to work with stream. Please make sure to close the streams returned by KlinkDocument methods when you have finished.**
+The `KlinkDocument` class exposes methods to work with stream. Please make sure to close streams returned by `KlinkDocument` 
+methods when you have finished otherwise you might experience leaks on the filesytem.
 
