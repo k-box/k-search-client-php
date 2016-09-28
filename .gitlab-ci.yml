@@ -35,8 +35,8 @@ linting:5.5:
 composer:7.0:
   image: "docker.klink.asia:5043/klink/php-7-test-cli:master"
   stage: build
-  variables:
-    - SOMETHING=el_duderino
+  variables: 
+    SOMETHING: el_duderino
   tags:
   - docker
   script:
@@ -46,7 +46,7 @@ phpunit:7.0:
   image: "docker.klink.asia:5043/klink/php-7-test-cli:master"
   stage: test
   variables:
-    - SOMETHING=el_duderino
+    SOMETHING: el_duderino
   tags:
   - docker
   script:
@@ -63,7 +63,7 @@ composer:5.6:
   image: "docker.klink.asia:5043/klink/php-5.6-test-cli:master"
   stage: build
   variables:
-    - SOMETHING=el_duderino
+    SOMETHING: el_duderino
   tags:
   - docker
   script:
@@ -73,7 +73,7 @@ linting:5.6:
   image: "docker.klink.asia:5043/klink/php-5.6-test-cli:master"
   stage: linting
   variables:
-    - SOMETHING=el_duderino
+    SOMETHING: el_duderino
   script:
     - ./vendor/bin/parallel-lint --exclude vendor .
 
@@ -81,7 +81,7 @@ phpunit:5.6:
   image: "docker.klink.asia:5043/klink/php-5.6-test-cli:master"
   stage: test
   variables:
-    - SOMETHING=el_duderino
+    SOMETHING: el_duderino
   tags:
   - docker
   script:
