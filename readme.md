@@ -2,7 +2,7 @@
 
 # Adapter Boilerplate
 
-The _AdapterBoilerplate_ is a **PHP library*. Is designed for speed-up the communication process 
+The _AdapterBoilerplate_ is a *PHP library*. Is designed for speed-up the communication process 
 between the K-Core service (both private of an Institution, or the K-Link Public Network) with 
 any software component you want to build.  
 
