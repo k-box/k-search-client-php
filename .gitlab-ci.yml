@@ -1,97 +1,85 @@
 stages:
   - build
-  - linting
   - test
-  - deploy
+  - release
 
 cache:
   key: "$CI_BUILD_REF_NAME"
   paths:
   - vendor/
 
-composer:5.5:
+# Job templates
+
+.builder: &builder
   stage: build
-  tags:
-  - shell
   script:
     - composer install --prefer-dist
-    
-phpunit:5.5:
-  stage: test
-  tags:
-  - shell
-  script:
-    - ./vendor/bin/phpunit
 
-linting:5.5:
-  stage: linting
-  tags:
-  - shell
+.tester: &tester
+  stage: test
   script:
     - ./vendor/bin/parallel-lint --exclude vendor .
     - ./vendor/bin/phpcpd ./klink
     - ./vendor/bin/phpcpd --min-lines=25 ./test
+    - ./vendor/bin/phpunit
 
-composer:7.0:
-  image: "docker.klink.asia:5043/klink/php-7-test-cli:master"
-  stage: build
-  variables: 
-    SOMETHING: el_duderino
-  tags:
-  - docker
-  script:
-  - composer install --prefer-dist
-
-phpunit:7.0:
-  image: "docker.klink.asia:5043/klink/php-7-test-cli:master"
+.tester_plus_coverage: &tester_plus_coverage
   stage: test
-  variables:
-    SOMETHING: el_duderino
-  tags:
-  - docker
-  script:
-  - ./vendor/bin/phpunit
-
-linting:7.0:
-  image: "docker.klink.asia:5043/klink/php-7-test-cli:master"
-  stage: linting
   script:
     - ./vendor/bin/parallel-lint --exclude vendor .
-
-
-composer:5.6:
-  image: "docker.klink.asia:5043/klink/php-5.6-test-cli:master"
-  stage: build
-  variables:
-    SOMETHING: el_duderino
-  tags:
-  - docker
-  script:
-  - composer install --prefer-dist
-
-linting:5.6:
-  image: "docker.klink.asia:5043/klink/php-5.6-test-cli:master"
-  stage: linting
-  variables:
-    SOMETHING: el_duderino
-  script:
-    - ./vendor/bin/parallel-lint --exclude vendor .
-
-phpunit:5.6:
-  image: "docker.klink.asia:5043/klink/php-5.6-test-cli:master"
-  stage: test
-  variables:
-    SOMETHING: el_duderino
-  tags:
-  - docker
-  script:
-  - ./vendor/bin/phpunit --verbose --coverage-text --colors=never --coverage-html coverage
+    - ./vendor/bin/phpcpd ./klink
+    - ./vendor/bin/phpcpd --min-lines=25 ./test
+    - ./vendor/bin/phpunit --verbose --coverage-text --colors=never --coverage-html coverage
   artifacts:
     paths:
     - coverage
 
-composer_repo_push:
-  stage: deploy
+
+
+# Build jobs 
+# - PHP deps pulling
+
+composer:5.5:
+  <<: *builder
+  tags:
+  - shell
+
+composer:5.6:
+  image: "docker.klink.asia:5043/klink/php-ci-docker:5.6-alpine"
+  tags:
+  - docker
+
+composer:7.0:
+  image: "docker.klink.asia:5043/klink/php-ci-docker:7.0-alpine"
+  tags:
+  - docker
+
+# Testing jobs
+
+phpunit:5.5:
+  <<: *tester
+  tags:
+  - shell
+
+phpunit:5.6:
+  image: "docker.klink.asia:5043/klink/php-ci-docker:5.6"
+  <<: *tester_plus_coverage
+  tags:
+  - docker
+  
+
+phpunit:7.0:
+  image: "docker.klink.asia:5043/klink/php-ci-docker:7.0-alpine"
+  <<: *tester
+  tags:
+  - docker
+
+
+
+# Release as composer managed dependency
+
+push_to_composer_repo:
+  stage: release
   script:
     - HOME=${SATIS_FOLDER}/comp_home
     - COMPOSER_HOME=${SATIS_FOLDER}/comp_home/.composer
