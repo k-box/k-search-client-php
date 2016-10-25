@@ -63,7 +63,7 @@ final class KlinkAuthentication
      * @param string $tag        the visibility tag to attach to this core instance. Default \KlinkVisibilityType::KLINK_PRIVATE. Will be used in core selection based on the request to be executed.
      * @param string $apiVersion specify the version of the KCore API to use
      */
-	function __construct($core_url, $username, $password, $tag = \KlinkVisibilityType::KLINK_PRIVATE, $apiVersion = null)
+	function __construct($core_url, $username, $password, $tag = \KlinkVisibilityType::KLINK_PRIVATE, $apiVersion = KlinkCoreClient::DEFAULT_KCORE_API_VERSION)
 	{
 		KlinkHelpers::is_valid_url( $core_url, 'core url');
 		KlinkHelpers::is_string_and_not_empty( $username, 'username');
