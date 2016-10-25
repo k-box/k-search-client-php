@@ -35,6 +35,8 @@ class KlinkSearchResultTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals(58, $deserialized->getTotalResults());
 		$this->assertEquals(2, $deserialized->getResultsPerPage());
 		$this->assertEquals(0, $deserialized->getOffset());
+		$this->assertEquals(63, $deserialized->getSearchTime());
+		$this->assertEquals(2, $deserialized->getCurrentResultCount());
 		
 		$this->assertContainsOnlyInstancesOf('KlinkSearchResultItem', $deserialized->getResults());
 		
