@@ -1,5 +1,10 @@
 # Boilerplate changelog and release info
 
+## Version 2.3.0
+
+- deprecated class `KlinkValidators`
+
+
 ## Version 2.2.1
 
 **mandatory upgrade**
