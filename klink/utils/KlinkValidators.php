@@ -2,6 +2,7 @@
 
 /**
 * Contains a collection of data validators that are used to validate input in the Boilerplate classes
+* @deprecated 2.3.0 use KlinkHelpers instead
 */
 final class KlinkValidators
 {
