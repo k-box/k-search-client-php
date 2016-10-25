@@ -5,6 +5,7 @@
 - Removed deprecated class `KlinkAuthor`
 - Removed deprecated class `KlinkSearchType`
 - Removed deprecated class `KlinkHttp`
+- Removed deprecated class `KlinkValidators`
 
 
 ## Version 2.3.0
