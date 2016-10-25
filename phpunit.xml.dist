@@ -24,11 +24,13 @@
         </exclude>
     </groups>
     <php>
-        <env name="KLINK_CORE_PRIVATE_URL" value="http://kcore.dev/"/>
-        <env name="KLINK_CORE_PUBLIC_URL" value="http://kcore.dev/"/>
-        <env name="KLINK_USER" value="admin@klink.org"/>
-        <env name="KLINK_PASS" value="admin.klink"/>
-        <env name="KLINK_ADAPTER_ID" value="XX"/>
+        <!-- Example K-Link Core configuration for integration tests -->
+        <env name="KLINK_CORE_PRIVATE_URL" value="param_core_private_url"/>
+        <env name="KLINK_CORE_PUBLIC_URL" value="param_core_public_url"/>
+        <env name="KLINK_CORE_USER" value="param_core_user"/>
+        <env name="KLINK_CORE_PASS" value="param_core_pass"/>
+        <!-- base environment variables -->
+        <env name="KLINK_ADAPTER_ID" value="B1"/>
         <env name="KLINK_INSTITUTION_ID" value="BOIL"/>
     </php>
     <filter>

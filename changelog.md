@@ -1,5 +1,12 @@
 # Boilerplate changelog and release info
 
+## Version 3.0.0
+
+- Removed deprecated class `KlinkAuthor`
+- Removed deprecated class `KlinkSearchType`
+- Removed deprecated class `KlinkHttp`
+
+
 ## Version 2.3.0
 
 - deprecated class `KlinkValidators`

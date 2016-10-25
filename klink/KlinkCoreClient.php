@@ -5,7 +5,7 @@ use Psr\Log\LoggerAwareTrait;
 use Psr\Log\NullLogger;
 
 if( !defined( 'KLINK_BOILERPLATE_VERSION' ) ){
-	define( 'KLINK_BOILERPLATE_VERSION', '2.2.1' );
+	define( 'KLINK_BOILERPLATE_VERSION', '3.0.0' );
 }
 
 /**
@@ -1126,7 +1126,7 @@ final class KlinkCoreClient
 	 * @return string The boilerplate version number.
 	 */
 	public static function version(){
-		return defined('KLINK_BOILERPLATE_VERSION') ? KLINK_BOILERPLATE_VERSION : '0.3.33';
+		return defined('KLINK_BOILERPLATE_VERSION') ? KLINK_BOILERPLATE_VERSION : '3.0.0';
 	}
 
 	// ----- Private Stuff

@@ -38,8 +38,8 @@ abstract class BaseKlinkCoreClientTest extends PHPUnit_Framework_TestCase
         }
         $this->logger = new \LoggerMock();
         // Main configurations
-        $this->coreUser = $_ENV['KLINK_USER'];
-        $this->corePass = $_ENV['KLINK_PASS'];
+        $this->coreUser = $_ENV['KLINK_CORE_USER'];
+        $this->corePass = $_ENV['KLINK_CORE_PASS'];
         $this->institutionId = $_ENV['KLINK_INSTITUTION_ID'];
         $this->adapterId = $_ENV['KLINK_ADAPTER_ID'];
         $this->corePublicUrl = $_ENV['KLINK_CORE_PUBLIC_URL'];

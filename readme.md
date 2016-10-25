@@ -18,6 +18,9 @@ It offers:
 
 For release changelogs see the [Changelog document](./changelog.md)
 
+
+**For the 2.x release please refer to the branch [`2.x`](https://git.klink.asia/kadapters/adapterboilerplate/tree/2.x)**
+
 ## Requirements
 
 - PHP 5.5.9 or above
@@ -856,9 +859,9 @@ All tests have been executed on the following versions of PHP
 - 7.0
 
 
-Unit tests are peformed on repository push and build with the following configuration (see `phpunit.xml` file):
+Unit tests are peformed on repository push and build with the following configuration (see `phpunit.xml.dist` file):
 
-	INSTITUION_ID: BOIL
+	KLINK_INSTITUTION_ID: BOIL
 
 to run the unit tests by yourself you have to perform
 
@@ -872,15 +875,22 @@ to execute the tests with your version of PHP.
 
 #### Integration tests
 
-**Integration tests with a real K-Link Core instance are not automatically executed**. In order to be able to execute 
-the integration tests the following environment variables must be setup:
+**Integration tests with a real K-Link Core instance are not automatically executed**. 
 
-- `CORE_URL`: the address of the K-Link private Core
-- `PUBLIC_CORE_URL`: the address of the K-Link Public 
-- `CORE_USER`: the username to be used for authentication 
-- `CORE_PASS`: the password used for authentication
+To execute integration tests, the following K-Core related configuration parameter must be set:
 
-to execute the integration tests
+- `KLINK_CORE_PRIVATE_URL`: the address of the K-Link private Core
+- `KLINK_CORE_PUBLIC_URL`: the address of the K-Link Public 
+- `KLINK_CORE_USER`: the username to be used for authentication 
+- `KLINK_CORE_PASS`: the password used for authentication
+
+The file `phpunit.xml.dist` has placeholder value for all the required parameters. To use your own
+version of the parameters copy `phpunit.xml.dist` to `phpunit.xml` and change the environment variables values.
+
+The file `phpunit.xml` is in gitignore and won't be tracked. Please do not commit this file.
+
+
+After changing the configuration, to execute the integration tests run:
 
 	vendor/bin/phpunit --group integration
 
