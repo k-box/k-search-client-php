@@ -2,7 +2,8 @@
 
 
 /**
- * Describe a Document to be sent to the K-Link Core for indexing purposes
+ * Describe a K-Link Document. 
+ * This class is used for send documents to the K-Link Core for indexing purposes
  */
 class KlinkDocument {
 
@@ -24,7 +25,7 @@ class KlinkDocument {
 	 * Create an instance of a KlinkDocument
 	 *
 	 * @param KlinkDocumentDescriptor $descriptor The descriptor of the document
-	 * @param mixed $data The document data as string, stream (please don't close it until when we have done) or the absolute file path of the document content
+	 * @param string|stream $data The document data as string, stream (please don't close it until we have done) or the absolute file path of the document content
 	 */
 	public function __construct(KlinkDocumentDescriptor $descriptor, $data){
 
@@ -108,11 +109,6 @@ class KlinkDocument {
 	 * @throws UnexpectedValueException if the internal document data was already a stream and has been closed
 	 */
 	public function getDocumentStream() {
-		
-		// var_dump($this->documentData); 
-		// var_dump(is_resource($this->documentData)); 
-		// var_dump(@stream_get_meta_data($this->documentData)); 
-		// var_dump(@get_resource_type($this->documentData)); 
 		
 		if( is_resource($this->documentData) && @get_resource_type($this->documentData) === 'stream' ){
 			rewind($this->documentData);
