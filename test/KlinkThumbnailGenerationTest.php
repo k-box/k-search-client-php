@@ -90,9 +90,6 @@ class KlinkThumbnailGenerationTest extends PHPUnit_Framework_TestCase
      */
 	public function testGenerateThumbnailFromContent()
 	{
-		$this->markTestSkipped(
-          'The KCore has a bug in the thumbnail generation service preventing this test to execute correctly.'
-        );
 
 		$result = $this->core->generateThumbnailFromContent('application/pdf', base64_decode($this->pdf_string));
 
