@@ -12,23 +12,30 @@ class KlinkDocumentDescriptorTest extends PHPUnit_Framework_TestCase
 	  	date_default_timezone_set('Europe/Rome');
 	}
 
+	public function serializedDescriptorsDataprovider(){
+		return [
+			[__DIR__ . '/json/documentdescriptor-v2.1.json', '2.1'],
+			[__DIR__ . '/json/documentdescriptor-v2.2.json', '2.2'],
+		];
+	}
+
     public function testDocumentProjectIDAddAndRemove()
     {
         $doc = new KlinkDocumentDescriptor();
 
-        $this->assertEmpty($doc->getProjectIds());
+        $this->assertEmpty($doc->getProjects());
 
-        $doc->addProjectId(10);
-        $doc->addProjectId(20);
+        $doc->addProject(10);
+        $doc->addProject(20);
 
-        $this->assertCount(2, $doc->getProjectIds());
-        $this->assertEquals(array(10, 20), $doc->getProjectIds());
+        $this->assertCount(2, $doc->getProjects());
+        $this->assertEquals(array(10, 20), $doc->getProjects());
 
-        $this->assertFalse($doc->removeProjectId(2));
-        $this->assertTrue($doc->removeProjectId(20));
+        $this->assertFalse($doc->removeProject(2));
+        $this->assertTrue($doc->removeProject(20));
 
-        $this->assertCount(1, $doc->getProjectIds());
-        $this->assertEquals(array(10), $doc->getProjectIds());
+        $this->assertCount(1, $doc->getProjects());
+        $this->assertEquals(array(10), $doc->getProjects());
     }
 
 
@@ -97,11 +104,12 @@ class KlinkDocumentDescriptorTest extends PHPUnit_Framework_TestCase
 
 	/**
 	 * @group deserialization
+	 * @dataProvider serializedDescriptorsDataprovider
 	 */
-	public function testDeserialization()
+	public function testDeserialization($file, $apiVersion)
 	{
 
-		$json = file_get_contents(__DIR__ . '/json/documentdescriptor.json');
+		$json = file_get_contents( $file );
 
 		$this->jm = new JsonMapper();
 		$this->jm->bExceptionOnUndefinedProperty = true;
@@ -118,16 +126,24 @@ class KlinkDocumentDescriptorTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals('SeedInfo_48.pdf', $deserialized->getTitle());
 		$this->assertEquals('http://somesite.com/document/SeedInfo_48.pdf', $deserialized->getDocumentURI());
 		$this->assertEquals(array("Dushanbe","Kyrgyzstan","Europe","Yuzhniy Ferganskiy Kanal Imeni Andreyeva"), $deserialized->getLocationsString());
+
+		if($apiVersion==='2.2'){
+			$this->assertEquals(["1","2"], $deserialized->getProjects());
+		}
+		else {
+			$this->assertEmpty($deserialized->getProjects());
+		}
 		
 	}
 
 	/**
 	 * @group deserialization
+	 * @dataProvider serializedDescriptorsDataprovider
 	 */
-	public function testGeoJsonDeserialization()
+	public function testGeoJsonDeserialization($file)
 	{
 
-		$json = file_get_contents(__DIR__ . '/json/documentdescriptor.json');
+		$json = file_get_contents($file);
 
 		$this->jm = new JsonMapper();
 		$this->jm->bExceptionOnUndefinedProperty = true;

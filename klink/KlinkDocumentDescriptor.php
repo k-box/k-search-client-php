@@ -383,8 +383,11 @@ final class KlinkDocumentDescriptor
 
 
     /**
-     * The list of ProjectsIDs of the document, as defined by users when inserting the document in a project
+     * The list of Project identifier attached to this Descriptor, as per DMS configuration.
+	 *
+	 * The list of ProjectsIDs of the document, as defined by users when inserting the document in a project
      *
+	 * @internal Please do not edit this field directly, use @see setProjects, @see addProject or @see removeProject
      * @var array
      */
     public $projectIds;
@@ -549,10 +552,12 @@ final class KlinkDocumentDescriptor
 
 	}
 
-    /**
-     * @return array
+	/**
+	 * Return the list of project identifier attached to this descriptor.
+	 *
+     * @return array the array of project identifiers
      */
-    public function getProjectIds()
+    public function getProjects()
     {
         return $this->projectIds;
     }
@@ -562,42 +567,51 @@ final class KlinkDocumentDescriptor
      *
      * @return KlinkDocumentDescriptor
      */
-    public function setProjectIds(array $projectIds)
+    public function setProjects(array $ids)
     {
-        $this->projectIds = $projectIds;
+
+		// TODO: check that $ids contains onlu string or int, no object or array
+
+        $this->projectIds = $ids;
 
         return $this;
     }
 
 
     /**
-     * @param int $projectId The ProjectID to add for this document.
+	 * Add the given ProjectID to the Descriptor.
+	 *
+     * @param int|string $id The ProjectID to add to this descriptor.
      *
      * @return KlinkDocumentDescriptor
      */
-    public function addProjectId($projectId)
+    public function addProject($id)
     {
-        if (!in_array($projectId, $this->projectIds)) {
-            $this->projectIds[] = $projectId;
+		// TODO: validate that int or string is passed
+
+        if (!in_array($id, $this->projectIds)) {
+            $this->projectIds[] = $id;
         }
 
         return $this;
     }
 
     /**
-     * Removes the given ProjectID from the Document.
+     * Removes the given ProjectID from the Descriptor.
      *
-     * @param int $projectId The ProjectID to remove
+     * @param int|string $id The ProjectID to remove
      *
      * @return bool
      */
-    public function removeProjectId($projectId)
+    public function removeProject($id)
     {
-        if (!in_array($projectId, $this->projectIds)) {
+		// TODO: validate that int or string is passed
+
+        if (!in_array($id, $this->projectIds)) {
             return false;
         }
 
-        $pos = array_search($projectId, $this->projectIds);
+        $pos = array_search($id, $this->projectIds);
         unset($this->projectIds[$pos]);
         return true;
     }
@@ -610,6 +624,7 @@ final class KlinkDocumentDescriptor
 	 */
 	function __construct(){
         $this->projectIds = array();
+		$this->authors = array();
 	}
 
 	/**
