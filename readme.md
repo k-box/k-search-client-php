@@ -547,7 +547,7 @@ This method could raise:
 
 ### Helpers and validators
 
-The `KlinkHelpers` class if full of useful methods for validation
+The `KlinkHelpers` class is full of useful methods for validation
 
 The `KlinkDocumentUtils` class contains the **hash generation methods**
 

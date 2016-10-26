@@ -6,6 +6,7 @@
 - Removed deprecated class `KlinkSearchType`
 - Removed deprecated class `KlinkHttp`
 - Removed deprecated class `KlinkValidators`
+- Added `projectIds` field and related methods to the `KlinkDocumentDescriptor`
 
 
 ## Version 2.3.0
