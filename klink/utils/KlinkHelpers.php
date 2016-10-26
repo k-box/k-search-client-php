@@ -500,7 +500,7 @@ class KlinkHelpers
 	}
 
 	/**
-	 * Check is an array contains only elements of a particular class.
+	 * Check if an array contains only elements of a particular class.
 	 * 
 	 * @param array $array the array to check
 	 * @param string $classname the class name to check
@@ -526,6 +526,67 @@ class KlinkHelpers
 				throw new InvalidArgumentException( $message );
 
 			}
+
+		}
+
+	}
+
+	/**
+	 * Check if an array contains only elements that are strings or integers.
+	 * 
+	 * @param array $array the array to check
+	 * @param string $parameter_name the human understandable name of the parameter to be used in the error message
+	 * @throws InvalidArgumentException if an element of the array contains objects, arrays or boolean
+	 */
+	public static function is_array_of_integers_or_strings( array $array, $parameter_name, $error_message_format = 'The array %s must contains only strings or integers' )
+	{
+
+		if( is_null( $array ) ){
+			
+			$message = self::localize( sprintf( $error_message_format, $parameter_name ) );
+
+			throw new InvalidArgumentException( $message );
+
+		}
+
+		foreach( $array as $element ){
+
+			if( !(is_int( $element ) || is_string( $element )) ) {
+
+				$message = self::localize( sprintf( $error_message_format, $parameter_name ) );
+
+				throw new InvalidArgumentException( $message );
+
+			}
+
+		}
+
+	}
+
+	/**
+	 * Check if a given parameter value is of type string or integer.
+	 *
+	 * 
+	 * @param mixed $param the value to check
+	 * @param string $parameter_name the human understandable name of the parameter to be used in the error message
+	 * @throws InvalidArgumentException if the value is an array, object, null or boolean
+	 */
+	public static function is_integer_or_string( $param, $parameter_name, $error_message_format = 'The %s must be of type integer or string.' )
+	{
+
+		if( is_null( $param ) ){
+			
+			$message = self::localize( sprintf( $error_message_format, $parameter_name ) );
+
+			throw new InvalidArgumentException( $message );
+
+		}
+
+		if( !(is_int( $param ) || is_string( $param )) ) {
+
+			$message = self::localize( sprintf( $error_message_format, $parameter_name ) );
+
+			throw new InvalidArgumentException( $message );
 
 		}
 

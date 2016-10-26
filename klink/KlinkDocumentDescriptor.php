@@ -565,12 +565,13 @@ final class KlinkDocumentDescriptor
     /**
      * @param array $projectIds
      *
+	 * @throws InvalidArgumentException If array do not contains only integers or strings
      * @return KlinkDocumentDescriptor
      */
     public function setProjects(array $ids)
     {
 
-		// TODO: check that $ids contains onlu string or int, no object or array
+		KlinkHelpers::is_array_of_integers_or_strings($ids, 'ids');
 
         $this->projectIds = $ids;
 
@@ -584,10 +585,11 @@ final class KlinkDocumentDescriptor
      * @param int|string $id The ProjectID to add to this descriptor.
      *
      * @return KlinkDocumentDescriptor
+	 * @throws InvalidArgumentException If $id is not an integer or a string. Boolean are considered not integer
      */
     public function addProject($id)
     {
-		// TODO: validate that int or string is passed
+		KlinkHelpers::is_integer_or_string($id, 'id');
 
         if (!in_array($id, $this->projectIds)) {
             $this->projectIds[] = $id;
@@ -605,7 +607,7 @@ final class KlinkDocumentDescriptor
      */
     public function removeProject($id)
     {
-		// TODO: validate that int or string is passed
+		KlinkHelpers::is_integer_or_string($id, 'id');
 
         if (!in_array($id, $this->projectIds)) {
             return false;
@@ -625,6 +627,7 @@ final class KlinkDocumentDescriptor
 	function __construct(){
         $this->projectIds = array();
 		$this->authors = array();
+		$this->locationsString = array();
 	}
 
 	/**
@@ -640,7 +643,7 @@ final class KlinkDocumentDescriptor
 	 * @param  string $userOwner       The user that owns the document
 	 * @param  string|null $visibility      The document visibility, the default is KlinkVisibilityType::KLINK_PUBLIC
 	 * @param  string|null $creationDate    The document creation date in RFC3339 format, the default value is the current timestamp
-	 * @return [type]                  [description]
+	 * @return KlinkDocumentDescriptor The DocumentDescriptor instance
 	 * @throws InvalidArgumentException If one or more parameters are invalid
 	 */
 	public static function create($institutionID, $localDocumentID, $hash, $title, $mimetype, $documentURI, $thumbnailURI, $userUploader, $userOwner, $visibility = null, $creationDate = null){
@@ -702,22 +705,6 @@ final class KlinkDocumentDescriptor
         return $instance;
 
     }
-
-	/**
-	 * For JSON serialization purporses
-	 * */
-	public function to_array(){
-		$json = array();
-	    foreach($this as $key => $value) {
-	    	if(is_array($value)){
-	    		$json[$key] = "array";
-	    	}
-	    	else {
-		        $json[$key] = $value;
-		    }
-	    }
-	    return $json; // or json_encode($json)
-	}
 
 
 }
