@@ -40,6 +40,11 @@ The Boilerplate do not strip out facets that are not supported on old K-Core ver
  - Added `is_valid_version_string` to check if a string is a valid version number
  - Added `is_array_of_integers_or_strings` to check if an array contains only integers or strings
  - Added `is_integer_or_string` to check if a mixed variable has a string on an integer value
+- `KlinkInstitutionDetails` class
+ - method `getAddress()` now returns the full formatted address as a string
+ - added `getKlinkAddress()` to obtain the address as `Klink_Address` instance
+ - added support for `address` field (see https://git.klink.asia/kcore/kcore/issues/22)
+ - method `setAddress()` can accept a string, as full address, or a `Klink_Address` instance
 - Now the HTTP stack is entirely based on Guzzle `6.2.x`
 
 

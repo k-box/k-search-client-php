@@ -24,32 +24,32 @@
 final class KlinkInstitutionDetails
 {
     /**
-     * ...
+     * The K-Link Institution Identifier
      * @var string
      */	
     public $id;
 
 
 	/**
-     * Full name
+     * The Institution Name
      * @var string
      */
     public $name;
 
     /**
-     * ...
+     * The institution e-mail address for contact purposes
      * @var string
      */
     public $email;
 
     /**
-     * ...
+     * The institution telephone number
      * @var string
      */
     public $phone;
 
     /**
-     * ...
+     * The type of the institution according to schema.org
      * @var string
      */
     public $type;
@@ -86,7 +86,9 @@ final class KlinkInstitutionDetails
      */
     public $url;
 
-
+    /**
+     * @internal
+     */
     function __construct(){
 
     }
@@ -97,7 +99,7 @@ final class KlinkInstitutionDetails
      * 
      * @return Klink_Address
      */
-    public function getAddress(){
+    public function getKlinkAddress(){
 
         return new Klink_Address(
             $this->address,
@@ -108,14 +110,36 @@ final class KlinkInstitutionDetails
 
     }
 
+    /**
+     * Returns the address of the institution.
+     * 
+     * @return string the formatted address
+     */
+    public function getAddress(){
+
+        return empty($this->address) ? $this->getKlinkAddress()->__toString() : $this->address;
+
+    }
+
+    /**
+     * Set the address of the institution
+     *
+     * @param mixed 
+     * @return KlinkInstitutionDetails
+     */
     public function setAddress($address){
-        if ($address && $address instanceof Klink_Address) {
-            $this->address = $address->getAddress();
+
+        if($address instanceof Klink_Address){
             $this->addressStreet = $address->getStreet();
             $this->addressCountry = $address->getCountry();
             $this->addressLocality = $address->getLocality();
             $this->addressZip = $address->getPostalCode();
+            $this->address = $address->getAddress();
+
+            return $this;
         }
+
+        $this->address = $address;
 
         return $this;
     }
@@ -251,13 +275,6 @@ final class KlinkInstitutionDetails
     }
 
 
-
-
-    public function getFormattedAddress(){
-        throw new Exception('Not implemented');
-    }
-
-
     /**
      * Creates a new instance of KlinkInstitutiondetails
      * @param string $id the Insitution ID, must be an alphanumeric non empty (or non null) string
@@ -297,15 +314,6 @@ final class KlinkInstitutionDetails
         $instance->type = $type;
 
         $instance->url = null;
-
-// id   string  true    {not blank}, {match: /^[a-zA-Z0-9-]+$/} The Object Id
-// name    string  true    {not blank} The Institution Name
-// type    string  true    {not blank} The Institution type, according to Schema.org
-// email   string  true    {email address}, {not blank}    
-// url string  true    {url}, {not blank}  
-// phone   string  true    {not blank} 
-// creationDate    string  true    {not blank} 
-// thumbnailURI    string  true    {not blank}, {url}
 
         return $instance;
 
@@ -388,13 +396,16 @@ final class Klink_Address
         return $this->postalCode;
     }
 
-    
-    // addressRegion   Text    The region. For example, CA.
-    // postOfficeBoxNumber Text    The post office box number for PO box addresses.
-    
+    public function __toString(){
 
-    public function getGeoCoords()
-    {
-        //do something with the $street and $city
+        if(!empty($this->address)){
+            return $this->address;
+        }
+
+        return trim(implode(" ",[
+             $this->getStreet(),
+             $this->getPostalCode() . ' ' . $this->getLocality() . '.',
+             $this->getCountry()
+         ]));
     }
 }
