@@ -46,10 +46,10 @@ class KlinkCoreClientIntegrationTest extends BaseKlinkCoreClientTest
     public function testPublicSearch()
     {
         $term_to_search = '*';
-        $result = $this->getCoreClient()->search($term_to_search);
+        $result = $this->getCoreClient()->search($term_to_search, \KlinkVisibilityType::KLINK_PUBLIC);
         $this->assertEquals($term_to_search, $result->getTerms());
         $this->assertInstanceOf('KlinkSearchResult', $result);
-        $this->assertEquals('public', $result->getVisibility());
+        $this->assertEquals(\KlinkVisibilityType::KLINK_PUBLIC, $result->getVisibility());
         $this->assertFalse($result->getFacets());
 
         $items = $result->getResults();
@@ -72,10 +72,10 @@ class KlinkCoreClientIntegrationTest extends BaseKlinkCoreClientTest
     public function testPrivateSearch()
     {
         $term_to_search = '*';
-        $result = $this->getCoreClient()->search($term_to_search, 'private');
+        $result = $this->getCoreClient()->search($term_to_search, \KlinkVisibilityType::KLINK_PRIVATE);
         $this->assertEquals($term_to_search, $result->getTerms());
         $this->assertInstanceOf('KlinkSearchResult', $result);
-        $this->assertEquals('private', $result->getVisibility());
+        $this->assertEquals(\KlinkVisibilityType::KLINK_PRIVATE, $result->getVisibility());
         $this->assertFalse($result->getFacets());
 
         $items = $result->getResults();
@@ -99,7 +99,7 @@ class KlinkCoreClientIntegrationTest extends BaseKlinkCoreClientTest
      */
     public function testSearchFacetParameterValidation($facets)
     {
-        $result = $this->getCoreClient()->search('term', 'public', 10, 0, $facets);
+        $result = $this->getCoreClient()->search('term', \KlinkVisibilityType::KLINK_PUBLIC, 10, 0, $facets);
     }
 
     /**
@@ -108,8 +108,8 @@ class KlinkCoreClientIntegrationTest extends BaseKlinkCoreClientTest
     public function testSearchWithFacets()
     {
         $term_to_search = '*';
-        $f = KlinkFacetsBuilder::all();
-        $result = $this->getCoreClient()->search($term_to_search, 'public', 10, 0, $f);
+        $f = KlinkFacetsBuilder::all($this->corePublicVersion);
+        $result = $this->getCoreClient()->search($term_to_search, \KlinkVisibilityType::KLINK_PUBLIC, 10, 0, $f);
         $this->assertEquals($term_to_search, $result->getTerms());
         $this->assertInstanceOf('KlinkSearchResult', $result);
 
@@ -137,7 +137,7 @@ class KlinkCoreClientIntegrationTest extends BaseKlinkCoreClientTest
     {
         $term_to_search = '*';
         $f = KlinkFacetsBuilder::create()->localDocumentId('aaaa')->build();
-        $result = $this->getCoreClient()->search($term_to_search, 'public', 10, 0, $f);
+        $result = $this->getCoreClient()->search($term_to_search, \KlinkVisibilityType::KLINK_PUBLIC, 10, 0, $f);
         $this->assertEquals($term_to_search, $result->getTerms());
         $this->assertInstanceOf('KlinkSearchResult', $result);
 
@@ -238,14 +238,16 @@ class KlinkCoreClientIntegrationTest extends BaseKlinkCoreClientTest
      */
     public function testFacetArrayCollapse()
     {
+        $coreclient = $this->getCoreClient();
 
         $f = KlinkFacetsBuilder::all();
         $f_count = count($f);
-        $collapsed = $this->invokeMethod($this->getCoreClient(), '_collapse_facets', array($f));
+        $param = array($f);
+        $collapsed = $this->invokeMethod($coreclient, '_collapse_facets', $param);
         $this->assertArrayHasKey('facets', $collapsed);
         $this->assertEquals($f_count, count(explode(',', $collapsed['facets'])));
 
-        $collapsed_two = $this->invokeMethod($this->getCoreClient(), '_collapse_facets', array(null));
+        $collapsed_two = $this->invokeMethod($coreclient, '_collapse_facets', array(null));
         $this->assertEquals(array(), $collapsed_two);
     }
 
@@ -306,12 +308,12 @@ class KlinkCoreClientIntegrationTest extends BaseKlinkCoreClientTest
         $this->initSettings();
 
         return array(
-            'private' => array(
+            \KlinkVisibilityType::KLINK_PRIVATE => array(
                 new KlinkConfiguration($this->institutionId, $this->adapterId, array(
                     new KlinkAuthentication($this->corePrivateUrl, $this->coreUser, $this->corePass)
                 ))
             ),
-            'public' => array(
+            \KlinkVisibilityType::KLINK_PUBLIC => array(
                 new KlinkConfiguration($this->institutionId, $this->adapterId, array(
                     new KlinkAuthentication($this->corePublicUrl, $this->coreUser, $this->corePass, \KlinkVisibilityType::KLINK_PUBLIC)
                 ))

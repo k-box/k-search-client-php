@@ -27,6 +27,14 @@ class KlinkFacetsBuilderTest extends PHPUnit_Framework_TestCase
             KlinkFacet::LOCATIONS_STRING,
             KlinkFacet::PROJECT_ID,
         ));
+
+		$this->currently_supported_api_version_two_one = array_values(array(
+            KlinkFacet::DOCUMENT_TYPE,
+            KlinkFacet::LANGUAGE,
+            KlinkFacet::INSTITUTION_ID,
+            KlinkFacet::DOCUMENT_GROUPS,
+            KlinkFacet::LOCATIONS_STRING
+        ));
 	}
 
 
@@ -144,9 +152,13 @@ class KlinkFacetsBuilderTest extends PHPUnit_Framework_TestCase
 	public function testBuilderAllNames()
 	{
 		
-		$current = KlinkFacetsBuilder::allNames();
+		$current = KlinkFacetsBuilder::allNames(); // default to 2.2 for API Version
 
 		$this->assertEquals( $this->currently_supported, $current);
+
+		$current = KlinkFacetsBuilder::allNames('2.1');
+
+		$this->assertEquals( $this->currently_supported_api_version_two_one, $current);
 
 	}
 

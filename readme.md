@@ -29,7 +29,8 @@ For release changelogs see the [Changelog document](./changelog.md)
 
 Tested on PHP 5.5.9, 5.6 and 7.0. Runs on Windows, MacOS and Ubuntu 14.04+
 
-**Requires the K-Link Core version 2.1**
+**This release supports K-Core API version 2.1 and 2.2**. When configuring a K-Core connection please specify the API 
+version, otherwise version 2.2 will be assumed.
 
 ## Usage
 
@@ -153,11 +154,14 @@ $config = new KlinkConfiguration(
 		'{username}',      // Authentication Username
 		'{password}'       // Authentication Password
         KlinkVisibilityType::KLINK_PRIVATE // the document visibility the core can serve, if omitted KlinkVisibilityType::KLINK_PRIVATE will be used
+		'{API_VERSION}'    // The version of the API supported by this K-Core
   	  )
   ) );
 
 $klinkCore = new KlinkCoreClient( $config );
 ```
+
+where `{API_VERSION}` can be `2.1` or `2.2`.
 
 Two classes are used to hold the configuration: 
 

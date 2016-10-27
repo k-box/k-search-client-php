@@ -308,17 +308,17 @@ final class KlinkCoreClient
 	 * Execute a KLink search on the reference KLink Core. The performed search reflects the specified parameters.
 	 * 
 	 * @param string $terms the phrase or terms to search for
-	 * @param KlinkVisibilityType $type the type of the search to be perfomed, if null is specified the default behaviour is KlinkVisibilityType::KLINK_PUBLIC
+	 * @param KlinkVisibilityType $type the type of the search to be perfomed, if null is specified the default behaviour is @see KlinkVisibilityType::KLINK_PRIVATE
 	 * @param int $resultsPerPage the number of results per page
 	 * @param int $offset the page to display
 	 * @param KlinkFacet[] $facets The facets that needs to be retrieved or what will be retrieved. Default null, no facets will be calculated or filtered.
 	 * @return KlinkSearchResult returns the document that match the searched terms
 	 * @throws KlinkException if something wrong happened during the communication with the core
 	 */
-	function search( $terms, $type = null, $resultsPerPage = 10, $offset = 0, $facets = null ){
+	function search( $terms, $type = \KlinkVisibilityType::KLINK_PRIVATE, $resultsPerPage = 10, $offset = 0, $facets = null ){
 
 		if(is_null($type)){
-			$type = \KlinkVisibilityType::KLINK_PUBLIC;
+			$type = \KlinkVisibilityType::KLINK_PRIVATE;
 		}
 
 		if(!empty($facets)){
@@ -356,10 +356,10 @@ final class KlinkCoreClient
 	 * to construct the facets parameter @see KlinkFacetsBuilder
 	 *
 	 * @param KlinkFacet[]|string[] $facets The facets to be retrieved. You can pass also an array of string with the facet names, the default configuration will be applyied
-	 * @param string $visibility The visibility 
+	 * @param string $visibility The visibility. Default @see KlinkVisibilityType::KLINK_PRIVATE
 	 * @return [type] [description]
 	 */
-	public function facets( $facets, $visibility = 'public', $term = '*' )
+	public function facets( $facets, $visibility = \KlinkVisibilityType::KLINK_PRIVATE, $term = '*' )
 	{
 
 		if(!is_null($facets)){

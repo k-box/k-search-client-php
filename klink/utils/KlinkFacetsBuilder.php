@@ -26,6 +26,13 @@ final class KlinkFacetsBuilder
 	const DEFAULT_COUNT = 10;
 
 	/**
+	 * Define facets and filters only available for K-Core version 2.2 or above
+	 *
+     * @var array
+	 */
+	private static $ONLY_CORE_TWO_TWO = array(\KlinkFacet::DOCUMENT_HASH, \KlinkFacet::PROJECT_ID);
+
+	/**
 	 * Cache of known facets
 	 */
 	private $known_constants = null;
@@ -637,12 +644,12 @@ final class KlinkFacetsBuilder
 	}
 
 
-	protected function _all()
+	protected function _all($apiVersion = \KlinkCoreClient::DEFAULT_KCORE_API_VERSION)
 	{
 
 		$instance = $this;
 
-		$known = $this->_allNames();
+		$known = $this->_allNames($apiVersion);
 
 		foreach ($known as $facetName) {
 
@@ -654,9 +661,21 @@ final class KlinkFacetsBuilder
 	}
 
 
-	protected function _allNames()
+	protected function _allNames($apiVersion = \KlinkCoreClient::DEFAULT_KCORE_API_VERSION)
 	{
-		return array_values(array_filter( array_values( $this->known_constants ), array($this, '_filterConstantValues')));
+		$names = array_values(array_filter( array_values( $this->known_constants ), array($this, '_filterConstantValues')));
+
+		if( $apiVersion !== \KlinkCoreClient::DEFAULT_KCORE_API_VERSION ){
+
+			// remove the facet names that cause error if used on API version < 2.2
+
+			$names = array_filter($names, function($el){
+				return !in_array($el, self::$ONLY_CORE_TWO_TWO);
+			});			
+			
+		}
+
+		return $names;
 	}
 
 
@@ -696,13 +715,14 @@ final class KlinkFacetsBuilder
 	/**
 	 * Return all the Klink supported facets with the default configuration
 	 * 
+	 * @param string $apiVersion The API version you want facets for. Default @see \KlinkCoreClient::DEFAULT_KCORE_API_VERSION  
 	 * @return KlinkFacet[] array of the available KlinkFacet
 	 */
-	public static function all(){
+	public static function all($apiVersion = \KlinkCoreClient::DEFAULT_KCORE_API_VERSION){
 
 		$s = new KlinkFacetsBuilder();
 
-		return $s->_all();
+		return $s->_all($apiVersion);
 
 	}
 
@@ -748,13 +768,14 @@ final class KlinkFacetsBuilder
 	/**
 	 * Return the names of the currently supported facets
 	 * 
+	 * @param string $apiVersion The API version you want facets for. Default @see \KlinkCoreClient::DEFAULT_KCORE_API_VERSION  
 	 * @return array array of strings
 	 */
-	public static function allNames(){
+	public static function allNames($apiVersion = \KlinkCoreClient::DEFAULT_KCORE_API_VERSION){
 
 		$s = new KlinkFacetsBuilder();
 
-		return $s->_allNames();
+		return $s->_allNames($apiVersion);
 
 	}
 }

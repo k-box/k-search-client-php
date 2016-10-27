@@ -18,6 +18,12 @@ abstract class BaseKlinkCoreClientTest extends PHPUnit_Framework_TestCase
     protected $corePublicUrl;
 
     /** @var string */
+    protected $corePrivateVersion;
+
+    /** @var string */
+    protected $corePublicVersion;
+
+    /** @var string */
     protected $institutionId;
 
     /** @var string */
@@ -44,6 +50,8 @@ abstract class BaseKlinkCoreClientTest extends PHPUnit_Framework_TestCase
         $this->adapterId = $_ENV['KLINK_ADAPTER_ID'];
         $this->corePublicUrl = $_ENV['KLINK_CORE_PUBLIC_URL'];
         $this->corePrivateUrl = $_ENV['KLINK_CORE_PRIVATE_URL'];
+        $this->corePublicVersion = $_ENV['KLINK_CORE_PUBLIC_API_VERSION'];
+        $this->corePrivateVersion = $_ENV['KLINK_CORE_PRIVATE_API_VERSION'];
     }
 
 
@@ -67,13 +75,15 @@ abstract class BaseKlinkCoreClientTest extends PHPUnit_Framework_TestCase
             $this->corePublicUrl,
             $this->coreUser,
             $this->corePass,
-            \KlinkVisibilityType::KLINK_PUBLIC
+            \KlinkVisibilityType::KLINK_PUBLIC,
+            $this->corePublicVersion
         );
         $auth_private = new KlinkAuthentication(
             $this->corePrivateUrl,
             $this->coreUser,
             $this->corePass,
-            \KlinkVisibilityType::KLINK_PRIVATE
+            \KlinkVisibilityType::KLINK_PRIVATE,
+            $this->corePrivateVersion
         );
         $config = new KlinkConfiguration($this->institutionId, $this->adapterId, array($auth_public, $auth_private));
 

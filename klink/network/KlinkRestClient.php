@@ -391,6 +391,22 @@ final class KlinkRestClient implements IKlinkRestClient
     }
 
     /**
+     * Get the value of a configuration parameter
+     *
+     * @param string $parameter the config key name you want to retrieve
+     *
+     * @return mixed the configuration value assigned to $parameter, if exists
+     * @throws InvalidArgumentException if $parameter is not defined in the configuration
+     */
+    public function config($parameter){
+        if(isset($this->config[$parameter])){
+            return $this->config[$parameter];
+        }
+
+        throw new InvalidArgumentException( "Unknown parameter $parameter" );
+    }
+
+    /**
      * Compose an array of key-values into an url encoded string according to the RFC 1738 (PHP_QUERY_RFC1738)
      * specification
      *

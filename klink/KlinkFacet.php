@@ -61,7 +61,7 @@ final class KlinkFacet
      * @var array
      */
 	public static $ONLY_FILTER = array(self::LOCAL_DOCUMENT_ID, self::DOCUMENT_ID, self::DOCUMENT_HASH);
-
+	
 
 
 	/**

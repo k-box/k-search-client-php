@@ -475,6 +475,32 @@ class KlinkHelpers
 	}
 
 	/**
+	 * Check if the specified string is a valid version number.
+	 * 
+	 * The version string must follow the format:
+	 *    X.Y[.Z] where X,Y,Z are numbers and Z is optional
+	 * 
+	 * @param string $version the version string to check
+	 * @param string $parameter_name the human understandable name of the parameter to be used in the error message
+	 * @param string $error_message_format only one %s is allowed, plese take into account that the format must be in english and will be localized in other languages
+	 * @throws InvalidArgumentException if the passed value is empty or null or is not a version string
+	 */
+	public static function is_valid_version_string( $version, $parameter_name, $error_message_format = 'The %s must be a valid version string. Format: X.Y[.Z] where X,Y,Z are numbers and Z is optional.' )
+	{
+
+		self::is_string_and_not_empty( $version, $parameter_name, $error_message_format );
+
+		if ( !preg_match('/^(\d+\.)(\d+\.)?(\*|\d+)$/', $version) ) {
+			
+			$message = self::localize( sprintf( $error_message_format, $parameter_name ) );
+
+			throw new InvalidArgumentException( $message );
+
+		}
+
+	}
+
+	/**
 	 * Check if the specified value is a well formatted document group identifier.
 	 *
 	 * Valid document groups are formatted as a couple of positive integers separated by a colon like 10:20 or 0:15
