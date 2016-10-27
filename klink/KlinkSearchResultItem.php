@@ -49,6 +49,9 @@ final class KlinkSearchResultItem
         if (property_exists($this->document_descriptor, $property)) {
             return $this->document_descriptor->$property;
         }
+		// @codeCoverageIgnoreStart
+		return $this->$property;
+		// @codeCoverageIgnoreEnd
     }
 
 
@@ -59,8 +62,9 @@ final class KlinkSearchResultItem
 		{
 			return call_user_func_array(array($this->document_descriptor, $method), $parameters);
 		}
-
+		// @codeCoverageIgnoreStart
 		return call_user_func_array(array($this, $method), $parameters);
+		// @codeCoverageIgnoreEnd
     }
 
 

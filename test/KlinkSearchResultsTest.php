@@ -38,7 +38,20 @@ class KlinkSearchResultTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals(63, $deserialized->getSearchTime());
 		$this->assertEquals(2, $deserialized->getCurrentResultCount());
 		
-		$this->assertContainsOnlyInstancesOf('KlinkSearchResultItem', $deserialized->getResults());
+		$results = $deserialized->getResults();
+		
+		$this->assertContainsOnlyInstancesOf('KlinkSearchResultItem', $results);
+
+		$this->assertCount(2, $results);
+
+		$first = $results[0];
+
+		$this->assertEquals(1, $first->getScore());
+		
+		$this->assertInstanceOf('KlinkDocumentDescriptor', $first->getDescriptor());
+		
+		$this->assertEquals('en', $first->getLanguage());
+		$this->assertEquals('en', $first->language);
 		
 	}
 
