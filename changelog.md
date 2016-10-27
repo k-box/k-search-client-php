@@ -33,6 +33,9 @@ The Boilerplate do not strip out facets that are not supported on old K-Core ver
 - `KlinkFacetsBuilder` api changes
  - method `all()` now takes an optional string parameter for the K-Core API Version
  - method `allNames()` now takes an optional string parameter for the K-Core API Version
+ - added support for `projectId` filtering
+- `KlinkFacet` class
+ - added support for `projectId` facet with the `PROJECT_ID` constant
 - `KlinkHelpers` class 
  - Added `is_valid_version_string` to check if a string is a valid version number
  - Added `is_array_of_integers_or_strings` to check if an array contains only integers or strings
