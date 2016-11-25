@@ -43,9 +43,25 @@ final class KlinkFacet
 	 */
 	const LOCATIONS_STRING = 'locationsString';
 
+    /**
+     * Define the filter name for the @see KlinkDocumentDescriptor::$hash field
+     */
+    const DOCUMENT_HASH = 'documentHash';
 
-	public static $ONLY_FILTER = array(KlinkFacet::LOCAL_DOCUMENT_ID, KlinkFacet::DOCUMENT_ID);
+    /**
+     * Define the facet name for the DocumentDescriptor
+     *
+     * @see KlinkDocumentDescriptor::$projectId
+     */
+    const PROJECT_ID = 'projectId';
 
+    /**
+     * Defines fields used as filter only
+     *
+     * @var array
+     */
+	public static $ONLY_FILTER = array(self::LOCAL_DOCUMENT_ID, self::DOCUMENT_ID, self::DOCUMENT_HASH);
+	
 
 
 	/**

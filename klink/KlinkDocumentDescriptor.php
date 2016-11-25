@@ -382,6 +382,17 @@ final class KlinkDocumentDescriptor
 	public $titleAliases;
 
 
+    /**
+     * The list of Project identifier attached to this Descriptor, as per DMS configuration.
+	 *
+	 * The list of ProjectsIDs of the document, as defined by users when inserting the document in a project
+     *
+	 * @internal Please do not edit this field directly, use @see setProjects, @see addProject or @see removeProject
+     * @var array
+     */
+    public $projectIds;
+
+
 	/**
 	 * setDocumentGroups
 	 * @param string[] $value the new values for the document groups, each element in the array must be formatted as user_id:group_id, where user_id adn group_id are integers and user_id could be 0
@@ -541,9 +552,71 @@ final class KlinkDocumentDescriptor
 
 	}
 
+	/**
+	 * Return the list of project identifier attached to this descriptor.
+	 *
+     * @return array the array of project identifiers
+     */
+    public function getProjects()
+    {
+        return $this->projectIds;
+    }
+
+    /**
+     * @param array $projectIds
+     *
+	 * @throws InvalidArgumentException If array do not contains only integers or strings
+     * @return KlinkDocumentDescriptor
+     */
+    public function setProjects(array $ids)
+    {
+
+		KlinkHelpers::is_array_of_integers_or_strings($ids, 'ids');
+
+        $this->projectIds = $ids;
+
+        return $this;
+    }
 
 
+    /**
+	 * Add the given ProjectID to the Descriptor.
+	 *
+     * @param int|string $id The ProjectID to add to this descriptor.
+     *
+     * @return KlinkDocumentDescriptor
+	 * @throws InvalidArgumentException If $id is not an integer or a string. Boolean are considered not integer
+     */
+    public function addProject($id)
+    {
+		KlinkHelpers::is_integer_or_string($id, 'id');
 
+        if (!in_array($id, $this->projectIds)) {
+            $this->projectIds[] = $id;
+        }
+
+        return $this;
+    }
+
+    /**
+     * Removes the given ProjectID from the Descriptor.
+     *
+     * @param int|string $id The ProjectID to remove
+     *
+     * @return bool
+     */
+    public function removeProject($id)
+    {
+		KlinkHelpers::is_integer_or_string($id, 'id');
+
+        if (!in_array($id, $this->projectIds)) {
+            return false;
+        }
+
+        $pos = array_search($id, $this->projectIds);
+        unset($this->projectIds[$pos]);
+        return true;
+    }
 	
 
 	/**
@@ -552,7 +625,9 @@ final class KlinkDocumentDescriptor
 	 * @internal
 	 */
 	function __construct(){
-
+        $this->projectIds = array();
+		$this->authors = array();
+		$this->locationsString = array();
 	}
 
 	/**
@@ -568,7 +643,7 @@ final class KlinkDocumentDescriptor
 	 * @param  string $userOwner       The user that owns the document
 	 * @param  string|null $visibility      The document visibility, the default is KlinkVisibilityType::KLINK_PUBLIC
 	 * @param  string|null $creationDate    The document creation date in RFC3339 format, the default value is the current timestamp
-	 * @return [type]                  [description]
+	 * @return KlinkDocumentDescriptor The DocumentDescriptor instance
 	 * @throws InvalidArgumentException If one or more parameters are invalid
 	 */
 	public static function create($institutionID, $localDocumentID, $hash, $title, $mimetype, $documentURI, $thumbnailURI, $userUploader, $userOwner, $visibility = null, $creationDate = null){
@@ -630,22 +705,6 @@ final class KlinkDocumentDescriptor
         return $instance;
 
     }
-
-	/**
-	 * For JSON serialization purporses
-	 * */
-	public function to_array(){
-		$json = array();
-	    foreach($this as $key => $value) {
-	    	if(is_array($value)){
-	    		$json[$key] = "array";
-	    	}
-	    	else {
-		        $json[$key] = $value;
-		    }
-	    }
-	    return $json; // or json_encode($json)
-	}
 
 
 }

@@ -26,6 +26,13 @@ final class KlinkFacetsBuilder
 	const DEFAULT_COUNT = 10;
 
 	/**
+	 * Define facets and filters only available for K-Core version 2.2 or above
+	 *
+     * @var array
+	 */
+	private static $ONLY_CORE_TWO_TWO = array(\KlinkFacet::DOCUMENT_HASH, \KlinkFacet::PROJECT_ID);
+
+	/**
 	 * Cache of known facets
 	 */
 	private $known_constants = null;
@@ -382,6 +389,52 @@ final class KlinkFacetsBuilder
 
 		return call_user_func_array(array($instance, 'institution'), func_get_args());
 	}
+
+    /**
+     * Filter for the documentHash.
+     *
+     * This is not a facet and so you cannot use mincount, prefix, count.
+     *
+     * If no value is passed for $filter parameter the filter will not be applied on the request to the Core.
+     *
+     * @param string $filter the value to use for filtering
+     * @return KlinkFacetsBuilder
+     * @throws BadMethodCallException if called two or more times on the same builder
+     */
+    public function documentHash($filter){
+        $isStatic = !(isset($this) && get_class($this) == __CLASS__); //This check is caused by the non-sense of PHP 5.6 that call the same method not considering the static modifier
+
+        if(!$isStatic){
+            $instance = $this;
+        }
+        else {
+            $instance = new KlinkFacetsBuilder;
+        }
+
+        if(in_array(KlinkFacet::DOCUMENT_HASH, $instance->already_builded)){
+            throw new BadMethodCallException("The documentHash filter has been already added", 1);
+        }
+
+        if(empty($filter)){
+            throw new InvalidArgumentException("The filter value cannot be empty", 2);
+        }
+
+        if (is_array($filter)) {
+            throw new InvalidArgumentException("The documentHash value cannot be an array", 2);
+        }
+
+        $facet = KlinkFacet::create(KlinkFacet::DOCUMENT_HASH,
+            KlinkFacetsBuilder::DEFAULT_MINCOUNT,
+            null,
+            KlinkFacetsBuilder::DEFAULT_COUNT,
+            $filter);
+
+        $instance->facets[] = $facet;
+        $instance->already_builded[] = KlinkFacet::DOCUMENT_HASH;
+
+        return $instance;
+    }
+
 	
 	/**
 	 * Facet for the locations city/country names
@@ -429,6 +482,55 @@ final class KlinkFacetsBuilder
 
 		$instance->facets[] = $facet;
 		$instance->already_builded[] = KlinkFacet::LOCATIONS_STRING;
+
+		return $instance;
+	}
+	/**
+	 * Facet for the projectId names
+	 * 
+	 * variable number of parameters
+	 * 
+	 * if NONE   => enable the facet will 
+	 * if one string => the filter (check if is a valid project_id )
+	 * if one int => number of items to return for the facet (count)
+	 * if two ints => 1: count, 2: mincount
+	 * if 3 => 1: filter, 2: count, 3: mincount
+	 * 
+	 * @throws BadMethodCallException if called two or more times on the same builder
+	 */
+	public function projectId()
+	{
+		$isStatic = !(isset($this) && get_class($this) == __CLASS__); //This check is caused by the non-sense of PHP 5.6 that call the same method not considering the static modifier
+
+		if(!$isStatic){
+			$instance = $this;
+		}
+		else {
+			$instance = new KlinkFacetsBuilder;
+		}
+
+		if(in_array(KlinkFacet::PROJECT_ID, $instance->already_builded)){
+			throw new BadMethodCallException("The project_id facet has been already added", 1);
+		}
+
+		$builded_params = call_user_func_array(array($instance, '_handle_facet_parameters'), func_get_args());
+
+		$facet = null;
+
+		if(is_null($builded_params)){
+			$facet = KlinkFacet::create(KlinkFacet::PROJECT_ID, 1);
+		}
+		else {
+
+			$facet = KlinkFacet::create(KlinkFacet::PROJECT_ID,
+						$builded_params['mincount'], 
+						$builded_params['prefix'], 
+						$builded_params['count'], 
+						$builded_params['filter']);
+		}
+
+		$instance->facets[] = $facet;
+		$instance->already_builded[] = KlinkFacet::PROJECT_ID;
 
 		return $instance;
 	}
@@ -542,12 +644,12 @@ final class KlinkFacetsBuilder
 	}
 
 
-	protected function _all()
+	protected function _all($apiVersion = \KlinkCoreClient::DEFAULT_KCORE_API_VERSION)
 	{
 
 		$instance = $this;
 
-		$known = $this->_allNames();
+		$known = $this->_allNames($apiVersion);
 
 		foreach ($known as $facetName) {
 
@@ -559,9 +661,21 @@ final class KlinkFacetsBuilder
 	}
 
 
-	protected function _allNames()
+	protected function _allNames($apiVersion = \KlinkCoreClient::DEFAULT_KCORE_API_VERSION)
 	{
-		return array_values(array_filter( array_values( $this->known_constants ), array($this, '_filterConstantValues')));
+		$names = array_values(array_filter( array_values( $this->known_constants ), array($this, '_filterConstantValues')));
+
+		if( $apiVersion !== \KlinkCoreClient::DEFAULT_KCORE_API_VERSION ){
+
+			// remove the facet names that cause error if used on API version < 2.2
+
+			$names = array_filter($names, function($el){
+				return !in_array($el, self::$ONLY_CORE_TWO_TWO);
+			});			
+			
+		}
+
+		return $names;
 	}
 
 
@@ -601,13 +715,14 @@ final class KlinkFacetsBuilder
 	/**
 	 * Return all the Klink supported facets with the default configuration
 	 * 
+	 * @param string $apiVersion The API version you want facets for. Default @see \KlinkCoreClient::DEFAULT_KCORE_API_VERSION  
 	 * @return KlinkFacet[] array of the available KlinkFacet
 	 */
-	public static function all(){
+	public static function all($apiVersion = \KlinkCoreClient::DEFAULT_KCORE_API_VERSION){
 
 		$s = new KlinkFacetsBuilder();
 
-		return $s->_all();
+		return $s->_all($apiVersion);
 
 	}
 
@@ -653,13 +768,14 @@ final class KlinkFacetsBuilder
 	/**
 	 * Return the names of the currently supported facets
 	 * 
+	 * @param string $apiVersion The API version you want facets for. Default @see \KlinkCoreClient::DEFAULT_KCORE_API_VERSION  
 	 * @return array array of strings
 	 */
-	public static function allNames(){
+	public static function allNames($apiVersion = \KlinkCoreClient::DEFAULT_KCORE_API_VERSION){
 
 		$s = new KlinkFacetsBuilder();
 
-		return $s->_allNames();
+		return $s->_allNames($apiVersion);
 
 	}
 }

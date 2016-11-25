@@ -9,7 +9,9 @@
 */
 class KlinkFacetsBuilderTest extends PHPUnit_Framework_TestCase
 {
-	
+
+    /** @var array */
+    private  $currently_supported;
 
 	public function setUp()
 	{
@@ -17,11 +19,22 @@ class KlinkFacetsBuilderTest extends PHPUnit_Framework_TestCase
 
 	  	error_reporting(E_ALL & E_STRICT);
 
+        $this->currently_supported = array_values(array(
+            KlinkFacet::DOCUMENT_TYPE,
+            KlinkFacet::LANGUAGE,
+            KlinkFacet::INSTITUTION_ID,
+            KlinkFacet::DOCUMENT_GROUPS,
+            KlinkFacet::LOCATIONS_STRING,
+            KlinkFacet::PROJECT_ID,
+        ));
 
-	  	$oClass = new ReflectionClass('KlinkFacet');
-
-        $this->currently_supported = array_values(array(KlinkFacet::DOCUMENT_TYPE,KlinkFacet::LANGUAGE,KlinkFacet::INSTITUTION_ID,KlinkFacet::DOCUMENT_GROUPS,KlinkFacet::LOCATIONS_STRING));
-
+		$this->currently_supported_api_version_two_one = array_values(array(
+            KlinkFacet::DOCUMENT_TYPE,
+            KlinkFacet::LANGUAGE,
+            KlinkFacet::INSTITUTION_ID,
+            KlinkFacet::DOCUMENT_GROUPS,
+            KlinkFacet::LOCATIONS_STRING
+        ));
 	}
 
 
@@ -127,6 +140,7 @@ class KlinkFacetsBuilderTest extends PHPUnit_Framework_TestCase
 		return array(
 			array(KlinkFacet::LOCAL_DOCUMENT_ID, KlinkFacet::LOCAL_DOCUMENT_ID),
 			array(KlinkFacet::DOCUMENT_ID, KlinkFacet::DOCUMENT_ID),
+			array(KlinkFacet::DOCUMENT_HASH, KlinkFacet::DOCUMENT_HASH),
 		);
 	}
 
@@ -138,9 +152,13 @@ class KlinkFacetsBuilderTest extends PHPUnit_Framework_TestCase
 	public function testBuilderAllNames()
 	{
 		
-		$current = KlinkFacetsBuilder::allNames();
+		$current = KlinkFacetsBuilder::allNames(); // default to 2.2 for API Version
 
 		$this->assertEquals( $this->currently_supported, $current);
+
+		$current = KlinkFacetsBuilder::allNames('2.1');
+
+		$this->assertEquals( $this->currently_supported_api_version_two_one, $current);
 
 	}
 
@@ -213,6 +231,17 @@ class KlinkFacetsBuilderTest extends PHPUnit_Framework_TestCase
 		$first = $ft[0];
 
 		$this->assertEquals('10,12', $first->getFilter());
+
+        $documentHash = 'lsakdfjsdklfjsldkfmsdfmsdlfmsdafksadfs324';
+        $ft = KlinkFacetsBuilder::create()->documentHash($documentHash)->build();
+        $this->assertNotEmpty($ft);
+        $this->assertCount(1, $ft);
+
+        /** @var KlinkFacet $facet */
+        $facet = reset($ft);
+        $this->assertInstanceOf('KlinkFacet', $facet);
+        $this->assertSame(KlinkFacet::DOCUMENT_HASH, $facet->getName());
+        $this->assertSame($documentHash, $facet->getFilter());
 
 	}
 

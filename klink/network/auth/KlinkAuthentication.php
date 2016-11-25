@@ -46,29 +46,32 @@ final class KlinkAuthentication
 	 */
 	private $tag;
 
-
 	/**
-	 * Creates a new KlinkAuthentication
-	 * @param string $core_url the URL of the Core instance
-	 * @param string $username the username that must be used for authentication
-	 * @param string $password the password
-	 * @param string $tag the visibility tag to attach to this core instance. Default \KlinkVisibilityType::KLINK_PRIVATE. Will be used in core selection based on the request to be executed. 
-	 *
-	 * @return KlinkAuthentication
-	 * @throws IllegalArgumentException if any of the parameters is wrong
+	 * API Version to be used when selecting the core for the communication
+     *
+	 * @var string
 	 */
-	function __construct($core_url, $username, $password, $tag = \KlinkVisibilityType::KLINK_PRIVATE)
+	private $apiVersion;
+
+
+    /**
+     * Creates a new KlinkAuthentication
+     *
+     * @param string $core_url   the URL of the Core instance
+     * @param string $username   the username that must be used for authentication
+     * @param string $password   the password
+     * @param string $tag        the visibility tag to attach to this core instance. Default \KlinkVisibilityType::KLINK_PRIVATE. Will be used in core selection based on the request to be executed.
+     * @param string $apiVersion specify the version of the KCore API to use
+     */
+	function __construct($core_url, $username, $password, $tag = \KlinkVisibilityType::KLINK_PRIVATE, $apiVersion = \KlinkCoreClient::DEFAULT_KCORE_API_VERSION)
 	{
-
 		KlinkHelpers::is_valid_url( $core_url, 'core url');
-
 		KlinkHelpers::is_string_and_not_empty( $username, 'username');
-
 		KlinkHelpers::is_string_and_not_empty( $password, 'password');
-		
-		KlinkHelpers::is_string_and_not_empty( $tag, 'tag');
+		KlinkVisibilityType::fromString( $tag, 'tag');
+		KlinkHelpers::is_valid_version_string( $apiVersion, 'apiVersion');
 
-
+        $this->apiVersion = $apiVersion;
 		$this->core = $core_url;
 		$this->username = $username;
 		$this->password = $password;
@@ -110,4 +113,11 @@ final class KlinkAuthentication
 		return $this->tag;
 	}
 
+    /**
+     * @return string
+     */
+    public function getApiVersion()
+    {
+        return $this->apiVersion;
+    }
 }

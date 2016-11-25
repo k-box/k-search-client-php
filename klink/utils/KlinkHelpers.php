@@ -475,6 +475,32 @@ class KlinkHelpers
 	}
 
 	/**
+	 * Check if the specified string is a valid version number.
+	 * 
+	 * The version string must follow the format:
+	 *    X.Y[.Z] where X,Y,Z are numbers and Z is optional
+	 * 
+	 * @param string $version the version string to check
+	 * @param string $parameter_name the human understandable name of the parameter to be used in the error message
+	 * @param string $error_message_format only one %s is allowed, plese take into account that the format must be in english and will be localized in other languages
+	 * @throws InvalidArgumentException if the passed value is empty or null or is not a version string
+	 */
+	public static function is_valid_version_string( $version, $parameter_name, $error_message_format = 'The %s must be a valid version string. Format: X.Y[.Z] where X,Y,Z are numbers and Z is optional.' )
+	{
+
+		self::is_string_and_not_empty( $version, $parameter_name, $error_message_format );
+
+		if ( !preg_match('/^(\d+\.)(\d+\.)?(\*|\d+)$/', $version) ) {
+			
+			$message = self::localize( sprintf( $error_message_format, $parameter_name ) );
+
+			throw new InvalidArgumentException( $message );
+
+		}
+
+	}
+
+	/**
 	 * Check if the specified value is a well formatted document group identifier.
 	 *
 	 * Valid document groups are formatted as a couple of positive integers separated by a colon like 10:20 or 0:15
@@ -500,7 +526,7 @@ class KlinkHelpers
 	}
 
 	/**
-	 * Check is an array contains only elements of a particular class.
+	 * Check if an array contains only elements of a particular class.
 	 * 
 	 * @param array $array the array to check
 	 * @param string $classname the class name to check
@@ -526,6 +552,67 @@ class KlinkHelpers
 				throw new InvalidArgumentException( $message );
 
 			}
+
+		}
+
+	}
+
+	/**
+	 * Check if an array contains only elements that are strings or integers.
+	 * 
+	 * @param array $array the array to check
+	 * @param string $parameter_name the human understandable name of the parameter to be used in the error message
+	 * @throws InvalidArgumentException if an element of the array contains objects, arrays or boolean
+	 */
+	public static function is_array_of_integers_or_strings( array $array, $parameter_name, $error_message_format = 'The array %s must contains only strings or integers' )
+	{
+
+		if( is_null( $array ) ){
+			
+			$message = self::localize( sprintf( $error_message_format, $parameter_name ) );
+
+			throw new InvalidArgumentException( $message );
+
+		}
+
+		foreach( $array as $element ){
+
+			if( !(is_int( $element ) || is_string( $element )) ) {
+
+				$message = self::localize( sprintf( $error_message_format, $parameter_name ) );
+
+				throw new InvalidArgumentException( $message );
+
+			}
+
+		}
+
+	}
+
+	/**
+	 * Check if a given parameter value is of type string or integer.
+	 *
+	 * 
+	 * @param mixed $param the value to check
+	 * @param string $parameter_name the human understandable name of the parameter to be used in the error message
+	 * @throws InvalidArgumentException if the value is an array, object, null or boolean
+	 */
+	public static function is_integer_or_string( $param, $parameter_name, $error_message_format = 'The %s must be of type integer or string.' )
+	{
+
+		if( is_null( $param ) ){
+			
+			$message = self::localize( sprintf( $error_message_format, $parameter_name ) );
+
+			throw new InvalidArgumentException( $message );
+
+		}
+
+		if( !(is_int( $param ) || is_string( $param )) ) {
+
+			$message = self::localize( sprintf( $error_message_format, $parameter_name ) );
+
+			throw new InvalidArgumentException( $message );
 
 		}
 

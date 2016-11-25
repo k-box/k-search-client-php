@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Define the search result structure
+ * Define the thumbnail response structure
  * 
  * @package Klink
  */

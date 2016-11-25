@@ -5,7 +5,7 @@ use Psr\Log\LoggerAwareTrait;
 use Psr\Log\NullLogger;
 
 if( !defined( 'KLINK_BOILERPLATE_VERSION' ) ){
-	define( 'KLINK_BOILERPLATE_VERSION', '2.2.1' );
+	define( 'KLINK_BOILERPLATE_VERSION', '3.0.0' );
 }
 
 /**
@@ -14,7 +14,8 @@ if( !defined( 'KLINK_BOILERPLATE_VERSION' ) ){
 */
 final class KlinkCoreClient
 {
-	
+    const DEFAULT_KCORE_API_VERSION = '2.2';
+
 	use LoggerAwareTrait;
 
 	// ---- API endpoint constants
@@ -83,26 +84,36 @@ final class KlinkCoreClient
      * Stores the (optional) Telemetry object
      */
     private $telemeter=null;
-	
-	
 
-	/**
-	 * Creates a KlinkCoreClient
-	 *
-	 * @return KlinkCoreClient
-	 */
-	function __construct( KlinkConfiguration $config, LoggerInterface $logger = null, IKlinkCoreTelemeter $telemeter=null )
+
+    /**
+     * Creates a KLinkCoreClient
+     *
+     * @param KlinkConfiguration  $config
+     * @param LoggerInterface     $logger
+     * @param IKlinkCoreTelemeter $telemeter
+     */
+	function __construct(
+        KlinkConfiguration $config,
+        LoggerInterface $logger = null,
+        IKlinkCoreTelemeter $telemeter = null
+    )
 	{
-
 		$this->telemeter= $telemeter;
-
         $this->configuration = $config;
-		
 		$this->logger = $logger;
 
 		foreach ($this->configuration->getCores() as $core) {
-
-			$this->rest[$core->getTag()] = new KlinkRestClient($core->getCore(), $core, array('debug' => $this->configuration->isDebugEnabled()), $logger);
+		    $version = $core->getApiVersion();
+			$this->rest[$core->getTag()] = new KlinkRestClient(
+			    $core->getCore(),
+                $core,
+                [
+                    'debug' => $this->configuration->isDebugEnabled(),
+                    'api-version' => $version ? $version : self::DEFAULT_KCORE_API_VERSION,
+                ],
+                $logger
+            );
 
 		}
 		
@@ -297,17 +308,17 @@ final class KlinkCoreClient
 	 * Execute a KLink search on the reference KLink Core. The performed search reflects the specified parameters.
 	 * 
 	 * @param string $terms the phrase or terms to search for
-	 * @param KlinkVisibilityType $type the type of the search to be perfomed, if null is specified the default behaviour is KlinkVisibilityType::KLINK_PUBLIC
+	 * @param KlinkVisibilityType $type the type of the search to be perfomed, if null is specified the default behaviour is @see KlinkVisibilityType::KLINK_PRIVATE
 	 * @param int $resultsPerPage the number of results per page
 	 * @param int $offset the page to display
 	 * @param KlinkFacet[] $facets The facets that needs to be retrieved or what will be retrieved. Default null, no facets will be calculated or filtered.
 	 * @return KlinkSearchResult returns the document that match the searched terms
 	 * @throws KlinkException if something wrong happened during the communication with the core
 	 */
-	function search( $terms, $type = null, $resultsPerPage = 10, $offset = 0, $facets = null ){
+	function search( $terms, $type = \KlinkVisibilityType::KLINK_PRIVATE, $resultsPerPage = 10, $offset = 0, $facets = null ){
 
 		if(is_null($type)){
-			$type = \KlinkVisibilityType::KLINK_PUBLIC;
+			$type = \KlinkVisibilityType::KLINK_PRIVATE;
 		}
 
 		if(!empty($facets)){
@@ -345,10 +356,10 @@ final class KlinkCoreClient
 	 * to construct the facets parameter @see KlinkFacetsBuilder
 	 *
 	 * @param KlinkFacet[]|string[] $facets The facets to be retrieved. You can pass also an array of string with the facet names, the default configuration will be applyied
-	 * @param string $visibility The visibility 
+	 * @param string $visibility The visibility. Default @see KlinkVisibilityType::KLINK_PRIVATE
 	 * @return [type] [description]
 	 */
-	public function facets( $facets, $visibility = 'public', $term = '*' )
+	public function facets( $facets, $visibility = \KlinkVisibilityType::KLINK_PRIVATE, $term = '*' )
 	{
 
 		if(!is_null($facets)){
@@ -646,10 +657,11 @@ final class KlinkCoreClient
 	 * Test the specified KlinkConfiguration for errors. 
 	 * The test will verify also that the authentication parameter and the istitutionid are valid.
 	 * 
-	 * @param KlinkConfiguration $config the configuration to test
-	 * @param Exception $error (in) the variable the will contain the detailed exception object
-	 * @param boolean $health_info (in) pass a variable here to gather health details
-	 * @return  boolean true if the test passes, false otherwise. 
+	 * @param KlinkConfiguration $config      the configuration to test
+	 * @param Exception          $error       (in) the variable the will contain the detailed exception object
+	 * @param boolean            $health_info (in) pass a variable here to gather health details
+	 *
+*@return  boolean true if the test passes, false otherwise.
 	 * */
 	public static function test(KlinkConfiguration $config, &$error, $perform_health_check = false, &$health_info=null, LoggerInterface $logger = null){
 
@@ -750,7 +762,7 @@ final class KlinkCoreClient
 		} catch( Exception $e ){
 			if( $config->isDebugEnabled() ){
 
-				$logger->debug( 'Test - CoreClient instance construction caused Exception ' . $ke->getMessage(), ['error' => $e, 'res' => isset($res) ? $res : null] );
+				$logger->debug( 'Test - CoreClient instance construction caused Exception ' . $e->getMessage(), ['error' => $e, 'res' => isset($res) ? $res : null] );
 				
 			}
             
@@ -1114,7 +1126,7 @@ final class KlinkCoreClient
 	 * @return string The boilerplate version number.
 	 */
 	public static function version(){
-		return defined('KLINK_BOILERPLATE_VERSION') ? KLINK_BOILERPLATE_VERSION : '0.3.33';
+		return defined('KLINK_BOILERPLATE_VERSION') ? KLINK_BOILERPLATE_VERSION : '3.0.0';
 	}
 
 	// ----- Private Stuff

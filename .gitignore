@@ -2,3 +2,4 @@
 vendor/
 test/Brochure.pdf
 coverage
+phpunit.xml
