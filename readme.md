@@ -1,4 +1,4 @@
-[![build status](https://git.klink.asia/ci/projects/7/status.png?ref=master)](https://git.klink.asia/ci/projects/7?ref=master) [![coverage report](https://git.klink.asia/alessio.vertemati/adapterboilerplate/badges/master/coverage.svg)](https://git.klink.asia/alessio.vertemati/adapterboilerplate/commits/master)
+[![build status](https://git.klink.asia/kadapters/adapterboilerplate/badges/master/build.svg)](https://git.klink.asia/kadapters/adapterboilerplate/commits/master) [![coverage report](https://git.klink.asia/kadapters/adapterboilerplate/badges/master/coverage.svg)](https://git.klink.asia/kadapters/adapterboilerplate/commits/master)
 
 # Adapter Boilerplate
 
