@@ -19,10 +19,6 @@ class KlinkThumbnailGenerationTest extends BaseKlinkCoreClientTest
 	public function testGenerateThumbnailOfWebSites()
 	{
 
-		$this->markTestSkipped(
-          'The KCore has a bug in the thumbnail generation service preventing this test to execute correctly.'
-        );
-
 		$result = $this->getCoreClient()->generateThumbnailOfWebSite('http://www.google.it/');
 
 		$this->assertNotNull($result);
