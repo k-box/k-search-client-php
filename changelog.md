@@ -1,5 +1,9 @@
 # Boilerplate changelog and release info
 
+## Version 3.0.1
+
+Fixed a bug in handling website thumbnail generation
+
 ## Version 3.0.0
 
 Version 3.0.0 starts the work on the refactoring of the code. This will end-up in making
