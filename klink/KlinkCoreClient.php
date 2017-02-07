@@ -1114,7 +1114,7 @@ final class KlinkCoreClient
 		$data = self::generateThumbnailFromContent( 'text/uri-list', $url);
 
 		if(!is_null($image_file)){
-			return file_put_contents( $fullImagePath, file_get_contents( $decoded->dataURI ) );
+			return file_put_contents( $image_file, $data );
 		}
 
 		return $data;
