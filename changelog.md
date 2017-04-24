@@ -1,6 +1,6 @@
 # Boilerplate changelog and release info
 
-## Unreleased
+## Version 3.0.2
 
 If a KlinkFacet is constructed with an empty filter value, the request will be interpreted 
 as a facet request and not as a filter. The K-Core will soon throw error if a filter,
