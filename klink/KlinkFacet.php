@@ -122,7 +122,7 @@ final class KlinkFacet
 		$ret->name = $name;
 		$ret->min = $min;
 		$ret->count = $count;
-		$ret->filter = $filter;
+		$ret->filter = !empty($filter) ? $filter : null;
 		$ret->prefix = $prefix;
 
 		return $ret;
@@ -162,7 +162,7 @@ final class KlinkFacet
 	}
 
 	public function setFilter($value){
-		$this->filter = $value;
+		$this->filter = !empty($value) ? $value : null;
 		return $this;
 	}
 
@@ -198,7 +198,7 @@ final class KlinkFacet
 			), $ser);
 		}
 
-		if(!is_null($this->getFilter())){
+		if(!is_null($this->getFilter()) && !empty($this->getFilter())){
 			$ser['filter_'.$this->getName()] = $this->getFilter();
 		}
 

@@ -1,5 +1,11 @@
 # Boilerplate changelog and release info
 
+## Unreleased
+
+If a KlinkFacet is constructed with an empty filter value, the request will be interpreted 
+as a facet request and not as a filter. The K-Core will soon throw error if a filter,
+with an empty string, is added to the search request.
+
 ## Version 3.0.1
 
 Fixed a bug in handling website thumbnail generation
