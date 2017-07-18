@@ -4,9 +4,13 @@ stages:
   - release
 
 cache:
-  key: "$CI_BUILD_REF_NAME"
+  key: "kbox"
   paths:
-  - vendor/
+  - .composer-cache/
+
+## Making sure that the composer cache folder is the one we have in the CI cache
+before_script:
+  - export COMPOSER_CACHE_DIR=`pwd`/.composer-cache
 
 # Job templates
 
