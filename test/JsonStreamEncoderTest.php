@@ -21,7 +21,7 @@ class JsonStreamEncoderTest extends PHPUnit_Framework_TestCase
         $client = new GuzzleHttp\Client();
         
         if(!is_file($brochure_file_path)){
-            $client->request('GET', 'https://build.klink.asia/Brochure.pdf', ['sink' => $brochure_file_path]);
+            file_put_contents($brochure_file_path, str_repeat('1', 1000 * 1000));
         }
 	}
 

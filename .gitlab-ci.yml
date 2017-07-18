@@ -39,39 +39,29 @@ cache:
 # Build jobs 
 # - PHP deps pulling
 
-composer:5.5:
-  <<: *builder
-  tags:
-  - shell
-
 composer:5.6:
   <<: *builder
-  image: "docker.klink.asia:5043/klink/php-ci-docker:5.6-alpine"
+  image: "docker.klink.asia/open/docker-php:5.6-alpine"
   tags:
   - docker
 
 composer:7.0:
   <<: *builder
-  image: "docker.klink.asia:5043/klink/php-ci-docker:7.0-alpine"
+  image: "docker.klink.asia/open/docker-php:7.0-alpine"
   tags:
   - docker
 
 # Testing jobs
 
-phpunit:5.5:
-  <<: *tester
-  tags:
-  - shell
-
 phpunit:5.6:
-  image: "docker.klink.asia:5043/klink/php-ci-docker:5.6"
+  image: "docker.klink.asia/open/docker-php:5.6"
   <<: *tester_plus_coverage
   tags:
   - docker
   
 
 phpunit:7.0:
-  image: "docker.klink.asia:5043/klink/php-ci-docker:7.0"
+  image: "docker.klink.asia/open/docker-php:7.0"
   <<: *tester_plus_coverage
   tags:
   - docker
@@ -89,5 +79,6 @@ push_to_composer_repo:
     - cd $SATIS_FOLDER
     - php ./bin/satis build --verbose ./satis.json ./web
   tags: 
+   - composer-repo
   only:
     - tags
