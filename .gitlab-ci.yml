@@ -54,4 +54,5 @@ phpunit:7.1:
   <<: *tester_plus_coverage
   tags:
   - docker
+  allow_failure: true
 
