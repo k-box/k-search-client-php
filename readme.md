@@ -1,5 +1,5 @@
-[![build status](https://git.klink.asia/main/k-search-client-php/badges/master/build.svg)](https://git.klink.asia/main/k-search-client-php/commits/master) 
-[![coverage report](https://git.klink.asia/main/k-search-client-php/badges/master/coverage.svg)](https://git.klink.asia/main/k-search-client-php/commits/master)
+[![build status](https://git.klink.asia/open/k-search-client-php/badges/master/build.svg)](https://git.klink.asia/open/k-search-client-php/commits/master) 
+[![coverage report](https://git.klink.asia/open/k-search-client-php/badges/master/coverage.svg)](https://git.klink.asia/open/k-search-client-php/commits/master)
 
 # Adapter Boilerplate
 
