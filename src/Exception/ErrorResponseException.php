@@ -2,7 +2,7 @@
 
 namespace KSearchClient\Exception;
 
-class ErrorResponseException extends \Exception
+class ErrorResponseException extends KSearchClientException
 {
     /**
      * @var mixed
