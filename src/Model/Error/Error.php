@@ -46,7 +46,7 @@ class Error
 
     /**
      * Additional information can optionally be provided on errors for better debugging.
-     *
+     * @JMS\Type("array")
      * @todo: properly define the structure of this property.
      */
     public $data;
