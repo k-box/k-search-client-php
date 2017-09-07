@@ -23,7 +23,10 @@
     },
 
     "autoload": {
-        "psr-4": {"KSearchClient\\": "src/"}
+        "psr-4": {
+            "KSearchClient\\": "src/",
+            "JMS\\Serializer\\Annotation\\": "vendor/jms/serializer/src/JMS/Serializer/Annotation"
+        }
     },
 
     "autoload-dev": {
@@ -42,6 +45,6 @@
     },
     "require-dev": {
         "phpunit/phpunit": "^6.3",
-        "php-http/mock-client": "^1.0"
+        "php-http/guzzle6-adapter": "^1.1"
     }
 }
