@@ -4,6 +4,11 @@ namespace KSearchClient\API;
 use KSearchClient\Model\Data\AddParams;
 use KSearchClient\Model\Data\AddRequest;
 use KSearchClient\Model\Data\Data;
+use KSearchClient\Model\Data\DeleteRequest;
+use KSearchClient\Model\Data\GetRequest;
+use KSearchClient\Model\Data\SearchParams;
+use KSearchClient\Model\Data\SearchRequest;
+use KSearchClient\Model\Data\UUIDParam;
 
 class RequestFactory
 {
@@ -30,6 +35,36 @@ class RequestFactory
         $addRequest->id = $this->idGenerator->getNewId();
 
         return $addRequest;
+    }
+
+    public function buildGetRequest($uuid)
+    {
+        $getRequest = new GetRequest();
+        $getRequest->id = $this->idGenerator->getNewId();
+        $getRequest->params = new UUIDParam();
+        $getRequest->params->uuid = $uuid;
+
+        return $getRequest;
+    }
+
+    public function buildDeleteRequest(string $uuid): DeleteRequest
+    {
+        $deleteRequest = new DeleteRequest();
+        $deleteRequest->id = $this->idGenerator->getNewId();
+        $deleteRequest->params = new UUIDParam();
+        $deleteRequest->params->uuid = $uuid;
+
+        return $deleteRequest;
+    }
+
+    public function buildSearchRequest($uuid)
+    {
+        $searchRequest = new SearchRequest();
+        $searchRequest->id = $this->idGenerator->getNewId();
+        $searchRequest->params = new SearchParams;
+        $searchRequest->params;
+
+        return $searchRequest;
     }
 
     public static function buildDefault()

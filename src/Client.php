@@ -15,9 +15,16 @@ use KSearchClient\Exception\ModelNotValidException;
 use KSearchClient\Model\Data\AddRequest;
 use KSearchClient\Model\Data\AddResponse;
 use KSearchClient\Model\Data\Data;
+use KSearchClient\Model\Data\SearchParams;
+use KSearchClient\Model\Data\SearchResponse;
 use KSearchClient\Model\Error\ErrorResponse;
 use KSearchClient\Model\RPCRequest;
+use KSearchClient\Model\RPCResponse;
+use KSearchClient\Model\Search\Search;
+use KSearchClient\Model\Status\Status;
+use KSearchClient\Model\Status\StatusResponse;
 use KSearchClient\Validator\AuthTypeValidator;
+use Psr\Http\Message\ResponseInterface;
 use Symfony\Component\Validator\Validation;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -71,39 +78,65 @@ class Client
         $this->validator = $validator;
     }
 
-    public function addData(Data $data, $dataTextualContents = '')
+    /**
+     * @param Data $data
+     * @param string $dataTextualContents
+     * @return Data
+     */
+    public function addData(Data $data, string $dataTextualContents = '')
     {
         $addRequest = $this->apiRequestFactory->buildDataAddRequest($data, $dataTextualContents);
-        $this->validateRequest($addRequest);
+        $route = $this->routes->getDataAdd();
 
-        $serializedRequestBody = $this->serializer->serialize($addRequest, self::SERIALIZER_FORMAT);
+        $response = $this->handleRequest($addRequest, $route);
 
-        $request = $this->messageFactory->createRequest( 'POST', $this->routes->getDataAdd(), [], $serializedRequestBody);
-        $this->authentication->authenticate($request);
-
-        $response = $this->httpClient->sendRequest($request);
-        $responseBody = $response->getBody();
-
-        if (ResponseHelper::isAnError($responseBody)) {
-            /** @var ErrorResponse $errorResponse */
-            $errorResponse = $this->serializer->deserialize($responseBody, ErrorResponse::class, self::SERIALIZER_FORMAT);
-            throw new ErrorResponseException($errorResponse->error->message, $errorResponse->error->code, $errorResponse->error->data);
-        }
-
-        return $this->serializer->deserialize($response->getBody(), AddResponse::class, self::SERIALIZER_FORMAT);
+        /** @var AddResponse $addResponse */
+        $addResponse = $this->serializer->deserialize($response->getBody(), AddResponse::class, self::SERIALIZER_FORMAT);
+        return $addResponse->result;
     }
 
-    public static function buildDefault(Authentication $authentication, $kSearchUrl)
+    /**
+     * @param $uuid
+     * @return Status
+     */
+    public function deleteData(string $uuid): Status
     {
-        $validator = Validation::createValidatorBuilder()
-            ->enableAnnotationMapping()
-            ->getValidator();
-        $factory = API\RequestFactory::buildDefault();
-        $serializer = \JMS\Serializer\SerializerBuilder::create()->build();
-        $httpClient = HttpClientDiscovery::find();
-        $messageFactory = MessageFactoryDiscovery::find();
+        $deleteRequest = $this->apiRequestFactory->buildDeleteRequest($uuid);
+        $route = $this->routes->getDataDelete();
 
-        return new self($authentication, $kSearchUrl, $validator, $factory, $serializer, $httpClient, $messageFactory);
+        $response = $this->handleRequest($deleteRequest, $route);
+
+        /** @var StatusResponse $statusResponse */
+        $statusResponse = $this->serializer->deserialize($response->getBody(), StatusResponse::class, self::SERIALIZER_FORMAT);
+        return $statusResponse->result;
+    }
+
+    /**
+     * @param $uuid
+     * @return Status
+     */
+    public function getData(string $uuid): Status
+    {
+        $request = $this->apiRequestFactory->buildGetRequest($uuid);
+        $route = $this->routes->getDataGet();
+
+        $response = $this->handleRequest($request, $route);
+
+        /** @var StatusResponse $statusResponse */
+        $statusResponse = $this->serializer->deserialize($response->getBody(), StatusResponse::class, self::SERIALIZER_FORMAT);
+        return $statusResponse->result;
+    }
+
+    public function searchData(SearchParams $searchParams)
+    {
+        $request = $this->apiRequestFactory->buildSearchRequest($searchParams);
+        $route = $this->routes->getSearchQuery();
+
+        $response = $this->handleRequest($request, $route);
+
+        /** @var StatusResponse $searchResponse */
+        $searchResponse = $this->serializer->deserialize($response->getBody(), SearchResponse::class, self::SERIALIZER_FORMAT);
+        return $searchResponse->result;
     }
 
     /**
@@ -122,5 +155,58 @@ class Client
             }
             throw new ModelNotValidException($errorList);
         }
+    }
+
+    /**
+     * @param ResponseInterface $response
+     * @throws ErrorResponseException
+     */
+    private function checkResponseError(ResponseInterface $response)
+    {
+        $responseBody = $response->getBody();
+
+        if (ResponseHelper::isAnError($responseBody)) {
+            /** @var ErrorResponse $errorResponse */
+            $errorResponse = $this->serializer->deserialize($responseBody, ErrorResponse::class, self::SERIALIZER_FORMAT);
+            throw new ErrorResponseException($errorResponse->error->message, $errorResponse->error->code, $errorResponse->error->data);
+        }
+    }
+
+    /**
+     * @param Authentication $authentication
+     * @param $kSearchUrl
+     * @return Client
+     */
+    public static function buildDefault(Authentication $authentication, $kSearchUrl)
+    {
+        $validator = Validation::createValidatorBuilder()
+            ->enableAnnotationMapping()
+            ->getValidator();
+
+        $factory = API\RequestFactory::buildDefault();
+        $serializer = \JMS\Serializer\SerializerBuilder::create()
+            ->build();
+        $httpClient = HttpClientDiscovery::find();
+        $messageFactory = MessageFactoryDiscovery::find();
+
+        return new self($authentication, $kSearchUrl, $validator, $factory, $serializer, $httpClient, $messageFactory);
+    }
+
+    /**
+     * @param $request
+     * @param $route
+     * @return ResponseInterface
+     */
+    private function handleRequest($request, $route): ResponseInterface
+    {
+        $this->validateRequest($request);
+
+        $serializedRequestBody = $this->serializer->serialize($request, self::SERIALIZER_FORMAT);
+        $request = $this->messageFactory->createRequest('POST', $route, [], $serializedRequestBody);
+
+        $response = $this->httpClient->sendRequest($request);
+        $this->checkResponseError($response);
+        
+        return $response;
     }
 }
