@@ -12,15 +12,12 @@ use KSearchClient\API\ResponseHelper;
 use KSearchClient\Exception\AuthTypeNotSupportedException;
 use KSearchClient\Exception\ErrorResponseException;
 use KSearchClient\Exception\ModelNotValidException;
-use KSearchClient\Model\Data\AddRequest;
 use KSearchClient\Model\Data\AddResponse;
 use KSearchClient\Model\Data\Data;
 use KSearchClient\Model\Data\SearchParams;
 use KSearchClient\Model\Data\SearchResponse;
 use KSearchClient\Model\Error\ErrorResponse;
 use KSearchClient\Model\RPCRequest;
-use KSearchClient\Model\RPCResponse;
-use KSearchClient\Model\Search\Search;
 use KSearchClient\Model\Status\Status;
 use KSearchClient\Model\Status\StatusResponse;
 use KSearchClient\Validator\AuthTypeValidator;
@@ -127,14 +124,14 @@ class Client
         return $statusResponse->result;
     }
 
-    public function searchData(SearchParams $searchParams)
+    public function searchData(SearchParams $searchParams): Data
     {
         $request = $this->apiRequestFactory->buildSearchRequest($searchParams);
         $route = $this->routes->getSearchQuery();
 
         $response = $this->handleRequest($request, $route);
 
-        /** @var StatusResponse $searchResponse */
+        /** @var SearchResponse $searchResponse */
         $searchResponse = $this->serializer->deserialize($response->getBody(), SearchResponse::class, self::SERIALIZER_FORMAT);
         return $searchResponse->result;
     }
@@ -206,7 +203,7 @@ class Client
 
         $response = $this->httpClient->sendRequest($request);
         $this->checkResponseError($response);
-        
+
         return $response;
     }
 }
