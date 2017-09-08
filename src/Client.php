@@ -2,6 +2,7 @@
 
 namespace KSearchClient;
 
+use Doctrine\Common\Annotations\AnnotationRegistry;
 use Http\Client\HttpClient;
 use Http\Discovery\HttpClientDiscovery;
 use Http\Discovery\MessageFactoryDiscovery;
@@ -176,6 +177,8 @@ class Client
      */
     public static function buildDefault(Authentication $authentication, $kSearchUrl)
     {
+        AnnotationRegistry::registerLoader('class_exists');
+        
         $validator = Validation::createValidatorBuilder()
             ->enableAnnotationMapping()
             ->getValidator();
