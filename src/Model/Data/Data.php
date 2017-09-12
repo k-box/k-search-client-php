@@ -100,6 +100,7 @@ class Data
     /**
      * The status of the data, internal use only, not exposed.
      *
+     * @JMS\Exclude()
      * @var string
      */
     public $status;

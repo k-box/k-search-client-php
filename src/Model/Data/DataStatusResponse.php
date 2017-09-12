@@ -20,7 +20,6 @@ class DataStatusResponse extends RPCResponse
      * @var DataStatus
      *
      * @JMS\Type("KSearchClient\Model\Data\DataStatus")
-     * @JMS\ReadOnly()
      * ##SWG\Property()
      */
     public $result;

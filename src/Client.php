@@ -15,6 +15,9 @@ use KSearchClient\Exception\ErrorResponseException;
 use KSearchClient\Exception\ModelNotValidException;
 use KSearchClient\Model\Data\AddResponse;
 use KSearchClient\Model\Data\Data;
+use KSearchClient\Model\Data\DataStatus;
+use KSearchClient\Model\Data\DataStatusResponse;
+use KSearchClient\Model\Data\GetResponse;
 use KSearchClient\Model\Data\SearchParams;
 use KSearchClient\Model\Data\SearchResponse;
 use KSearchClient\Model\Error\ErrorResponse;
@@ -90,6 +93,7 @@ class Client
 
         /** @var AddResponse $addResponse */
         $addResponse = $this->serializer->deserialize($response->getBody(), AddResponse::class, self::SERIALIZER_FORMAT);
+
         return $addResponse->result;
     }
 
@@ -111,18 +115,30 @@ class Client
 
     /**
      * @param $uuid
-     * @return Status
+     * @return Data
      */
-    public function getData(string $uuid): Status
+    public function getData(string $uuid): Data
     {
         $request = $this->apiRequestFactory->buildGetRequest($uuid);
         $route = $this->routes->getDataGet();
 
         $response = $this->handleRequest($request, $route);
 
-        /** @var StatusResponse $statusResponse */
-        $statusResponse = $this->serializer->deserialize($response->getBody(), StatusResponse::class, self::SERIALIZER_FORMAT);
-        return $statusResponse->result;
+        /** @var GetResponse $getRes */
+        $getResponse = $this->serializer->deserialize($response->getBody(), GetResponse::class, self::SERIALIZER_FORMAT);
+        return $getResponse->result;
+    }
+
+    public function getDataStatus(string $uuid): DataStatus
+    {
+        $request = $this->apiRequestFactory->buildStatusRequest($uuid);
+        $route = $this->routes->getDataGet();
+
+        $response = $this->handleRequest($request, $route);
+
+        /** @var DataStatusResponse $getRes */
+        $dataStatusResponse = $this->serializer->deserialize($response->getBody(), DataStatusResponse::class, self::SERIALIZER_FORMAT);
+        return $dataStatusResponse->result;
     }
 
     public function searchData(SearchParams $searchParams): Data
@@ -171,28 +187,6 @@ class Client
     }
 
     /**
-     * @param Authentication $authentication
-     * @param $kSearchUrl
-     * @return Client
-     */
-    public static function buildDefault(Authentication $authentication, $kSearchUrl)
-    {
-        AnnotationRegistry::registerLoader('class_exists');
-        
-        $validator = Validation::createValidatorBuilder()
-            ->enableAnnotationMapping()
-            ->getValidator();
-
-        $factory = API\RequestFactory::buildDefault();
-        $serializer = \JMS\Serializer\SerializerBuilder::create()
-            ->build();
-        $httpClient = HttpClientDiscovery::find();
-        $messageFactory = MessageFactoryDiscovery::find();
-
-        return new self($authentication, $kSearchUrl, $validator, $factory, $serializer, $httpClient, $messageFactory);
-    }
-
-    /**
      * @param $request
      * @param $route
      * @return ResponseInterface
@@ -208,5 +202,27 @@ class Client
         $this->checkResponseError($response);
 
         return $response;
+    }
+
+    /**
+     * @param Authentication $authentication
+     * @param $kSearchUrl
+     * @return Client
+     */
+    public static function buildDefault(Authentication $authentication, $kSearchUrl)
+    {
+        AnnotationRegistry::registerLoader('class_exists');
+
+        $validator = Validation::createValidatorBuilder()
+            ->enableAnnotationMapping()
+            ->getValidator();
+
+        $factory = API\RequestFactory::buildDefault();
+        $serializer = \JMS\Serializer\SerializerBuilder::create()
+            ->build();
+        $httpClient = HttpClientDiscovery::find();
+        $messageFactory = MessageFactoryDiscovery::find();
+
+        return new self($authentication, $kSearchUrl, $validator, $factory, $serializer, $httpClient, $messageFactory);
     }
 }

@@ -1,11 +1,12 @@
 <?php
-namespace KSearchClient;
+namespace KSearchClient\API;
 
 class Routes
 {
     const DATA_ADD_ENDPOINT = 'data.add';
     const DATA_DELETE_ENDPOINT = 'data.delete';
     const DATA_GET_ENDPOINT = 'data.get';
+    const DATA_STATUS_ENDPOINT = 'data.status';
     const SEARCH_QUERY_ENDPOINT = 'search.query';
 
     /** @var string */
@@ -39,6 +40,14 @@ class Routes
     public function getDataGet()
     {
         return $this->buildURL(self::DATA_GET_ENDPOINT);
+    }
+
+    /**
+     * @return string
+     */
+    public function getDataStatus()
+    {
+        return $this->buildURL(self::DATA_STATUS_ENDPOINT);
     }
 
     /**
