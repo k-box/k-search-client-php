@@ -18,7 +18,7 @@ class AggregationResult
      * The aggregation value.
      *
      * @var string
-     * @Assert\NotBlank()
+     * ##AssertNotBlank()
      * @JMS\Type("string")
      * ##SWG\Property(
      *     example="es"
@@ -30,7 +30,7 @@ class AggregationResult
      * How many items in aggregation.
      *
      * @var int
-     * @Assert\NotBlank()
+     * ##AssertNotBlank()
      * @JMS\Type("integer")
      * ##SWG\Property(
      *     example="102"

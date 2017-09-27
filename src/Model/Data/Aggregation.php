@@ -19,8 +19,8 @@ class Aggregation
      *
      * @var int
      * @JMS\Type("integer")
-     * @Assert\Type("integer")
-     * @Assert\Range(
+     * ##AssertType("integer")
+     * ##AssertRange(
      *     min=1,
      *     max=100
      * )
@@ -38,7 +38,7 @@ class Aggregation
      *
      * @var bool
      * @JMS\Type("boolean")
-     * @Assert\Type("boolean")
+     * ##AssertType("boolean")
      * ##SWG\Property(
      *     type="boolean",
      *     default=false

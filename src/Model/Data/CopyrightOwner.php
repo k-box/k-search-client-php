@@ -31,7 +31,7 @@ class CopyrightOwner
      *
      * @var string
      * @JMS\Type("string")
-     * @Assert\Email()
+     * ##AssertEmail()
      * ##SWG\Property(
      *     example="info@klink.asia",
      * )
@@ -42,7 +42,7 @@ class CopyrightOwner
      * General contact information (e.g. URL to the owner website or postal address).
      *
      * @var string
-     * @Assert\NotBlank()
+     * ##AssertNotBlank()
      * @JMS\Type("string")
      * ##SWG\Property(
      *     example="KLink Website: http://www.klink.asia",

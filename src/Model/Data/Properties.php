@@ -19,7 +19,7 @@ class Properties
      * The data title.
      *
      * @var string
-     * @Assert\NotBlank()
+     * ##AssertNotBlank()
      * @JMS\Type("string")
      * ##SWG\Property(
      *     example="Adventures of Sherlock Holmes",
@@ -31,7 +31,7 @@ class Properties
      * The file name of the data.
      *
      * @var string
-     * @Assert\NotBlank()
+     * ##AssertNotBlank()
      * @JMS\Type("string")
      * ##SWG\Property(
      *     example="adventures-of-sherlock-holmes.pdf",
@@ -43,7 +43,7 @@ class Properties
      * The Mime type of the provided data.
      *
      * @var string
-     * @Assert\NotBlank()
+     * ##AssertNotBlank()
      * @JMS\Type("string")
      * ##SWG\Property(
      *     example="application/pdf",
@@ -55,8 +55,8 @@ class Properties
      * ISO code of the main language (explicitly the abstract and title).
      *
      * @var string
-     * @Assert\NotBlank()
-     * @Assert\Length(min="2", max="2")
+     * ##AssertNotBlank()
+     * ##AssertLength(min="2", max="2")
      * @JMS\Type("string")
      * ##SWG\Property(
      *     example="en",
@@ -70,7 +70,7 @@ class Properties
      * Data’s or document’s creation date in [RFC-3339](https://www.ietf.org/rfc/rfc3339.txt) format.
      *
      * @var \DateTime
-     * @Assert\NotBlank()
+     * ##AssertNotBlank()
      * @JMS\Type("DateTime<'Y-m-d\TH:i:s\Z', 'UTC'>")
      * ##SWG\Property(
      *     example="2008-07-28T14:47:31Z",
@@ -115,7 +115,7 @@ class Properties
      * The URI where the a thumbnail of this data is stored.
      *
      * @var string
-     * @Assert\Url()
+     * ##AssertUrl()
      * @JMS\Type("string")
      * ##SWG\Property(
      *     example="http://thumbnailserver.com/get/thumbnail123"
@@ -127,7 +127,7 @@ class Properties
      * User-definet tags associated to the data (multiple).
      *
      * @var array
-     * @Assert\Type("array")
+     * ##AssertType("array")
      * @JMS\Type("array<string>")
      * ##SWG\Property(
      *     example={"tag1", "tag2"}
@@ -139,7 +139,7 @@ class Properties
      * Search data and browse within the hierarchy (multiple). However be careful to expose the hierarchy to a public search index, as it may contain confidential data. Example: List [ "COLLECTION_ID_1", "COLLECTION_ID_2" ].
      *
      * @var array
-     * @Assert\Type("array")
+     * ##AssertType("array")
      * @JMS\Type("array<string>")
      * ##SWG\Property(
      *     example={"COLLECTION_ID_1", "COLLECTION_ID_2"}
@@ -151,9 +151,9 @@ class Properties
      * Object containing information on the video file.
      *
      * @var Properties\Video
-     * @Assert\Callback({"App\Validation\AvailableOnlyForVideo", "validate"})
-     * @Assert\Callback({"App\Validation\RequiredOnlyForVideo", "validate"})
-     * @Assert\Valid()
+     * ##AssertCallback({"App\Validation\AvailableOnlyForVideo", "validate"})
+     * ##AssertCallback({"App\Validation\RequiredOnlyForVideo", "validate"})
+     * ##AssertValid()
      * @JMS\Type("KSearchClient\Model\Data\Properties\Video")
      * ##SWG\Property()
      */
@@ -163,7 +163,7 @@ class Properties
      * Audio tracks attached to the video (multiple).
      *
      * @var Properties\Audio[]
-     * @Assert\Callback({"App\Validation\AvailableOnlyForVideo", "validate"})
+     * ##AssertCallback({"App\Validation\AvailableOnlyForVideo", "validate"})
      * @JMS\Type("array<KSearchClient\Model\Data\Properties\Audio>")
      * ##SWG\Property()
      */
@@ -173,7 +173,7 @@ class Properties
      * Subtitles attached to the video (multiple).
      *
      * @var Properties\Subtitles[]
-     * @Assert\Callback({"App\Validation\AvailableOnlyForVideo", "validate"})
+     * ##AssertCallback({"App\Validation\AvailableOnlyForVideo", "validate"})
      * @JMS\Type("array<KSearchClient\Model\Data\Properties\Subtitles>")
      * ##SWG\Property()
      */

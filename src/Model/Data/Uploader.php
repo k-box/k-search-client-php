@@ -19,8 +19,8 @@ class Uploader
      * Freely definable name. Can be a single user, an organization, a project or a group.
      *
      * @var string
-     * @Assert\Type("string")
-     * @Assert\NotBlank()
+     * ##AssertType("string")
+     * ##AssertNotBlank()
      * @JMS\Type("string")
      * ##SWG\Property()
      */
@@ -30,7 +30,7 @@ class Uploader
      * URL to an human readable website with information about the source entity.
      *
      * @var string
-     * @Assert\Type("string")
+     * ##AssertType("string")
      * @JMS\Type("string")
      * ##SWG\Property()
      */
@@ -40,7 +40,7 @@ class Uploader
      * The URL of the application that triggered the data upload.
      *
      * @var string
-     * @Assert\Type("string")
+     * ##AssertType("string")
      * @JMS\Type("string")
      * @JMS\ReadOnly()
      * ##SWG\Property()
@@ -51,7 +51,7 @@ class Uploader
      * Contact email to of an administrator, who can be contacted in case of any issues related to uploaded documents. This data is coming from the Application data in the K-Link Registry.
      *
      * @var string
-     * @Assert\Type("string")
+     * ##AssertType("string")
      * @JMS\Type("string")
      * @JMS\ReadOnly()
      * ##SWG\Property()

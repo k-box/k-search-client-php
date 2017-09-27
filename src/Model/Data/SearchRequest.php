@@ -17,8 +17,8 @@ class SearchRequest extends RPCRequest
 {
     /**
      * @var SearchParams
-     * @Assert\Valid()
-     * @Assert\NotNull()
+     * ##AssertValid()
+     * ##AssertNotNull()
      * @JMS\Type("KSearchClient\Model\Data\SearchParams")
      * ##SWG\Property()
      */

@@ -19,8 +19,8 @@ class Author
      * Name of the author.
      *
      * @var string
-     * @Assert\NotBlank()
-     * @Assert\Type("string")
+     * ##AssertNotBlank()
+     * ##AssertType("string")
      * @JMS\Type("string")
      * ##SWG\Property(
      *     example="Arthur Conan Doyle",
@@ -32,7 +32,7 @@ class Author
      * Contact email of author.
      *
      * @var string
-     * @Assert\Email
+     * ##AssertEmail
      * @JMS\Type("string")
      * ##SWG\Property(
      *     example="arthur@conan.doyle",

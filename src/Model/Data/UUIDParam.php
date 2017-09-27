@@ -18,8 +18,8 @@ class UUIDParam
      * The universally unique identifier of the data piece to be deleted.
      *
      * @var string
-     * @Assert\NotBlank()
-     * @Assert\Uuid()
+     * ##AssertNotBlank()
+     * ##AssertUuid()
      * @JMS\Type("string")
      * ##SWG\Property(
      *     example="cc1bbc0b-20e8-4e1f-b894-fb067e81c5dd"

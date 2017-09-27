@@ -19,7 +19,7 @@ class Video
      * Duration of the video.
      *
      * @var string
-     * @Assert\NotBlank()
+     * ##AssertNotBlank()
      * @JMS\Type("string")
      * ##SWG\Property(
      *     example="11:13 min",
@@ -31,8 +31,8 @@ class Video
      * Information about the source file.
      *
      * @var Source
-     * @Assert\NotBlank()
-     * @Assert\Valid()
+     * ##AssertNotBlank()
+     * ##AssertValid()
      * @JMS\Type("KSearchClient\Model\Data\Properties\Source")
      * ##SWG\Property()
      */

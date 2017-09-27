@@ -19,8 +19,8 @@ class Copyright
      * The copyright owner and information on how to contact for any inquiries.
      *
      * @var CopyrightOwner
-     * @Assert\NotBlank()
-     * @Assert\Valid()
+     * ##AssertNotBlank()
+     * ##AssertValid()
      * @JMS\Type("KSearchClient\Model\Data\CopyrightOwner")
      * ##SWG\Property()
      */
@@ -30,8 +30,8 @@ class Copyright
      * The conditions of use of the copyrighted data.
      *
      * @var CopyrightUsage
-     * @Assert\NotBlank()
-     * @Assert\Valid()
+     * ##AssertNotBlank()
+     * ##AssertValid()
      * @JMS\Type("KSearchClient\Model\Data\CopyrightUsage")
      * ##SWG\Property()
      */

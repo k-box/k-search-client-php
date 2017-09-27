@@ -19,7 +19,7 @@ class Source
      * Format of the video file.
      *
      * @var string
-     * @Assert\NotBlank()
+     * ##AssertNotBlank()
      * @JMS\Type("string")
      * ##SWG\Property(
      *     example="mkv",
@@ -31,7 +31,7 @@ class Source
      * Resolution of the video.
      *
      * @var string
-     * @Assert\NotBlank()
+     * ##AssertNotBlank()
      * @JMS\Type("string")
      * ##SWG\Property(
      *     example="1080p",

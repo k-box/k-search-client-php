@@ -18,8 +18,8 @@ class AddParams
      * The Data object to be added.
      *
      * @var Data
-     * @Assert\NotBlank()
-     * @Assert\Valid()
+     * ##AssertNotBlank()
+     * ##AssertValid()
      * @JMS\Type("KSearchClient\Model\Data\Data")
      * ##SWG\Property()
      */

@@ -19,7 +19,7 @@ class CopyrightUsage
      * The associated usage permissions, expressed with the SPDX identifier (https://spdx.org/licenses/) and C for full copyright and PD for public domain.
      *
      * @var string
-     * @Assert\NotBlank()
+     * ##AssertNotBlank()
      * @JMS\Type("string")
      * ##SWG\Property(
      *     example="MPL-2.0",
@@ -32,7 +32,7 @@ class CopyrightUsage
      * Examples: All right reserved, GNU General Public License, Public Domain.
      *
      * @var string
-     * @Assert\NotBlank()
+     * ##AssertNotBlank()
      * @JMS\Type("string")
      * ##SWG\Property(
      *     example="Mozilla Public License 2.0",
@@ -44,7 +44,7 @@ class CopyrightUsage
      * URL of the full license text (if applicable).
      *
      * @var string
-     * @Assert\Url()
+     * ##AssertUrl()
      * @JMS\Type("string")
      * ##SWG\Property(
      *     example="https://spdx.org/licenses/MPL-2.0.html",

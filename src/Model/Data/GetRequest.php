@@ -17,8 +17,8 @@ class GetRequest extends RPCRequest
 {
     /**
      * @var UUIDParam
-     * @Assert\Valid()
-     * @Assert\NotNull()
+     * ##AssertValid()
+     * ##AssertNotNull()
      * @JMS\Type("KSearchClient\Model\Data\UUIDParam")
      * ##SWG\Property()
      */

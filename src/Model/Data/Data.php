@@ -24,8 +24,8 @@ class Data
      * The Universally unique identifier of this data.
      *
      * @var string
-     * @Assert\NotBlank()
-     * @Assert\Uuid()
+     * ##AssertNotBlank()
+     * ##AssertUuid()
      * @JMS\Type("string")
      * ##SWG\Property(
      *     example="cc1bbc0b-20e8-4e1f-b894-fb067e81c5dd",
@@ -37,8 +37,8 @@ class Data
      * The URI where the source data is stored and retrievable.
      *
      * @var string
-     * @Assert\NotBlank()
-     * @Assert\Url()
+     * ##AssertNotBlank()
+     * ##AssertUrl()
      * @JMS\Type("string")
      * ##SWG\Property(
      *     example="http://publicliterature.org/pdf/advsh12.pdf",
@@ -50,8 +50,8 @@ class Data
      * The SHA-2 hash of the Document contents (SHA-512, thus 128 Chars).
      *
      * @var string
-     * @Assert\NotBlank()
-     * @Assert\Length(min="128", max="128")
+     * ##AssertNotBlank()
+     * ##AssertLength(min="128", max="128")
      * @JMS\Type("string")
      * ##SWG\Property(
      *     example="d6f644b19812e97b5d871658d6d3400ecd4787faeb9b8990c1e7608288664be77257104a58d033bcf1a0e0945ff06468ebe53e2dff36e248424c7273117dac09",
@@ -63,9 +63,9 @@ class Data
      * The general type of the provided data.
      *
      * @var string
-     * @Assert\NotNull()
+     * ##AssertNotNull()
      * @JMS\Type("string")
-     * @Assert\Choice(
+     * ##AssertChoice(
      *     strict=true,
      *     choices={"document", "video"}
      * )
@@ -79,8 +79,8 @@ class Data
      * The properties of the data.
      *
      * @var Properties
-     * @Assert\NotBlank()
-     * @Assert\Valid()
+     * ##AssertNotBlank()
+     * ##AssertValid()
      * @JMS\Type("KSearchClient\Model\Data\Properties")
      * ##SWG\Property()
      */
@@ -90,8 +90,8 @@ class Data
      * List of authors (multiple).
      *
      * @var Author[]
-     * @Assert\NotBlank()
-     * @Assert\Valid()
+     * ##AssertNotBlank()
+     * ##AssertValid()
      * @JMS\Type("array<KSearchClient\Model\Data\Author>")
      * ##SWG\Property()
      */
@@ -101,8 +101,8 @@ class Data
      * Information on the copyright.
      *
      * @var Copyright
-     * @Assert\NotBlank()
-     * @Assert\Valid()
+     * ##AssertNotBlank()
+     * ##AssertValid()
      * @JMS\Type("KSearchClient\Model\Data\Copyright")
      * ##SWG\Property()
      */
@@ -112,8 +112,8 @@ class Data
      * The originating source where the data has been uploaded or created.
      *
      * @var Uploader
-     * @Assert\NotBlank()
-     * @Assert\Valid()
+     * ##AssertNotBlank()
+     * ##AssertValid()
      * @JMS\Type("KSearchClient\Model\Data\Uploader")
      * ##SWG\Property()
      */

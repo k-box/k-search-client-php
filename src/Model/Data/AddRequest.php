@@ -17,8 +17,8 @@ class AddRequest extends RPCRequest
 {
     /**
      * @var AddParams
-     * @Assert\Valid()
-     * @Assert\NotNull()
+     * ##AssertValid()
+     * ##AssertNotNull()
      * @JMS\Type("KSearchClient\Model\Data\AddParams")
      * ##SWG\Property()
      */

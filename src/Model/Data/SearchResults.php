@@ -51,7 +51,7 @@ class SearchResults
     /**
      * Array of aggregations.
      *
-     * @Assert\Valid()
+     * ##AssertValid()
      * @JMS\Type("array<string,array<KSearchClient\Model\Data\AggregationResult>>")
      * ##SWG\Property()
      *
@@ -63,7 +63,7 @@ class SearchResults
      * Array of results.
      *
      * @var Data[]
-     * @Assert\Valid()
+     * ##AssertValid()
      * @JMS\Type("array<KSearchClient\Model\Data\Data>")
      * ##SWG\Property()
      */
