@@ -7,7 +7,7 @@ class Routes
     const DATA_DELETE_ENDPOINT = 'data.delete';
     const DATA_GET_ENDPOINT = 'data.get';
     const DATA_STATUS_ENDPOINT = 'data.status';
-    const SEARCH_QUERY_ENDPOINT = 'search.query';
+    const SEARCH_QUERY_ENDPOINT = 'data.search';
 
     /** @var string */
     private $baseUrl;
