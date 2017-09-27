@@ -20,7 +20,7 @@ class SearchResponse extends RPCResponse
      * @var SearchResults
      *
      * @JMS\Type("KSearchClient\Model\Data\SearchResults")
-     * @JMS\ReadOnly()
+     * ##JMS\ReadOnly()
      * ##SWG\Property()
      */
     public $result;

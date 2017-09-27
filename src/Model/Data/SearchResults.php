@@ -19,7 +19,7 @@ class SearchResults
      *
      * @var \KSearchClient\Model\Data\SearchParams
      * @JMS\Type("KSearchClient\Model\Data\SearchParams")
-     * @JMS\ReadOnly()
+     * ##JMS\ReadOnly()
      * ##SWG\Property()
      */
     public $query;
@@ -29,7 +29,7 @@ class SearchResults
      *
      * @var int
      * @JMS\Type("integer")
-     * @JMS\ReadOnly()
+     * ##JMS\ReadOnly()
      * ##SWG\Property(
      *     example="104"
      * )
@@ -41,7 +41,7 @@ class SearchResults
      *
      * @var int
      * @JMS\Type("integer")
-     * @JMS\ReadOnly()
+     * ##JMS\ReadOnly()
      * ##SWG\Property(
      *     example="1"
      * )

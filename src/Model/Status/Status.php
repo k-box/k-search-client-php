@@ -18,7 +18,7 @@ class Status
      *
      * @var int
      * @JMS\Type("integer")
-     * @JMS\ReadOnly()
+     * ##JMS\ReadOnly()
      * ##SWG\Property(
      *     example=201
      * )
@@ -30,7 +30,7 @@ class Status
      *
      * @var string
      * @JMS\Type("string")
-     * @JMS\ReadOnly()
+     * ##JMS\ReadOnly()
      * ##SWG\Property(
      *     example="Ok"
      * )

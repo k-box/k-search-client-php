@@ -20,7 +20,7 @@ class GetResponse extends RPCResponse
      * @var Data
      *
      * @JMS\Type("KSearchClient\Model\Data\Data")
-     * @JMS\ReadOnly()
+     * ##JMS\ReadOnly()
      * ##SWG\Property()
      */
     public $result;

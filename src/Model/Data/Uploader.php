@@ -42,7 +42,7 @@ class Uploader
      * @var string
      * ##AssertType("string")
      * @JMS\Type("string")
-     * @JMS\ReadOnly()
+     * ##JMS\ReadOnly()
      * ##SWG\Property()
      */
     public $app_url;
@@ -53,7 +53,7 @@ class Uploader
      * @var string
      * ##AssertType("string")
      * @JMS\Type("string")
-     * @JMS\ReadOnly()
+     * ##JMS\ReadOnly()
      * ##SWG\Property()
      */
     public $email;
