@@ -10,6 +10,7 @@ use Http\Message\Authentication;
 use Http\Message\MessageFactory;
 use JMS\Serializer\Serializer;
 use KSearchClient\API\ResponseHelper;
+use KSearchClient\API\Routes;
 use KSearchClient\Exception\AuthTypeNotSupportedException;
 use KSearchClient\Exception\ErrorResponseException;
 use KSearchClient\Exception\ModelNotValidException;
