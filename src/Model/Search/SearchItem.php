@@ -5,7 +5,7 @@ namespace KSearchClient\Model\Search;
 use Swagger\Annotations as SWG;
 
 /**
- * @SWG\Definition(
+ * ##SWG\Definition(
  *     required={"score", "data", "data-type"}
  * )
  */
@@ -15,20 +15,20 @@ class SearchItem
      * The search score of the Item.
      *
      * @var string
-     * @SWG\Property(readOnly=true)
+     * ##SWG\Property(readOnly=true)
      */
     public $score;
 
     /**
      * @var string
-     * @SWG\Property()
+     * ##SWG\Property()
      */
     public $dataType;
 
     /**
      * @var Data
      *
-     * @SWG\Property()
+     * ##SWG\Property()
      */
     public $data;
 }

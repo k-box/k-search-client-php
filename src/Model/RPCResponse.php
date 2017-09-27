@@ -18,7 +18,7 @@ class RPCResponse
      * @var string
      * @JMS\Type("string")
      * @JMS\ReadOnly()
-     * @SWG\Property(
+     * ##SWG\Property(
      *     example="request-3d254173"
      * )
      */

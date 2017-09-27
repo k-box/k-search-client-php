@@ -7,7 +7,7 @@ use JMS\Serializer\Annotation as JMS;
 use Swagger\Annotations as SWG;
 
 /**
- * @SWG\Definition(
+ * ##SWG\Definition(
  *     definition="Status\StatusResponse",
  *     required={"result"}
  * )
@@ -20,7 +20,7 @@ class StatusResponse extends RPCResponse
      * @var Status
      *
      * @JMS\Type("KSearchClient\Model\Status\Status")
-     * @SWG\Property(
+     * ##SWG\Property(
      *     readOnly=true,
      *     ref="#/definitions/Status\Status")
      * )

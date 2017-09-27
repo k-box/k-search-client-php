@@ -5,7 +5,7 @@ namespace KSearchClient\Model\Search;
 use Swagger\Annotations as SWG;
 
 /**
- * @SWG\Definition()
+ * ##SWG\Definition()
  */
 class SearchAggregation
 {
@@ -13,7 +13,7 @@ class SearchAggregation
      * Aggregation name, usually a Data field name.
      *
      * @var string
-     * @SWG\Property()
+     * ##SWG\Property()
      */
     public $name;
 
@@ -21,7 +21,7 @@ class SearchAggregation
      * Count of the results according to aggregations.
      *
      * @var int
-     * @SWG\Property()
+     * ##SWG\Property()
      */
     public $count;
 }
