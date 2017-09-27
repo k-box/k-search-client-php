@@ -6,7 +6,7 @@ use JMS\Serializer\Annotation as JMS;
 use Swagger\Annotations as SWG;
 
 /**
- * ##SWG\Definition(
+ * @SWG\Definition(
  *     definition="Status\Status",
  *     required={"code", "status"}
  * )
@@ -18,7 +18,8 @@ class Status
      *
      * @var int
      * @JMS\Type("integer")
-     * ##SWG\Property(
+     * @JMS\ReadOnly()
+     * @SWG\Property(
      *     example=201
      * )
      */
@@ -29,7 +30,8 @@ class Status
      *
      * @var string
      * @JMS\Type("string")
-     * ##SWG\Property(
+     * @JMS\ReadOnly()
+     * @SWG\Property(
      *     example="Ok"
      * )
      */

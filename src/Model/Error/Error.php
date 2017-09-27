@@ -6,7 +6,7 @@ use JMS\Serializer\Annotation as JMS;
 use Swagger\Annotations as SWG;
 
 /**
- * ##SWG\Definition(
+ * @SWG\Definition(
  *     definition="Error\Error",
  *     required={"code", "message"}
  * )
@@ -27,7 +27,7 @@ class Error
      *
      * @var int
      * @JMS\Type("integer")
-     * ##SWG\Property(
+     * @SWG\Property(
      *     example=404
      * )
      */
@@ -38,7 +38,7 @@ class Error
      *
      * @var string
      * @JMS\Type("string")
-     * ##SWG\Property(
+     * @SWG\Property(
      *     example="Not Found"
      * )
      */
@@ -46,7 +46,7 @@ class Error
 
     /**
      * Additional information can optionally be provided on errors for better debugging.
-     * @JMS\Type("array")
+     *
      * @todo: properly define the structure of this property.
      */
     public $data;

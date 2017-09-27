@@ -3,8 +3,15 @@
 namespace KSearchClient\Model\Data;
 
 use JMS\Serializer\Annotation as JMS;
+use Swagger\Annotations as SWG;
 use Symfony\Component\Validator\Constraints as Assert;
 
+/**
+ * ##SWG\Definition(
+ *     definition="Data\AddParams",
+ *     required={"data"}
+ * )
+ */
 class AddParams
 {
     /**
@@ -14,6 +21,7 @@ class AddParams
      * @Assert\NotBlank()
      * @Assert\Valid()
      * @JMS\Type("KSearchClient\Model\Data\Data")
+     * ##SWG\Property()
      */
     public $data;
 
@@ -25,6 +33,7 @@ class AddParams
      *
      * @var string
      * @JMS\Type("string")
+     * ##SWG\Property()
      */
     public $dataTextualContents;
 }

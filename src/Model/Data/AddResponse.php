@@ -20,6 +20,7 @@ class AddResponse extends RPCResponse
      * @var Data
      *
      * @JMS\Type("KSearchClient\Model\Data\Data")
+     * @JMS\ReadOnly()
      * ##SWG\Property(
      *     ref="#/definitions/Data\Data")
      * )

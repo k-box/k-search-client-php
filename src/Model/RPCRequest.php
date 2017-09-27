@@ -20,7 +20,7 @@ class RPCRequest
      * @var string
      *
      * @JMS\Type("string")
-     * ##SWG\Property(
+     * @SWG\Property(
      *     example="request-3d254173"
      * )
      */

@@ -5,7 +5,7 @@ namespace KSearchClient\Model\Search;
 use Swagger\Annotations as SWG;
 
 /**
- * ##SWG\Definition(
+ * @SWG\Definition(
  *     definition="Search",
  *     required={"query"}
  * )
@@ -16,13 +16,13 @@ class Search
      * The complete SearchQuery object from the request.
      *
      * @var SearchRequest
-     * ##SWG\Property()
+     * @SWG\Property()
      */
     public $query;
 
     /**
      * @var SearchAggregation[]
-     * ##SWG\Property()
+     * @SWG\Property()
      */
     public $aggregations;
 
@@ -31,7 +31,7 @@ class Search
      *
      * @var SearchItem[]
      *
-     * ##SWG\Property()
+     * @SWG\Property()
      */
     public $results = [];
 }

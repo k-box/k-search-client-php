@@ -7,7 +7,7 @@ use JMS\Serializer\Annotation as JMS;
 use Swagger\Annotations as SWG;
 
 /**
- * ##SWG\Definition(
+ * @SWG\Definition(
  *     definition="Error\ErrorResponse",
  *     required={"error"},
  * )
@@ -20,7 +20,7 @@ class ErrorResponse extends RPCResponse
      * @var Error
      *
      * @JMS\Type("KSearchClient\Model\Error\Error")
-     * ##SWG\Property(
+     * @SWG\Property(
      *     ref="#/definitions/Error\Error")
      * )
      */

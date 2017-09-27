@@ -2,7 +2,7 @@
 
 namespace KSearchClient\Model\Search;
 
-use KSearchClient\Entity\DocumentDescriptor;
+use App\Entity\DocumentDescriptor;
 use JMS\Serializer\Annotation\SerializedName;
 use JMS\Serializer\Annotation\Type;
 

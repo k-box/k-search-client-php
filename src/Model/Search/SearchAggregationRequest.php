@@ -5,7 +5,7 @@ namespace KSearchClient\Model\Search;
 use Swagger\Annotations as SWG;
 
 /**
- * ##SWG\Definition(
+ * @SWG\Definition(
  *     definition="SearchAggregationRequest"
  * )
  */
@@ -15,7 +15,7 @@ class SearchAggregationRequest
      * Aggregation name, usually a Data field name.
      *
      * @var string
-     * ##SWG\Property()
+     * @SWG\Property()
      */
     public $name;
 
@@ -23,7 +23,7 @@ class SearchAggregationRequest
      * Only retrieve the given amount of aggregated values.
      *
      * @var int
-     * ##SWG\Property()
+     * @SWG\Property()
      */
     public $limit;
 
@@ -31,7 +31,7 @@ class SearchAggregationRequest
      * Calculate aggregations count after applying filters (True, default) or before (False).
      *
      * @var bool
-     * ##SWG\Property()
+     * @SWG\Property()
      */
     public $counts_filtered;
 }
