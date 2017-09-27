@@ -145,6 +145,7 @@ class Client
 
         $response = $this->handleRequest($request, $route);
 
+
         /** @var SearchResponse $searchResponse */
         $searchResponse = $this->serializer->deserialize($response->getBody(), SearchResponse::class, self::SERIALIZER_FORMAT);
         return $searchResponse->result;
