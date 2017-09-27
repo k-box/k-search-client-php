@@ -42,11 +42,10 @@ class RequestFactory
         return $deleteRequest;
     }
 
-    public function buildSearchRequest(string $uuid): SearchRequest
+    public function buildSearchRequest(SearchParams $searchParams): SearchRequest
     {
         $searchRequest = new SearchRequest();
-        $searchRequest->params = new SearchParams;
-        $searchRequest->params;
+        $searchRequest->params = $searchParams;
 
         return $searchRequest;
     }
