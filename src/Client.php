@@ -59,12 +59,8 @@ class Client
      * @var Serializer
      */
     private $serializer;
-    /**
-     * @var ValidatorInterface
-     */
-    private $validator;
 
-    public function __construct(Authentication $authentication, string $kSearchUrl, ValidatorInterface $validator, API\RequestFactory $apiRequestFactory, Serializer $serializer, HttpClient $httpClient, MessageFactory $messageFactory)
+    public function __construct(Authentication $authentication, string $kSearchUrl, API\RequestFactory $apiRequestFactory, Serializer $serializer, HttpClient $httpClient, MessageFactory $messageFactory)
     {
         $this->authentication = $authentication;
 
@@ -77,7 +73,6 @@ class Client
         $this->routes = new Routes($kSearchUrl);
         $this->apiRequestFactory = $apiRequestFactory;
         $this->serializer = $serializer;
-        $this->validator = $validator;
     }
 
     /**
@@ -155,24 +150,6 @@ class Client
     }
 
     /**
-     * @param RPCRequest $request
-     * @throws ModelNotValidException
-     */
-    protected function validateRequest(RPCRequest $request): void
-    {
-        $validationResult = $this->validator->validate($request);
-
-        if ($validationResult->count() > 0) {
-            $errorList = [];
-            /** @var \Symfony\Component\Validator\ConstraintViolation $validationError */
-            foreach ($validationResult as $validationError) {
-                $errorList[] = $validationError->getMessage();
-            }
-            throw new ModelNotValidException($errorList);
-        }
-    }
-
-    /**
      * @param ResponseInterface $response
      * @throws ErrorResponseException
      */
@@ -194,8 +171,6 @@ class Client
      */
     private function handleRequest($request, $route): ResponseInterface
     {
-        $this->validateRequest($request);
-
         $serializedRequestBody = $this->serializer->serialize($request, self::SERIALIZER_FORMAT);
         $request = $this->messageFactory->createRequest('POST', $route, [], $serializedRequestBody);
 
@@ -214,16 +189,12 @@ class Client
     {
         AnnotationRegistry::registerLoader('class_exists');
 
-        $validator = Validation::createValidatorBuilder()
-            ->enableAnnotationMapping()
-            ->getValidator();
-
         $factory = API\RequestFactory::buildDefault();
         $serializer = \JMS\Serializer\SerializerBuilder::create()
             ->build();
         $httpClient = HttpClientDiscovery::find();
         $messageFactory = MessageFactoryDiscovery::find();
 
-        return new self($authentication, $kSearchUrl, $validator, $factory, $serializer, $httpClient, $messageFactory);
+        return new self($authentication, $kSearchUrl, $factory, $serializer, $httpClient, $messageFactory);
     }
 }
