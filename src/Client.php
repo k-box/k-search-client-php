@@ -21,6 +21,7 @@ use KSearchClient\Model\Data\DataStatusResponse;
 use KSearchClient\Model\Data\GetResponse;
 use KSearchClient\Model\Data\SearchParams;
 use KSearchClient\Model\Data\SearchResponse;
+use KSearchClient\Model\Data\SearchResults;
 use KSearchClient\Model\Error\ErrorResponse;
 use KSearchClient\Model\RPCRequest;
 use KSearchClient\Model\Status\Status;
@@ -137,7 +138,7 @@ class Client
         return $dataStatusResponse->result;
     }
 
-    public function searchData(SearchParams $searchParams): Data
+    public function searchData(SearchParams $searchParams): SearchResults
     {
         $request = $this->apiRequestFactory->buildSearchRequest($searchParams);
         $route = $this->routes->getSearchQuery();
