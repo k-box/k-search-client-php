@@ -189,7 +189,7 @@ class Client
     {
         AnnotationRegistry::registerLoader('class_exists');
 
-        $factory = API\RequestFactory::buildDefault();
+        $factory = new API\RequestFactory;
         $serializer = \JMS\Serializer\SerializerBuilder::create()
             ->build();
         $httpClient = HttpClientDiscovery::find();
