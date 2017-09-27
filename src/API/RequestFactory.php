@@ -14,27 +14,12 @@ use KSearchClient\Model\Status\StatusResponse;
 
 class RequestFactory
 {
-    /**
-     * @var IDGenerator
-     */
-    private $idGenerator;
-
-
-    /**
-     * APIRequestFactory constructor.
-     */
-    public function __construct(IDGenerator $idGenerator)
-    {
-        $this->idGenerator = $idGenerator;
-    }
-
     public function buildDataAddRequest(Data $data, $dataTextualContents): AddRequest
     {
         $addRequest = new AddRequest();
         $addRequest->params = new AddParams();
         $addRequest->params->data = $data;
         $addRequest->params->dataTextualContents = $dataTextualContents;
-        $addRequest->id = $this->idGenerator->getNewId();
 
         return $addRequest;
     }
@@ -42,7 +27,6 @@ class RequestFactory
     public function buildGetRequest($uuid)
     {
         $getRequest = new GetRequest();
-        $getRequest->id = $this->idGenerator->getNewId();
         $getRequest->params = new UUIDParam();
         $getRequest->params->uuid = $uuid;
 
@@ -52,7 +36,6 @@ class RequestFactory
     public function buildDeleteRequest(string $uuid): DeleteRequest
     {
         $deleteRequest = new DeleteRequest();
-        $deleteRequest->id = $this->idGenerator->getNewId();
         $deleteRequest->params = new UUIDParam();
         $deleteRequest->params->uuid = $uuid;
 
@@ -62,7 +45,6 @@ class RequestFactory
     public function buildSearchRequest(string $uuid): SearchRequest
     {
         $searchRequest = new SearchRequest();
-        $searchRequest->id = $this->idGenerator->getNewId();
         $searchRequest->params = new SearchParams;
         $searchRequest->params;
 
@@ -72,15 +54,9 @@ class RequestFactory
     public function buildStatusRequest(string $uuid): DataStatusRequest
     {
         $statusRequest= new DataStatusRequest();
-        $statusRequest->id = $this->idGenerator->getNewId();
         $statusRequest->params = new UUIDParam;
         $statusRequest->params->uuid = $uuid;
 
         return $statusRequest;
-    }
-
-    public static function buildDefault()
-    {
-        return new self(new IDGenerator());
     }
 }
