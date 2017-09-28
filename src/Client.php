@@ -187,7 +187,7 @@ class Client
      * @param $kSearchUrl
      * @return Client
      */
-    public static function buildDefault(Authentication $authentication, $kSearchUrl)
+    public static function build(Authentication $authentication, $kSearchUrl)
     {
         AnnotationRegistry::registerLoader('class_exists');
 
