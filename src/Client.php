@@ -114,7 +114,7 @@ class Client
      * @param $uuid
      * @return Data
      */
-    public function getData(string $uuid): Data
+    public function get(string $uuid): Data
     {
         $request = $this->apiRequestFactory->buildGetRequest($uuid);
         $route = $this->routes->getDataGet();
@@ -126,7 +126,7 @@ class Client
         return $getResponse->result;
     }
 
-    public function getDataStatus(string $uuid): DataStatus
+    public function getStatus(string $uuid): DataStatus
     {
         $request = $this->apiRequestFactory->buildStatusRequest($uuid);
         $route = $this->routes->getDataGet();
