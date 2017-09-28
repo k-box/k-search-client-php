@@ -81,7 +81,7 @@ class Client
      * @param string $dataTextualContents
      * @return Data
      */
-    public function addData(Data $data, string $dataTextualContents = '')
+    public function add(Data $data, string $dataTextualContents = '')
     {
         $addRequest = $this->apiRequestFactory->buildDataAddRequest($data, $dataTextualContents);
         $route = $this->routes->getDataAdd();
