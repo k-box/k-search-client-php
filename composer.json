@@ -24,8 +24,7 @@
 
     "autoload": {
         "psr-4": {
-            "KSearchClient\\": "src/",
-            "JMS\\Serializer\\Annotation\\": "vendor/jms/serializer/src/JMS/Serializer/Annotation"
+            "KSearchClient\\": "src/"
         }
     },
 
