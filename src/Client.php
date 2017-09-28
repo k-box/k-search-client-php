@@ -138,7 +138,7 @@ class Client
         return $dataStatusResponse->result;
     }
 
-    public function searchData(SearchParams $searchParams): SearchResults
+    public function search(SearchParams $searchParams): SearchResults
     {
         $request = $this->apiRequestFactory->buildSearchRequest($searchParams);
         $route = $this->routes->getSearchQuery();
