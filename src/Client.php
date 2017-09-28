@@ -98,7 +98,7 @@ class Client
      * @param $uuid
      * @return Status
      */
-    public function deleteData(string $uuid): Status
+    public function delete(string $uuid): Status
     {
         $deleteRequest = $this->apiRequestFactory->buildDeleteRequest($uuid);
         $route = $this->routes->getDataDelete();
