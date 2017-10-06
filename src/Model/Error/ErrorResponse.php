@@ -26,13 +26,22 @@ class ErrorResponse extends RPCResponse
      */
     public $error;
 
-    public function __construct(Error $error, string $responseId = null)
+    /**
+     * @param string $responseId
+     */
+    public function __construct(Error $error, $responseId = null)
     {
         $this->error = $error;
         $this->id = $responseId;
     }
 
-    public static function withErrorMessage(int $errorCode, string $errorMessage, string $responseId = null): ErrorResponse
+    /**
+     * @param int $errorCode
+     * @param string $errorMessage
+     * @param string $responseId
+     * @return ErrorResponse
+     */
+    public static function withErrorMessage($errorCode, $errorMessage, $responseId = null)
     {
         return new self(new Error($errorCode, $errorMessage), $responseId);
     }

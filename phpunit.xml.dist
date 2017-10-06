@@ -24,17 +24,10 @@
         </exclude>
     </groups>
     <php>
-        <!-- Example K-Link Core configuration for integration tests -->
-        <env name="KLINK_CORE_PRIVATE_URL" value="param_core_private_url"/>
-        <env name="KLINK_CORE_PUBLIC_URL" value="param_core_public_url"/>
-        <env name="KLINK_CORE_USER" value="param_core_user"/>
-        <env name="KLINK_CORE_PASS" value="param_core_pass"/>
-        <!-- These variables depends on the K-Core you are using, please configure them accordingly -->
-        <env name="KLINK_CORE_PRIVATE_API_VERSION" value="2.2"/>
-        <env name="KLINK_CORE_PUBLIC_API_VERSION" value="2.2"/>
-        <!-- base environment variables -->
-        <env name="KLINK_ADAPTER_ID" value="B1"/>
-        <env name="KLINK_INSTITUTION_ID" value="BOIL"/>
+        <!-- Example K-Search configuration for integration tests -->
+        <env name="KSEARCH_URL" value="http://search_url/"/>
+        <env name="KSEARCH_APP_URL" value="http://localhost/"/>
+        <env name="KSEARCH_APP_SECRET" value="app_secret"/>
     </php>
     <filter>
         <blacklist>
@@ -42,7 +35,7 @@
             <directory>test</directory>
         </blacklist>
         <whitelist>
-            <directory>klink</directory>
+            <directory>src</directory>
         </whitelist>
     </filter>
 </phpunit>

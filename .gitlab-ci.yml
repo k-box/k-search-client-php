@@ -1,9 +1,8 @@
 stages:
   - test
-  - release
 
 cache:
-  key: "kbox"
+  key: "ksearch-client"
   paths:
   - .composer-cache/
 
@@ -13,22 +12,11 @@ before_script:
 
 # Job templates
 
-.tester: &tester
-  stage: test
-  script:
-    - composer install --prefer-dist
-    - ./vendor/bin/parallel-lint --exclude vendor .
-    - ./vendor/bin/phpcpd ./klink
-    - ./vendor/bin/phpcpd --min-lines=25 ./test
-    - ./vendor/bin/phpunit
-
 .tester_plus_coverage: &tester_plus_coverage
   stage: test
   script:
     - composer install --prefer-dist
     - ./vendor/bin/parallel-lint --exclude vendor .
-    - ./vendor/bin/phpcpd ./klink
-    - ./vendor/bin/phpcpd --min-lines=25 ./test
     - ./vendor/bin/phpunit --verbose --coverage-text --colors=never --coverage-html coverage
   artifacts:
     paths:
@@ -37,22 +25,21 @@ before_script:
 # Testing jobs
 
 phpunit:5.6:
-  image: "docker.klink.asia/open/docker-php:5.6"
+  image: "docker.klink.asia/main/docker-php:5.6"
   <<: *tester_plus_coverage
   tags:
   - docker
   
 
 phpunit:7.0:
-  image: "docker.klink.asia/open/docker-php:7.0"
+  image: "docker.klink.asia/main/docker-php:7.0"
   <<: *tester_plus_coverage
   tags:
   - docker
   
 phpunit:7.1:
-  image: "docker.klink.asia/open/docker-php:7.1"
+  image: "docker.klink.asia/main/docker-php:7.1"
   <<: *tester_plus_coverage
   tags:
   - docker
-  allow_failure: true
 

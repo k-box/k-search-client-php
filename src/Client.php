@@ -61,7 +61,12 @@ class Client
      */
     private $serializer;
 
-    public function __construct(Authentication $authentication, string $kSearchUrl, API\RequestFactory $apiRequestFactory, Serializer $serializer, HttpClient $httpClient, MessageFactory $messageFactory)
+    /**
+     * Create a client instance
+     * 
+     * @param string $kSearchUrl
+     */
+    public function __construct(Authentication $authentication, $kSearchUrl, API\RequestFactory $apiRequestFactory, Serializer $serializer, HttpClient $httpClient, MessageFactory $messageFactory)
     {
         $this->authentication = $authentication;
 
@@ -81,7 +86,7 @@ class Client
      * @param string $dataTextualContents
      * @return Data
      */
-    public function add(Data $data, string $dataTextualContents = '')
+    public function add(Data $data, $dataTextualContents = '')
     {
         $addRequest = $this->apiRequestFactory->buildDataAddRequest($data, $dataTextualContents);
         $route = $this->routes->getDataAdd();
@@ -95,10 +100,10 @@ class Client
     }
 
     /**
-     * @param $uuid
+     * @param string $uuid
      * @return Status
      */
-    public function delete(string $uuid): Status
+    public function delete($uuid)
     {
         $deleteRequest = $this->apiRequestFactory->buildDeleteRequest($uuid);
         $route = $this->routes->getDataDelete();
@@ -111,10 +116,10 @@ class Client
     }
 
     /**
-     * @param $uuid
+     * @param string $uuid
      * @return Data
      */
-    public function get(string $uuid): Data
+    public function get($uuid)
     {
         $request = $this->apiRequestFactory->buildGetRequest($uuid);
         $route = $this->routes->getDataGet();
@@ -126,7 +131,11 @@ class Client
         return $getResponse->result;
     }
 
-    public function getStatus(string $uuid): DataStatus
+    /**
+     * @param string $uuid
+     * @return DataStatus
+     */
+    public function getStatus($uuid)
     {
         $request = $this->apiRequestFactory->buildStatusRequest($uuid);
         $route = $this->routes->getDataGet();
@@ -138,7 +147,10 @@ class Client
         return $dataStatusResponse->result;
     }
 
-    public function search(SearchParams $searchParams): SearchResults
+    /**
+     * @return SearchResults
+     */
+    public function search(SearchParams $searchParams)
     {
         $request = $this->apiRequestFactory->buildSearchRequest($searchParams);
         $route = $this->routes->getSearchQuery();
@@ -171,7 +183,7 @@ class Client
      * @param $route
      * @return ResponseInterface
      */
-    private function handleRequest($request, $route): ResponseInterface
+    private function handleRequest($request, $route)
     {
         $serializedRequestBody = $this->serializer->serialize($request, self::SERIALIZER_FORMAT);
         $request = $this->messageFactory->createRequest('POST', $route, [], $serializedRequestBody);

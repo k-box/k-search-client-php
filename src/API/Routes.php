@@ -12,7 +12,10 @@ class Routes
     /** @var string */
     private $baseUrl;
 
-    public function __construct(string $baseUrl)
+    /**
+     * @param string $baseUrl
+     */
+    public function __construct($baseUrl)
     {
         $baseUrl = trim($baseUrl);
         $this->baseUrl = trim($baseUrl, '/');
@@ -21,7 +24,7 @@ class Routes
     /**
      * @return string
      */
-    public function getDataAdd(): string
+    public function getDataAdd()
     {
         return $this->buildURL(self::DATA_ADD_ENDPOINT);
     }
@@ -61,7 +64,7 @@ class Routes
     /**
      * @return string
      */
-    protected function buildURL($endpoint): string
+    protected function buildURL($endpoint)
     {
         return sprintf('%s/%s', $this->baseUrl, $endpoint);
     }

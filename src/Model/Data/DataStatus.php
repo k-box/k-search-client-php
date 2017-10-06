@@ -25,7 +25,10 @@ class DataStatus
      */
     public $status;
 
-    public function __construct(string $status)
+    /**
+     * @param string $status
+     */
+    public function __construct($status)
     {
         $this->status = $status;
     }

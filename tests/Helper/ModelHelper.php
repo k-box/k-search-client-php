@@ -10,10 +10,14 @@ use KSearchClient\Model\Data\Properties;
 
 class ModelHelper
 {
-    public const DATE = '2008-07-28T14:47:31Z';
-    public const SIZE = 717590;
+    const DATE = '2008-07-28T14:47:31Z';
+    const SIZE = 717590;
 
-    public static function createDataModel($sampleUUID): Data
+    /**
+     * @param string $sampleUUID
+     * @return \KSearchClient\Model\Data\Data
+     */
+    public static function createDataModel($sampleUUID)
     {
         $date = new \DateTime(self::DATE, new \DateTimeZone('UTC'));
 
@@ -48,7 +52,11 @@ class ModelHelper
         return $data;
     }
 
-    public static function createDataArray($dataUUID): array
+    /**
+     * @param string $sampleUUID
+     * @return array
+     */
+    public static function createDataArray($dataUUID)
     {
         return [
             'hash' => hash('sha512', 'hash'),

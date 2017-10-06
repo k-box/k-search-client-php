@@ -43,7 +43,7 @@ class Status
      * @param int    $code
      * @param string $status
      */
-    public function __construct(int $code, string $status)
+    public function __construct($code, $status)
     {
         $this->code = $code;
         $this->status = $status;

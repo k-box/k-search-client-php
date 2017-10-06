@@ -25,7 +25,10 @@ class DataStatusResponse extends RPCResponse
      */
     public $result;
 
-    public function __construct(DataStatus $status, string $responseId = null)
+    /**
+     * @param string $responseId
+     */
+    public function __construct(DataStatus $status, $responseId = null)
     {
         parent::__construct($responseId);
         $this->result = $status;

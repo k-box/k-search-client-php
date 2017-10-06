@@ -12,7 +12,10 @@ class AuthTypeValidator
         Bearer::class
     ];
 
-    public static function isSupported(Authentication $auth): bool
+    /**
+     * @return bool
+     */
+    public static function isSupported(Authentication $auth)
     {
         foreach( self::SUPPORTED_AUTHENTICATION_METHODS as $authenticationMethod ) {
             if ($auth instanceof $authenticationMethod) {

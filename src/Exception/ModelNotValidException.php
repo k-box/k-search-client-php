@@ -19,7 +19,7 @@ class ModelNotValidException extends KSearchClientException
     /**
      * @return array
      */
-    public function getErrors(): array
+    public function getErrors()
     {
         return $this->errors;
     }

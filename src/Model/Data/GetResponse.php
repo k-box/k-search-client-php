@@ -25,7 +25,10 @@ class GetResponse extends RPCResponse
      */
     public $result;
 
-    public function __construct(Data $data, string $responseId = null)
+    /**
+     * @param string $responseId
+     */
+    public function __construct(Data $data, $responseId = null)
     {
         $this->result = $data;
         $this->id = $responseId;

@@ -11,8 +11,11 @@ class ErrorResponseException extends KSearchClientException
 
     /**
      * ErrorResponseException constructor.
+     * 
+     * @param string $message
+     * @param int $code
      */
-    public function __construct(string $message, int $code, $data)
+    public function __construct($message, $code, $data)
     {
         parent::__construct($message, $code);
         $this->data = $data;

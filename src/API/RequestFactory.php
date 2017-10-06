@@ -14,7 +14,11 @@ use KSearchClient\Model\Status\StatusResponse;
 
 class RequestFactory
 {
-    public function buildDataAddRequest(Data $data, $dataTextualContents): AddRequest
+    /**
+     * @param string $dataTextualContents
+     * @return \KSearchClient\Model\Data\AddRequest
+     */
+    public function buildDataAddRequest(Data $data, $dataTextualContents)
     {
         $addRequest = new AddRequest();
         $addRequest->params = new AddParams();
@@ -33,7 +37,11 @@ class RequestFactory
         return $getRequest;
     }
 
-    public function buildDeleteRequest(string $uuid): DeleteRequest
+    /**
+     * @param string $uuid
+     * @return \KSearchClient\Model\Data\DeleteRequest
+     */
+    public function buildDeleteRequest($uuid)
     {
         $deleteRequest = new DeleteRequest();
         $deleteRequest->params = new UUIDParam();
@@ -42,7 +50,10 @@ class RequestFactory
         return $deleteRequest;
     }
 
-    public function buildSearchRequest(SearchParams $searchParams): SearchRequest
+    /**
+     * @return \KSearchClient\Model\Data\SearchRequest
+     */
+    public function buildSearchRequest(SearchParams $searchParams)
     {
         $searchRequest = new SearchRequest();
         $searchRequest->params = $searchParams;
@@ -50,7 +61,11 @@ class RequestFactory
         return $searchRequest;
     }
 
-    public function buildStatusRequest(string $uuid): DataStatusRequest
+    /**
+     * @param string $uuid
+     * @return \KSearchClient\Model\Data\DataStatusRequest
+     */
+    public function buildStatusRequest($uuid)
     {
         $statusRequest= new DataStatusRequest();
         $statusRequest->params = new UUIDParam;
