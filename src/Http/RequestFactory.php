@@ -1,5 +1,5 @@
 <?php
-namespace KSearchClient\API;
+namespace KSearchClient\Http;
 
 use KSearchClient\Model\Data\AddParams;
 use KSearchClient\Model\Data\AddRequest;

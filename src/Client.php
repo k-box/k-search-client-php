@@ -9,8 +9,8 @@ use Http\Discovery\MessageFactoryDiscovery;
 use Http\Message\Authentication;
 use Http\Message\MessageFactory;
 use JMS\Serializer\Serializer;
-use KSearchClient\API\ResponseHelper;
-use KSearchClient\API\Routes;
+use KSearchClient\Http\ResponseHelper;
+use KSearchClient\Http\Routes;
 use KSearchClient\Exception\AuthTypeNotSupportedException;
 use KSearchClient\Exception\ErrorResponseException;
 use KSearchClient\Exception\ModelNotValidException;
@@ -53,7 +53,7 @@ class Client
     /** @var  Routes */
     private $routes;
     /**
-     * @var API\RequestFactory
+     * @var Http\RequestFactory
      */
     private $apiRequestFactory;
     /**
@@ -66,7 +66,7 @@ class Client
      * 
      * @param string $kSearchUrl
      */
-    public function __construct(Authentication $authentication, $kSearchUrl, API\RequestFactory $apiRequestFactory, Serializer $serializer, HttpClient $httpClient, MessageFactory $messageFactory)
+    public function __construct(Authentication $authentication, $kSearchUrl, Http\RequestFactory $apiRequestFactory, Serializer $serializer, HttpClient $httpClient, MessageFactory $messageFactory)
     {
         $this->authentication = $authentication;
 
@@ -203,7 +203,7 @@ class Client
     {
         AnnotationRegistry::registerLoader('class_exists');
 
-        $factory = new API\RequestFactory;
+        $factory = new Http\RequestFactory;
         $serializer = \JMS\Serializer\SerializerBuilder::create()
             ->build();
         $httpClient = HttpClientDiscovery::find();

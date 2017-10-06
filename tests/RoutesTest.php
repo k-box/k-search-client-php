@@ -1,8 +1,7 @@
 <?php
-namespace KSearchClient;
+namespace Tests;
 
-use KSearchClient\API\Routes;
-use PHPUnit\Framework\TestCase;
+use KSearchClient\Http\Routes;
 
 class RoutesTest extends TestCase
 {

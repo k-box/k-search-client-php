@@ -1,13 +1,13 @@
 <?php
 
-namespace KSearchClient\Tests\API;
+namespace Tests\Http;
 
-use KSearchClient\API\ResponseHelper;
+use Tests\TestCase;
 use KSearchClient\Model\Error\Error;
-use KSearchClient\Model\Error\ErrorResponse;
 use KSearchClient\Model\Status\Status;
+use KSearchClient\Http\ResponseHelper;
+use KSearchClient\Model\Error\ErrorResponse;
 use KSearchClient\Model\Status\StatusResponse;
-use PHPUnit\Framework\TestCase;
 
 class ResponseHelperTest extends TestCase
 {

@@ -1,6 +1,7 @@
 <?php
 
-namespace KSearchClient\Tests\Helper;
+namespace Tests\Helper;
+
 
 use KSearchClient\Model\Data\Copyright;
 use KSearchClient\Model\Data\CopyrightOwner;

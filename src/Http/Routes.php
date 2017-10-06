@@ -1,5 +1,5 @@
 <?php
-namespace KSearchClient\API;
+namespace KSearchClient\Http;
 
 class Routes
 {
