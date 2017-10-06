@@ -6,7 +6,7 @@ use Doctrine\Common\Annotations\AnnotationRegistry;
 use Http\Client\HttpClient;
 use Http\Discovery\HttpClientDiscovery;
 use Http\Discovery\MessageFactoryDiscovery;
-use Http\Message\Authentication;
+use KSearchClient\Http\Authentication;
 use Http\Message\MessageFactory;
 use JMS\Serializer\Serializer;
 use KSearchClient\Http\ResponseHelper;
@@ -69,11 +69,6 @@ class Client
     public function __construct(Authentication $authentication, $kSearchUrl, Http\RequestFactory $apiRequestFactory, Serializer $serializer, HttpClient $httpClient, MessageFactory $messageFactory)
     {
         $this->authentication = $authentication;
-
-        if (!AuthTypeValidator::isSupported($authentication)) {
-            throw new AuthTypeNotSupportedException('KSearch API supports the following types of authentication: Bearer and BasicAuth.');
-        }
-
         $this->httpClient = $httpClient ?: HttpClientDiscovery::find();
         $this->messageFactory = $messageFactory ?: MessageFactoryDiscovery::find();
         $this->routes = new Routes($kSearchUrl);
@@ -195,7 +190,7 @@ class Client
     }
 
     /**
-     * @param Authentication $authentication
+     * @param \KSearchClient\Http\Authentication $authentication
      * @param $kSearchUrl
      * @return Client
      */
