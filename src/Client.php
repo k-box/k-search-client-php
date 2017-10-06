@@ -190,11 +190,13 @@ class Client
     }
 
     /**
+     * Build a K-Search client
+     * 
+     * @param string $instanceUrl The K-Search instance URL
      * @param \KSearchClient\Http\Authentication $authentication
-     * @param $kSearchUrl
      * @return Client
      */
-    public static function build(Authentication $authentication, $kSearchUrl)
+    public static function build($instanceUrl, Authentication $authentication)
     {
         AnnotationRegistry::registerLoader('class_exists');
 
@@ -204,6 +206,6 @@ class Client
         $httpClient = HttpClientDiscovery::find();
         $messageFactory = MessageFactoryDiscovery::find();
 
-        return new self($authentication, $kSearchUrl, $factory, $serializer, $httpClient, $messageFactory);
+        return new self($authentication, $instanceUrl, $factory, $serializer, $httpClient, $messageFactory);
     }
 }

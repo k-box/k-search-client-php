@@ -54,9 +54,24 @@ All examples below assumes you've already included this in your file:
 ```php
 require 'vendor/autoload.php';
 use KSearchClient\Client;
+use KSearchClient\Http\Authentication;
 ```
 
-_to be written_
+#### Instantiate a client
+
+The client needs a valid `app_secret` and `app_url` from the K-Registry. After obtaining the pair you can instantiate a client like
+
+```php
+// Authentication
+$app_secret = 'Som3RandomW0rds';
+$app_url = 'http://localhost:8080/';
+
+// URL of the K-Search instance you want to connect to
+$service_url = 'https://search.klink.asia/';
+
+// Generate the client
+$client = Client::build($service_url, new Authentication($app_secret, $app_url));
+```
 
 
 ## Contributing
