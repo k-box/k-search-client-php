@@ -10,6 +10,22 @@ cache:
 before_script:
   - export COMPOSER_CACHE_DIR=`pwd`/.composer-cache
 
+## Configuration to run Integration tests
+## The configuration is disabled because on the current runners generate services 
+## that are not linked together or in the same network
+## See https://gitlab.com/gitlab-org/gitlab-runner/issues/2436 and
+## https://gitlab.com/gitlab-org/gitlab-runner/issues/1042
+# variables:
+#   APP_ENV: "dev"
+#   APP_DEBUG: "1"
+#   SOLRCORE_HOST: "docker.klink.asia-images-k-search-engine"
+#   SOLRCORE_NAME: "k-search"
+#   KSEARCH_URL: "http://docker.klink.asia-main-k-search/"
+
+# services:
+#   - docker.klink.asia/images/k-search-engine:0.2.0
+#   - docker.klink.asia/main/k-search:deelop
+
 # Job templates
 
 .tester_plus_coverage: &tester_plus_coverage

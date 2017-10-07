@@ -1,32 +1,46 @@
 <?php
 
-namespace Tests\Helper;
+namespace Tests\Concern;
 
 
 use KSearchClient\Model\Data\Copyright;
 use KSearchClient\Model\Data\CopyrightOwner;
 use KSearchClient\Model\Data\CopyrightUsage;
 use KSearchClient\Model\Data\Data;
+use KSearchClient\Model\Data\Author;
+use KSearchClient\Model\Data\Uploader;
 use KSearchClient\Model\Data\Properties;
 
-class ModelHelper
+trait GeneratesData
 {
-    const DATE = '2008-07-28T14:47:31Z';
-    const SIZE = 717590;
 
     /**
      * @param string $sampleUUID
      * @return \KSearchClient\Model\Data\Data
      */
-    public static function createDataModel($sampleUUID)
+    public function createDataModel($sampleUUID)
     {
-        $date = new \DateTime(self::DATE, new \DateTimeZone('UTC'));
+        $date = new \DateTime('2008-07-28T14:47:31Z', new \DateTimeZone('UTC'));
 
         $data = new Data();
         $data->hash = hash('sha512', 'hash');
         $data->type = 'document';
         $data->url = 'http://example.com/data.txt';
         $data->uuid = $sampleUUID;
+
+        $author = new Author();
+        $author->name = "An Author Name";
+        $author->email = "author@email.com";
+
+        $data->author = [
+            $author
+        ];
+
+        $uploader = new Uploader();
+        $uploader->name = "Uploader Name";
+        $uploader->url = "http://some.profile/";
+
+        $data->uploader = $uploader;
 
         $data->copyright = new Copyright();
         $data->copyright->owner = new CopyrightOwner();
@@ -46,7 +60,7 @@ class ModelHelper
         $data->properties->language = 'en';
         $data->properties->created_at = $date;
         $data->properties->updated_at = $date;
-        $data->properties->size = self::SIZE;
+        $data->properties->size = 150;
         $data->properties->abstract = 'It is a novel about a detective';
         $data->properties->thumbnail = 'https://ichef.bbci.co.uk/news/660/cpsprodpb/153B4/production/_89046968_89046967.jpg';
 
@@ -57,8 +71,10 @@ class ModelHelper
      * @param string $sampleUUID
      * @return array
      */
-    public static function createDataArray($dataUUID)
+    public function createDataArray($dataUUID)
     {
+        $date = new \DateTime('2008-07-28T14:47:31Z', new \DateTimeZone('UTC'));
+
         return [
             'hash' => hash('sha512', 'hash'),
             'type' => 'document',
@@ -81,9 +97,9 @@ class ModelHelper
                 'filename' => 'adventures-of-sherlock-holmes.pdf',
                 'mime_type' => 'application/pdf',
                 'language' => 'en',
-                'created_at' => self::DATE,
-                'updated_at' => self::DATE,
-                'size' => self::SIZE,
+                'created_at' => $date,
+                'updated_at' => $date,
+                'size' => 150,
                 'abstract' => 'It is a novel about a detective',
                 'thumbnail' => 'https://ichef.bbci.co.uk/news/660/cpsprodpb/153B4/production/_89046968_89046967.jpg',
             ],

@@ -73,6 +73,27 @@ $service_url = 'https://search.klink.asia/';
 $client = Client::build($service_url, new Authentication($app_secret, $app_url));
 ```
 
+## Testing
+
+The code testing is automated using [PHPUnit](https://phpunit.de/).
+
+There are 2 testing suites:
+
+- `Unit`: test classes in isolation
+- `Integration`: test the features using a real K-Search instance
+
+The tests can be executed using
+
+```bash
+vendor/bin/phpunit
+```
+
+**Executing integration tests**
+
+Integration tests requires to set the `KSEARCH_URL` environment variable to the URL of a running K-Search v3 instance.
+
+Leaving the `KSEARCH_URL` variable empty will cause the integration tests to be skipped.
+
 
 ## Contributing
 

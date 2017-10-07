@@ -13,7 +13,7 @@ use KSearchClient\Http\ResponseHelper;
 use KSearchClient\Http\Routes;
 use KSearchClient\Exception\AuthTypeNotSupportedException;
 use KSearchClient\Exception\ErrorResponseException;
-use KSearchClient\Exception\ModelNotValidException;
+use KSearchClient\Exception\InvalidDataException;
 use KSearchClient\Model\Data\AddResponse;
 use KSearchClient\Model\Data\Data;
 use KSearchClient\Model\Data\DataStatus;
@@ -95,8 +95,10 @@ class Client
     }
 
     /**
-     * @param string $uuid
-     * @return Status
+     * Deletes a previously added Data
+     * 
+     * @param string $uuid The UUID of the data to delete
+     * @return bool true if the data was deleted, false otherwise
      */
     public function delete($uuid)
     {
@@ -107,7 +109,7 @@ class Client
 
         /** @var StatusResponse $statusResponse */
         $statusResponse = $this->serializer->deserialize($response->getBody(), StatusResponse::class, self::SERIALIZER_FORMAT);
-        return $statusResponse->result;
+        return strtolower($statusResponse->result->status) === 'ok';
     }
 
     /**
@@ -127,19 +129,22 @@ class Client
     }
 
     /**
+     * Get the processing status of a recently added data
+     * 
      * @param string $uuid
-     * @return DataStatus
+     * @return string The status. Possible values are "ok", "queued"
      */
     public function getStatus($uuid)
     {
         $request = $this->apiRequestFactory->buildStatusRequest($uuid);
-        $route = $this->routes->getDataGet();
+        $route = $this->routes->getDataStatus();
 
         $response = $this->handleRequest($request, $route);
 
         /** @var DataStatusResponse $getRes */
         $dataStatusResponse = $this->serializer->deserialize($response->getBody(), DataStatusResponse::class, self::SERIALIZER_FORMAT);
-        return $dataStatusResponse->result;
+        // todo: check for deserialization errors and in case status is null raise an exception
+        return $dataStatusResponse->result->status;
     }
 
     /**
@@ -166,9 +171,19 @@ class Client
     {
         $responseBody = $response->getBody();
 
+        if($response->getStatusCode() !== 200){
+            print (string)$responseBody;
+            throw new ErrorResponseException(!empty($response->getReasonPhrase()) ? $response->getReasonPhrase() : 'There was a problem in fulfilling your request.', $response->getStatusCode(), $responseBody);
+        }
+
         if (ResponseHelper::isAnError($responseBody)) {
             /** @var ErrorResponse $errorResponse */
             $errorResponse = $this->serializer->deserialize($responseBody, ErrorResponse::class, self::SERIALIZER_FORMAT);
+            
+            if($errorResponse->error->code === 400){
+                throw new InvalidDataException($errorResponse->error->data);
+            }
+
             throw new ErrorResponseException($errorResponse->error->message, $errorResponse->error->code, $errorResponse->error->data);
         }
     }

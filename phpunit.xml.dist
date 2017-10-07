@@ -9,23 +9,16 @@
          syntaxCheck="false"
 >
     <testsuites>
-        <testsuite name="all">
-            <directory>tests</directory>
+        <testsuite name="Integration">
+            <directory suffix="Test.php">./tests/Integration</directory>
+        </testsuite>
+        <testsuite name="Unit">
+            <directory suffix="Test.php">./tests/Unit</directory>
         </testsuite>
     </testsuites>
-    <groups>
-        <include>
-            <group>default</group>
-            <group>deserialization</group>
-            <group>http</group>
-        </include>
-        <exclude>
-            <group>integration</group>
-        </exclude>
-    </groups>
     <php>
         <!-- Example K-Search configuration for integration tests -->
-        <env name="KSEARCH_URL" value="http://search_url/"/>
+        <env name="KSEARCH_URL" value=""/>
         <env name="KSEARCH_APP_URL" value="http://localhost/"/>
         <env name="KSEARCH_APP_SECRET" value="app_secret"/>
     </php>

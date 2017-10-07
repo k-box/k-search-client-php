@@ -1,6 +1,7 @@
 <?php
-namespace Tests;
+namespace Tests\Unit;
 
+use Tests\TestCase;
 use KSearchClient\Client;
 use KSearchClient\Http\Authentication;
 use GuzzleHttp\Psr7\Request;

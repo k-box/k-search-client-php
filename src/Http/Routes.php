@@ -66,6 +66,6 @@ class Routes
      */
     protected function buildURL($endpoint)
     {
-        return sprintf('%s/%s', $this->baseUrl, $endpoint);
+        return sprintf('%s/api/0.0/%s', $this->baseUrl, $endpoint);
     }
 }
