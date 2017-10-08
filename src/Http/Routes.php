@@ -1,7 +1,10 @@
 <?php
 namespace KSearchClient\Http;
 
-class Routes
+/**
+ * @internal
+ */
+final class Routes
 {
     const DATA_ADD_ENDPOINT = 'data.add';
     const DATA_DELETE_ENDPOINT = 'data.delete';
@@ -64,7 +67,7 @@ class Routes
     /**
      * @return string
      */
-    protected function buildURL($endpoint)
+    private function buildURL($endpoint)
     {
         return sprintf('%s/api/0.0/%s', $this->baseUrl, $endpoint);
     }
