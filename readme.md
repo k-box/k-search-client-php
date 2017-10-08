@@ -59,7 +59,21 @@ use KSearchClient\Http\Authentication;
 
 #### Instantiate a client
 
-The client needs a valid `app_secret` and `app_url` from the K-Registry. After obtaining the pair you can instantiate a client like
+**When no authentication is required**
+
+The client needs a valid URL of a K-Search instance, e.g. https://search.klink.asia/. After obtaining the URL you can instantiate a client like
+
+```php
+// URL of the K-Search instance you want to connect to
+$service_url = 'https://search.klink.asia/';
+
+// Generate the client
+$client = Client::build($service_url);
+```
+
+**When authentication is required**
+
+The client, in addition to the K-Search URL, needs a valid `app_secret` and `app_url` from the K-Registry. After obtaining the pair you can instantiate a client like
 
 ```php
 // Authentication

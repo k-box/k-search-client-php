@@ -4,9 +4,12 @@ namespace KSearchClient;
 
 use Doctrine\Common\Annotations\AnnotationRegistry;
 use Http\Client\HttpClient;
+use Http\Client\Common\PluginClient;
 use Http\Discovery\HttpClientDiscovery;
 use Http\Discovery\MessageFactoryDiscovery;
-use KSearchClient\Http\Authentication;
+use Http\Message\Authentication;
+use KSearchClient\Http\NullAuthentication;
+use Http\Client\Common\Plugin\AuthenticationPlugin;
 use Http\Message\MessageFactory;
 use JMS\Serializer\Serializer;
 use KSearchClient\Http\ResponseHelper;
@@ -45,11 +48,6 @@ class Client
      */
     private $messageFactory;
 
-    /**
-     * @var Authentication
-     */
-    private $authentication;
-
     /** @var  Routes */
     private $routes;
     /**
@@ -66,10 +64,16 @@ class Client
      * 
      * @param string $kSearchUrl
      */
-    public function __construct(Authentication $authentication, $kSearchUrl, Http\RequestFactory $apiRequestFactory, Serializer $serializer, HttpClient $httpClient, MessageFactory $messageFactory)
+    public function __construct($kSearchUrl, Authentication $authentication, Http\RequestFactory $apiRequestFactory, Serializer $serializer, HttpClient $httpClient, MessageFactory $messageFactory)
     {
-        $this->authentication = $authentication;
-        $this->httpClient = $httpClient ?: HttpClientDiscovery::find();
+        // registering a PluginClient as the authentication should be appended to all requests
+        $this->httpClient = new PluginClient(
+            $httpClient ?: HttpClientDiscovery::find(),
+            [
+                new AuthenticationPlugin($authentication),
+            ]
+        );
+
         $this->messageFactory = $messageFactory ?: MessageFactoryDiscovery::find();
         $this->routes = new Routes($kSearchUrl);
         $this->apiRequestFactory = $apiRequestFactory;
@@ -208,10 +212,10 @@ class Client
      * Build a K-Search client
      * 
      * @param string $instanceUrl The K-Search instance URL
-     * @param \KSearchClient\Http\Authentication $authentication
+     * @param \KSearchClient\Http\Authentication $authentication The authentication credentials, if necessary
      * @return Client
      */
-    public static function build($instanceUrl, Authentication $authentication)
+    public static function build($instanceUrl, Authentication $authentication = null)
     {
         AnnotationRegistry::registerLoader('class_exists');
 
@@ -221,6 +225,6 @@ class Client
         $httpClient = HttpClientDiscovery::find();
         $messageFactory = MessageFactoryDiscovery::find();
 
-        return new self($authentication, $instanceUrl, $factory, $serializer, $httpClient, $messageFactory);
+        return new self($instanceUrl, $authentication ? $authentication : (new NullAuthentication), $factory, $serializer, $httpClient, $messageFactory);
     }
 }

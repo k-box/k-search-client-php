@@ -2,13 +2,14 @@
 namespace Tests\Unit;
 
 use Tests\TestCase;
-use KSearchClient\Http\Authentication;
 use GuzzleHttp\Psr7\Request;
+use KSearchClient\Http\Authentication;
 use Psr\Http\Message\RequestInterface;
+use KSearchClient\Http\NullAuthentication;
 
 class AuthenticationTest extends TestCase
 {
-    public function testHeadersAreAppendedToTheRequest()
+    public function testAuthenticationAppendHeaders()
     {
         $auth = new Authentication('token', 'http://localhost');
 
@@ -19,5 +20,18 @@ class AuthenticationTest extends TestCase
         $this->assertInstanceOf(RequestInterface::class, $request_with_authentication);
         $this->assertEquals(['http://localhost'], $request_with_authentication->getHeader('Origin'));
         $this->assertEquals(['Bearer token'], $request_with_authentication->getHeader('Authorization'));
+    }
+    
+    public function testNullAuthenticationDontModifyTheRequest()
+    {
+        $auth = new NullAuthentication();
+
+        $request = new Request('GET', 'http://ksearch.local');
+
+        $request_without_authentication = $auth->authenticate($request);
+
+        $this->assertInstanceOf(RequestInterface::class, $request_without_authentication);
+        $this->assertEquals(['Host' => ['ksearch.local']], $request_without_authentication->getHeaders());
+        $this->assertEquals($request, $request_without_authentication);
     }
 }
