@@ -10,6 +10,7 @@ use Http\Discovery\MessageFactoryDiscovery;
 use Http\Message\Authentication;
 use KSearchClient\Http\NullAuthentication;
 use Http\Client\Common\Plugin\AuthenticationPlugin;
+use Http\Client\Common\Plugin\HeaderSetPlugin;
 use Http\Message\MessageFactory;
 use JMS\Serializer\Serializer;
 use KSearchClient\Http\ResponseHelper;
@@ -66,11 +67,16 @@ class Client
      */
     public function __construct($kSearchUrl, Authentication $authentication, Http\RequestFactory $apiRequestFactory, Serializer $serializer, HttpClient $httpClient, MessageFactory $messageFactory)
     {
-        // registering a PluginClient as the authentication should be appended to all requests
+        // registering a PluginClient as the authentication and content headers should be added to all requests
         $this->httpClient = new PluginClient(
             $httpClient ?: HttpClientDiscovery::find(),
             [
                 new AuthenticationPlugin($authentication),
+                new HeaderSetPlugin([
+                    'User-Agent' => 'K-Search Client',
+                    'Content-Type' => 'application/json',
+                    'Accept' => 'application/json'
+                ]),
             ]
         );
 

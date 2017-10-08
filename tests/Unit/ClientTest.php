@@ -63,4 +63,33 @@ class ClientTest extends TestCase
         $this->assertEquals(['http://localhost'], $sentRequests[0]->getHeader('Origin'));
         $this->assertEquals(['Bearer token'], $sentRequests[0]->getHeader('Authorization'));
     }
+    
+    public function testClientSendAndAcceptJson()
+    {
+        AnnotationRegistry::registerLoader('class_exists');
+
+        $auth = new Authentication('token', 'http://localhost');
+
+        $service_url = 'https://search.klink.asia/';
+
+        $factory = new RequestFactory;
+        $serializer = SerializerBuilder::create()->build();
+        $httpClient = new HttpMockClient();
+        $messageFactory = MessageFactoryDiscovery::find();
+        $httpClient->addResponse(new Response(200, 
+            ['Content-Type' => 'application/json'],
+            '{"id": "hello", "result": {"status":"ok"}}'
+        ));
+        
+        $client = new Client($service_url, $auth, $factory, $serializer, $httpClient, $messageFactory);
+
+        $uuid = '00000000-0000-0000-0000-000000000001';
+
+        $status = $client->getStatus($uuid);
+        
+        $sentRequests = $httpClient->getRequests();
+                
+        $this->assertEquals(['application/json'], $sentRequests[0]->getHeader('Content-Type'));
+        $this->assertEquals(['application/json'], $sentRequests[0]->getHeader('Accept'));
+    }
 }
