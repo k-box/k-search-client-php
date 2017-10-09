@@ -182,7 +182,6 @@ class Client
         $responseBody = $response->getBody();
 
         if($response->getStatusCode() !== 200){
-            print (string)$responseBody;
             throw new ErrorResponseException(!empty($response->getReasonPhrase()) ? $response->getReasonPhrase() : 'There was a problem in fulfilling your request.', $response->getStatusCode(), $responseBody);
         }
 
