@@ -16,12 +16,11 @@ class GetDataTest extends TestCase
 {
     use SetupIntegrationTest;
 
-    /**
-     * @expectedException \KSearchClient\Exception\InvalidDataException
-     */
     public function testClientThrowsErrorIfNonExistentDataIsAsked()
     {
         $uuid = '00000000-0000-0000-0000-000000000001';
+
+        $this->expectException(InvalidDataException::class);
 
         $data = $this->client->get($uuid);
     }
