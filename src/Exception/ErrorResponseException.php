@@ -14,6 +14,7 @@ class ErrorResponseException extends KSearchClientException
      * 
      * @param string $message
      * @param int $code
+     * @param mixed $data
      */
     public function __construct($message, $code, $data)
     {

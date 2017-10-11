@@ -17,6 +17,7 @@ use KSearchClient\Http\ResponseHelper;
 use KSearchClient\Http\Routes;
 use KSearchClient\Exception\AuthTypeNotSupportedException;
 use KSearchClient\Exception\ErrorResponseException;
+use KSearchClient\Exception\SerializationException;
 use KSearchClient\Exception\InvalidDataException;
 use KSearchClient\Model\Data\AddResponse;
 use KSearchClient\Model\Data\Data;
@@ -181,8 +182,19 @@ class Client
     {
         $responseBody = $response->getBody();
 
+        $contentTypeHeader = $response->getHeader('Content-Type');
+        $contentType = !empty($contentTypeHeader) ? $contentTypeHeader[0] : '';
+        
         if($response->getStatusCode() !== 200){
-            throw new ErrorResponseException(!empty($response->getReasonPhrase()) ? $response->getReasonPhrase() : 'There was a problem in fulfilling your request.', $response->getStatusCode(), $responseBody);
+            
+            if($response->getStatusCode() === 500 && strpos($contentType, 'text/html')!== false){
+                
+                $reason = substr((string)$responseBody, 0, 500);
+
+                throw new ErrorResponseException($reason, $response->getStatusCode(), (string)$responseBody);
+            }
+
+            throw new ErrorResponseException(!empty($response->getReasonPhrase()) ? $response->getReasonPhrase() : 'There was a problem in fulfilling your request.', $response->getStatusCode(), (string)$responseBody);
         }
 
         if (ResponseHelper::isAnError($responseBody)) {
@@ -204,7 +216,17 @@ class Client
      */
     private function handleRequest($request, $route)
     {
-        $serializedRequestBody = $this->serializer->serialize($request, self::SERIALIZER_FORMAT);
+        $serializedRequestBody = '';
+        try{
+
+            $serializedRequestBody = $this->serializer->serialize($request, self::SERIALIZER_FORMAT);
+
+        } catch(\Throwable $ex){
+            throw new SerializationException($ex->getMessage());
+        } catch(Exception $ex){
+            throw new SerializationException($ex->getMessage());
+        }
+
         $request = $this->messageFactory->createRequest('POST', $route, [], $serializedRequestBody);
 
         $response = $this->httpClient->sendRequest($request);

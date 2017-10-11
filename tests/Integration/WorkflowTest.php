@@ -67,4 +67,5 @@ class WorkflowTest extends TestCase
         $this->assertInternalType('bool', $is_deleted);
         $this->assertTrue($is_deleted);
     }
+
 }
