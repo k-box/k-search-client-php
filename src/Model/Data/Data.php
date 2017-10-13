@@ -118,12 +118,4 @@ class Data
      * ##SWG\Property()
      */
     public $uploader;
-
-    /**
-     * The status of the data, internal use only, not exposed.
-     *
-     * @var string
-     * @JMS\Exclude()
-     */
-    public $status;
 }
