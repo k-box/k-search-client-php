@@ -63,6 +63,8 @@ trait GeneratesData
         $data->properties->size = 150;
         $data->properties->abstract = 'It is a novel about a detective';
         $data->properties->thumbnail = 'https://ichef.bbci.co.uk/news/660/cpsprodpb/153B4/production/_89046968_89046967.jpg';
+        $data->properties->tags = ['tag1', 'tag2'];
+        $data->properties->collections = ['c1', 'c2'];
 
         return $data;
     }
