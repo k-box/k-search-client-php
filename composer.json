@@ -4,7 +4,7 @@
     "type": "library",
     "homepage": "https://git.klink.asia/main/k-search-client-php",
     "time": "2017-04-24",
-
+    "license": "AGPL-3.0",
     "authors": [
         {
             "name": "Alessio Vertemati",
@@ -13,6 +13,10 @@
         {
             "name": "Emanuele Panzeri",
             "email": "emanuele.panzeri@oneofftech.xyz"
+        },
+        {
+            "name": "Carlos Reig",
+            "email": "carlos.reig@oneofftech.xyz"
         }
     ],
 
