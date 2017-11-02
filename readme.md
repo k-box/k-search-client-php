@@ -108,6 +108,7 @@ use KSearchClient\Client;
 use KSearchClient\Http\Authentication;
 use KSearchClient\Model\Data\Data;
 use KSearchClient\Model\Data\Copyright;
+use KSearchClient\Model\Data\CopyrightOwner;
 use KSearchClient\Model\Data\CopyrightUsage;
 use KSearchClient\Model\Data\Properties;
 use KSearchClient\Model\Data\Uploader;
@@ -116,10 +117,10 @@ use KSearchClient\Model\Data\Author;
 $client = Client::build($service_url, new Authentication($app_secret, $app_url));
 
 //We create the Data object
-$data = new Data(); 
+$data = new Data();
 $data->hash = hash('sha512', 'hash'); //The document hash
 $data->type = 'document'; //This can be a 'video' or 'document'
-$data->url = 'http://example.com/data.txt'; //The document URL
+$data->url = 'http://norvig.com/palindrome.html'; //The document URL
 $data->uuid = 'b2c16bd1-6739-4fd9-a1e2-7dde785bed54'; //A unique UUID that identifies this document
 
 $data->copyright = new Copyright(); //Copyright info
@@ -136,10 +137,10 @@ $data->copyright->usage->reference = 'https://spdx.org/licenses/MPL-2.0.html';
 $data->properties = new Properties(); //The document properties
 $data->properties->title = 'Adventures of Sherlock Holmes';
 $data->properties->filename = 'adventures-of-sherlock-holmes.pdf';
-$data->properties->mimeType = 'application/pdf';
+$data->properties->mime_type = 'application/pdf';
 $data->properties->language = 'en';
-$data->properties->createdAt = new \DateTime();
-$data->properties->updatedAt = new \DateTime();
+$data->properties->created_at = new \DateTime();
+$data->properties->updated_at = new \DateTime();
 $data->properties->size = 2048; //In bytes
 $data->properties->abstract = 'It is a novel about a detective';
 $data->properties->thumbnail = 'https://ichef.bbci.co.uk/news/660/cpsprodpb/153B4/production/_89046968_89046967.jpg';
@@ -164,6 +165,120 @@ $responseData = $client->add($data);
 The lines above are structured in 3 blocks. In the first block we create the `Client` object providing the authentication details.In the second block we create and fill the `Data` object with the document information. Finally, in the third block we just call to `$client->add($data)` that is responsible for authenticating in the system and indexing the data.
 
 The `add` method returns a new `Data` object that will contain the same info than the `$data` variable.
+
+Output:
+
+```
+object(KSearchClient\Model\Data\Data)#121 (8) {
+  ["uuid"]=>
+  string(36) "b2c16bd1-6739-4fd9-a1e2-7dde785bed54"
+  ["url"]=>
+  string(33) "http://norvig.com/palindrome.html"
+  ["hash"]=>
+  string(128) "30163935c002fc4e1200906c3d30a9c4956b4af9f6dcaef1eb4b1fcb8fba69e7a7acdc491ea5b1f2864ea8c01b01580ef09defc3b11b3f183cb21d236f7f1a6b"
+  ["type"]=>
+  string(8) "document"
+  ["properties"]=>
+  object(KSearchClient\Model\Data\Properties)#149 (14) {
+    ["title"]=>
+    string(29) "Adventures of Sherlock Holmes"
+    ["filename"]=>
+    string(33) "adventures-of-sherlock-holmes.pdf"
+    ["mime_type"]=>
+    string(15) "application/pdf"
+    ["language"]=>
+    string(2) "en"
+    ["created_at"]=>
+    object(DateTime)#183 (3) {
+      ["date"]=>
+      string(26) "2017-11-02 12:13:35.000000"
+      ["timezone_type"]=>
+      int(3)
+      ["timezone"]=>
+      string(3) "UTC"
+    }
+    ["updated_at"]=>
+    object(DateTime)#180 (3) {
+      ["date"]=>
+      string(26) "2017-11-02 12:13:35.000000"
+      ["timezone_type"]=>
+      int(3)
+      ["timezone"]=>
+      string(3) "UTC"
+    }
+    ["size"]=>
+    int(2048)
+    ["abstract"]=>
+    string(31) "It is a novel about a detective"
+    ["thumbnail"]=>
+    string(83) "https://ichef.bbci.co.uk/news/660/cpsprodpb/153B4/production/_89046968_89046967.jpg"
+    ["tags"]=>
+    array(2) {
+      [0]=>
+      string(4) "tag1"
+      [1]=>
+      string(4) "tag2"
+    }
+    ["collections"]=>
+    array(2) {
+      [0]=>
+      string(3) "123"
+      [1]=>
+      string(3) "456"
+    }
+    ["video"]=>
+    NULL
+    ["audio"]=>
+    NULL
+    ["subtitles"]=>
+    NULL
+  }
+  ["author"]=>
+  array(1) {
+    [0]=>
+    object(KSearchClient\Model\Data\Author)#165 (3) {
+      ["name"]=>
+      string(18) "Arthur Conan Doyle"
+      ["email"]=>
+      string(18) "arthur@conan.doyle"
+      ["contact"]=>
+      string(17) "221B Baker Street"
+    }
+  }
+  ["copyright"]=>
+  object(KSearchClient\Model\Data\Copyright)#117 (2) {
+    ["owner"]=>
+    object(KSearchClient\Model\Data\CopyrightOwner)#196 (3) {
+      ["name"]=>
+      string(18) "KLink Organization"
+      ["email"]=>
+      string(15) "info@klink.asia"
+      ["contact"]=>
+      string(36) "KLink Website: http://www.klink.asia"
+    }
+    ["usage"]=>
+    object(KSearchClient\Model\Data\CopyrightUsage)#208 (3) {
+      ["short"]=>
+      string(7) "MPL-2.0"
+      ["name"]=>
+      string(26) "Mozilla Public License 2.0"
+      ["reference"]=>
+      string(38) "https://spdx.org/licenses/MPL-2.0.html"
+    }
+  }
+  ["uploader"]=>
+  object(KSearchClient\Model\Data\Uploader)#221 (4) {
+    ["name"]=>
+    string(13) "Uploader name"
+    ["url"]=>
+    NULL
+    ["app_url"]=>
+    NULL
+    ["email"]=>
+    NULL
+  }
+}
+```
 
 ##### Indexing a video
 
@@ -192,7 +307,7 @@ $client = Client::build($service_url, new Authentication($app_secret, $app_url))
 $data = new Data(); 
 $data->hash = hash('sha512', 'hash'); //The document hash
 $data->type = 'video'; //This can be a 'video' or 'document'
-$data->url = 'http://example.com/data.mp4'; //The document URL
+$data->url = 'https://github.com/mediaelement/mediaelement-files/blob/master/echo-hereweare.mp4?raw=true'; //The document URL
 $data->uuid = 'b2c16bd1-6739-4fd9-a1e2-7dde785bed54'; //A unique UUID that identifies this document
 
 $data->copyright = new Copyright(); //Copyright info
@@ -209,10 +324,10 @@ $data->copyright->usage->reference = 'https://spdx.org/licenses/MPL-2.0.html';
 $data->properties = new Properties(); //The document properties
 $data->properties->title = 'Adventures of Sherlock Holmes';
 $data->properties->filename = 'adventures-of-sherlock-holmes.mp4';
-$data->properties->mimeType = 'video/mp4';
+$data->properties->mime_type = 'video/mp4';
 $data->properties->language = 'en';
-$data->properties->createdAt = new \DateTime();
-$data->properties->updatedAt = new \DateTime();
+$data->properties->created_at = new \DateTime();
+$data->properties->updated_at = new \DateTime();
 $data->properties->size = 204825684; //In bytes
 $data->properties->abstract = 'It is a video about the novel about a detective';
 $data->properties->thumbnail = 'https://ichef.bbci.co.uk/news/660/cpsprodpb/153B4/production/_89046968_89046967.jpg';
@@ -236,12 +351,12 @@ $data->properties->video->source->bitrate = 'bitrate';
 $audioEn = new Audio();
 $audioEn->language = 'en';
 $audioEn->bitrate = '1 Mbps';
-$audioEn->formate = 'mp3';
+$audioEn->format = 'mp3';
 
 $audioEs = new Audio();
 $audioEs->language = 'es';
 $audioEs->bitrate = '1 Mbps';
-$audioEs->formate = 'mp3';
+$audioEs->format = 'mp3';
 
 $data->properties->audio = [
   $audioEn,
@@ -267,8 +382,10 @@ $data->author = [$author]; //An array with the different document's authors
 
 //We index it
 /** @var Data $responseData */
-$responseData = $client->add($data);
+$responseData = $client->add($data, 'my video description');
 ```
+
+Notice that the `$client->add` method has a second argument where you can add a video description.
 
 ##### Get the document status
 
@@ -287,8 +404,14 @@ use KSearchClient\Http\Authentication;
 
 $client = Client::build($service_url, new Authentication($app_secret, $app_url));
 
-/** @var bool $status */
+/** @var string $status */
 $status = $client->getStatus('b2c16bd1-6739-4fd9-a1e2-7dde785bed54'); //we have to provide the document UUID
+var_dump($status);
+```
+
+Output:
+```
+string(2) "Ok"
 ```
 
 ##### Remove a document
@@ -304,6 +427,12 @@ $client = Client::build($service_url, new Authentication($app_secret, $app_url))
 
 /** @var bool $deleteResult */
 $deleteResult = $client->delete('b2c16bd1-6739-4fd9-a1e2-7dde785bed54');
+var_dump($deleteResult);
+```
+
+Output:
+```
+bool(true)
 ```
 ##### Get a document
 
@@ -319,6 +448,120 @@ $client = Client::build($service_url, new Authentication($app_secret, $app_url))
 
 /** @var Data $data */
 $data = $client->get('b2c16bd1-6739-4fd9-a1e2-7dde785bed54');
+var_dump($data);
+```
+
+Output:
+```
+object(KSearchClient\Model\Data\Data)#121 (8) {
+  ["uuid"]=>
+  string(36) "b2c16bd1-6739-4fd9-a1e2-7dde785bed54"
+  ["url"]=>
+  string(33) "http://norvig.com/palindrome.html"
+  ["hash"]=>
+  string(128) "30163935c002fc4e1200906c3d30a9c4956b4af9f6dcaef1eb4b1fcb8fba69e7a7acdc491ea5b1f2864ea8c01b01580ef09defc3b11b3f183cb21d236f7f1a6b"
+  ["type"]=>
+  string(8) "document"
+  ["properties"]=>
+  object(KSearchClient\Model\Data\Properties)#149 (14) {
+    ["title"]=>
+    string(29) "Adventures of Sherlock Holmes"
+    ["filename"]=>
+    string(33) "adventures-of-sherlock-holmes.pdf"
+    ["mime_type"]=>
+    string(15) "application/pdf"
+    ["language"]=>
+    string(2) "en"
+    ["created_at"]=>
+    object(DateTime)#183 (3) {
+      ["date"]=>
+      string(26) "2017-11-02 12:13:35.000000"
+      ["timezone_type"]=>
+      int(3)
+      ["timezone"]=>
+      string(3) "UTC"
+    }
+    ["updated_at"]=>
+    object(DateTime)#180 (3) {
+      ["date"]=>
+      string(26) "2017-11-02 12:13:35.000000"
+      ["timezone_type"]=>
+      int(3)
+      ["timezone"]=>
+      string(3) "UTC"
+    }
+    ["size"]=>
+    int(2048)
+    ["abstract"]=>
+    string(31) "It is a novel about a detective"
+    ["thumbnail"]=>
+    string(83) "https://ichef.bbci.co.uk/news/660/cpsprodpb/153B4/production/_89046968_89046967.jpg"
+    ["tags"]=>
+    array(2) {
+      [0]=>
+      string(4) "tag1"
+      [1]=>
+      string(4) "tag2"
+    }
+    ["collections"]=>
+    array(2) {
+      [0]=>
+      string(3) "123"
+      [1]=>
+      string(3) "456"
+    }
+    ["video"]=>
+    NULL
+    ["audio"]=>
+    NULL
+    ["subtitles"]=>
+    NULL
+  }
+  ["author"]=>
+  array(1) {
+    [0]=>
+    object(KSearchClient\Model\Data\Author)#165 (3) {
+      ["name"]=>
+      string(18) "Arthur Conan Doyle"
+      ["email"]=>
+      string(18) "arthur@conan.doyle"
+      ["contact"]=>
+      string(17) "221B Baker Street"
+    }
+  }
+  ["copyright"]=>
+  object(KSearchClient\Model\Data\Copyright)#117 (2) {
+    ["owner"]=>
+    object(KSearchClient\Model\Data\CopyrightOwner)#196 (3) {
+      ["name"]=>
+      string(18) "KLink Organization"
+      ["email"]=>
+      string(15) "info@klink.asia"
+      ["contact"]=>
+      string(36) "KLink Website: http://www.klink.asia"
+    }
+    ["usage"]=>
+    object(KSearchClient\Model\Data\CopyrightUsage)#208 (3) {
+      ["short"]=>
+      string(7) "MPL-2.0"
+      ["name"]=>
+      string(26) "Mozilla Public License 2.0"
+      ["reference"]=>
+      string(38) "https://spdx.org/licenses/MPL-2.0.html"
+    }
+  }
+  ["uploader"]=>
+  object(KSearchClient\Model\Data\Uploader)#221 (4) {
+    ["name"]=>
+    string(13) "Uploader name"
+    ["url"]=>
+    NULL
+    ["app_url"]=>
+    NULL
+    ["email"]=>
+    NULL
+  }
+}
 ```
 
 ##### Search a document
@@ -347,23 +590,189 @@ $client = Client::build($service_url, new Authentication($app_secret, $app_url))
 
 $searchParams = new SearchParams();
 $searchParams->search = 'Sherlock';
-$searchParams->filters = 'properties:es AND properties.mime_type:\'application/pdf\'';
+$searchParams->filters = 'properties.language:en AND properties.mime_type:"application/pdf"';
 $searchParams->aggregations = [];
 
 $languageAggregation = new Aggregation();
 $languageAggregation->countsFiltered = false;
 $languageAggregation->limit = 15;
 
-$searchParams->aggregations['language'] = $languageAggregation;
+$searchParams->aggregations['properties.language'] = $languageAggregation;
 
-$searchParams = new SearchParams();
+$result = $client->search($searchParams);
+
+var_dump($result);
 
 ```
 
 The result will return the found documents and, because we are adding an `Aggregation`, it will also return how many documents exists in each language.
 
-The `$languageAggregation->countsFiltered = false` is important in that case since we are telling KSearch to apply the aggregations before doing the filtering. Otherwise, the aggregation would be applied after the filtering. 
+The `$languageAggregation->countsFiltered = false` is important in that case since we are telling KSearch to apply the aggregations before doing the filtering. Otherwise, the aggregation would be applied after the filtering.
 
+Output:
+```
+object(KSearchClient\Model\Data\SearchResults)#285 (5) {
+  ["query"]=>
+  object(KSearchClient\Model\Data\SearchParams)#292 (5) {
+    ["search"]=>
+    string(8) "Sherlock"
+    ["filters"]=>
+    string(65) "properties.language:en AND properties.mime_type:"application/pdf""
+    ["aggregations"]=>
+    array(1) {
+      ["properties.language"]=>
+      object(KSearchClient\Model\Data\Aggregation)#283 (2) {
+        ["limit"]=>
+        int(15)
+        ["countsFiltered"]=>
+        bool(false)
+      }
+    }
+    ["limit"]=>
+    int(10)
+    ["offset"]=>
+    int(0)
+  }
+  ["query_time"]=>
+  int(6)
+  ["total_matches"]=>
+  int(1)
+  ["aggregations"]=>
+  array(1) {
+    ["properties.language"]=>
+    array(2) {
+      [0]=>
+      object(KSearchClient\Model\Data\AggregationResult)#304 (2) {
+        ["value"]=>
+        string(2) "es"
+        ["count"]=>
+        int(2)
+      }
+      [1]=>
+      object(KSearchClient\Model\Data\AggregationResult)#303 (2) {
+        ["value"]=>
+        string(2) "en"
+        ["count"]=>
+        int(1)
+      }
+    }
+  }
+  ["items"]=>
+  array(1) {
+    [0]=>
+    object(KSearchClient\Model\Data\Data)#310 (8) {
+      ["uuid"]=>
+      string(36) "b2c16bd1-6739-4fd9-a1e2-7dde785bed54"
+      ["url"]=>
+      string(33) "http://norvig.com/palindrome.html"
+      ["hash"]=>
+      string(128) "30163935c002fc4e1200906c3d30a9c4956b4af9f6dcaef1eb4b1fcb8fba69e7a7acdc491ea5b1f2864ea8c01b01580ef09defc3b11b3f183cb21d236f7f1a6b"
+      ["type"]=>
+      string(8) "document"
+      ["properties"]=>
+      object(KSearchClient\Model\Data\Properties)#312 (14) {
+        ["title"]=>
+        string(29) "Adventures of Sherlock Holmes"
+        ["filename"]=>
+        string(33) "adventures-of-sherlock-holmes.pdf"
+        ["mime_type"]=>
+        string(15) "application/pdf"
+        ["language"]=>
+        string(2) "en"
+        ["created_at"]=>
+        object(DateTime)#314 (3) {
+          ["date"]=>
+          string(26) "2017-11-02 12:28:58.000000"
+          ["timezone_type"]=>
+          int(3)
+          ["timezone"]=>
+          string(3) "UTC"
+        }
+        ["updated_at"]=>
+        object(DateTime)#315 (3) {
+          ["date"]=>
+          string(26) "2017-11-02 12:28:58.000000"
+          ["timezone_type"]=>
+          int(3)
+          ["timezone"]=>
+          string(3) "UTC"
+        }
+        ["size"]=>
+        int(2048)
+        ["abstract"]=>
+        string(31) "It is a novel about a detective"
+        ["thumbnail"]=>
+        string(83) "https://ichef.bbci.co.uk/news/660/cpsprodpb/153B4/production/_89046968_89046967.jpg"
+        ["tags"]=>
+        array(2) {
+          [0]=>
+          string(4) "tag1"
+          [1]=>
+          string(4) "tag2"
+        }
+        ["collections"]=>
+        array(2) {
+          [0]=>
+          string(3) "123"
+          [1]=>
+          string(3) "456"
+        }
+        ["video"]=>
+        NULL
+        ["audio"]=>
+        NULL
+        ["subtitles"]=>
+        NULL
+      }
+      ["author"]=>
+      array(1) {
+        [0]=>
+        object(KSearchClient\Model\Data\Author)#313 (3) {
+          ["name"]=>
+          string(18) "Arthur Conan Doyle"
+          ["email"]=>
+          string(18) "arthur@conan.doyle"
+          ["contact"]=>
+          string(17) "221B Baker Street"
+        }
+      }
+      ["copyright"]=>
+      object(KSearchClient\Model\Data\Copyright)#316 (2) {
+        ["owner"]=>
+        object(KSearchClient\Model\Data\CopyrightOwner)#317 (3) {
+          ["name"]=>
+          string(18) "KLink Organization"
+          ["email"]=>
+          string(15) "info@klink.asia"
+          ["contact"]=>
+          string(36) "KLink Website: http://www.klink.asia"
+        }
+        ["usage"]=>
+        object(KSearchClient\Model\Data\CopyrightUsage)#318 (3) {
+          ["short"]=>
+          string(7) "MPL-2.0"
+          ["name"]=>
+          string(26) "Mozilla Public License 2.0"
+          ["reference"]=>
+          string(38) "https://spdx.org/licenses/MPL-2.0.html"
+        }
+      }
+      ["uploader"]=>
+      object(KSearchClient\Model\Data\Uploader)#319 (4) {
+        ["name"]=>
+        string(13) "Uploader name"
+        ["url"]=>
+        NULL
+        ["app_url"]=>
+        NULL
+        ["email"]=>
+        NULL
+      }
+    }
+  }
+}
+
+``` 
 
 ## Testing
 
