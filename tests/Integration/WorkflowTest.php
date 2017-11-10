@@ -1,14 +1,14 @@
 <?php
+
 namespace Tests\Integration;
 
-use Tests\TestCase;
-use KSearchClient\Model\Data\Data;
 use GuzzleHttp\Psr7\Request;
+use KSearchClient\Model\Data\Data;
+use KSearchClient\Model\Data\DataStatus;
 use Psr\Http\Message\RequestInterface;
 use Ramsey\Uuid\Uuid;
 use Tests\Concern\SetupIntegrationTest;
-use KSearchClient\Exception\ErrorResponseException;
-use KSearchClient\Exception\InvalidDataException;
+use Tests\TestCase;
 
 class WorkflowTest extends TestCase
 {
@@ -36,11 +36,12 @@ class WorkflowTest extends TestCase
      */
     public function testWorkflowRetrievesStatusForRecentlyAddedData($uuid)
     {
+        /** @var DataStatus $status */
         $status = $this->client->getStatus($uuid);
 
-        $this->assertNotEmpty($status);
-        $this->assertInternalType('string', $status);
-        $this->assertEquals('ok', $status);
+        $this->assertInstanceOf(DataStatus::class, $status);
+        $this->assertInternalType('string', $status->status);
+        $this->assertEquals('ok', $status->status);
 
         return $uuid;
     }
@@ -56,7 +57,7 @@ class WorkflowTest extends TestCase
 
         return $uuid;
     }
-    
+
     /**
      * @depends testWorkflowRetrievesAddedData
      */

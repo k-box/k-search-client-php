@@ -3,22 +3,22 @@
 namespace KSearchClient;
 
 use Doctrine\Common\Annotations\AnnotationRegistry;
-use Http\Client\HttpClient;
+use Http\Client\Common\Plugin\AuthenticationPlugin;
+use Http\Client\Common\Plugin\HeaderSetPlugin;
 use Http\Client\Common\PluginClient;
+use Http\Client\HttpClient;
 use Http\Discovery\HttpClientDiscovery;
 use Http\Discovery\MessageFactoryDiscovery;
 use Http\Message\Authentication;
-use KSearchClient\Http\NullAuthentication;
-use Http\Client\Common\Plugin\AuthenticationPlugin;
-use Http\Client\Common\Plugin\HeaderSetPlugin;
 use Http\Message\MessageFactory;
 use JMS\Serializer\Serializer;
-use KSearchClient\Http\ResponseHelper;
-use KSearchClient\Http\Routes;
 use KSearchClient\Exception\AuthTypeNotSupportedException;
 use KSearchClient\Exception\ErrorResponseException;
-use KSearchClient\Exception\SerializationException;
 use KSearchClient\Exception\InvalidDataException;
+use KSearchClient\Exception\SerializationException;
+use KSearchClient\Http\NullAuthentication;
+use KSearchClient\Http\ResponseHelper;
+use KSearchClient\Http\Routes;
 use KSearchClient\Model\Data\AddResponse;
 use KSearchClient\Model\Data\Data;
 use KSearchClient\Model\Data\DataStatus;
@@ -29,7 +29,6 @@ use KSearchClient\Model\Data\SearchResponse;
 use KSearchClient\Model\Data\SearchResults;
 use KSearchClient\Model\Error\ErrorResponse;
 use KSearchClient\Model\RPCRequest;
-use KSearchClient\Model\Status\Status;
 use KSearchClient\Model\Status\StatusResponse;
 use KSearchClient\Validator\AuthTypeValidator;
 use Psr\Http\Message\ResponseInterface;
@@ -147,7 +146,8 @@ class Client
      * Get the processing status of a recently added data
      * 
      * @param string $uuid
-     * @return string The status. Possible values are "ok", "queued"
+     *
+     * @return DataStatus The data status
      */
     public function getStatus($uuid)
     {
@@ -156,10 +156,10 @@ class Client
 
         $response = $this->handleRequest($request, $route);
 
-        /** @var DataStatusResponse $getRes */
+        /** @var DataStatusResponse $dataStatusResponse */
         $dataStatusResponse = $this->serializer->deserialize($response->getBody(), DataStatusResponse::class, self::SERIALIZER_FORMAT);
         // todo: check for deserialization errors and in case status is null raise an exception
-        return $dataStatusResponse->result->status;
+        return $dataStatusResponse->result;
     }
 
     /**
@@ -214,20 +214,21 @@ class Client
     }
 
     /**
-     * @param $request
-     * @param $route
+     * Handle and send the request to the given route.
+     *
+     * @param RPCRequest $request The request data
+     * @param string     $route   The API route
+     *
      * @return ResponseInterface
+     * @throws SerializationException
      */
     private function handleRequest($request, $route)
     {
-        $serializedRequestBody = '';
         try{
-
             $serializedRequestBody = $this->serializer->serialize($request, self::SERIALIZER_FORMAT);
-
         } catch(\Throwable $ex){
             throw new SerializationException($ex->getMessage());
-        } catch(Exception $ex){
+        } catch(\Exception $ex){
             throw new SerializationException($ex->getMessage());
         }
 

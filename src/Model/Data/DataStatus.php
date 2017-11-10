@@ -3,33 +3,26 @@
 namespace KSearchClient\Model\Data;
 
 use JMS\Serializer\Annotation as JMS;
-use Swagger\Annotations as SWG;
 
-/**
- * ##SWG\Definition(
- *     definition="Data\DataStatus",
- *     required={"code", "status"}
- * )
- */
 class DataStatus
 {
+    const STATUS_OK = 'ok';
+    const STATUS_QUEUED = 'queued';
+    const STATUS_ERROR = 'error';
+
     /**
      * The status.
      *
      * @var string
      * @JMS\Type("string")
-     * ##JMS\ReadOnly()
-     * ##SWG\Property(
-     *     example="queued",
-     * )
      */
     public $status;
 
     /**
-     * @param string $status
+     * The status message, if any.
+     *
+     * @var string
+     * @JMS\Type("string")
      */
-    public function __construct($status)
-    {
-        $this->status = $status;
-    }
+    public $message;
 }
