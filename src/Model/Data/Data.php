@@ -3,8 +3,6 @@
 namespace KSearchClient\Model\Data;
 
 use JMS\Serializer\Annotation as JMS;
-use Swagger\Annotations as SWG;
-use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * ##SWG\Definition(
@@ -95,7 +93,7 @@ class Data
      * @JMS\Type("array<KSearchClient\Model\Data\Author>")
      * ##SWG\Property()
      */
-    public $author;
+    public $authors;
 
     /**
      * Information on the copyright.

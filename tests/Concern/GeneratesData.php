@@ -32,7 +32,7 @@ trait GeneratesData
         $author->name = "An Author Name";
         $author->email = "author@email.com";
 
-        $data->author = [
+        $data->authors = [
             $author
         ];
 
