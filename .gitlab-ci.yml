@@ -36,11 +36,11 @@ before_script:
 
 # Testing jobs
 
-phpunit:5.6:
-  image: "docker.klink.asia/main/docker-php:5.6"
-  <<: *tester_plus_coverage
-  tags:
-  - docker
+# phpunit:5.6:
+#   image: "docker.klink.asia/main/docker-php:5.6"
+#   <<: *tester_plus_coverage
+#   tags:
+#   - docker
   
 
 phpunit:7.0:

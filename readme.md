@@ -24,11 +24,11 @@ For release changelogs see the [Changelog document](./changelog.md)
 
 ## Requirements
 
-- PHP 5.6.4 or above
+- PHP 7.0 or above
 - PHP GD library for image support with PNG library (some PHP installation might not have the library bundled)
 - CURL
 
-Tested on PHP 5.6, 7.0 and 7.1. Runs on Windows, MacOS and Ubuntu 14.04+
+Tested on PHP 7.0 and 7.1. Runs on Windows, MacOS and Ubuntu 14.04+
 
 > **This release supports K-Core/K-Search API version 2.1 and 2.2**. It is compatible with K-Core component up to version 2.6.1 
 
