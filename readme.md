@@ -375,6 +375,9 @@ Integration tests requires to set the `KSEARCH_URL` environment variable to the 
 
 Leaving the `KSEARCH_URL` variable empty will cause the integration tests to be skipped.
 
+For specific tests a webserver that generates specific failures might be needed. The Host and Port of that server can be configured with the `FAILURE_GENERATOR_SERVER` environment variable. The variable is expected to contain both host and port, like `docker.for.win.localhost:8001`, if the server is running on localhost port 8001 and the K-Search is running in a docker image on localhost.
+
+The failure generator webserver replies with correct responses to HEAD requests, while generate a 404 for every GET request. You can see an example implementation in https://git.klink.asia/paul/failure 
 
 ## Contributing
 

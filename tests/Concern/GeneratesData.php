@@ -18,14 +18,14 @@ trait GeneratesData
      * @param string $sampleUUID
      * @return \KSearchClient\Model\Data\Data
      */
-    public function createDataModel($sampleUUID)
+    public function createDataModel($sampleUUID, $url = 'http://example.com/data.txt')
     {
         $date = new \DateTime('2008-07-28T14:47:31Z', new \DateTimeZone('UTC'));
 
         $data = new Data();
         $data->hash = hash('sha512', 'hash');
         $data->type = 'document';
-        $data->url = 'http://example.com/data.txt';
+        $data->url = $url;
         $data->uuid = $sampleUUID;
 
         $author = new Author();
