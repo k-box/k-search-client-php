@@ -1,5 +1,5 @@
-[![build status](https://git.klink.asia/open/k-search-client-php/badges/2.30.x/build.svg)](https://git.klink.asia/open/k-search-client-php/commits/2.30.x) 
-[![coverage report](https://git.klink.asia/open/k-search-client-php/badges/2.30.x/coverage.svg)](https://git.klink.asia/open/k-search-client-php/commits/2.30.x)
+[![pipeline status](https://git.klink.asia/main/k-search-client-php/badges/2.30.x/pipeline.svg)](https://git.klink.asia/main/k-search-client-php/commits/2.30.x) 
+[![coverage report](https://git.klink.asia/main/k-search-client-php/badges/2.30.x/coverage.svg)](https://git.klink.asia/main/k-search-client-php/commits/2.30.x)
 
 # K-Search Client for K-Search 2.x
 
