@@ -65,7 +65,7 @@ class Client
      * 
      * @param string $kSearchUrl
      */
-    public function __construct($kSearchUrl, Authentication $authentication, Http\RequestFactory $apiRequestFactory, Serializer $serializer, HttpClient $httpClient, MessageFactory $messageFactory)
+    public function __construct($kSearchUrl, Authentication $authentication, Http\RequestFactory $apiRequestFactory, Serializer $serializer, HttpClient $httpClient, MessageFactory $messageFactory, $apiVersion = '3.0')
     {
         // registering a PluginClient as the authentication and content headers should be added to all requests
         $this->httpClient = new PluginClient(
@@ -81,7 +81,7 @@ class Client
         );
 
         $this->messageFactory = $messageFactory ?: MessageFactoryDiscovery::find();
-        $this->routes = new Routes($kSearchUrl);
+        $this->routes = new Routes($kSearchUrl, $apiVersion);
         $this->apiRequestFactory = $apiRequestFactory;
         $this->serializer = $serializer;
     }
@@ -247,7 +247,7 @@ class Client
      * @param \KSearchClient\Http\Authentication $authentication The authentication credentials, if necessary
      * @return Client
      */
-    public static function build($instanceUrl, Authentication $authentication = null)
+    public static function build($instanceUrl, Authentication $authentication = null, $apiVersion = '3.0')
     {
         AnnotationRegistry::registerLoader('class_exists');
 
@@ -257,6 +257,6 @@ class Client
         $httpClient = HttpClientDiscovery::find();
         $messageFactory = MessageFactoryDiscovery::find();
 
-        return new self($instanceUrl, $authentication ? $authentication : (new NullAuthentication), $factory, $serializer, $httpClient, $messageFactory);
+        return new self($instanceUrl, $authentication ? $authentication : (new NullAuthentication), $factory, $serializer, $httpClient, $messageFactory, $apiVersion);
     }
 }

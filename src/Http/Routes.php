@@ -14,14 +14,18 @@ final class Routes
 
     /** @var string */
     private $baseUrl;
+    
+    /** @var string */
+    private $apiVersion;
 
     /**
      * @param string $baseUrl
      */
-    public function __construct($baseUrl)
+    public function __construct($baseUrl, $apiVersion = '3.0')
     {
         $baseUrl = trim($baseUrl);
         $this->baseUrl = trim($baseUrl, '/');
+        $this->apiVersion = trim($apiVersion);
     }
 
     /**
@@ -69,6 +73,6 @@ final class Routes
      */
     private function buildURL($endpoint)
     {
-        return sprintf('%s/api/0.0/%s', $this->baseUrl, $endpoint);
+        return sprintf('%s/api/%s/%s', $this->baseUrl, $this->apiVersion, $endpoint);
     }
 }

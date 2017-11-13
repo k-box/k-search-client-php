@@ -26,12 +26,12 @@ class RoutesTest extends TestCase
 
         $route_url = $routes->getDataAdd();
         
-        $this->assertEquals('http://localhost/api/0.0/data.add', $route_url);
+        $this->assertEquals('http://localhost/api/3.0/data.add', $route_url);
     }
 
     public function testDataGetRouteIsReturned()
     {
-        $routes = new Routes('http://localhost/');
+        $routes = new Routes('http://localhost/', '0.0');
 
         $route_url = $routes->getDataGet();
         
@@ -44,7 +44,7 @@ class RoutesTest extends TestCase
 
         $route_url = $routes->getDataDelete();
         
-        $this->assertEquals('http://localhost/api/0.0/data.delete', $route_url);
+        $this->assertEquals('http://localhost/api/3.0/data.delete', $route_url);
     }
 
     public function testDataStatusRouteIsReturned()
@@ -53,7 +53,7 @@ class RoutesTest extends TestCase
 
         $route_url = $routes->getDataStatus();
         
-        $this->assertEquals('http://localhost/api/0.0/data.status', $route_url);
+        $this->assertEquals('http://localhost/api/3.0/data.status', $route_url);
     }
 
     public function testSearchRouteIsReturned()
@@ -62,7 +62,7 @@ class RoutesTest extends TestCase
 
         $route_url = $routes->getSearchQuery();
         
-        $this->assertEquals('http://localhost/api/0.0/data.search', $route_url);
+        $this->assertEquals('http://localhost/api/3.0/data.search', $route_url);
     }
 
 
