@@ -162,7 +162,7 @@ $author->name = 'Arthur Conan Doyle';
 $author->contact = '221B Baker Street';
 
 //The authors of the piece of data
-$data->author = [$author]; //An array with the different document's authors
+$data->authors = [$author]; //An array with the different document's authors
 
 $data->copyright = new Copyright(); //Copyright info
 $data->copyright->owner = new CopyrightOwner();
