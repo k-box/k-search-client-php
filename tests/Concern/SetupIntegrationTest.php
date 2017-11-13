@@ -19,6 +19,7 @@ trait SetupIntegrationTest
         $auth = new Authentication(getenv('KSEARCH_APP_SECRET'), getenv('KSEARCH_APP_URL'));
         
         $service_url = getenv('KSEARCH_URL');
+        $api_version = getenv('KSEARCH_VERSION');
 
         if(empty($service_url)){
             $this->markTestSkipped(
@@ -26,7 +27,7 @@ trait SetupIntegrationTest
                 );
         }
         
-        $this->client = Client::build($service_url, $auth);
+        $this->client = Client::build($service_url, $auth, $api_version ? $api_version : '3.0');
     }
     
 }
