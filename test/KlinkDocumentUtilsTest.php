@@ -6,13 +6,6 @@
 class KlinkDocumentUtilsTest extends PHPUnit_Framework_TestCase 
 {
 
-	// public static $test_pdf_file_path = null;
-
-	// public static function setUpBeforeClass()
- //    {
- //        KlinkDocumentUtilsTest::$test_pdf_file_path = __DIR__ . '/test.pdf';
- //    }
-
 	private $stream = null;
 
 	public function setUp()
@@ -187,16 +180,6 @@ class KlinkDocumentUtilsTest extends PHPUnit_Framework_TestCase
 		 return $inputs;
 	}
 
-	// public function fileInputForException(){
-
-	// 	$inputs = array(
-	// 		array('application/pdf', str_replace('.pdf', '', self::getFilePath())),
-	// 		array('application/pdf', 'http://ciao/'),
-	// 		array('application/pdf', 'temporary::/2137863'),
-	// 	);
-
-	// 	 return $inputs;
-	// }
 	
 	public function inputForIndexableTest(){
 		$inputs = array(

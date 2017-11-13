@@ -88,16 +88,6 @@ class KlinkFacetsBuilderTest extends PHPUnit_Framework_TestCase
 		);
 	}
 
-	public function invalid_documentTypes()
-	{
-		return array(
-			array('banas'),
-			array('orange'),
-			array('jiuce,apple'),
-		);
-	}
-
-
 	public function valid_params()
 	{
 		return array(
@@ -314,19 +304,7 @@ class KlinkFacetsBuilderTest extends PHPUnit_Framework_TestCase
 		KlinkFacetsBuilder::i()->institution('IM-NOT-AN_ID');
 
 	}
-
-
-	/**
-	 * @dataProvider invalid_documentTypes
-	 * @expectedException InvalidArgumentException
-	 */
-	public function testDocumentTypeFacetWithInvalidType($documentType)
-	{
-		
-		KlinkFacetsBuilder::i()->documentType($documentType);
-
-	}
-
+	
 	/**
 	 * [testDocumentTypeFacetWithValidType description]
 	 * @dataProvider valid_documentTypes

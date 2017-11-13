@@ -3,7 +3,7 @@ stages:
   - release
 
 cache:
-  key: "kbox"
+  key: "2-30-ksearch-client"
   paths:
   - .composer-cache/
 
@@ -37,20 +37,20 @@ before_script:
 # Testing jobs
 
 phpunit:5.6:
-  image: "docker.klink.asia/open/docker-php:5.6"
+  image: "docker.klink.asia/main/docker-php:5.6"
   <<: *tester_plus_coverage
   tags:
   - docker
   
 
 phpunit:7.0:
-  image: "docker.klink.asia/open/docker-php:7.0"
+  image: "docker.klink.asia/main/docker-php:7.0"
   <<: *tester_plus_coverage
   tags:
   - docker
   
 phpunit:7.1:
-  image: "docker.klink.asia/open/docker-php:7.1"
+  image: "docker.klink.asia/main/docker-php:7.1"
   <<: *tester_plus_coverage
   tags:
   - docker

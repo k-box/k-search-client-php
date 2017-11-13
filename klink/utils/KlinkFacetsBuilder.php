@@ -98,21 +98,6 @@ final class KlinkFacetsBuilder
 		}
 		else {
 
-			if(!is_null($builded_params['filter'])){
-
-				$exploded = explode(',', $builded_params['filter']);
-
-				$valids = KlinkDocumentUtils::getDocumentTypes();
-
-				foreach ($exploded as $single_filter) {
-					if(!in_array($single_filter, $valids)){
-						throw new InvalidArgumentException("Invalid document type ". $single_filter ."for filter", 2);
-					}
-				}
-
-
-			}
-
 			$facet = KlinkFacet::create(KlinkFacet::DOCUMENT_TYPE, 
 						$builded_params['mincount'], 
 						$builded_params['prefix'], 

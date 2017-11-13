@@ -1,11 +1,10 @@
-[![build status](https://git.klink.asia/open/k-search-client-php/badges/master/build.svg)](https://git.klink.asia/open/k-search-client-php/commits/master) 
-[![coverage report](https://git.klink.asia/open/k-search-client-php/badges/master/coverage.svg)](https://git.klink.asia/open/k-search-client-php/commits/master)
+[![build status](https://git.klink.asia/open/k-search-client-php/badges/2.30.x/build.svg)](https://git.klink.asia/open/k-search-client-php/commits/2.30.x) 
+[![coverage report](https://git.klink.asia/open/k-search-client-php/badges/2.30.x/coverage.svg)](https://git.klink.asia/open/k-search-client-php/commits/2.30.x)
 
-# Adapter Boilerplate
+# K-Search Client for K-Search 2.x
 
-The _Adapter Boilerplate_ is a *PHP library*. Is designed for speed-up the communication process 
-between the K-Core service (both private of an Institution or the K-Link Public Network) with 
-the PHP software component you want to build.
+The _K-Search client_ is a *PHP library*. Is designed for speed-up the communication process 
+between the K-Core/K-Search service with the PHP software component you want to build.
 
 It offers:
 
@@ -19,19 +18,21 @@ It offers:
 
 For release changelogs see the [Changelog document](./changelog.md)
 
-
-**For the 2.x release please refer to the branch [`2.x`](https://git.klink.asia/kadapters/adapterboilerplate/tree/2.x)**
+> **Important notices:**
+> - The composer package name has been changed to `k-box/k-search-client-php`
+> - The version numbering has been changed. Last version is `2.30`.
 
 ## Requirements
 
-- PHP 5.5.9 or above
+- PHP 5.6.4 or above
 - PHP GD library for image support with PNG library (some PHP installation might not have the library bundled)
 - CURL
 
-Tested on PHP 5.5.9, 5.6 and 7.0. Runs on Windows, MacOS and Ubuntu 14.04+
+Tested on PHP 5.6, 7.0 and 7.1. Runs on Windows, MacOS and Ubuntu 14.04+
 
-**This release supports K-Core API version 2.1 and 2.2**. When configuring a K-Core connection please specify the API 
-version, otherwise version 2.2 will be assumed.
+> **This release supports K-Core/K-Search API version 2.1 and 2.2**. It is compatible with K-Core component up to version 2.6.1 
+
+When configuring a K-Core connection please specify the API version, otherwise version 2.2 will be assumed.
 
 ## Usage
 
@@ -45,8 +46,8 @@ In order to require it in your project add the following repository configuratio
 ```json
 "repositories": [
     {
-        "type": "composer",
-        "url": "https://build.klink.asia/composer/"
+        "type": "vcs",
+        "url": "https://git.klink.asia/main/k-search-client-php"
     }
 ]
 ```
@@ -54,7 +55,7 @@ In order to require it in your project add the following repository configuratio
 Now you could require the Adapter Boilerplate 
 
 ```bash
-composer require --prefer-dist klink/adapterboilerplate
+composer require --prefer-dist k-box/k-search-client-php:2.30.*
 ```
 
 After that you can use the available classes as shown in the [Examples](#examples) section.
