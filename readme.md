@@ -248,20 +248,22 @@ When this approach is used, the data will be avaiable immediately in search resu
 
 ##### Monitoring the status of the data add request
 
-Once an add request is sent, the developer must control its status. 
+Once an add request is sent, the developer must control its status:
 
-There are two statuses:
+- `ok`: Means that the data has been correctly proccessed by the K-Search
+- `queued`: Means that the data is in the queue for being processed
+- `error`: Means that an error occurred while processing the request
 
-- `Ok`: Means that the data has been correctly proccessed by the K-Search
-- `Queued`: Means that the data is in the queue for being processed
-
-An example for checking a data status is:
+An example for checking the status is:
 
 ```php
 $uuid = 'b2c16bd1-6739-4fd9-a1e2-7dde785bed54';
 $status = $client->getStatus($uuid);
-// ok || queued
+// instance of KSearchClient\Model\Data\DataStatus
 ```
+
+In case of error, the `$status->message` field will contain a description 
+of the occurred problem.
 
 ##### Get data
 

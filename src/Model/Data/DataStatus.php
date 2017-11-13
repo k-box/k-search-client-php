@@ -19,7 +19,7 @@ class DataStatus
     public $status;
 
     /**
-     * The status message, if any.
+     * The status description message, if any.
      *
      * @var string
      * @JMS\Type("string")
