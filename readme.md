@@ -3,14 +3,23 @@
 
 # K-Search PHP Client
 
-> **This client is a complete rewrite and breaks the compatibility with the older versions**
-> **It targets K-Search API version 3.0**.
+The K-Search Client is a library that abstract the communication to a [K-Search](https://git.klink.asia/main/k-search) instance.
 
-The K-Search Client is a library that enables to communicate to a K-Serch instance.
+The library enables the following operations
+
+- Perform [add Data requests](#adding-data)
+- Get [status of add data requests](#monitoring-the-status-of-the-data-add-request)
+- [Retrieve data details](#get-data)
+- [Remove an already added data](#remove-data)
+- [Search data](#search-data) using terms, filters and aggregations.
+
+**Compatible with K-Search version 3.x**.
 
 For release changelogs see the [Changelog](./changelog.md)
 
-Compatible and tested on PHP 5.6, 7.0 and 7.1.
+**Requirements**
+
+- [PHP 5.6](http://www.php.net/) or above.
 
 ## Getting Started
 
@@ -35,7 +44,7 @@ The K-Search api client is not hard coupled to [Guzzle](https://github.com/guzzl
 If you just want to get started quickly you should run the following command:
 
 ```bash
-composer require php-http/guzzle6-adapter guzzlehttp/psr7 klink/adapterboilerplate@dev-ksearchv3
+composer require php-http/guzzle6-adapter guzzlehttp/psr7 k-box/k-search-client-php@3.0
 ```
 
 ### Why requiring so many packages?
@@ -47,7 +56,7 @@ You do not have to use the `php-http/guzzle6-adapter` if you do not want to. You
 
 ### Usage
 
-You should always use Composer's autoloader in your application to automatically load the your dependencies. 
+You should always use Composer's autoloader in your application to automatically load the dependencies. 
 
 All examples below assumes you've already included this in your file:
 
@@ -73,7 +82,7 @@ $client = Client::build($service_url);
 
 **When authentication is required**
 
-The client, in addition to the K-Search URL, needs a valid `app_secret` and `app_url` from the K-Registry. After obtaining the pair you can instantiate a client like
+The client, in addition to the K-Search URL, needs a valid `app_secret` and `app_url` from the K-Registry that handles application registration for the specific K-Search instance. After obtaining the pair you can instantiate a client like
 
 ```php
 // Authentication
@@ -87,25 +96,26 @@ $service_url = 'https://search.klink.asia/';
 $client = Client::build($service_url, new Authentication($app_secret, $app_url));
 ```
 
-#### Working with documents
+#### Working with a Client instance
 
-The client can do 4 operation with documents. Those are:
+In this section an example usage for each library feature is presented.
 
-* To index a document/video
-* To get the document's status
-* To remove a document already indexed
-* To retrieve a document from the index
-* To search a document
+All examples below assumes you've already [instantiated a Client](#instantiate-a-client) using an instantiation approach and that the Client is accessible using a `$client` variable in the current scope.
 
-##### Indexing a document
+##### Adding data
 
-The client uses a class that represent a document. That class is `KSearchClient\Model\Data\Data`. In order to index a document, you have to create a new object of that class and fill the appropiate properties:
+Adding Data to the K-Search means creating a description of the data to be added and indicating the way the K-Search should obtain the real content of the described data.
+
+The K-Search supports different data description type, the most common common are `document` and `video`. Depending on the data type a set of different properties is expected. `document` refers to a generic textual document, while `video` is designed to describe a video file.
+
+For more information on data types and the supported formats refer to the [K-Search documentation](https://git.klink.asia/main/k-search/).
+
+**Creating a data descriptor**
+
+A Data descriptor for a document can be instantiated like
 
 ```php
-require 'vendor/autoload.php';
-
-use KSearchClient\Client;
-use KSearchClient\Http\Authentication;
+use DateTime;
 use KSearchClient\Model\Data\Data;
 use KSearchClient\Model\Data\Copyright;
 use KSearchClient\Model\Data\CopyrightOwner;
@@ -114,14 +124,45 @@ use KSearchClient\Model\Data\Properties;
 use KSearchClient\Model\Data\Uploader;
 use KSearchClient\Model\Data\Author;
 
-$client = Client::build($service_url, new Authentication($app_secret, $app_url));
-
-//We create the Data object
+//Create the Data object that will contain all the properties
+// if not specified all fields are required
 $data = new Data();
-$data->hash = hash('sha512', 'hash'); //The document hash
-$data->type = 'document'; //This can be a 'video' or 'document'
-$data->url = 'http://norvig.com/palindrome.html'; //The document URL
-$data->uuid = 'b2c16bd1-6739-4fd9-a1e2-7dde785bed54'; //A unique UUID that identifies this document
+
+//The UUID that identifies this data, as string
+$data->uuid = 'b2c16bd1-6739-4fd9-a1e2-7dde785bed54';
+
+//The SHA-2 hash of the content that is described by this Data instance
+$data->hash = hash('sha512', 'File Content'); 
+
+//The type of the data descriptor. 'video' or 'document'
+$data->type = 'document'; 
+
+//The URL at which the described data can be downloaded. 
+// It must return the exact content, no preview pages or other screens
+$data->url = 'http://norvig.com/palindrome.html';
+
+// The data properties. Those properties are dependent from the specified $data->type
+$data->properties = new Properties(); //The document properties
+$data->properties->title = 'Adventures of Sherlock Holmes';
+$data->properties->filename = 'adventures-of-sherlock-holmes.pdf';
+$data->properties->mime_type = 'application/pdf';
+$data->properties->language = 'en'; // The ISO 639-1 language code
+$data->properties->created_at = new DateTime();
+$data->properties->updated_at = new DateTime();
+$data->properties->size = 2048; //The size of the file content in bytes
+$data->properties->abstract = 'It is a novel about a detective';
+$data->properties->thumbnail = 'https://ichef.bbci.co.uk/news/660/cpsprodpb/153B4/production/_89046968_89046967.jpg';
+
+$data->uploader = new Uploader(); //The originating source where the data has been uploaded or created.
+$data->uploader->name = 'Uploader name';
+
+$author = new Author(); 
+$author->email = 'arthur@conan.doyle';
+$author->name = 'Arthur Conan Doyle';
+$author->contact = '221B Baker Street';
+
+//The authors of the piece of data
+$data->author = [$author]; //An array with the different document's authors
 
 $data->copyright = new Copyright(); //Copyright info
 $data->copyright->owner = new CopyrightOwner();
@@ -130,223 +171,33 @@ $data->copyright->owner->email = 'info@klink.asia';
 $data->copyright->owner->contact = 'KLink Website: http://www.klink.asia';
 
 $data->copyright->usage = new CopyrightUsage(); //Copyright license info
-$data->copyright->usage->short = 'MPL-2.0';
+$data->copyright->usage->short = 'MPL-2.0'; // it must be a valid SPDX identifier https://spdx.org/licenses/
 $data->copyright->usage->name = 'Mozilla Public License 2.0';
 $data->copyright->usage->reference = 'https://spdx.org/licenses/MPL-2.0.html';
-
-$data->properties = new Properties(); //The document properties
-$data->properties->title = 'Adventures of Sherlock Holmes';
-$data->properties->filename = 'adventures-of-sherlock-holmes.pdf';
-$data->properties->mime_type = 'application/pdf';
-$data->properties->language = 'en';
-$data->properties->created_at = new \DateTime();
-$data->properties->updated_at = new \DateTime();
-$data->properties->size = 2048; //In bytes
-$data->properties->abstract = 'It is a novel about a detective';
-$data->properties->thumbnail = 'https://ichef.bbci.co.uk/news/660/cpsprodpb/153B4/production/_89046968_89046967.jpg';
-$data->properties->tags = ['tag1', 'tag2']; //Custom tags associated to the data
-$data->properties->collections = ['123', '456']; //Search data and browse within the hierarchy
-
-$data->uploader = new Uploader(); //The originating source where the data has been uploaded or created.
-$data->uploader->name = 'Uploader name';
-
-$author = new Author(); //Author
-$author->email = 'arthur@conan.doyle';
-$author->name = 'Arthur Conan Doyle';
-$author->contact = '221B Baker Street';
-
-$data->author = [$author]; //An array with the different document's authors
-
-//We index it
-/** @var Data $responseData */
-$responseData = $client->add($data);
 ```
 
-The lines above are structured in 3 blocks. In the first block we create the `Client` object providing the authentication details.In the second block we create and fill the `Data` object with the document information. Finally, in the third block we just call to `$client->add($data)` that is responsible for authenticating in the system and indexing the data.
-
-The `add` method returns a new `Data` object that will contain the same info than the `$data` variable.
-
-Output:
-
-```
-object(KSearchClient\Model\Data\Data)#121 (8) {
-  ["uuid"]=>
-  string(36) "b2c16bd1-6739-4fd9-a1e2-7dde785bed54"
-  ["url"]=>
-  string(33) "http://norvig.com/palindrome.html"
-  ["hash"]=>
-  string(128) "30163935c002fc4e1200906c3d30a9c4956b4af9f6dcaef1eb4b1fcb8fba69e7a7acdc491ea5b1f2864ea8c01b01580ef09defc3b11b3f183cb21d236f7f1a6b"
-  ["type"]=>
-  string(8) "document"
-  ["properties"]=>
-  object(KSearchClient\Model\Data\Properties)#149 (14) {
-    ["title"]=>
-    string(29) "Adventures of Sherlock Holmes"
-    ["filename"]=>
-    string(33) "adventures-of-sherlock-holmes.pdf"
-    ["mime_type"]=>
-    string(15) "application/pdf"
-    ["language"]=>
-    string(2) "en"
-    ["created_at"]=>
-    object(DateTime)#183 (3) {
-      ["date"]=>
-      string(26) "2017-11-02 12:13:35.000000"
-      ["timezone_type"]=>
-      int(3)
-      ["timezone"]=>
-      string(3) "UTC"
-    }
-    ["updated_at"]=>
-    object(DateTime)#180 (3) {
-      ["date"]=>
-      string(26) "2017-11-02 12:13:35.000000"
-      ["timezone_type"]=>
-      int(3)
-      ["timezone"]=>
-      string(3) "UTC"
-    }
-    ["size"]=>
-    int(2048)
-    ["abstract"]=>
-    string(31) "It is a novel about a detective"
-    ["thumbnail"]=>
-    string(83) "https://ichef.bbci.co.uk/news/660/cpsprodpb/153B4/production/_89046968_89046967.jpg"
-    ["tags"]=>
-    array(2) {
-      [0]=>
-      string(4) "tag1"
-      [1]=>
-      string(4) "tag2"
-    }
-    ["collections"]=>
-    array(2) {
-      [0]=>
-      string(3) "123"
-      [1]=>
-      string(3) "456"
-    }
-    ["video"]=>
-    NULL
-    ["audio"]=>
-    NULL
-    ["subtitles"]=>
-    NULL
-  }
-  ["author"]=>
-  array(1) {
-    [0]=>
-    object(KSearchClient\Model\Data\Author)#165 (3) {
-      ["name"]=>
-      string(18) "Arthur Conan Doyle"
-      ["email"]=>
-      string(18) "arthur@conan.doyle"
-      ["contact"]=>
-      string(17) "221B Baker Street"
-    }
-  }
-  ["copyright"]=>
-  object(KSearchClient\Model\Data\Copyright)#117 (2) {
-    ["owner"]=>
-    object(KSearchClient\Model\Data\CopyrightOwner)#196 (3) {
-      ["name"]=>
-      string(18) "KLink Organization"
-      ["email"]=>
-      string(15) "info@klink.asia"
-      ["contact"]=>
-      string(36) "KLink Website: http://www.klink.asia"
-    }
-    ["usage"]=>
-    object(KSearchClient\Model\Data\CopyrightUsage)#208 (3) {
-      ["short"]=>
-      string(7) "MPL-2.0"
-      ["name"]=>
-      string(26) "Mozilla Public License 2.0"
-      ["reference"]=>
-      string(38) "https://spdx.org/licenses/MPL-2.0.html"
-    }
-  }
-  ["uploader"]=>
-  object(KSearchClient\Model\Data\Uploader)#221 (4) {
-    ["name"]=>
-    string(13) "Uploader name"
-    ["url"]=>
-    NULL
-    ["app_url"]=>
-    NULL
-    ["email"]=>
-    NULL
-  }
-}
-```
-
-##### Indexing a video
-
-In that case are going to use the `Data` object again. However, we will need to fill more properties in the `Properties` object. The method in the client that indexes the video is also `add` and the response is the same as in thi above case.
+For a `video` data type, the `$data->properties->video` property is required.
 
 ```php
-require 'vendor/autoload.php';
-
-use KSearchClient\Client;
-use KSearchClient\Http\Authentication;
-use KSearchClient\Model\Data\Data;
-use KSearchClient\Model\Data\Copyright;
-use KSearchClient\Model\Data\CopyrightUsage;
-use KSearchClient\Model\Data\Properties;
 use KSearchClient\Model\Data\Properties\Video;
 use KSearchClient\Model\Data\Properties\Streaming;
 use KSearchClient\Model\Data\Properties\Source;
 use KSearchClient\Model\Data\Properties\Audio;
 use KSearchClient\Model\Data\Properties\Subtitles;
-use KSearchClient\Model\Data\Uploader;
-use KSearchClient\Model\Data\Author;
 
-$client = Client::build($service_url, new Authentication($app_secret, $app_url));
-
-//We create the Data object
-$data = new Data(); 
-$data->hash = hash('sha512', 'hash'); //The document hash
-$data->type = 'video'; //This can be a 'video' or 'document'
-$data->url = 'https://github.com/mediaelement/mediaelement-files/blob/master/echo-hereweare.mp4?raw=true'; //The document URL
-$data->uuid = 'b2c16bd1-6739-4fd9-a1e2-7dde785bed54'; //A unique UUID that identifies this document
-
-$data->copyright = new Copyright(); //Copyright info
-$data->copyright->owner = new CopyrightOwner();
-$data->copyright->owner->name = 'KLink Organization';
-$data->copyright->owner->email = 'info@klink.asia';
-$data->copyright->owner->contact = 'KLink Website: http://www.klink.asia';
-
-$data->copyright->usage = new CopyrightUsage(); //Copyright license info
-$data->copyright->usage->short = 'MPL-2.0';
-$data->copyright->usage->name = 'Mozilla Public License 2.0';
-$data->copyright->usage->reference = 'https://spdx.org/licenses/MPL-2.0.html';
-
-$data->properties = new Properties(); //The document properties
-$data->properties->title = 'Adventures of Sherlock Holmes';
-$data->properties->filename = 'adventures-of-sherlock-holmes.mp4';
-$data->properties->mime_type = 'video/mp4';
-$data->properties->language = 'en';
-$data->properties->created_at = new \DateTime();
-$data->properties->updated_at = new \DateTime();
-$data->properties->size = 204825684; //In bytes
-$data->properties->abstract = 'It is a video about the novel about a detective';
-$data->properties->thumbnail = 'https://ichef.bbci.co.uk/news/660/cpsprodpb/153B4/production/_89046968_89046967.jpg';
-$data->properties->tags = ['tag1', 'tag2']; //Custom tags associated to the data
-$data->properties->collections = ['123', '456']; //Search data and browse within the hierarchy
-
-//Start video custom properties
 $data->properties->video = new Video();
 $data->properties->video->duration = '10 min';
+
+// information of the video source
+$data->properties->video->source = new Source();
+$data->properties->video->source->resolution = '1920x1080';
+$data->properties->video->source->format = 'h264';
+$data->properties->video->source->bitrate = '1Mbps';
 
 $streaming = new Streaming();
 $streaming->type = 'youtube'; //It can be youtube, dash or hls
 $streaming->url = 'https://www.youtube.com/watch?v=iEueWyu0TXA';
 $data->properties->video->streaming = [$streaming]; //A video can have multiple streaming 
-
-$data->properties->video->source = new Source();
-$data->properties->video->source->resolution = '1080';
-$data->properties->video->source->format = 'format';
-$data->properties->video->source->bitrate = 'bitrate';
 
 $audioEn = new Audio();
 $audioEn->language = 'en';
@@ -368,411 +219,138 @@ $subtitles->language = 'es';
 $subtitles->file = 'http://opensubtitles.org/get/iEueWyu0TXA';
 $subtitles->format = 'txt';
 $data->properties->subtitles = [$subtitles];
-//End video custom properties
-
-$data->uploader = new Uploader(); //The originating source where the data has been uploaded or created.
-$data->uploader->name = 'Uploader name';
-
-$author = new Author(); //Author
-$author->email = 'arthur@conan.doyle';
-$author->name = 'Arthur Conan Doyle';
-$author->contact = '221B Baker Street';
-
-$data->author = [$author]; //An array with the different document's authors
-
-//We index it
-/** @var Data $responseData */
-$responseData = $client->add($data, 'my video description');
 ```
 
-Notice that the `$client->add` method has a second argument where you can add a video description.
+There are two ways the K-Search can obtain the text/file content related to the data descriptor being added.
 
-##### Get the document status
+**Download using URL**
 
-The documents indexed by KSearch are searchable by their content and metadata. In order to get the file to be able to process it, KSearch needs to download it and it uses a queue for doing this proccess asynchronously. That's the reason for having a document status.
-
-There are two status:
-- `Ok`: Means that the document has been correctly proccessed and indexed by KSearch
-- `Queued`: Means that the document stills in the queue for being processed
-
-An example for checking a document status is:
+The K-Search is able to download the referenced data from the given `$data->url`. To let the K-Search download the file use
 
 ```php
-require 'vendor/autoload.php';
-use KSearchClient\Client;
-use KSearchClient\Http\Authentication;
-
-$client = Client::build($service_url, new Authentication($app_secret, $app_url));
-
-/** @var string $status */
-$status = $client->getStatus('b2c16bd1-6739-4fd9-a1e2-7dde785bed54'); //we have to provide the document UUID
-var_dump($status);
+$added_data = $client->add($data);
 ```
 
-Output:
-```
-string(2) "Ok"
-```
+The progress of the add request can be, then, monitored using the [`getStatus($data->uuid)` method](#monitoring-the-status-of-the-data-add-request).
 
-##### Remove a document
 
-The following example shows how to delete a document from KSearch with its UUID.
+**Sending textual data**
+
+If the file is not supported by the K-Search or you want to specify a different text representation of the file content, you can do it via the second parameter of the `add` call.
+
+The string must be ascii or UTF-8 encoded.
 
 ```php
-require 'vendor/autoload.php';
-use KSearchClient\Client;
-use KSearchClient\Http\Authentication;
-
-$client = Client::build($service_url, new Authentication($app_secret, $app_url));
-
-/** @var bool $deleteResult */
-$deleteResult = $client->delete('b2c16bd1-6739-4fd9-a1e2-7dde785bed54');
-var_dump($deleteResult);
+$added_data = $client->add($data, 'This text will be used for search retrieval');
 ```
 
-Output:
-```
-bool(true)
-```
-##### Get a document
+When this approach is used, the data will be avaiable immediately in search results.
 
-The following example shows how to get a document from KSearch with its UUID.
-```php
-require 'vendor/autoload.php';
+##### Monitoring the status of the data add request
 
-use KSearchClient\Client;
-use KSearchClient\Http\Authentication;
-use KSearchClient\Model\Data\Data;
+Once an add request is sent, the developer must control its status. 
 
-$client = Client::build($service_url, new Authentication($app_secret, $app_url));
+There are two statuses:
 
-/** @var Data $data */
-$data = $client->get('b2c16bd1-6739-4fd9-a1e2-7dde785bed54');
-var_dump($data);
-```
+- `Ok`: Means that the data has been correctly proccessed by the K-Search
+- `Queued`: Means that the data is in the queue for being processed
 
-Output:
-```
-object(KSearchClient\Model\Data\Data)#121 (8) {
-  ["uuid"]=>
-  string(36) "b2c16bd1-6739-4fd9-a1e2-7dde785bed54"
-  ["url"]=>
-  string(33) "http://norvig.com/palindrome.html"
-  ["hash"]=>
-  string(128) "30163935c002fc4e1200906c3d30a9c4956b4af9f6dcaef1eb4b1fcb8fba69e7a7acdc491ea5b1f2864ea8c01b01580ef09defc3b11b3f183cb21d236f7f1a6b"
-  ["type"]=>
-  string(8) "document"
-  ["properties"]=>
-  object(KSearchClient\Model\Data\Properties)#149 (14) {
-    ["title"]=>
-    string(29) "Adventures of Sherlock Holmes"
-    ["filename"]=>
-    string(33) "adventures-of-sherlock-holmes.pdf"
-    ["mime_type"]=>
-    string(15) "application/pdf"
-    ["language"]=>
-    string(2) "en"
-    ["created_at"]=>
-    object(DateTime)#183 (3) {
-      ["date"]=>
-      string(26) "2017-11-02 12:13:35.000000"
-      ["timezone_type"]=>
-      int(3)
-      ["timezone"]=>
-      string(3) "UTC"
-    }
-    ["updated_at"]=>
-    object(DateTime)#180 (3) {
-      ["date"]=>
-      string(26) "2017-11-02 12:13:35.000000"
-      ["timezone_type"]=>
-      int(3)
-      ["timezone"]=>
-      string(3) "UTC"
-    }
-    ["size"]=>
-    int(2048)
-    ["abstract"]=>
-    string(31) "It is a novel about a detective"
-    ["thumbnail"]=>
-    string(83) "https://ichef.bbci.co.uk/news/660/cpsprodpb/153B4/production/_89046968_89046967.jpg"
-    ["tags"]=>
-    array(2) {
-      [0]=>
-      string(4) "tag1"
-      [1]=>
-      string(4) "tag2"
-    }
-    ["collections"]=>
-    array(2) {
-      [0]=>
-      string(3) "123"
-      [1]=>
-      string(3) "456"
-    }
-    ["video"]=>
-    NULL
-    ["audio"]=>
-    NULL
-    ["subtitles"]=>
-    NULL
-  }
-  ["author"]=>
-  array(1) {
-    [0]=>
-    object(KSearchClient\Model\Data\Author)#165 (3) {
-      ["name"]=>
-      string(18) "Arthur Conan Doyle"
-      ["email"]=>
-      string(18) "arthur@conan.doyle"
-      ["contact"]=>
-      string(17) "221B Baker Street"
-    }
-  }
-  ["copyright"]=>
-  object(KSearchClient\Model\Data\Copyright)#117 (2) {
-    ["owner"]=>
-    object(KSearchClient\Model\Data\CopyrightOwner)#196 (3) {
-      ["name"]=>
-      string(18) "KLink Organization"
-      ["email"]=>
-      string(15) "info@klink.asia"
-      ["contact"]=>
-      string(36) "KLink Website: http://www.klink.asia"
-    }
-    ["usage"]=>
-    object(KSearchClient\Model\Data\CopyrightUsage)#208 (3) {
-      ["short"]=>
-      string(7) "MPL-2.0"
-      ["name"]=>
-      string(26) "Mozilla Public License 2.0"
-      ["reference"]=>
-      string(38) "https://spdx.org/licenses/MPL-2.0.html"
-    }
-  }
-  ["uploader"]=>
-  object(KSearchClient\Model\Data\Uploader)#221 (4) {
-    ["name"]=>
-    string(13) "Uploader name"
-    ["url"]=>
-    NULL
-    ["app_url"]=>
-    NULL
-    ["email"]=>
-    NULL
-  }
-}
-```
-
-##### Search a document
-
-The KSearch search engine is very flexible. By using filters and agggreagations you can get a lot of info about the documents that are indexed.
-
-In order to perform a search you have to use the `SearchParams` class. There are 3 several properties in a `SearchParams` object:
-* `search`: It is a simple string with the content that will be searched in the following the document's content, title and abstract. This property is mandatory.
-* `filters`: It is a query in the Lucene query syntax (https://lucene.apache.org/core/2_9_4/queryparsersyntax.html). The fields that can be used for filtering are: `uuid`, `type`, `properties.language`, `properties.created_at`, `properties.updated_at`, `properties.size`, `properties.collections`, `properties.tags`, `properties.mime_type`, `properties.owner.name`, `properties.usage.short`.    
-* `aggregations`: It is an array of `Aggregation` objects where the key is the field name (the same fields than in filters are available) where the aggreagation will be applied. In the `Aggregation` object we can configure how many different aggregations we want to return and if the aggregation has to be done before or after the filtering. 
-
-The following example will search the documents that meets those requirements:
-* It contains the string "Sherlock" in the title or the content or the abstract.
-* Its language is 'es' and its mimetype is 'application/pdf'
- 
+An example for checking a data status is:
 
 ```php
-require 'vendor/autoload.php';
+$uuid = 'b2c16bd1-6739-4fd9-a1e2-7dde785bed54';
+$status = $client->getStatus($uuid);
+// ok || queued
+```
 
-use KSearchClient\Client;
-use KSearchClient\Http\Authentication;
-use KSearchClient\Model\Data\SearchParams;
-use KSearchClient\Model\Data\Aggregation;
+##### Get data
 
-$client = Client::build($service_url, new Authentication($app_secret, $app_url));
+From the K-Search is possible to obtain data details given a known data UUID
 
+```php
+$uuid = 'b2c16bd1-6739-4fd9-a1e2-7dde785bed54';
+$data = $client->get($uuid);
+// instance of KSearchClient\Model\Data\Data
+```
+
+##### Remove data
+
+Removing a data is performed by specifying the UUID of the data to remove.
+
+```php
+$uuid = 'b2c16bd1-6739-4fd9-a1e2-7dde785bed54';
+$done = $client->delete($uuid);
+// true || false
+```
+
+Even if the method returns a boolean you can safely ignore the return value, as in case of errors an exception will be thrown.
+
+##### Search data
+
+Search enables to use the full text retrieval capability of the K-Search to list data that matches a specific criteria.
+
+Search criteria can be formulated using:
+
+- _terms_: a string representing the keywords to find
+- _filters_: the criteria used to select which documents needs to be searched for the terms
+
+Of course, filters are not required.
+
+```php
+$searchParams = new SearchParams();
+$searchParams->search = 'Sherlock';
+
+$result = $client->search($searchParams);
+// instance of KSearchClient\Model\Data\SearchResults
+```
+
+The filter option accepts a [Lucene query syntax](https://lucene.apache.org/core/2_9_4/queryparsersyntax.html)
+
+```php
 $searchParams = new SearchParams();
 $searchParams->search = 'Sherlock';
 $searchParams->filters = 'properties.language:en AND properties.mime_type:"application/pdf"';
+
+$result = $client->search($searchParams);
+// instance of KSearchClient\Model\Data\SearchResults
+```
+Currently the supported filter fields are:
+
+- `uuid`
+- `type`
+- `properties.language`
+- `properties.created_at`
+- `properties.updated_at`
+- `properties.size`
+- `properties.collections`
+- `properties.tags`
+- `properties.mime_type`
+- `properties.owner.name`
+- `properties.usage.short`
+
+Some filters accept free text terms, but most of them are bound to specific values. To know the possible values to use the `aggregation` concept was defined.
+
+Aggregations consider all the possible values for a specific (supported) field and return the list of _N_ most common terms for the field.
+
+For example if I want to know the 15 most common data languages
+
+```php
+$searchParams = new SearchParams();
+$searchParams->search = 'Sherlock'; // this can be also * if no specific term should appear in the data content
+
 $searchParams->aggregations = [];
 
 $languageAggregation = new Aggregation();
-$languageAggregation->countsFiltered = false;
-$languageAggregation->limit = 15;
+$languageAggregation->countsFiltered = true;
+$languageAggregation->limit = 15; // minimum 10, maximum 100
 
 $searchParams->aggregations['properties.language'] = $languageAggregation;
 
 $result = $client->search($searchParams);
-
-var_dump($result);
-
+// instance of KSearchClient\Model\Data\SearchResults
 ```
 
-The result will return the found documents and, because we are adding an `Aggregation`, it will also return how many documents exists in each language.
-
-The `$languageAggregation->countsFiltered = false` is important in that case since we are telling KSearch to apply the aggregations before doing the filtering. Otherwise, the aggregation would be applied after the filtering.
-
-Output:
-```
-object(KSearchClient\Model\Data\SearchResults)#285 (5) {
-  ["query"]=>
-  object(KSearchClient\Model\Data\SearchParams)#292 (5) {
-    ["search"]=>
-    string(8) "Sherlock"
-    ["filters"]=>
-    string(65) "properties.language:en AND properties.mime_type:"application/pdf""
-    ["aggregations"]=>
-    array(1) {
-      ["properties.language"]=>
-      object(KSearchClient\Model\Data\Aggregation)#283 (2) {
-        ["limit"]=>
-        int(15)
-        ["countsFiltered"]=>
-        bool(false)
-      }
-    }
-    ["limit"]=>
-    int(10)
-    ["offset"]=>
-    int(0)
-  }
-  ["query_time"]=>
-  int(6)
-  ["total_matches"]=>
-  int(1)
-  ["aggregations"]=>
-  array(1) {
-    ["properties.language"]=>
-    array(2) {
-      [0]=>
-      object(KSearchClient\Model\Data\AggregationResult)#304 (2) {
-        ["value"]=>
-        string(2) "es"
-        ["count"]=>
-        int(2)
-      }
-      [1]=>
-      object(KSearchClient\Model\Data\AggregationResult)#303 (2) {
-        ["value"]=>
-        string(2) "en"
-        ["count"]=>
-        int(1)
-      }
-    }
-  }
-  ["items"]=>
-  array(1) {
-    [0]=>
-    object(KSearchClient\Model\Data\Data)#310 (8) {
-      ["uuid"]=>
-      string(36) "b2c16bd1-6739-4fd9-a1e2-7dde785bed54"
-      ["url"]=>
-      string(33) "http://norvig.com/palindrome.html"
-      ["hash"]=>
-      string(128) "30163935c002fc4e1200906c3d30a9c4956b4af9f6dcaef1eb4b1fcb8fba69e7a7acdc491ea5b1f2864ea8c01b01580ef09defc3b11b3f183cb21d236f7f1a6b"
-      ["type"]=>
-      string(8) "document"
-      ["properties"]=>
-      object(KSearchClient\Model\Data\Properties)#312 (14) {
-        ["title"]=>
-        string(29) "Adventures of Sherlock Holmes"
-        ["filename"]=>
-        string(33) "adventures-of-sherlock-holmes.pdf"
-        ["mime_type"]=>
-        string(15) "application/pdf"
-        ["language"]=>
-        string(2) "en"
-        ["created_at"]=>
-        object(DateTime)#314 (3) {
-          ["date"]=>
-          string(26) "2017-11-02 12:28:58.000000"
-          ["timezone_type"]=>
-          int(3)
-          ["timezone"]=>
-          string(3) "UTC"
-        }
-        ["updated_at"]=>
-        object(DateTime)#315 (3) {
-          ["date"]=>
-          string(26) "2017-11-02 12:28:58.000000"
-          ["timezone_type"]=>
-          int(3)
-          ["timezone"]=>
-          string(3) "UTC"
-        }
-        ["size"]=>
-        int(2048)
-        ["abstract"]=>
-        string(31) "It is a novel about a detective"
-        ["thumbnail"]=>
-        string(83) "https://ichef.bbci.co.uk/news/660/cpsprodpb/153B4/production/_89046968_89046967.jpg"
-        ["tags"]=>
-        array(2) {
-          [0]=>
-          string(4) "tag1"
-          [1]=>
-          string(4) "tag2"
-        }
-        ["collections"]=>
-        array(2) {
-          [0]=>
-          string(3) "123"
-          [1]=>
-          string(3) "456"
-        }
-        ["video"]=>
-        NULL
-        ["audio"]=>
-        NULL
-        ["subtitles"]=>
-        NULL
-      }
-      ["author"]=>
-      array(1) {
-        [0]=>
-        object(KSearchClient\Model\Data\Author)#313 (3) {
-          ["name"]=>
-          string(18) "Arthur Conan Doyle"
-          ["email"]=>
-          string(18) "arthur@conan.doyle"
-          ["contact"]=>
-          string(17) "221B Baker Street"
-        }
-      }
-      ["copyright"]=>
-      object(KSearchClient\Model\Data\Copyright)#316 (2) {
-        ["owner"]=>
-        object(KSearchClient\Model\Data\CopyrightOwner)#317 (3) {
-          ["name"]=>
-          string(18) "KLink Organization"
-          ["email"]=>
-          string(15) "info@klink.asia"
-          ["contact"]=>
-          string(36) "KLink Website: http://www.klink.asia"
-        }
-        ["usage"]=>
-        object(KSearchClient\Model\Data\CopyrightUsage)#318 (3) {
-          ["short"]=>
-          string(7) "MPL-2.0"
-          ["name"]=>
-          string(26) "Mozilla Public License 2.0"
-          ["reference"]=>
-          string(38) "https://spdx.org/licenses/MPL-2.0.html"
-        }
-      }
-      ["uploader"]=>
-      object(KSearchClient\Model\Data\Uploader)#319 (4) {
-        ["name"]=>
-        string(13) "Uploader name"
-        ["url"]=>
-        NULL
-        ["app_url"]=>
-        NULL
-        ["email"]=>
-        NULL
-      }
-    }
-  }
-}
-
-``` 
+The `$languageAggregation->countsFiltered = true` (or `false`) will tell the K-Search to evaluate the aggregations after filters are applied. In this way aggregation refers only to the subset of documents that matched your filter criteria. Otherwise the aggregations are evaluated on the whole data added to the K-Search instance by any users.
 
 ## Testing
 

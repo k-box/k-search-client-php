@@ -88,6 +88,8 @@ class Client
     }
 
     /**
+     * Add Data
+     * 
      * @param Data $data
      * @param string $dataTextualContents
      * @return Data
@@ -124,6 +126,8 @@ class Client
     }
 
     /**
+     * Retrieve a previously added data
+     * 
      * @param string $uuid
      * @return Data
      */
