@@ -44,7 +44,7 @@ The K-Search api client is not hard coupled to [Guzzle](https://github.com/guzzl
 If you just want to get started quickly you should run the following command:
 
 ```bash
-composer require php-http/guzzle6-adapter guzzlehttp/psr7 k-box/k-search-client-php@3.0
+composer require php-http/guzzle6-adapter guzzlehttp/psr7 k-box/k-search-client-php:3.0.*
 ```
 
 ### Why requiring so many packages?
