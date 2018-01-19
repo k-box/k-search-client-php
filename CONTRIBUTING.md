@@ -4,7 +4,7 @@ This document provides a set of best practices for bug reports, code submissions
 
 ## Submitting bug reports
 
-Bugs are tracked as [Gitlab issues](https://git.klink.asia/kadapters/adapterboilerplate/issues).
+Bugs are tracked as [GitHub issues](https://github.com/k-box/k-search-client-php/issues).
 
 To submit a bug report create an issue that explains the problem and include additional details to help maintainers reproduce the problem:
 
@@ -33,14 +33,14 @@ Please make sure to highlight also:
 
 ### General flow
 
-1. Fork the project, creating e.g. `yourname/adapterboilerplate`.
-2. Clone the project on your local environment `git clone git@git.klink.asia:yourname/theproject`
-3. Create the branch for the feature.
+1. Fork the project, creating e.g. `yourname/k-search-client-php`.
+2. Clone the project on your local environment `git clone https://github.com/yourname/k-search-client-php.git`
+3. Create the branch for the feature `git checkout -b [name_of_your_new_branch]`
 4. Write tests expecting the correct/fixed functionality; make sure they fail.
 5. Make your changes to the source code.
 6. Run tests again, making sure they pass.
 7. Commit your changes: `git commit -m "Closes #1 - Foo the bars"`. If you have created 2 or more commits please squash them in a single commit and always mention the reference issue.
-8. Push your commit to get it back up to your fork: `git push origin HEAD`.
-9. [Create a merge request](https://git.klink.asia/kadapters/adapterboilerplate/merge_requests/new) and let it go.
+8. Push your commit to get it back up to your fork: `git push`.
+9. Create a Pull request and let it go.
 
 
