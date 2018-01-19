@@ -1,6 +1,3 @@
-[![pipeline status](https://git.klink.asia/main/k-search-client-php/badges/2.30.x/pipeline.svg)](https://git.klink.asia/main/k-search-client-php/commits/2.30.x) 
-[![coverage report](https://git.klink.asia/main/k-search-client-php/badges/2.30.x/coverage.svg)](https://git.klink.asia/main/k-search-client-php/commits/2.30.x)
-
 # K-Search Client for K-Search 2.x
 
 The _K-Search client_ is a *PHP library*. Is designed for speed-up the communication process 
@@ -47,7 +44,7 @@ In order to require it in your project add the following repository configuratio
 "repositories": [
     {
         "type": "vcs",
-        "url": "https://git.klink.asia/main/k-search-client-php"
+        "url": "https://github.com/k-box/k-search-client-php"
     }
 ]
 ```
@@ -152,7 +149,7 @@ $config = new KlinkConfiguration(
   '{InstitutionAdapterID}', // The adapter identifier
   array(                    // The array of K-Link Cores to be used
     new KlinkAuthentication(
-		'{core_url}',      // The url of the core, e.g https://test.klink.asia/kcore/
+		'{core_url}',      // The url of the core, e.g https://test.something.com/kcore/
 		'{username}',      // Authentication Username
 		'{password}'       // Authentication Password
         KlinkVisibilityType::KLINK_PRIVATE // the document visibility the core can serve, if omitted KlinkVisibilityType::KLINK_PRIVATE will be used
@@ -911,3 +908,7 @@ To execute all available unit tests run
 The `KlinkDocument` class exposes methods to work with stream. Please make sure to close streams returned by `KlinkDocument` 
 methods when you have finished otherwise you might experience leaks on the filesytem.
 
+
+### License
+
+This project is licensed under the AGPL v3 license, see [LICENSE.txt](./LICENSE.txt).
