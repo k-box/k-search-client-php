@@ -10,6 +10,14 @@ the K-Search client supports K-Search api version `>=3.0`, but less than `4.0`.
 
 ## Unreleased
 
+### Added
+
+- `website` field to the `CopyrightOwner` object.
+
+### Changed
+
+- Renamed `CopyrightOwner.contact` to  `CopyrightOwner.address`. **breaking change**
+
 ## [3.0.0] - 2017-11-14
 
 ### Added

@@ -44,9 +44,8 @@ trait GeneratesData
 
         $data->copyright = new Copyright();
         $data->copyright->owner = new CopyrightOwner();
-        $data->copyright->owner->name = 'KLink Organization';
-        $data->copyright->owner->email = 'info@klink.asia';
-        $data->copyright->owner->contact = 'KLink Website: http://www.klink.asia';
+        $data->copyright->owner->name = 'OneOffTech';
+        $data->copyright->owner->website = 'https://oneofftech.xyz/';
 
         $data->copyright->usage = new CopyrightUsage();
         $data->copyright->usage->short = 'MPL-2.0';
