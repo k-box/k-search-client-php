@@ -1,4 +1,4 @@
-# Adapter Boilerplate Contribution Guide
+# K-Search Client Contribution Guide
 
 This document provides a set of best practices for bug reports, code submissions / pull requests, etc.
 
