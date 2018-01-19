@@ -10,6 +10,8 @@ the K-Search client supports K-Search api version `>=3.0`, but less than `4.0`.
 
 ## Unreleased
 
+## [3.0.1] - 2018-01-19
+
 ### Added
 
 - `website` field to the `CopyrightOwner` object.

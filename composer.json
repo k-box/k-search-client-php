@@ -2,8 +2,8 @@
     "name": "k-box/k-search-client-php",
     "description": "The K-Link K-Search client",
     "type": "library",
-    "homepage": "https://git.klink.asia/main/k-search-client-php",
-    "time": "2017-11-14",
+    "homepage": "https://github.com/k-box/k-search-client-php",
+    "time": "2018-01-19",
     "license": "AGPL-3.0",
     "authors": [
         {
@@ -21,9 +21,8 @@
     ],
 
     "support": {
-        "issues": "https://git.klink.asia/main/k-search-client-php/issues",
-        "wiki": "https://git.klink.asia/main/k-search-client-php/wikis/home",
-        "source": "https://git.klink.asia/main/k-search-client-php"
+        "issues": "https://github.com/k-box/k-search-client-php/issues",
+        "source": "https://github.com/k-box/k-search-client-php"
     },
 
     "autoload": {
