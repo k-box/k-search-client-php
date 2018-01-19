@@ -1,9 +1,6 @@
-[![build status](https://git.klink.asia/main/k-search-client-php/badges/master/build.svg)](https://git.klink.asia/main/k-search-client-php/commits/master) 
-[![coverage report](https://git.klink.asia/main/k-search-client-php/badges/master/coverage.svg)](https://git.klink.asia/main/k-search-client-php/commits/master)
-
 # K-Search PHP Client
 
-The K-Search Client is a library that abstract the communication to a [K-Search](https://git.klink.asia/main/k-search) instance.
+The K-Search Client is a library that abstract the communication to a [K-Search](https://github.com/k-box/k-search) instance.
 
 The library enables the following operations
 
@@ -34,7 +31,7 @@ In order to require it in your project add the following repository configuratio
 "repositories": [
     {
         "type": "vcs",
-        "url": "https://git.klink.asia/main/k-search-client-php"
+        "url": "https://github.com/k-box/k-search-client-php"
     }
 ]
 ```
@@ -108,7 +105,7 @@ Adding Data to the K-Search means creating a description of the data to be added
 
 The K-Search supports different data description type, the most common common are `document` and `video`. Depending on the data type a set of different properties is expected. `document` refers to a generic textual document, while `video` is designed to describe a video file.
 
-For more information on data types and the supported formats refer to the [K-Search documentation](https://git.klink.asia/main/k-search/).
+For more information on data types and the supported formats refer to the [K-Search documentation](https://github.com/k-box/k-search).
 
 **Creating a data descriptor**
 
