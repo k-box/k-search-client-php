@@ -16,6 +16,7 @@ use KSearchClient\Exception\AuthTypeNotSupportedException;
 use KSearchClient\Exception\ErrorResponseException;
 use KSearchClient\Exception\InvalidDataException;
 use KSearchClient\Exception\SerializationException;
+use KSearchClient\Exception\DeserializationException;
 use KSearchClient\Http\NullAuthentication;
 use KSearchClient\Http\ResponseHelper;
 use KSearchClient\Http\Routes;
@@ -34,6 +35,7 @@ use KSearchClient\Validator\AuthTypeValidator;
 use Psr\Http\Message\ResponseInterface;
 use Symfony\Component\Validator\Validation;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use JMS\Serializer\Exception\Exception as JMSException;
 
 class Client
 {
@@ -101,7 +103,7 @@ class Client
         $response = $this->handleRequest($addRequest, $route);
 
         /** @var AddResponse $addResponse */
-        $addResponse = $this->serializer->deserialize($response->getBody(), AddResponse::class, self::SERIALIZER_FORMAT);
+        $addResponse = $this->deserializeResponse($response->getBody(), AddResponse::class);
 
         return $addResponse->result;
     }
@@ -120,7 +122,7 @@ class Client
         $response = $this->handleRequest($deleteRequest, $route);
 
         /** @var StatusResponse $statusResponse */
-        $statusResponse = $this->serializer->deserialize($response->getBody(), StatusResponse::class, self::SERIALIZER_FORMAT);
+        $statusResponse = $this->deserializeResponse($response->getBody(), StatusResponse::class);
         return strtolower($statusResponse->result->status) === 'ok';
     }
 
@@ -138,7 +140,7 @@ class Client
         $response = $this->handleRequest($request, $route);
 
         /** @var GetResponse $getRes */
-        $getResponse = $this->serializer->deserialize($response->getBody(), GetResponse::class, self::SERIALIZER_FORMAT);
+        $getResponse = $this->deserializeResponse($response->getBody(), GetResponse::class);
         return $getResponse->result;
     }
 
@@ -157,7 +159,7 @@ class Client
         $response = $this->handleRequest($request, $route);
 
         /** @var DataStatusResponse $dataStatusResponse */
-        $dataStatusResponse = $this->serializer->deserialize($response->getBody(), DataStatusResponse::class, self::SERIALIZER_FORMAT);
+        $dataStatusResponse = $this->deserializeResponse($response->getBody(), DataStatusResponse::class);
         // todo: check for deserialization errors and in case status is null raise an exception
         return $dataStatusResponse->result;
     }
@@ -174,7 +176,7 @@ class Client
 
 
         /** @var SearchResponse $searchResponse */
-        $searchResponse = $this->serializer->deserialize($response->getBody(), SearchResponse::class, self::SERIALIZER_FORMAT);
+        $searchResponse = $this->deserializeResponse($response->getBody(), SearchResponse::class);
         return $searchResponse->result;
     }
 
@@ -185,7 +187,6 @@ class Client
     private function checkResponseError(ResponseInterface $response)
     {
         $responseBody = $response->getBody();
-
         $contentTypeHeader = $response->getHeader('Content-Type');
         $contentType = !empty($contentTypeHeader) ? $contentTypeHeader[0] : '';
         
@@ -201,15 +202,39 @@ class Client
             throw new ErrorResponseException(!empty($response->getReasonPhrase()) ? $response->getReasonPhrase() : 'There was a problem in fulfilling your request.', $response->getStatusCode(), (string)$responseBody);
         }
 
+        if(strpos($contentType, 'text/html')!== false){
+                
+            $reason = substr((string)$responseBody, 0, 500);
+
+            throw new ErrorResponseException('Expecting JSON, received HTML: ' . $reason, $response->getStatusCode(), (string)$responseBody);
+        }
+
         if (ResponseHelper::isAnError($responseBody)) {
             /** @var ErrorResponse $errorResponse */
-            $errorResponse = $this->serializer->deserialize($responseBody, ErrorResponse::class, self::SERIALIZER_FORMAT);
+            $errorResponse = $this->deserializeResponse($responseBody, ErrorResponse::class);
             
             if($errorResponse->error->code === 400){
                 throw new InvalidDataException($errorResponse->error->data);
             }
 
             throw new ErrorResponseException($errorResponse->error->message, $errorResponse->error->code, $errorResponse->error->data);
+        }
+    }
+
+    /**
+     * Deserialize a JSON string into the given class instance
+     * 
+     * @param string $json the JSON string to deserialized
+     * @param string $class the fully qualified class name
+     * @return object instance of $class
+     * @throws DeserializationException if an error occurs during the deserialization
+     */
+    private function deserializeResponse($json, $class, $format = self::SERIALIZER_FORMAT)
+    {
+        try{
+            return $this->serializer->deserialize($json, $class, $format);
+        }catch(JMSException $ex){
+            throw new DeserializationException($ex->getMessage(), $json);
         }
     }
 

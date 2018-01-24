@@ -10,6 +10,15 @@ the K-Search client supports K-Search api version `>=3.0`, but less than `4.0`.
 
 ## Unreleased
 
+### Added
+
+- `DeserializationException` to better expose the JSON deserialization failure.
+  The message also contains the original received JSON.
+
+### Changed
+
+- Improved error handling in case an HTML response is returned by the server
+
 ## [3.0.1] - 2018-01-19
 
 ### Added
