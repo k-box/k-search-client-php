@@ -21,6 +21,7 @@ class RequestFactory
     public function buildDataAddRequest(Data $data, $dataTextualContents)
     {
         $addRequest = new AddRequest();
+        $addRequest->id = time();
         $addRequest->params = new AddParams();
         $addRequest->params->data = $data;
         $addRequest->params->dataTextualContents = $dataTextualContents;
@@ -31,6 +32,7 @@ class RequestFactory
     public function buildGetRequest($uuid)
     {
         $getRequest = new GetRequest();
+        $getRequest->id = time();
         $getRequest->params = new UUIDParam();
         $getRequest->params->uuid = $uuid;
 
@@ -44,6 +46,7 @@ class RequestFactory
     public function buildDeleteRequest($uuid)
     {
         $deleteRequest = new DeleteRequest();
+        $deleteRequest->id = time();
         $deleteRequest->params = new UUIDParam();
         $deleteRequest->params->uuid = $uuid;
 
@@ -56,6 +59,7 @@ class RequestFactory
     public function buildSearchRequest(SearchParams $searchParams)
     {
         $searchRequest = new SearchRequest();
+        $searchRequest->id = time();
         $searchRequest->params = $searchParams;
 
         return $searchRequest;
@@ -67,7 +71,8 @@ class RequestFactory
      */
     public function buildStatusRequest($uuid)
     {
-        $statusRequest= new DataStatusRequest();
+        $statusRequest = new DataStatusRequest();
+        $statusRequest->id = time();
         $statusRequest->params = new UUIDParam;
         $statusRequest->params->uuid = $uuid;
 
