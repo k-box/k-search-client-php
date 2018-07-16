@@ -4,7 +4,6 @@ namespace KSearchClient\Model\Data;
 
 use KSearchClient\Model\RPCResponse;
 use JMS\Serializer\Annotation as JMS;
-use Swagger\Annotations as SWG;
 
 /**
  * ##SWG\Definition(
@@ -27,12 +26,9 @@ class AddResponse extends RPCResponse
      */
     public $result;
 
-    /**
-     * @param string $responseId
-     */
-    public function __construct(Data $data, $responseId = null)
+    public function __construct(Data $data, string $responseId = null)
     {
+        parent::__construct($responseId);
         $this->result = $data;
-        $this->id = $responseId;
     }
 }
