@@ -3,13 +3,12 @@
 namespace KSearchClient\Model\Data\Properties;
 
 use JMS\Serializer\Annotation as JMS;
-use Swagger\Annotations as SWG;
 
 /**
  * ##SWG\Definition(
  *     definition="Data\Properties\Audio",
  *     description="Object with information on one audio track",
- *     required={}
+ *     required={"bitrate", "format"}
  * )
  */
 class Audio
@@ -30,6 +29,7 @@ class Audio
      *
      * @var string
      * @JMS\Type("string")
+     * ##Assert\NotBlank()
      * ##SWG\Property(
      *     example="1 Mbps",
      * )
@@ -41,6 +41,7 @@ class Audio
      *
      * @var string
      * @JMS\Type("string")
+     * ##Assert\NotBlank()
      * ##SWG\Property(
      *     example="mp3",
      * )
