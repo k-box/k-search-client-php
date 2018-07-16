@@ -36,6 +36,7 @@ use Psr\Http\Message\ResponseInterface;
 use Symfony\Component\Validator\Validation;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use JMS\Serializer\Exception\Exception as JMSException;
+use KSearchClient\Http\RequestFactory;
 
 class Client
 {
@@ -54,7 +55,7 @@ class Client
     /** @var  Routes */
     private $routes;
     /**
-     * @var Http\RequestFactory
+     * @var RequestFactory
      */
     private $apiRequestFactory;
     /**
@@ -151,16 +152,16 @@ class Client
      *
      * @return DataStatus The data status
      */
-    public function getStatus($uuid)
+    public function getStatus($uuid, $type = DataStatus::TYPE_DATA)
     {
-        $request = $this->apiRequestFactory->buildStatusRequest($uuid);
+        $request = $this->apiRequestFactory->buildStatusRequest($uuid, $type);
         $route = $this->routes->getDataStatus();
 
         $response = $this->handleRequest($request, $route);
 
         /** @var DataStatusResponse $dataStatusResponse */
         $dataStatusResponse = $this->deserializeResponse($response->getBody(), DataStatusResponse::class);
-        // todo: check for deserialization errors and in case status is null raise an exception
+        
         return $dataStatusResponse->result;
     }
 
@@ -272,11 +273,11 @@ class Client
      * @param \KSearchClient\Http\Authentication $authentication The authentication credentials, if necessary
      * @return Client
      */
-    public static function build($instanceUrl, Authentication $authentication = null, $apiVersion = '3.0')
+    public static function build($instanceUrl, Authentication $authentication = null, $apiVersion = '3.4')
     {
         AnnotationRegistry::registerLoader('class_exists');
 
-        $factory = new Http\RequestFactory;
+        $factory = new RequestFactory;
         $serializer = \JMS\Serializer\SerializerBuilder::create()
             ->build();
         $httpClient = HttpClientDiscovery::find();
