@@ -3,7 +3,6 @@
 namespace KSearchClient\Model;
 
 use JMS\Serializer\Annotation as JMS;
-use Swagger\Annotations as SWG;
 
 /**
  * The base class for RPC responses.
@@ -17,17 +16,11 @@ class RPCResponse
      *
      * @var string
      * @JMS\Type("string")
-     * ##JMS\ReadOnly()
-     * ##SWG\Property(
-     *     example="request-3d254173"
-     * )
+     * @JMS\ReadOnly()
      */
     public $id;
 
-    /**
-     * @param string $id
-     */
-    public function __construct($id = null)
+    public function __construct(string $id = null)
     {
         $this->id = $id;
     }
