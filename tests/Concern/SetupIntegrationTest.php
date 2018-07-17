@@ -27,7 +27,7 @@ trait SetupIntegrationTest
                 );
         }
         
-        $this->client = Client::build($service_url, $auth, $api_version ? $api_version : '3.0');
+        $this->client = Client::build($service_url, $auth, $api_version ? $api_version : '3.4');
     }
     
 }

@@ -4,7 +4,7 @@ namespace Tests\Integration;
 use Tests\TestCase;
 use KSearchClient\Client;
 use KSearchClient\Model\Data\Data;
-use KSearchClient\Model\Data\SearchParams;
+use KSearchClient\Model\Search\SearchParams;
 use KSearchClient\Http\Authentication;
 use GuzzleHttp\Psr7\Request;
 use Psr\Http\Message\RequestInterface;
@@ -13,7 +13,7 @@ use KSearchClient\Exception\ErrorResponseException;
 use KSearchClient\Exception\InvalidDataException;
 use KSearchClient\Exception\SerializationException;
 use Tests\Concern\SetupIntegrationTest;
-use KSearchClient\Model\Data\SearchResults;
+use KSearchClient\Model\Search\SearchResults;
 
 class SearchDataTest extends TestCase
 {
@@ -38,9 +38,9 @@ class SearchDataTest extends TestCase
         $this->assertEmpty($response->query->filters);
         $this->assertEmpty($response->query->aggregations);
         
-        $this->assertNotNull($response->total_matches);
+        $this->assertNotNull($response->totalMatches);
         $this->assertNotNull($response->items);
-        $this->assertTrue($response->total_matches >= 0);
+        $this->assertTrue($response->totalMatches >= 0);
         $this->assertEmpty($response->aggregations);
         $this->assertContainsOnlyInstancesOf(Data::class, $response->items);
         $this->assertTrue(count($response->items) <= 1);
@@ -65,9 +65,9 @@ class SearchDataTest extends TestCase
         $this->assertEmpty($response->query->filters);
         $this->assertEmpty($response->query->aggregations);
         
-        $this->assertNotNull($response->total_matches);
+        $this->assertNotNull($response->totalMatches);
         $this->assertNotNull($response->items);
-        $this->assertTrue($response->total_matches >= 0);
+        $this->assertTrue($response->totalMatches >= 0);
         $this->assertEmpty($response->aggregations);
         $this->assertContainsOnlyInstancesOf(Data::class, $response->items);
         $this->assertTrue(count($response->items) <= 1);
