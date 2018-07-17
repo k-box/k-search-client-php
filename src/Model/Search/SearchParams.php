@@ -32,7 +32,7 @@ class SearchParams
      *
      * @var string
      * @JMS\Type("string")
-     * @ValidDataSearchFilter()
+     * ##ValidDataSearchFilter()
      * ##SWG\Property(
      *     example="properties.language:en AND properties.created_at:[""2008-07-28T14:47:31Z"" TO NOW] AND properties.updated_at:[""2008-07-28T14:47:31Z"" TO NOW] AND properties.size:[717589 TO 717591] copyright.owner.name:""KLink Organization"" AND copyright.usage.short:""MPL-2.0"""
      * )

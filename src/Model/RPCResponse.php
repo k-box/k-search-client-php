@@ -16,7 +16,7 @@ class RPCResponse
      *
      * @var string
      * @JMS\Type("string")
-     * @JMS\ReadOnly()
+     * ##JMS\ReadOnly()
      */
     public $id;
 

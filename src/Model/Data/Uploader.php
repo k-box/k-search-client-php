@@ -59,7 +59,7 @@ class Uploader
      *
      * @var string
      * @JMS\Type("string")
-     * @JMS\ReadOnly()
+     * ##JMS\ReadOnly()
      * @JMS\Groups({"details"})
      */
     public $appUrl;
@@ -73,7 +73,7 @@ class Uploader
      * @var string
      * @JMS\Type("string")
      * @JMS\Groups({"details"})
-     * @JMS\ReadOnly()
+     * ##JMS\ReadOnly()
      */
     public $email;
 }

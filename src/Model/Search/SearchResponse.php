@@ -17,15 +17,18 @@ class SearchResponse extends RPCResponse
     /**
      * The response data.
      *
-     * @var SearchResults
+     * @var \KSearchClient\Model\Search\SearchResults
      *
      * @JMS\Type("KSearchClient\Model\Search\SearchResults")
-     * @JMS\ReadOnly()
+     * ##JMS\ReadOnly()
      * ##SWG\Property()
      */
     public $result;
 
-    public function __construct($result, string $responseId = null)
+    /**
+     * @param string $responseId
+     */
+    public function __construct($result, $responseId = null)
     {
         parent::__construct($responseId);
         $this->result = $result;

@@ -28,7 +28,7 @@ class AggregationResult
      * How many items in aggregation.
      *
      * @var int
-     * @JMS\ReadOnly()
+     * ##JMS\ReadOnly()
      * @JMS\Type("integer")
      * ##SWG\Property(
      *     example="102"

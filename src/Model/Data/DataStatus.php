@@ -3,7 +3,7 @@
 namespace KSearchClient\Model\Data;
 
 // use App\Entity\DataProcessingStatus;
-// use JMS\Serializer\Annotation as JMS;
+use JMS\Serializer\Annotation as JMS;
 // use Swagger\Annotations as SWG;
 
 /**
@@ -27,7 +27,7 @@ class DataStatus
      *
      * @var string
      * @JMS\Type("string")
-     * @JMS\ReadOnly()
+     * ##JMS\ReadOnly()
      * ##SWG\Property(
      *     readOnly=true,
      *     enum={"index.ok", "index.fail", "queued.ok", "download.fail"},
@@ -41,7 +41,7 @@ class DataStatus
      *
      * @var string|null
      * @JMS\Type("string")
-     * @JMS\ReadOnly()
+     * ##JMS\ReadOnly()
      * ##SWG\Property(
      *     readOnly=true,
      *     example="Status message.",
@@ -69,7 +69,7 @@ class DataStatus
      * @var string
      * @JMS\Type("string")
      * @JMS\Since("3.4")
-     * @JMS\ReadOnly()
+     * ##JMS\ReadOnly()
      * ##SWG\Property(
      *     property="request_id",
      *     readOnly=true,
@@ -84,7 +84,7 @@ class DataStatus
      *
      * @var \DateTimeInterface
      * @JMS\Type("DateTime<'Y-m-d\TH:i:s\Z', 'UTC'>")
-     * @JMS\ReadOnly()
+     * ##JMS\ReadOnly()
      * @JMS\Since("3.4")
      * ##SWG\Property(
      *     property="request_received_at",
@@ -116,4 +116,14 @@ class DataStatus
 
     //     return $s;
     // }
+
+    /**
+     * Get if the status represent an indexed data
+     * 
+     * @return bool
+     */
+    public function indexed()
+    {
+        return $this->status === self::STATUS_INDEX_OK;
+    }
 }

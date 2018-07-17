@@ -20,7 +20,7 @@ class SearchResults
      *
      * @var SearchParams
      * @JMS\Type("KSearchClient\Model\Search\SearchParams")
-     * @JMS\ReadOnly()
+     * ##JMS\ReadOnly()
      * ##SWG\Property()
      */
     public $query;
@@ -30,7 +30,8 @@ class SearchResults
      *
      * @var int
      * @JMS\Type("integer")
-     * @JMS\ReadOnly()
+     * @JMS\SerializedName("query_time")
+     * ##JMS\ReadOnly()
      * ##SWG\Property(
      *     property="query_time",
      *     example="104",
@@ -43,7 +44,8 @@ class SearchResults
      *
      * @var int
      * @JMS\Type("integer")
-     * @JMS\ReadOnly()
+     * @JMS\SerializedName("total_matches")
+     * ##JMS\ReadOnly()
      * ##SWG\Property(
      *     property="total_matches",
      *     example="1",

@@ -177,7 +177,6 @@ class Client
 
         $response = $this->handleRequest($request, $route);
 
-
         /** @var SearchResponse $searchResponse */
         $searchResponse = $this->deserializeResponse($response->getBody(), SearchResponse::class);
         return $searchResponse->result;
