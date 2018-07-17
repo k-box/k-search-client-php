@@ -29,7 +29,11 @@ class DataStatusParams extends UUIDParam
      */
     public $type = DataStatus::TYPE_DATA;
 
-    public static function getTypes(): array
+    /**
+     * 
+     * @return array
+     */
+    public static function getTypes()
     {
         return [
             DataStatus::TYPE_DATA,

@@ -54,9 +54,11 @@ class Streaming
     public $url;
 
     /**
-     * Get the available supported streming types
+     * Get the available supported streaming types
+     * 
+     * @return array
      */
-    public static function getTypes(): array
+    public static function getTypes()
     {
         return self::TYPES;
     }

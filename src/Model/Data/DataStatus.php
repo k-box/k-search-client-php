@@ -14,13 +14,13 @@ namespace KSearchClient\Model\Data;
  */
 class DataStatus
 {
-    public const TYPE_DATA = 'data';
-    public const TYPE_PROCESSING = 'processing';
+    const TYPE_DATA = 'data';
+    const TYPE_PROCESSING = 'processing';
 
-    public const STATUS_QUEUED_OK = 'queued.ok';
-    public const STATUS_DOWNLOAD_FAIL = 'download.fail';
-    public const STATUS_INDEX_OK = 'index.ok';
-    public const STATUS_INDEX_FAIL = 'index.fail';
+    const STATUS_QUEUED_OK = 'queued.ok';
+    const STATUS_DOWNLOAD_FAIL = 'download.fail';
+    const STATUS_INDEX_OK = 'index.ok';
+    const STATUS_INDEX_FAIL = 'index.fail';
 
     /**
      * The status code.
