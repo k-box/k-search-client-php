@@ -20,7 +20,10 @@ class RPCResponse
      */
     public $id;
 
-    public function __construct(string $id = null)
+    /**
+     * @param string $id
+     */
+    public function __construct($id = null)
     {
         $this->id = $id;
     }
