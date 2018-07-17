@@ -18,7 +18,7 @@
     </testsuites>
     <php>
         <!-- Example K-Search configuration for integration tests -->
-        <env name="KSEARCH_URL" value=""/>
+        <env name="KSEARCH_URL" value="http://localhost:8080/"/>
         <env name="KSEARCH_APP_URL" value="http://localhost/"/>
         <env name="KSEARCH_APP_SECRET" value="app_secret"/>
     </php>

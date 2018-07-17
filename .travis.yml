@@ -1,0 +1,36 @@
+language: php
+
+services:
+  - docker
+
+branches:
+  only:
+  - master
+  - /^v\d+\.\d+(\.\d+)?(-\S*)?$/
+  - /^\d+\.\d+?$/
+
+sudo: false
+
+php:
+  # - 5.6
+  # - 7.0
+  - 7.1
+
+env:
+  matrix:
+    # - COMPOSER_FLAGS="--prefer-lowest"
+    - COMPOSER_FLAGS=""
+
+before_script:
+  - travis_retry composer self-update
+  - travis_retry composer update ${COMPOSER_FLAGS} --no-interaction --prefer-dist
+  - sudo service mysql stop
+  - docker-compose -f ./tests/docker-compose.yml up -d
+  # - php tests/wait.php
+
+script:
+  - ./vendor/bin/parallel-lint --exclude vendor .
+  - ./vendor/bin/phpunit
+
+after_script:
+  - docker-compose -f ./tests/docker-compose.yml down

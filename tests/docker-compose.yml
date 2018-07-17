@@ -1,0 +1,56 @@
+## Test environment
+## This docker compose starts the necessary services to run integration tests
+
+version: "2"
+
+networks:
+  internal:
+
+services:
+    # mysql:
+    #     restart: always
+    #     image: mysql/mysql-server:5.7
+    #     environment:
+    #         MYSQL_ROOT_PASSWORD: "root_password"
+    #         MYSQL_DATABASE: "laravel_event_projector"
+    #         MYSQL_USER: "username"
+    #         MYSQL_PASSWORD: "password"
+    #         MYSQL_ROOT_HOST: "0.0.0.0"
+    #         MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+    #     ports:
+    #         - "3306:3306"
+  engine:
+    image: "docker.klink.asia/images/k-search-engine:0.4.2"
+    expose:
+      - "8983"
+    environment:
+      ## the SOLR external address
+      KLINK_SOLR_MYHOST: engine
+    networks:
+      - internal
+
+  ## The Search Engine API
+  ksearch:
+    image: "oneofftech/k-search:develop"
+    # image: "docker.klink.asia/images/k-search:3.3.0-1"
+    environment:
+      ## Further datails about K-Search configuration in https://github.com/k-box/k-search
+      ## Application settings
+      # - APP_ENV=dev # Use the development environment
+      # - APP_DEBUG=0 # Enable the debug feature
+      ## Solr search configuration
+      - SOLR_HOST=engine # this is the external address of Solr
+      - SOLR_CORE=k-search # this is the Solr index name
+      ## Registry configuration
+      - KLINK_REGISTRY_ENABLED=0 # = no authentication
+      ## A valid URL needs to be specified for the registry, even if the integration is disabled
+      # - KLINK_REGISTRY_API_URL=https://registry.local/
+    depends_on:
+      - engine
+    ports:
+      - "8080:80"
+    networks:
+      internal:
+        # aliases:
+        #   ## the K-Box service checks the validity of the host, and just ksearch is not a valid host name
+        #   - ksearch.local
