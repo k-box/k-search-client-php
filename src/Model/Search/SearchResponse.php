@@ -1,14 +1,14 @@
 <?php
 
-namespace KSearchClient\Model\Data;
+namespace KSearchClient\Model\Search;
 
 use KSearchClient\Model\RPCResponse;
 use JMS\Serializer\Annotation as JMS;
-use Swagger\Annotations as SWG;
+// use Swagger\Annotations as SWG;
 
 /**
  * ##SWG\Definition(
- *     definition="Data\SearchResponse",
+ *     definition="KSearchClient\Model\Search\SearchResponse",
  *     required={"result"}
  * )
  */
@@ -19,18 +19,15 @@ class SearchResponse extends RPCResponse
      *
      * @var SearchResults
      *
-     * @JMS\Type("KSearchClient\Model\Data\SearchResults")
-     * ##JMS\ReadOnly()
+     * @JMS\Type("KSearchClient\Model\Search\SearchResults")
+     * @JMS\ReadOnly()
      * ##SWG\Property()
      */
     public $result;
 
-    /**
-     * @param string $responseId
-     */
-    public function __construct($result, $responseId = null)
+    public function __construct($result, string $responseId = null)
     {
+        parent::__construct($responseId);
         $this->result = $result;
-        $this->id = $responseId;
     }
 }

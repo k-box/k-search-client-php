@@ -25,8 +25,8 @@ use KSearchClient\Model\Data\Data;
 use KSearchClient\Model\Data\DataStatus;
 use KSearchClient\Model\Data\DataStatusResponse;
 use KSearchClient\Model\Data\GetResponse;
-use KSearchClient\Model\Data\SearchParams;
-use KSearchClient\Model\Data\SearchResponse;
+use KSearchClient\Model\Search\SearchParams;
+use KSearchClient\Model\Search\SearchResponse;
 use KSearchClient\Model\Data\SearchResults;
 use KSearchClient\Model\Error\ErrorResponse;
 use KSearchClient\Model\RPCRequest;
@@ -68,8 +68,10 @@ class Client
      * 
      * @param string $kSearchUrl
      */
-    public function __construct($kSearchUrl, Authentication $authentication, Http\RequestFactory $apiRequestFactory, Serializer $serializer, HttpClient $httpClient, MessageFactory $messageFactory, $apiVersion = '3.0')
+    public function __construct($kSearchUrl, Authentication $authentication, RequestFactory $apiRequestFactory, Serializer $serializer, HttpClient $httpClient, MessageFactory $messageFactory, $apiVersion = '3.4')
     {
+        // transform to $url, Authentication $authentication, Options{RequestFactory, Serializer, HttpClient, MessageFactory, $apiVersion = '3.0'}
+        
         // registering a PluginClient as the authentication and content headers should be added to all requests
         $this->httpClient = new PluginClient(
             $httpClient ?: HttpClientDiscovery::find(),

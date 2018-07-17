@@ -7,8 +7,8 @@ use KSearchClient\Model\Data\Data;
 use KSearchClient\Model\Data\DataStatusRequest;
 use KSearchClient\Model\Data\DeleteRequest;
 use KSearchClient\Model\Data\GetRequest;
-use KSearchClient\Model\Data\SearchParams;
-use KSearchClient\Model\Data\SearchRequest;
+use KSearchClient\Model\Search\SearchParams;
+use KSearchClient\Model\Search\SearchRequest;
 use KSearchClient\Model\Data\UUIDParam;
 use KSearchClient\Model\Data\DataStatus;
 use KSearchClient\Model\Data\DataStatusParams;
@@ -56,7 +56,7 @@ class RequestFactory
     }
 
     /**
-     * @return \KSearchClient\Model\Data\SearchRequest
+     * @return \KSearchClient\Model\Search\SearchRequest
      */
     public function buildSearchRequest(SearchParams $searchParams)
     {

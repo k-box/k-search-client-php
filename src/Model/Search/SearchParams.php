@@ -1,14 +1,15 @@
 <?php
 
-namespace KSearchClient\Model\Data;
+namespace KSearchClient\Model\Search;
 
+// use App\Validator\Constraints\ValidDataSearchFilter;
 use JMS\Serializer\Annotation as JMS;
-use Swagger\Annotations as SWG;
-use Symfony\Component\Validator\Constraints as Assert;
+// use Swagger\Annotations as SWG;
+// use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * ##SWG\Definition(
- *     definition="Data\SearchParams",
+ *     definition="Data\Search\SearchParams",
  *     required={"search", "filters"}
  * )
  */
@@ -18,7 +19,7 @@ class SearchParams
      * URI encoded string of the search query. If no query is specified, an empty result set will be returned.
      *
      * @var string
-     * ##AssertNotBlank()
+     * ##Assert\NotBlank()
      * @JMS\Type("string")
      * ##SWG\Property(
      *     example="Sherlock Holmes"
@@ -30,10 +31,10 @@ class SearchParams
      * Search filters in the [Lucene query parser syntax](https://lucene.apache.org/core/2_9_4/queryparsersyntax.html).
      *
      * @var string
-     * ##AssertNotBlank()
      * @JMS\Type("string")
+     * @ValidDataSearchFilter()
      * ##SWG\Property(
-     *     example="language:en AND created_at:[""2008-07-28T14:47:31Z"" TO NOW] AND updated_at:[""2008-07-28T14:47:31Z"" TO NOW] AND size:[717589 TO 717591] copyright_owner_name:""KLink Organization"" AND copyright_usage_short:""MPL-2.0"""
+     *     example="properties.language:en AND properties.created_at:[""2008-07-28T14:47:31Z"" TO NOW] AND properties.updated_at:[""2008-07-28T14:47:31Z"" TO NOW] AND properties.size:[717589 TO 717591] copyright.owner.name:""KLink Organization"" AND copyright.usage.short:""MPL-2.0"""
      * )
      */
     public $filters = '';
@@ -42,15 +43,15 @@ class SearchParams
      * An object containing the aggregations to be retrieved, keyed by the Aggregation field name.
      *
      * @var Aggregation[]
-     * ##AssertValid()
-     * @JMS\Type("array<string,KSearchClient\Model\Data\Aggregation>")
+     * ##Assert\Valid()
+     * @JMS\Type("array<string,App\Model\Data\Search\Aggregation>")
      * ##SWG\Property(
      *      example={
-     *          "language": {
+     *          "properties.language": {
      *              "limit": 5,
      *              "counts_filtered": false
      *           },
-     *          "copyright_usage_short": {
+     *          "copyright.usage.short": {
      *              "limit": 4,
      *              "counts_filtered": true
      *          }
@@ -60,12 +61,26 @@ class SearchParams
     public $aggregations = [];
 
     /**
+     * List of Sort parameters, used to sort the retrieved results.
+     * Multiple sorts are possible, the order of sorts define the sorting priority (since v3.1).
+     *
+     * @var SortParam[]
+     * ##Assert\Valid()
+     * @JMS\Since("3.1")
+     * @JMS\Type("array<App\Model\Data\Search\SortParam>")
+     * ##SWG\Property(
+     *     x={"since-version":"3.1"},
+     * )
+     */
+    public $sort = [];
+
+    /**
      * Specify the number of results to retrieve. If no value is given the default value of 10 is used.
      *
      * @var int
      * @JMS\Type("integer")
-     * ##AssertType("integer")
-     * ##AssertRange(
+     * ##Assert\Type("integer")
+     * ##Assert\Range(
      *     min=1,
      *     max=50,
      * )
@@ -85,8 +100,8 @@ class SearchParams
      *
      * @var int
      * @JMS\Type("integer")
-     * ##AssertType("integer")
-     * ##AssertRange(
+     * ##Assert\Type("integer")
+     * ##Assert\Range(
      *     min=0,
      * )
      * ##SWG\Property(
