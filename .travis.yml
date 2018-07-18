@@ -27,12 +27,7 @@ before_script:
   - sudo service mysql stop
   - docker-compose -f ./tests/docker-compose.yml up -d
   - docker-compose -f ./tests/docker-compose.yml ps
-  - curl --connect-timeout 5 \
-     --max-time 10 \
-     --retry 5 \
-     --retry-delay 0 \
-     --retry-max-time 60 \
-     -X POST "http://localhost:8080/api/3.0/data.get" -H  "accept: application/json" -H  "Content-Type: application/json" -d "{  \"params\": {    \"uuid\": \"cc1bbc0b-20e8-4e1f-b894-fb067e81c5dd\"  },  \"id\": \"request-3d254173\"}"
+  - curl --connect-timeout 5 --max-time 10 --retry 5 --retry-delay 0 --retry-max-time 60 -X POST "http://localhost:8080/api/3.0/data.get" -H  "accept: application/json" -H  "Content-Type: application/json" -d "{  \"params\": {    \"uuid\": \"cc1bbc0b-20e8-4e1f-b894-fb067e81c5dd\"  },  \"id\": \"request-3d254173\"}"
   # - php tests/wait.php
 
 script:
