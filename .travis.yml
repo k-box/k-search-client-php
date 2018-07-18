@@ -3,11 +3,11 @@ language: php
 services:
   - docker
 
-# branches:
-#   only:
-#   - master
-#   - /^v\d+\.\d+(\.\d+)?(-\S*)?$/
-#   - /^\d+\.\d+?$/
+branches:
+  only:
+  - master
+  - /^v\d+\.\d+(\.\d+)?(-\S*)?$/
+  - /^\d+\.\d+?$/
 
 sudo: false
 
