@@ -1,6 +1,6 @@
 {
     "name": "k-box/k-search-client-php",
-    "description": "The K-Link K-Search client",
+    "description": "The K-Search client",
     "type": "library",
     "homepage": "https://github.com/k-box/k-search-client-php",
     "time": "2018-01-19",
