@@ -70,6 +70,8 @@ use KSearchClient\Http\Authentication;
 The client needs a valid URL of a K-Search instance, e.g. https://search.klink.asia/. After obtaining the URL you can instantiate a client like
 
 ```php
+use KSearchClient\Client;
+
 // URL of the K-Search instance you want to connect to
 $service_url = 'https://search.klink.asia/';
 
@@ -82,6 +84,9 @@ $client = Client::build($service_url);
 The client, in addition to the K-Search URL, needs a valid `app_secret` and `app_url` from the K-Registry that handles application registration for the specific K-Search instance. After obtaining the pair you can instantiate a client like
 
 ```php
+use KSearchClient\Client;
+use Http\Message\Authentication;
+
 // Authentication
 $app_secret = 'Som3RandomW0rds';
 $app_url = 'http://localhost:8080/';
@@ -300,8 +305,10 @@ $searchParams = new SearchParams();
 $searchParams->search = 'Sherlock';
 
 $result = $client->search($searchParams);
-// instance of KSearchClient\Model\Data\SearchResults
+// instance of KSearchClient\Model\Search\SearchResults
 ```
+
+**Filters**
 
 The filter option accepts a [Lucene query syntax](https://lucene.apache.org/core/2_9_4/queryparsersyntax.html)
 
@@ -311,9 +318,9 @@ $searchParams->search = 'Sherlock';
 $searchParams->filters = 'properties.language:en AND properties.mime_type:"application/pdf"';
 
 $result = $client->search($searchParams);
-// instance of KSearchClient\Model\Data\SearchResults
+// instance of KSearchClient\Model\Search\SearchResults
 ```
-Currently the supported filter fields are:
+Currently the supported filter fields are defined in `KSearchClient\Model\Search\Filters`:
 
 - `uuid`
 - `type`
@@ -326,14 +333,21 @@ Currently the supported filter fields are:
 - `properties.mime_type`
 - `properties.owner.name`
 - `properties.usage.short`
+- `uploader.name`
+- `uploader.organization`
 
 Some filters accept free text terms, but most of them are bound to specific values. To know the possible values to use the `aggregation` concept was defined.
+
+**Aggregations**
 
 Aggregations consider all the possible values for a specific (supported) field and return the list of _N_ most common terms for the field.
 
 For example if I want to know the 15 most common data languages
 
 ```php
+use KSearchClient\Model\Search\Aggregation;
+use KSearchClient\Model\Search\Aggregations;
+
 $searchParams = new SearchParams();
 $searchParams->search = 'Sherlock'; // this can be also * if no specific term should appear in the data content
 
@@ -342,14 +356,42 @@ $searchParams->aggregations = [];
 $languageAggregation = new Aggregation();
 $languageAggregation->countsFiltered = true;
 $languageAggregation->limit = 15; // minimum 10, maximum 100
+$languageAggregation->minCount = 1; // return aggregation values that have at least minCount matching entries
 
-$searchParams->aggregations['properties.language'] = $languageAggregation;
+$searchParams->aggregations[Aggregations::LANGUAGE] = $languageAggregation;
 
 $result = $client->search($searchParams);
-// instance of KSearchClient\Model\Data\SearchResults
+// instance of KSearchClient\Model\Search\SearchResults
 ```
 
 The `$languageAggregation->countsFiltered = true` (or `false`) will tell the K-Search to evaluate the aggregations after filters are applied. In this way aggregation refers only to the subset of documents that matched your filter criteria. Otherwise the aggregations are evaluated on the whole data added to the K-Search instance by any users.
+
+The supported aggregations are defined in `KSearchClient\Model\Search\Aggregations`.
+
+**Sorting**
+
+By default search results are based on the score calculated for each data against the search query. Sometimes you might want to sort data differently.
+
+
+```php
+use KSearchClient\Model\Search\SortParam;
+
+$searchParams = new SearchParams();
+$searchParams->search = '*';
+
+
+$sortParam = new SortParam;
+$sortParam->field = SortParam::PROPERTIES_UPDATED_AT;
+$sortParam->order = SortParam::ASC;
+
+$searchParams->sort[] = [
+    $sortParam
+];
+
+$result = $client->search($searchParams);
+// instance of KSearchClient\Model\Search\SearchResults
+```
+
 
 ## Testing
 

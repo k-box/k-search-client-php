@@ -12,7 +12,7 @@ use JMS\Serializer\Annotation as JMS;
  *     required={"field"}
  * )
  */
-class SortParam
+class SortParam extends Sortables
 {
     const ORDER_DESC = 'desc';
     const ORDER_ASC = 'asc';

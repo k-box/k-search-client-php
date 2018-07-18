@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Model\Data\Search;
+namespace KSearchClient\Model\Search;
 
 use JMS\Serializer\Annotation as JMS;
 // use Swagger\Annotations as SWG;

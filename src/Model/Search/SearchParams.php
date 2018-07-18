@@ -44,7 +44,7 @@ class SearchParams
      *
      * @var Aggregation[]
      * ##Assert\Valid()
-     * @JMS\Type("array<string,App\Model\Data\Search\Aggregation>")
+     * @JMS\Type("array<string,KSearchClient\Model\Search\Aggregation>")
      * ##SWG\Property(
      *      example={
      *          "properties.language": {
@@ -67,7 +67,7 @@ class SearchParams
      * @var SortParam[]
      * ##Assert\Valid()
      * @JMS\Since("3.1")
-     * @JMS\Type("array<App\Model\Data\Search\SortParam>")
+     * @JMS\Type("array<KSearchClient\Model\Search\SortParam>")
      * ##SWG\Property(
      *     x={"since-version":"3.1"},
      * )
