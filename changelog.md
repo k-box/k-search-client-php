@@ -29,7 +29,7 @@ the K-Search client supports K-Search api version `>=3.0`, but less than `4.0`.
 - Class `ResultSet`, replaced by `Model\Search\SearchResults` (**breaking change**)
 - Class `SearchItem` (**breaking change**)
 
-## [3.0.2] - 2018-01-19
+## [3.0.2] - 2018-07-13
 
 ### Added
 
