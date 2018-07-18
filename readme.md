@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/k-box/k-search-client-php.svg?branch=master)](https://travis-ci.org/k-box/k-search-client-php)
+
 # K-Search PHP Client
 
 The K-Search Client is a library that abstract the communication to a [K-Search](https://github.com/k-box/k-search) instance.
