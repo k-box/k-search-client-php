@@ -21,8 +21,6 @@ services:
     #         - "3306:3306"
   engine:
     image: "docker.klink.asia/images/k-search-engine:0.4.2"
-    expose:
-      - "8983"
     environment:
       ## the SOLR external address
       KLINK_SOLR_MYHOST: engine
@@ -50,7 +48,7 @@ services:
     ports:
       - "8080:80"
     networks:
-      internal:
+      - internal
         # aliases:
         #   ## the K-Box service checks the validity of the host, and just ksearch is not a valid host name
         #   - ksearch.local
