@@ -5,6 +5,7 @@ require(__DIR__ . '/../vendor/autoload.php');
 use Http\Client\HttpClient;
 use Http\Discovery\HttpClientDiscovery;
 use Http\Discovery\MessageFactoryDiscovery;
+use Http\Client\Exception\RequestException;
 
 $messageFactory = MessageFactoryDiscovery::find();
 $httpClient = HttpClientDiscovery::find();
@@ -25,7 +26,7 @@ while (true) {
             fwrite(STDOUT, 'Docker container started!'.PHP_EOL);
             exit(0);
         }
-    } catch (PDOException $exception) {
+    } catch (RequestException $exception) {
         $elapsed = time() - $start;
 
         if ($elapsed > 30) {
