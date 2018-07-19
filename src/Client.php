@@ -12,6 +12,8 @@ use Http\Discovery\MessageFactoryDiscovery;
 use Http\Message\Authentication;
 use Http\Message\MessageFactory;
 use JMS\Serializer\Serializer;
+use JMS\Serializer\SerializerBuilder;
+use JMS\Serializer\EventDispatcher\EventDispatcher;
 use KSearchClient\Exception\AuthTypeNotSupportedException;
 use KSearchClient\Exception\ErrorResponseException;
 use KSearchClient\Exception\InvalidDataException;
@@ -37,6 +39,7 @@ use Symfony\Component\Validator\Validation;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use JMS\Serializer\Exception\Exception as JMSException;
 use KSearchClient\Http\RequestFactory;
+use KSearchClient\Serializer\DeserializeErrorEventSubscriber;
 
 class Client
 {
@@ -215,7 +218,7 @@ class Client
             /** @var ErrorResponse $errorResponse */
             $errorResponse = $this->deserializeResponse($responseBody, ErrorResponse::class);
             
-            if($errorResponse->error->code === 400){
+            if($errorResponse->error->code === 400 && ResponseHelper::isAssociativeArray($errorResponse->error->data)){
                 throw new InvalidDataException($errorResponse->error->data);
             }
 
@@ -279,7 +282,10 @@ class Client
         AnnotationRegistry::registerLoader('class_exists');
 
         $factory = new RequestFactory;
-        $serializer = \JMS\Serializer\SerializerBuilder::create()
+        $serializer = SerializerBuilder::create()
+            ->configureListeners(function(EventDispatcher $dispatcher) {
+                $dispatcher->addSubscriber(new DeserializeErrorEventSubscriber());
+            })
             ->build();
         $httpClient = HttpClientDiscovery::find();
         $messageFactory = MessageFactoryDiscovery::find();

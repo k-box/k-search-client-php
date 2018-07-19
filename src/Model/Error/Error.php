@@ -54,8 +54,9 @@ class Error
     /**
      * @param int $errorCode
      * @param string $message
+     * @param array $data
      */
-    public function __construct($errorCode, $message, $data = null)
+    public function __construct($errorCode, $message, $data = [])
     {
         $this->code = $errorCode;
         $this->message = $message;
