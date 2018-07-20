@@ -7,9 +7,11 @@ use KSearchClient\Model\Data\Data;
 use KSearchClient\Model\Data\DataStatusRequest;
 use KSearchClient\Model\Data\DeleteRequest;
 use KSearchClient\Model\Data\GetRequest;
-use KSearchClient\Model\Data\SearchParams;
-use KSearchClient\Model\Data\SearchRequest;
+use KSearchClient\Model\Search\SearchParams;
+use KSearchClient\Model\Search\SearchRequest;
 use KSearchClient\Model\Data\UUIDParam;
+use KSearchClient\Model\Data\DataStatus;
+use KSearchClient\Model\Data\DataStatusParams;
 use KSearchClient\Model\Status\StatusResponse;
 
 class RequestFactory
@@ -54,7 +56,7 @@ class RequestFactory
     }
 
     /**
-     * @return \KSearchClient\Model\Data\SearchRequest
+     * @return \KSearchClient\Model\Search\SearchRequest
      */
     public function buildSearchRequest(SearchParams $searchParams)
     {
@@ -69,12 +71,13 @@ class RequestFactory
      * @param string $uuid
      * @return \KSearchClient\Model\Data\DataStatusRequest
      */
-    public function buildStatusRequest($uuid)
+    public function buildStatusRequest($uuid, $type = DataStatus::TYPE_DATA)
     {
         $statusRequest = new DataStatusRequest();
         $statusRequest->id = time();
-        $statusRequest->params = new UUIDParam;
+        $statusRequest->params = new DataStatusParams;
         $statusRequest->params->uuid = $uuid;
+        $statusRequest->params->type = $type;
 
         return $statusRequest;
     }

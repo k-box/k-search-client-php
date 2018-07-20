@@ -12,6 +12,8 @@ use Http\Discovery\MessageFactoryDiscovery;
 use Http\Message\Authentication;
 use Http\Message\MessageFactory;
 use JMS\Serializer\Serializer;
+use JMS\Serializer\SerializerBuilder;
+use JMS\Serializer\EventDispatcher\EventDispatcher;
 use KSearchClient\Exception\AuthTypeNotSupportedException;
 use KSearchClient\Exception\ErrorResponseException;
 use KSearchClient\Exception\InvalidDataException;
@@ -25,8 +27,8 @@ use KSearchClient\Model\Data\Data;
 use KSearchClient\Model\Data\DataStatus;
 use KSearchClient\Model\Data\DataStatusResponse;
 use KSearchClient\Model\Data\GetResponse;
-use KSearchClient\Model\Data\SearchParams;
-use KSearchClient\Model\Data\SearchResponse;
+use KSearchClient\Model\Search\SearchParams;
+use KSearchClient\Model\Search\SearchResponse;
 use KSearchClient\Model\Data\SearchResults;
 use KSearchClient\Model\Error\ErrorResponse;
 use KSearchClient\Model\RPCRequest;
@@ -36,6 +38,8 @@ use Psr\Http\Message\ResponseInterface;
 use Symfony\Component\Validator\Validation;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use JMS\Serializer\Exception\Exception as JMSException;
+use KSearchClient\Http\RequestFactory;
+use KSearchClient\Serializer\DeserializeErrorEventSubscriber;
 
 class Client
 {
@@ -54,7 +58,7 @@ class Client
     /** @var  Routes */
     private $routes;
     /**
-     * @var Http\RequestFactory
+     * @var RequestFactory
      */
     private $apiRequestFactory;
     /**
@@ -67,8 +71,10 @@ class Client
      * 
      * @param string $kSearchUrl
      */
-    public function __construct($kSearchUrl, Authentication $authentication, Http\RequestFactory $apiRequestFactory, Serializer $serializer, HttpClient $httpClient, MessageFactory $messageFactory, $apiVersion = '3.0')
+    public function __construct($kSearchUrl, Authentication $authentication, RequestFactory $apiRequestFactory, Serializer $serializer, HttpClient $httpClient, MessageFactory $messageFactory, $apiVersion = '3.4')
     {
+        // transform to $url, Authentication $authentication, Options{RequestFactory, Serializer, HttpClient, MessageFactory, $apiVersion = '3.0'}
+        
         // registering a PluginClient as the authentication and content headers should be added to all requests
         $this->httpClient = new PluginClient(
             $httpClient ?: HttpClientDiscovery::find(),
@@ -151,16 +157,16 @@ class Client
      *
      * @return DataStatus The data status
      */
-    public function getStatus($uuid)
+    public function getStatus($uuid, $type = DataStatus::TYPE_DATA)
     {
-        $request = $this->apiRequestFactory->buildStatusRequest($uuid);
+        $request = $this->apiRequestFactory->buildStatusRequest($uuid, $type);
         $route = $this->routes->getDataStatus();
 
         $response = $this->handleRequest($request, $route);
 
         /** @var DataStatusResponse $dataStatusResponse */
         $dataStatusResponse = $this->deserializeResponse($response->getBody(), DataStatusResponse::class);
-        // todo: check for deserialization errors and in case status is null raise an exception
+        
         return $dataStatusResponse->result;
     }
 
@@ -173,7 +179,6 @@ class Client
         $route = $this->routes->getSearchQuery();
 
         $response = $this->handleRequest($request, $route);
-
 
         /** @var SearchResponse $searchResponse */
         $searchResponse = $this->deserializeResponse($response->getBody(), SearchResponse::class);
@@ -213,7 +218,7 @@ class Client
             /** @var ErrorResponse $errorResponse */
             $errorResponse = $this->deserializeResponse($responseBody, ErrorResponse::class);
             
-            if($errorResponse->error->code === 400){
+            if($errorResponse->error->code === 400 && ResponseHelper::isAssociativeArray($errorResponse->error->data)){
                 throw new InvalidDataException($errorResponse->error->data);
             }
 
@@ -272,12 +277,15 @@ class Client
      * @param \KSearchClient\Http\Authentication $authentication The authentication credentials, if necessary
      * @return Client
      */
-    public static function build($instanceUrl, Authentication $authentication = null, $apiVersion = '3.0')
+    public static function build($instanceUrl, Authentication $authentication = null, $apiVersion = '3.4')
     {
         AnnotationRegistry::registerLoader('class_exists');
 
-        $factory = new Http\RequestFactory;
-        $serializer = \JMS\Serializer\SerializerBuilder::create()
+        $factory = new RequestFactory;
+        $serializer = SerializerBuilder::create()
+            ->configureListeners(function(EventDispatcher $dispatcher) {
+                $dispatcher->addSubscriber(new DeserializeErrorEventSubscriber());
+            })
             ->build();
         $httpClient = HttpClientDiscovery::find();
         $messageFactory = MessageFactoryDiscovery::find();

@@ -1,0 +1,27 @@
+## Test environment
+## This docker compose starts the necessary services to run integration tests
+
+version: "2"
+
+networks:
+  internal:
+
+services:
+  engine:
+    image: "docker.klink.asia/images/k-search-engine:0.4.2"
+    environment:
+      KLINK_SOLR_MYHOST: engine
+    networks:
+      - internal
+  ksearch:
+    image: "docker.klink.asia/images/k-search:3.3.0-2"
+    environment:
+      - SOLR_HOST=engine
+      - SOLR_CORE=k-search
+      - KLINK_REGISTRY_ENABLED=0
+    depends_on:
+      - engine
+    ports:
+      - "8080:80"
+    networks:
+      - internal

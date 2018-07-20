@@ -30,7 +30,7 @@ class GetResponse extends RPCResponse
      */
     public function __construct(Data $data, $responseId = null)
     {
+        parent::__construct($responseId);
         $this->result = $data;
-        $this->id = $responseId;
     }
 }

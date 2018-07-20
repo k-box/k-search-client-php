@@ -3,6 +3,7 @@ namespace Tests\Concern;
 
 use KSearchClient\Client;
 use KSearchClient\Http\Authentication;
+use KSearchClient\Model\Search\SearchParams;
 
 trait SetupIntegrationTest
 {
@@ -27,7 +28,23 @@ trait SetupIntegrationTest
                 );
         }
         
-        $this->client = Client::build($service_url, $auth, $api_version ? $api_version : '3.0');
+        $this->client = Client::build($service_url, $auth, $api_version ? $api_version : '3.4');
+    }
+
+    protected function clearIndexedDocuments()
+    {
+        $params = tap(new SearchParams(), function($searchParams) {
+            $searchParams->search = '*'; // all indexed data
+            $searchParams->filters = null;
+            $searchParams->offset = 0;
+            $searchParams->limit = 50;
+        });
+
+        $list = $this->client->search($params)->items;
+
+        foreach ($list as $item) {
+            $this->client->delete($item->uuid);
+        }
     }
     
 }

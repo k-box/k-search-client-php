@@ -9,7 +9,7 @@ use Swagger\Annotations as SWG;
  * ##SWG\Definition(
  *     definition="Data\Properties\Subtitles",
  *     description="Object with information on one subtitles track.",
- *     required={}
+ *     required={"language", "file", "format"}
  * )
  */
 class Subtitles

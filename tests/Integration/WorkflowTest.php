@@ -41,7 +41,8 @@ class WorkflowTest extends TestCase
 
         $this->assertInstanceOf(DataStatus::class, $status);
         $this->assertInternalType('string', $status->status);
-        $this->assertEquals('ok', $status->status);
+        $this->assertEquals(DataStatus::STATUS_INDEX_OK, $status->status);
+        $this->assertTrue($status->indexed());
         $this->assertEmpty($status->message);
 
         return $uuid;

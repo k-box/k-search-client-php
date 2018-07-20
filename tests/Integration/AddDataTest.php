@@ -16,7 +16,7 @@ class AddDataTest extends TestCase
 {
     use SetupIntegrationTest;
 
-    public function testClientCanAddData()
+    public function testClientCanAddDataWithTextualContent()
     {
         $uuid = Uuid::uuid4()->toString();
 
@@ -81,26 +81,27 @@ class AddDataTest extends TestCase
         $this->assertTrue($exceptionHandled, 'Expected ErrorResponseException, but got nothing');
     }
 
-    // /**
-    //  * @depends testClientCanAddData
-    //  */
-    // public function testClientCanAddVideo()
-    // {
-    //     $auth = new Authentication('token', 'http://localhost');
+    public function testAddThrowsErrorIfInvalidUrlIsUsed()
+    {
+        try{
+    
+            $uuid = Uuid::uuid4()->toString();
 
-    //     $service_url = getenv('KSEARCH_URL');
+            $data = $this->createDataModel($uuid, 'http://localhost:3000/test.pdf');
+    
+            $added_data = $this->client->add($data, null);
 
-    //     $client = Client::build($service_url, $auth);
+            $this->fail("No ErrorResponseException received");
 
-    //     $uuid = Uuid::uuid4()->toString();
+        }catch(ErrorResponseException $ex){
 
-    //     $added_data = $client->add($this->createDataModel($uuid), 'textual content to use');
+            $this->assertEquals(400, $ex->getCode());
 
-    //     var_dump($added_data);
+            $this->assertContains('Unable to download contents', $ex->getMessage());
+            $this->assertCount(1, $ex->getData());
+            $this->assertContains('cURL error 7: Failed to connect to localhost port 3000: Connection refused (see http://curl.haxx.se/libcurl/c/libcurl-errors.html)', $ex->getData());
+            
+        }
+    }
 
-    //     $this->assertInstanceOf(Data::class, $added_data);
-
-    //     // cc1bbc0b-20e8-4e1f-b894-fb067e81c5dd
-    //     // 00000000-0000-0000-0000-000000000001
-    // }
 }

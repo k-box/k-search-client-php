@@ -7,14 +7,11 @@ use JMS\Serializer\Annotation as JMS;
 /**
  * ##SWG\Definition(
  *     definition="Data\Data",
- *     required={"uuid", "hash", "type", "url"}
+ *     required={"uuid", "hash", "type", "url", "author", "copyright", "uploader", "properties"}
  * )
  */
 class Data
 {
-    const DATA_STATUS_QUEUED = 'queued';
-    const DATA_STATUS_OK = 'ok';
-
     const DATA_TYPE_DOCUMENT = 'document';
     const DATA_TYPE_VIDEO = 'video';
 
