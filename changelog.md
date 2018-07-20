@@ -4,11 +4,13 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/0.3.0/).
 
-This project _do not adhere_ to Semantic Versioning. The `Major` version number 
+This project **_do not adhere_ to Semantic Versioning**. The `Major` version number 
 indicates the supported K-Search API version, e.g. a version number `3` means that
 the K-Search client supports K-Search api version `>=3.0`, but less than `4.0`.
 
 ## Unreleased
+
+## [3.1.0] - 2018-07-20
 
 ### Added
 

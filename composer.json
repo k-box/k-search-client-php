@@ -3,8 +3,8 @@
     "description": "The K-Search client",
     "type": "library",
     "homepage": "https://github.com/k-box/k-search-client-php",
-    "time": "2018-01-19",
-    "license": "AGPL-3.0",
+    "time": "2018-07-20",
+    "license": "AGPL-3.0-only",
     "authors": [
         {
             "name": "Alessio Vertemati",
