@@ -17,7 +17,7 @@ class GeographicGeometry
     const TYPE_POLYGON = 'Polygon';
 
     /**
-     * The Universally unique identifier of this data.
+     * The type of geometry, e.g. Point, Polygon.
      *
      * @var string
      * @JMS\Type("string")
@@ -25,7 +25,7 @@ class GeographicGeometry
     public $type;
 
     /**
-     * The URI where the source data is stored and retrievable.
+     * The coordinates of the geometry.
      *
      * @var array
      * @JMS\Type("array")
@@ -56,6 +56,9 @@ class GeographicGeometry
 
     /**
      * Create a Point geometry
+     * 
+     * @param float $longitude
+     * @param float $latitude
      */
     public static function point($longitude, $latitude)
     {
