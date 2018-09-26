@@ -20,7 +20,7 @@ trait SetupIntegrationTest
         $auth = new Authentication(getenv('KSEARCH_APP_SECRET'), getenv('KSEARCH_APP_URL'));
         
         $service_url = getenv('KSEARCH_URL');
-        $api_version = getenv('KSEARCH_VERSION');
+        $api_version = $this->getApiVersion();
 
         if(empty($service_url)){
             $this->markTestSkipped(
@@ -28,7 +28,24 @@ trait SetupIntegrationTest
                 );
         }
         
-        $this->client = Client::build($service_url, $auth, $api_version ? $api_version : '3.4');
+        $this->client = Client::build($service_url, $auth, $api_version);
+    }
+
+    protected function getApiVersion()
+    {
+        $api_version = getenv('KSEARCH_VERSION'); 
+        return  $api_version ? $api_version : '3.5';
+    }
+
+    public function skipIfApiVersionNotEqual($version)
+    {
+        $envVersion = $this->getApiVersion();
+
+        if($envVersion !== $version){
+            $this->markTestSkipped(
+                "Test skipped as require api [$version]. Environment version [$envVersion]."
+            );
+        }
     }
 
     protected function clearIndexedDocuments()

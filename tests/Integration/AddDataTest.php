@@ -4,6 +4,7 @@ namespace Tests\Integration;
 use Tests\TestCase;
 use KSearchClient\Client;
 use KSearchClient\Model\Data\Data;
+use KSearchClient\Model\Data\GeographicGeometry;
 use KSearchClient\Http\Authentication;
 use GuzzleHttp\Psr7\Request;
 use Psr\Http\Message\RequestInterface;
@@ -79,6 +80,51 @@ class AddDataTest extends TestCase
         }
 
         $this->assertTrue($exceptionHandled, 'Expected ErrorResponseException, but got nothing');
+    }
+
+    public function testAddThrowsErrorIfInvalidGeoLocation()
+    {
+        $this->skipIfApiVersionNotEqual('3.5');
+
+        $exceptionHandled = false;
+        try{
+    
+            $uuid = Uuid::uuid4()->toString();
+
+            $data = tap($this->createDataModel($uuid), function($model){
+                $model->geo_location = GeographicGeometry::polygon([]);
+            });
+    
+            $added_data = $this->client->add($data, 'textual content to use');
+
+            $this->fail('Expected InvalidDataException, but got nothing');
+
+        }catch(InvalidDataException $ex){
+
+            $this->assertEquals(400, $ex->getCode());
+
+            $this->assertContains('params.data.geo_location', $ex->getMessage());
+            $this->assertArrayHasKey('params.data.geo_location', $ex->getData());
+        }
+    }
+
+    public function test_add_geo_location()
+    {
+        $this->skipIfApiVersionNotEqual('3.5');
+    
+        $uuid = Uuid::uuid4()->toString();
+
+        $geometry = GeographicGeometry::point(-105.01621,39.57422);
+        $data = tap($this->createDataModel($uuid), function($model) use($geometry){
+            $model->geo_location = $geometry;
+        });
+
+        $added_data = $this->client->add($data, 'textual content to use');
+        
+        $this->assertInstanceOf(Data::class, $added_data);
+        $this->assertEquals($data, $added_data);
+        $this->assertEquals($geometry->__toString(), $added_data->geo_location);
+
     }
 
     public function testAddThrowsErrorIfInvalidUrlIsUsed()
