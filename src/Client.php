@@ -277,7 +277,7 @@ class Client
      * @param \KSearchClient\Http\Authentication $authentication The authentication credentials, if necessary
      * @return Client
      */
-    public static function build($instanceUrl, Authentication $authentication = null, $apiVersion = '3.4')
+    public static function build($instanceUrl, Authentication $authentication = null, $apiVersion = '3.5')
     {
         AnnotationRegistry::registerLoader('class_exists');
 

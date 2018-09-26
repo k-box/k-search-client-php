@@ -10,6 +10,18 @@ the K-Search client supports K-Search api version `>=3.0`, but less than `4.0`.
 
 ## Unreleased
 
+## [3.2.0] - 2018-09-26
+
+### Added
+
+- Support for K-Search API 3.5
+ - Support for `geo_location_filter` inside the Search request
+ - Support for the new `geo_location` field in the Data model
+
+### Changed
+
+- K-Search client now asks for API version 3.5 (requires K-Search version 3.5.0) (**breaking change**)
+
 ## [3.1.0] - 2018-07-20
 
 ### Added
