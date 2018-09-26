@@ -18,6 +18,8 @@ use Tests\Concern\SetupIntegrationTest;
 use KSearchClient\Model\Search\SearchResults;
 use KSearchClient\Model\Search\AggregationResult;
 use KSearchClient\Model\Search\SortParam;
+use KSearchClient\Model\Data\GeographicGeometry;
+use KSearchClient\Model\Search\BoundingBoxFilter;
 
 class SearchDataTest extends TestCase
 {
@@ -171,6 +173,68 @@ class SearchDataTest extends TestCase
         $this->assertEquals('2008-07-29 15:47:31', $last);
     }
 
+    public function test_search_filter_for_geographic_bounding_box()
+    {
+        $this->skipIfApiVersionNotEqual('3.5');
+
+        $this->clearIndexedDocuments();
+        $this->addGeographicTestDummyData();
+
+        $bbox =GeographicGeometry::polygon( 
+            [
+                [100,0],
+                [101,0],
+                [101,1],
+                [100,1],
+                [100,0]
+            ]
+        );
+        $boundingBox = new BoundingBoxFilter($bbox);
+
+        $params = tap(new SearchParams(), function($searchParams) use($boundingBox) {
+            $searchParams->search = '*'; // all indexed data
+            $searchParams->geo_location_filter = $boundingBox;
+            $searchParams->limit = 50;
+        });
+
+        $response = $this->client->search($params);
+
+        $this->assertInstanceOf(SearchResults::class, $response);
+        $this->assertEquals('*', $response->query->search);
+        $this->assertEquals($boundingBox->bounding_box, $response->query->geo_location_filter->bounding_box);
+        
+        $this->assertNotNull($response->totalMatches);
+        $this->assertNotNull($response->items);
+        $this->assertTrue(count($response->items) == 1, "Items count must be 1");
+    }
+
+    public function test_search_for_data_with_geo_location()
+    {
+        $this->skipIfApiVersionNotEqual('3.5');
+
+        $this->clearIndexedDocuments();
+        $this->addTestDummyData();
+        $this->addGeographicTestDummyData();
+
+        $boundingBox = BoundingBoxFilter::worldBounds();
+
+        $params = tap(new SearchParams(), function($searchParams) use($boundingBox) {
+            $searchParams->search = '*';
+            $searchParams->geo_location_filter = $boundingBox;
+            $searchParams->limit = 50;
+        });
+        
+        $response = $this->client->search($params);
+        
+        $this->assertInstanceOf(SearchResults::class, $response);
+        $this->assertEquals('*', $response->query->search);
+        
+        $this->assertNotNull($response->totalMatches);
+        $this->assertEquals($boundingBox->bounding_box, $response->query->geo_location_filter->bounding_box);
+        $this->assertNotNull($response->items);
+        $this->assertCount(2, $response->items, "Items count must be 2");
+    }
+
 
     private function addTestDummyData()
     {
@@ -196,6 +260,31 @@ class SearchDataTest extends TestCase
         $to_add = $this->createDataModel($uuid);
 
         $to_add->properties->updated_at = new \DateTime('2008-07-29T15:47:31Z', new \DateTimeZone('UTC'));
+
+        $added_data = $this->client->add($to_add, 'textual content to use');
+    }
+
+    private function addGeographicTestDummyData()
+    {
+        $geometry1 = GeographicGeometry::polygon([
+            [100,0],
+            [101,0],
+            [101,1],
+            [100,1],
+            [100,0]
+        ]);
+
+        $uuid = Uuid::uuid4()->toString();
+
+        $to_add = $this->createDataModel($uuid);
+        $to_add->geo_location = $geometry1;
+
+        $added_data = $this->client->add($to_add, 'textual content to use');
+
+        $uuid = Uuid::uuid4()->toString();
+
+        $to_add = $this->createDataModel($uuid);
+        $to_add->geo_location = GeographicGeometry::point(60.01621,20.57422);
 
         $added_data = $this->client->add($to_add, 'textual content to use');
     }

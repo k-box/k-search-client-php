@@ -40,6 +40,17 @@ class SearchParams
     public $filters = '';
 
     /**
+     * Filter documents based on geographic data
+     * 
+     * This filter is always applied in AND with other $filters
+     *
+     * @var GeoLocationFilter
+     * @JMS\Type("KSearchClient\Model\Search\BoundingBoxFilter")
+     * @JMS\Since("3.5")
+     */
+    public $geo_location_filter = null;
+
+    /**
      * An object containing the aggregations to be retrieved, keyed by the Aggregation field name.
      *
      * @var Aggregation[]
