@@ -208,6 +208,33 @@ class SearchDataTest extends TestCase
         $this->assertTrue(count($response->items) == 1, "Items count must be 1");
     }
 
+    public function test_search_for_data_with_geo_location()
+    {
+        $this->skipIfApiVersionNotEqual('3.5');
+
+        $this->clearIndexedDocuments();
+        $this->addTestDummyData();
+        $this->addGeographicTestDummyData();
+
+        $boundingBox = BoundingBoxFilter::worldBounds();
+
+        $params = tap(new SearchParams(), function($searchParams) use($boundingBox) {
+            $searchParams->search = '*';
+            $searchParams->geo_location_filter = $boundingBox;
+            $searchParams->limit = 50;
+        });
+        
+        $response = $this->client->search($params);
+        
+        $this->assertInstanceOf(SearchResults::class, $response);
+        $this->assertEquals('*', $response->query->search);
+        
+        $this->assertNotNull($response->totalMatches);
+        $this->assertEquals($boundingBox->bounding_box, $response->query->geo_location_filter->bounding_box);
+        $this->assertNotNull($response->items);
+        $this->assertCount(2, $response->items, "Items count must be 2");
+    }
+
 
     private function addTestDummyData()
     {

@@ -32,5 +32,26 @@ class BoundingBoxFilter
 	{
 		$this->bounding_box = $bounding_box instanceof GeographicGeometry ? $bounding_box->__toString() : $bounding_box;
 	}
+
+	public static function worldBounds()
+	{
+		return new self(GeographicGeometry::polygon([
+			[-180.0,90.0],
+			[-180.0,-90.0],
+			[180.0,-90.0],
+			[180.0,90.0],
+			[-180.0,90.0]
+			// [0.0,60.0],
+			// [0.0,0.0],
+			// [110.0,0.0],
+			// [110.0,60.0],
+			// [0.0,60.0]
+			// [100,0],
+            // [102,0],
+            // [102,2],
+            // [100,2],
+            // [100,0]
+		]));
+	}
 	
 }
