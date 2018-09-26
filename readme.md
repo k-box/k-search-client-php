@@ -16,6 +16,8 @@ The library enables the following operations
 
 For release changelogs see the [Changelog](./changelog.md)
 
+> The client always ask for the most recent version of the API. If you have an older K-Search version or you want to use an old API version, please specify it when [instantiating the client](#instantiate-a-client)
+
 **Requirements**
 
 - [PHP 5.6](http://www.php.net/) or above.
@@ -25,7 +27,7 @@ For release changelogs see the [Changelog](./changelog.md)
 ### Installation
 
 The K-Search client uses [Composer](http://getcomposer.org/) to manage its dependencies. 
-So, before using the Boilerplate, make sure you have Composer installed on your machine.
+So, before using the Client, make sure you have Composer installed on your machine.
 
 In order to require it in your project add the following repository configuration to your `composer.json` file.
 
@@ -98,6 +100,23 @@ $service_url = 'https://search.klink.asia/';
 
 // Generate the client
 $client = Client::build($service_url, new Authentication($app_secret, $app_url));
+```
+
+**Wanting different API versions**
+
+Forcing an API version usage is possible while creating a Client instance.
+Specify the API version as the last argument of the `Client::build()` method.
+
+```php
+use KSearchClient\Client;
+use Http\Message\Authentication;
+
+$app_secret = 'Som3RandomW0rds';
+$app_url = 'http://localhost:8080/';
+$service_url = 'https://search.klink.asia/';
+
+$client = Client::build($service_url, new Authentication($app_secret, $app_url), '3.4');
+// => a client for the API version 3.4 will be returned
 ```
 
 #### Working with a Client instance
