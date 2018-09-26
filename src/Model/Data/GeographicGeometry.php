@@ -40,7 +40,7 @@ class GeographicGeometry
 
     public function __toString()
     {
-        if(is_array($this->coordinates[0])){
+        if(isset($this->coordinates[0]) && is_array($this->coordinates[0])){
             $internal = [];
             foreach ($this->coordinates as $component) {
                 $internal[] = '[' . implode(',', $component) . ']';
