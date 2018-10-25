@@ -5,6 +5,8 @@ use Tests\TestCase;
 use KSearchClient\Client;
 use KSearchClient\Model\Data\Data;
 use KSearchClient\Model\Data\GeographicGeometry;
+use KSearchClient\Model\Data\Uploader;
+use KSearchClient\Model\Data\Copyright;
 use KSearchClient\Http\Authentication;
 use GuzzleHttp\Psr7\Request;
 use Psr\Http\Message\RequestInterface;
@@ -28,6 +30,26 @@ class AddDataTest extends TestCase
         $this->assertInstanceOf(Data::class, $added_data);
 
         $this->assertEquals($to_add, $added_data);
+    }
+
+    public function testClientCanAddDataWithMinimalRequiredFields()
+    {
+        $this->skipIfApiVersionNotEqualOrAbove('3.6');
+
+        $uuid = Uuid::uuid4()->toString();
+
+        $to_add = $this->createDataModel($uuid);
+        $to_add->copyright = null;
+        $to_add->uploader = null;
+        $to_add->authors = null;
+
+        $added_data = $this->client->add($to_add, 'textual content to use');
+
+        $this->assertInstanceOf(Data::class, $added_data);
+
+        $this->assertInstanceOf(Uploader::class, $added_data->uploader);
+        $this->assertNull($added_data->copyright);
+        $this->assertEmpty($added_data->authors);
     }
 
     public function testAddThrowsErrorIfInvalidUUID()
@@ -73,8 +95,6 @@ class AddDataTest extends TestCase
 
             $this->assertContains('params.data.properties.title', $ex->getMessage());
             $this->assertArrayHasKey('params.data.properties.title', $ex->getData());
-            $this->assertContains('params.data.uploader', $ex->getMessage());
-            $this->assertArrayHasKey('params.data.uploader', $ex->getData());
 
             $exceptionHandled = true;
         }
@@ -84,7 +104,7 @@ class AddDataTest extends TestCase
 
     public function testAddThrowsErrorIfInvalidGeoLocation()
     {
-        $this->skipIfApiVersionNotEqual('3.5');
+        $this->skipIfApiVersionNotEqualOrAbove('3.5');
 
         $exceptionHandled = false;
         try{
@@ -110,7 +130,7 @@ class AddDataTest extends TestCase
 
     public function test_add_geo_location()
     {
-        $this->skipIfApiVersionNotEqual('3.5');
+        $this->skipIfApiVersionNotEqualOrAbove('3.5');
     
         $uuid = Uuid::uuid4()->toString();
 
