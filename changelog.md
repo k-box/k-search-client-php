@@ -10,6 +10,12 @@ the K-Search client supports K-Search api version `>=3.0`, but less than `4.0`.
 
 ## Unreleased
 
+## [3.3.0] - 2018-10-31
+
+### Changed
+
+- The client now send requests with API version 3.6.
+
 ## [3.2.0] - 2018-09-26
 
 ### Added
