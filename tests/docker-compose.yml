@@ -14,7 +14,7 @@ services:
     networks:
       - internal
   ksearch:
-    image: "docker.klink.asia/images/k-search:3.5.1-1"
+    image: "docker.klink.asia/images/k-search:3.6.0-1"
     environment:
       - SOLR_HOST=engine
       - SOLR_CORE=k-search
