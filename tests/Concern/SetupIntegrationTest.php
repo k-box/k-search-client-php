@@ -34,14 +34,14 @@ trait SetupIntegrationTest
     protected function getApiVersion()
     {
         $api_version = getenv('KSEARCH_VERSION'); 
-        return  $api_version ? $api_version : '3.5';
+        return  $api_version ? $api_version : '3.6';
     }
 
-    public function skipIfApiVersionNotEqual($version)
+    public function skipIfApiVersionNotEqualOrAbove($version)
     {
         $envVersion = $this->getApiVersion();
 
-        if($envVersion !== $version){
+        if(version_compare($envVersion, $version, '<')){
             $this->markTestSkipped(
                 "Test skipped as require api [$version]. Environment version [$envVersion]."
             );

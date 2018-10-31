@@ -175,7 +175,7 @@ class SearchDataTest extends TestCase
 
     public function test_search_filter_for_geographic_bounding_box()
     {
-        $this->skipIfApiVersionNotEqual('3.5');
+        $this->skipIfApiVersionNotEqualOrAbove('3.5');
 
         $this->clearIndexedDocuments();
         $this->addGeographicTestDummyData();
@@ -210,7 +210,7 @@ class SearchDataTest extends TestCase
 
     public function test_search_for_data_with_geo_location()
     {
-        $this->skipIfApiVersionNotEqual('3.5');
+        $this->skipIfApiVersionNotEqualOrAbove('3.5');
 
         $this->clearIndexedDocuments();
         $this->addTestDummyData();
