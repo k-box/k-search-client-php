@@ -14,7 +14,8 @@ services:
     networks:
       - internal
   ksearch:
-    image: "docker.klink.asia/images/k-search:3.6.0-1"
+    image: "oneofftech/k-search:${KSEARCH_TAG:-develop}"
+    # image: "docker.klink.asia/images/k-search:3.6.0-2"
     environment:
       - SOLR_HOST=engine
       - SOLR_CORE=k-search
@@ -22,6 +23,6 @@ services:
     depends_on:
       - engine
     ports:
-      - "8080:80"
+      - "8081:80"
     networks:
       - internal

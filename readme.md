@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/k-box/k-search-client-php.svg?branch=master)](https://travis-ci.org/k-box/k-search-client-php)
+[![Build Status](https://travis-ci.com/k-box/k-search-client-php.svg?branch=master)](https://travis-ci.com/k-box/k-search-client-php)
 
 # K-Search PHP Client
 
