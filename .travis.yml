@@ -19,7 +19,6 @@ php:
 env:
   global:
     - KSEARCH_URL="http://127.0.0.1:8080/"
-    - COMPOSER_CACHE_DIR=`pwd`/.composer-cache
   matrix:
     - KSEARCH_TAG="develop" KSEARCH_VERSION="3.6" COMPOSER_FLAGS=""
     - KSEARCH_TAG="v3.6.0-2" KSEARCH_VERSION="3.6" COMPOSER_FLAGS=""
@@ -29,6 +28,7 @@ cache:
   - ./.composer-cache
 
 before_script:
+  - export COMPOSER_CACHE_DIR=`pwd`/.composer-cache
   - travis_retry composer self-update
   - travis_retry composer update ${COMPOSER_FLAGS} --no-interaction --prefer-dist
   - sudo service mysql stop
