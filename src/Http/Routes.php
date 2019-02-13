@@ -11,6 +11,7 @@ final class Routes
     const DATA_GET_ENDPOINT = 'data.get';
     const DATA_STATUS_ENDPOINT = 'data.status';
     const SEARCH_QUERY_ENDPOINT = 'data.search';
+    const KLINK_LIST_ENDPOINT = 'klink.list';
 
     /** @var string */
     private $baseUrl;
@@ -21,7 +22,7 @@ final class Routes
     /**
      * @param string $baseUrl
      */
-    public function __construct($baseUrl, $apiVersion = '3.0')
+    public function __construct($baseUrl, $apiVersion = '3.7')
     {
         $baseUrl = trim($baseUrl);
         $this->baseUrl = trim($baseUrl, '/');
@@ -50,6 +51,14 @@ final class Routes
     public function getDataGet()
     {
         return $this->buildURL(self::DATA_GET_ENDPOINT);
+    }
+
+    /**
+     * @return string
+     */
+    public function getKlinkList()
+    {
+        return $this->buildURL(self::KLINK_LIST_ENDPOINT);
     }
 
     /**

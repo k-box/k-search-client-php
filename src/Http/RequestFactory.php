@@ -6,6 +6,7 @@ use KSearchClient\Model\Data\AddRequest;
 use KSearchClient\Model\Data\Data;
 use KSearchClient\Model\Data\DataStatusRequest;
 use KSearchClient\Model\Data\DeleteRequest;
+use KSearchClient\Model\Data\ListRequest;
 use KSearchClient\Model\Data\GetRequest;
 use KSearchClient\Model\Search\SearchParams;
 use KSearchClient\Model\Search\SearchRequest;
@@ -39,6 +40,14 @@ class RequestFactory
         $getRequest->params->uuid = $uuid;
 
         return $getRequest;
+    }
+
+    public function buildListRequest()
+    {
+        $listRequest = new ListRequest();
+        $listRequest->id = time();
+
+        return $listRequest;
     }
 
     /**

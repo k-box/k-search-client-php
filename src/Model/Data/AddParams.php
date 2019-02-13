@@ -22,6 +22,17 @@ class AddParams
      * ##SWG\Property()
      */
     public $data;
+    
+    /**
+     * The K-Links to which the data needs to be published.
+     *
+     * Use the K-Link identifiers
+     *
+     * @var array
+     * @JMS\Type("array<string>")
+     * @JMS\Since("3.7")
+     */
+    public $klinks = [];
 
     /**
      * A plain text data with information that will be used for full-text searches to match the given Data.

@@ -38,6 +38,22 @@ class SearchParams
      * )
      */
     public $filters = '';
+   
+    /**
+     * K-Link based filters.
+     *
+     * Filter for documents in the specified K-Links
+     *
+     * klink = <empty> - Indicate to search accross default application K-Link (backward compatibility).
+     * klink = * or all - Indicate to search accross all K-Links.
+     * klink = id1 - Indicate to search in one explicit K-Link.
+     * klink = id1,id2 - Indicate to search across selected K-Links.
+     *
+     * @var string
+     * @JMS\Type("string")
+     * @JMS\Since("3.7")
+     */
+    public $klinks = '';
 
     /**
      * Filter documents based on geographic data
