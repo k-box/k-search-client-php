@@ -20,7 +20,7 @@ For release changelogs see the [Changelog](./changelog.md)
 
 **Requirements**
 
-- [PHP 5.6](http://www.php.net/) or above.
+- [PHP 7.0](http://www.php.net/) or above.
 
 ## Getting Started
 
