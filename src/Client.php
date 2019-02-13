@@ -218,8 +218,6 @@ class Client
             /** @var ErrorResponse $errorResponse */
             $errorResponse = $this->deserializeResponse($responseBody, ErrorResponse::class);
 
-            var_dump($responseBody);
-            
             if($errorResponse->error->code === 400 && ResponseHelper::isAssociativeArray($errorResponse->error->data)){
                 throw new InvalidDataException($errorResponse->error->data);
             }
