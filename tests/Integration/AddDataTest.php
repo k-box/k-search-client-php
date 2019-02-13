@@ -39,7 +39,6 @@ class AddDataTest extends TestCase
         $uuid = Uuid::uuid4()->toString();
 
         $to_add = $this->createDataModel($uuid);
-        $to_add->copyright = null;
         $to_add->uploader = null;
         $to_add->authors = null;
 
@@ -48,7 +47,6 @@ class AddDataTest extends TestCase
         $this->assertInstanceOf(Data::class, $added_data);
 
         $this->assertInstanceOf(Uploader::class, $added_data->uploader);
-        $this->assertNull($added_data->copyright);
         $this->assertEmpty($added_data->authors);
     }
 

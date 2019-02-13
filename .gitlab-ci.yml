@@ -23,8 +23,8 @@ before_script:
 #   KSEARCH_URL: "http://docker.klink.asia-main-k-search/"
 
 # services:
-#   - docker.klink.asia/images/k-search-engine:0.2.0
-#   - docker.klink.asia/main/k-search:deelop
+#   - docker.klink.asia/images/k-search-engine:1.0.1
+#   - docker.klink.asia/main/k-search:develop
 
 # Job templates
 
@@ -40,13 +40,6 @@ before_script:
 
 # Testing jobs
 
-  
-
-phpunit:7.0:
-  image: "docker.klink.asia/main/docker-php:7.0"
-  <<: *tester_plus_coverage
-  tags:
-  - docker
   
 phpunit:7.1:
   image: "docker.klink.asia/main/docker-php:7.1"
