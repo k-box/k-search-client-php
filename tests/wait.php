@@ -10,7 +10,7 @@ use Http\Client\Exception\RequestException;
 $messageFactory = MessageFactoryDiscovery::find();
 $httpClient = HttpClientDiscovery::find();
 
-$route = 'http://127.0.0.1:8081/api/3.4/data.get';
+$route = 'http://127.0.0.1:8080/api/3.6/data.get';
 
 $body = '{"params": {"uuid": "cc1bbc0b-20e8-4e1f-b894-fb067e81c5dd"},"id":"request-3d254173"}';
 
@@ -35,6 +35,6 @@ while (true) {
         }
 
         fwrite(STDOUT, 'Waiting for container to start...'.PHP_EOL);
-        sleep(1);
+        sleep(2);
     }
 }

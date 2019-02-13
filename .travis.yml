@@ -18,7 +18,7 @@ php:
 
 env:
   global:
-    - KSEARCH_URL="http://127.0.0.1:8081/"
+    - KSEARCH_URL="http://127.0.0.1:8080/"
     - COMPOSER_CACHE_DIR=`pwd`/.composer-cache
   matrix:
     - KSEARCH_TAG="develop" KSEARCH_VERSION="3.6" COMPOSER_FLAGS=""
