@@ -18,6 +18,8 @@ class KlinkListTest extends TestCase
 
     public function testEmptyListIsReturned()
     {
+        $this->skipIfApiVersionNotEqualOrAbove('3.7');
+
         $data = $this->client->klinks();
 
         $this->assertEmpty($data);
