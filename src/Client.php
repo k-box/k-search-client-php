@@ -97,13 +97,39 @@ class Client
     /**
      * Add Data
      * 
+     * In case data is being added to a multi-K-Link instance
+     * the application default K-Link will be used. The
+     * publication might fail if the application can
+     * publish to more than one K-Link
+     * 
      * @param Data $data
      * @param string $dataTextualContents
      * @return Data
      */
     public function add(Data $data, $dataTextualContents = '')
     {
-        $addRequest = $this->apiRequestFactory->buildDataAddRequest($data, $dataTextualContents);
+        $addRequest = $this->apiRequestFactory->buildDataAddRequest($data, [], $dataTextualContents);
+        $route = $this->routes->getDataAdd();
+
+        $response = $this->handleRequest($addRequest, $route);
+
+        /** @var AddResponse $addResponse */
+        $addResponse = $this->deserializeResponse($response->getBody(), AddResponse::class);
+
+        return $addResponse->result;
+    }
+
+    /**
+     * Add Data to K-Link
+     * 
+     * @param Data $data
+     * @param array $klinks the K-Link identifiers to which the data piece needs to be added to
+     * @param string $dataTextualContents
+     * @return Data
+     */
+    public function addToKlink(Data $data, array $klinks, $dataTextualContents = '')
+    {
+        $addRequest = $this->apiRequestFactory->buildDataAddRequest($data, $klinks, $dataTextualContents);
         $route = $this->routes->getDataAdd();
 
         $response = $this->handleRequest($addRequest, $route);

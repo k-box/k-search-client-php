@@ -18,15 +18,18 @@ use KSearchClient\Model\Status\StatusResponse;
 class RequestFactory
 {
     /**
+     * @param Data $data
+     * @param array $klinks
      * @param string $dataTextualContents
      * @return \KSearchClient\Model\Data\AddRequest
      */
-    public function buildDataAddRequest(Data $data, $dataTextualContents)
+    public function buildDataAddRequest(Data $data, array $klinks = [], $dataTextualContents = '')
     {
         $addRequest = new AddRequest();
         $addRequest->id = time();
         $addRequest->params = new AddParams();
         $addRequest->params->data = $data;
+        $addRequest->params->klinks = $klinks;
         $addRequest->params->dataTextualContents = $dataTextualContents;
 
         return $addRequest;
