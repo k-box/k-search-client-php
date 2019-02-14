@@ -34,7 +34,7 @@ trait SetupIntegrationTest
     protected function getApiVersion()
     {
         $api_version = getenv('KSEARCH_VERSION'); 
-        return  $api_version ? $api_version : '3.6';
+        return  $api_version ? $api_version : '3.7';
     }
 
     public function skipIfApiVersionNotEqualOrAbove($version)

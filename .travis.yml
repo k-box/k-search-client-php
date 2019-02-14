@@ -19,7 +19,7 @@ env:
   global:
     - KSEARCH_URL="http://127.0.0.1:8080/"
   matrix:
-    - KSEARCH_TAG="develop" KSEARCH_VERSION="3.6" COMPOSER_FLAGS=""
+    - KSEARCH_TAG="develop" KSEARCH_VERSION="3.7" COMPOSER_FLAGS=""
     - KSEARCH_TAG="v3.6.0-2" KSEARCH_VERSION="3.6" COMPOSER_FLAGS=""
 
 cache:

@@ -6,6 +6,7 @@ use KSearchClient\Model\Data\AddRequest;
 use KSearchClient\Model\Data\Data;
 use KSearchClient\Model\Data\DataStatusRequest;
 use KSearchClient\Model\Data\DeleteRequest;
+use KSearchClient\Model\Data\ListRequest;
 use KSearchClient\Model\Data\GetRequest;
 use KSearchClient\Model\Search\SearchParams;
 use KSearchClient\Model\Search\SearchRequest;
@@ -17,15 +18,18 @@ use KSearchClient\Model\Status\StatusResponse;
 class RequestFactory
 {
     /**
+     * @param Data $data
+     * @param array $klinks
      * @param string $dataTextualContents
      * @return \KSearchClient\Model\Data\AddRequest
      */
-    public function buildDataAddRequest(Data $data, $dataTextualContents)
+    public function buildDataAddRequest(Data $data, array $klinks = [], $dataTextualContents = '')
     {
         $addRequest = new AddRequest();
         $addRequest->id = time();
         $addRequest->params = new AddParams();
         $addRequest->params->data = $data;
+        $addRequest->params->klinks = $klinks;
         $addRequest->params->dataTextualContents = $dataTextualContents;
 
         return $addRequest;
@@ -39,6 +43,14 @@ class RequestFactory
         $getRequest->params->uuid = $uuid;
 
         return $getRequest;
+    }
+
+    public function buildListRequest()
+    {
+        $listRequest = new ListRequest();
+        $listRequest->id = time();
+
+        return $listRequest;
     }
 
     /**

@@ -54,6 +54,17 @@ class Data
      */
     public $hash;
 
+    
+    /**
+     * The K-Links to which this data is published.
+     *
+     * @var Klink[]
+     * @JMS\ReadOnly()
+     * @JMS\Type("array<KSearchClient\Model\Data\Klink>")
+     * @JMS\Since("3.7")
+     */
+    public $klinks = [];
+
     /**
      * The general type of the provided data.
      *

@@ -27,6 +27,7 @@ use KSearchClient\Model\Data\Data;
 use KSearchClient\Model\Data\DataStatus;
 use KSearchClient\Model\Data\DataStatusResponse;
 use KSearchClient\Model\Data\GetResponse;
+use KSearchClient\Model\Data\ListResponse;
 use KSearchClient\Model\Search\SearchParams;
 use KSearchClient\Model\Search\SearchResponse;
 use KSearchClient\Model\Data\SearchResults;
@@ -71,9 +72,8 @@ class Client
      * 
      * @param string $kSearchUrl
      */
-    public function __construct($kSearchUrl, Authentication $authentication, RequestFactory $apiRequestFactory, Serializer $serializer, HttpClient $httpClient, MessageFactory $messageFactory, $apiVersion = '3.4')
+    public function __construct($kSearchUrl, Authentication $authentication, RequestFactory $apiRequestFactory, Serializer $serializer, HttpClient $httpClient, MessageFactory $messageFactory, $apiVersion = '3.7')
     {
-        // transform to $url, Authentication $authentication, Options{RequestFactory, Serializer, HttpClient, MessageFactory, $apiVersion = '3.0'}
         
         // registering a PluginClient as the authentication and content headers should be added to all requests
         $this->httpClient = new PluginClient(
@@ -97,13 +97,39 @@ class Client
     /**
      * Add Data
      * 
+     * In case data is being added to a multi-K-Link instance
+     * the application default K-Link will be used. The
+     * publication might fail if the application can
+     * publish to more than one K-Link
+     * 
      * @param Data $data
      * @param string $dataTextualContents
      * @return Data
      */
     public function add(Data $data, $dataTextualContents = '')
     {
-        $addRequest = $this->apiRequestFactory->buildDataAddRequest($data, $dataTextualContents);
+        $addRequest = $this->apiRequestFactory->buildDataAddRequest($data, [], $dataTextualContents);
+        $route = $this->routes->getDataAdd();
+
+        $response = $this->handleRequest($addRequest, $route);
+
+        /** @var AddResponse $addResponse */
+        $addResponse = $this->deserializeResponse($response->getBody(), AddResponse::class);
+
+        return $addResponse->result;
+    }
+
+    /**
+     * Add Data to K-Link
+     * 
+     * @param Data $data
+     * @param array $klinks the K-Link identifiers to which the data piece needs to be added to
+     * @param string $dataTextualContents
+     * @return Data
+     */
+    public function addToKlink(Data $data, array $klinks, $dataTextualContents = '')
+    {
+        $addRequest = $this->apiRequestFactory->buildDataAddRequest($data, $klinks, $dataTextualContents);
         $route = $this->routes->getDataAdd();
 
         $response = $this->handleRequest($addRequest, $route);
@@ -148,6 +174,23 @@ class Client
         /** @var GetResponse $getRes */
         $getResponse = $this->deserializeResponse($response->getBody(), GetResponse::class);
         return $getResponse->result;
+    }
+
+    /**
+     * Retrieve the list of K-Links
+     * 
+     * @return array
+     */
+    public function klinks()
+    {
+        $request = $this->apiRequestFactory->buildListRequest();
+        $route = $this->routes->getKlinkList();
+
+        $response = $this->handleRequest($request, $route);
+
+        /** @var ListResponse $listResponse */
+        $listResponse = $this->deserializeResponse($response->getBody(), ListResponse::class);
+        return $listResponse->result;
     }
 
     /**
@@ -277,7 +320,7 @@ class Client
      * @param \KSearchClient\Http\Authentication $authentication The authentication credentials, if necessary
      * @return Client
      */
-    public static function build($instanceUrl, Authentication $authentication = null, $apiVersion = '3.5')
+    public static function build($instanceUrl, Authentication $authentication = null, $apiVersion = '3.7')
     {
         AnnotationRegistry::registerLoader('class_exists');
 
