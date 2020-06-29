@@ -63,7 +63,7 @@ class AddDataTest extends TestCase
 
             $this->assertEquals(400, $ex->getCode());
 
-            $this->assertContains('params.data.uuid', $ex->getMessage());
+            $this->assertStringContainsString('params.data.uuid', $ex->getMessage());
 
             $this->assertArrayHasKey('params.data.uuid', $ex->getData());
 
@@ -91,7 +91,7 @@ class AddDataTest extends TestCase
 
             $this->assertEquals(400, $ex->getCode());
 
-            $this->assertContains('params.data.properties.title', $ex->getMessage());
+            $this->assertStringContainsString('params.data.properties.title', $ex->getMessage());
             $this->assertArrayHasKey('params.data.properties.title', $ex->getData());
 
             $exceptionHandled = true;
@@ -121,7 +121,7 @@ class AddDataTest extends TestCase
 
             $this->assertEquals(400, $ex->getCode());
 
-            $this->assertContains('params.data.geo_location', $ex->getMessage());
+            $this->assertStringContainsString('params.data.geo_location', $ex->getMessage());
             $this->assertArrayHasKey('params.data.geo_location', $ex->getData());
         }
     }
@@ -161,7 +161,7 @@ class AddDataTest extends TestCase
 
             $this->assertEquals(400, $ex->getCode());
 
-            $this->assertContains('Unable to download contents', $ex->getMessage());
+            $this->assertStringContainsString('Unable to download contents', $ex->getMessage());
             $this->assertCount(1, $ex->getData());
             $this->assertContains('cURL error 7: Failed to connect to localhost port 3000: Connection refused (see http://curl.haxx.se/libcurl/c/libcurl-errors.html)', $ex->getData());
             

@@ -40,7 +40,7 @@ class WorkflowTest extends TestCase
         $status = $this->client->getStatus($uuid);
 
         $this->assertInstanceOf(DataStatus::class, $status);
-        $this->assertInternalType('string', $status->status);
+        $this->assertIsString($status->status);
         $this->assertEquals(DataStatus::STATUS_INDEX_OK, $status->status);
         $this->assertTrue($status->indexed());
         $this->assertEmpty($status->message);
@@ -67,7 +67,7 @@ class WorkflowTest extends TestCase
     {
         $is_deleted = $this->client->delete($uuid);
 
-        $this->assertInternalType('bool', $is_deleted);
+        $this->assertIsBool($is_deleted);
         $this->assertTrue($is_deleted);
     }
 
