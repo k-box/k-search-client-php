@@ -14,8 +14,7 @@ services:
     networks:
       - internal
   ksearch:
-    image: "oneofftech/k-search:${KSEARCH_TAG:-develop}"
-    # image: "docker.klink.asia/images/k-search:3.6.0-2"
+    image: "klinktech/k-search:${KSEARCH_TAG:-3.6.0-2}"
     environment:
       - SOLR_HOST=engine
       - SOLR_CORE=k-search
